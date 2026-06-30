@@ -10,3 +10,4 @@ stacker-projects/.visited
 .visited
 .deployed
 stacker-autodeploy.py
+autodeploy-requirements.txt
