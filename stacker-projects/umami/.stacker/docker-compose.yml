@@ -1,0 +1,43 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .stacker/Dockerfile
+    ports:
+    - 3000:3000
+    environment:
+      APP_SECRET: d951ad998d195e38f62741555f86fd7a51c498396469ec939c99a89cb27549e9
+      DATABASE_URL: postgresql://umami:umami@postgres:5432/umami
+      HOSTNAME: 0.0.0.0
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_ENV: production
+      PORT: '3000'
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: app
+      my.stacker.scope: project
+      my.stacker.service: app
+  postgres:
+    image: postgres:15-alpine
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_PASSWORD: umami
+      POSTGRES_USER: umami
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: postgres
+      my.stacker.scope: project
+      my.stacker.service: postgres
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  postgres_data: null

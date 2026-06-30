@@ -1,0 +1,45 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .stacker/Dockerfile
+    ports:
+    - 2368:2368
+    environment:
+      NODE_ENV: production
+      database__client: mysql
+      database__connection__database: ghost
+      database__connection__host: mysql
+      database__connection__password: ghost_local_password
+      database__connection__user: ghost
+      url: http://localhost:2368
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: app
+      my.stacker.scope: project
+      my.stacker.service: app
+  mysql:
+    image: mysql:8
+    ports:
+    - 3306:3306
+    environment:
+      MYSQL_DATABASE: ghost
+      MYSQL_PASSWORD: ghost_local_password
+      MYSQL_ROOT_PASSWORD: ghost_local_password
+      MYSQL_USER: ghost
+    volumes:
+    - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: mysql
+      my.stacker.scope: project
+      my.stacker.service: mysql
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  mysql_data: null

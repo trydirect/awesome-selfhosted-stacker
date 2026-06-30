@@ -1,0 +1,321 @@
+import logging
+import mimetypes
+import os
+import shutil
+import uuid
+from pathlib import Path
+from typing import Optional
+
+from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile, status
+from fastapi.responses import FileResponse, StreamingResponse
+from open_webui.config import UPLOAD_DIR
+from open_webui.constants import ERROR_MESSAGES
+from open_webui.internal.db import get_async_session
+from open_webui.models.chats import Chats
+from open_webui.models.folders import (
+    FolderForm,
+    FolderModel,
+    FolderNameIdResponse,
+    Folders,
+    FolderUpdateForm,
+)
+from open_webui.utils.access_control import has_permission
+from open_webui.utils.access_control.files import get_accessible_folder_files
+from open_webui.utils.auth import get_admin_user, get_verified_user
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+
+log = logging.getLogger(__name__)
+
+
+router = APIRouter()
+
+
+############################
+# Get Folders
+############################
+
+
+@router.get('/', response_model=list[FolderNameIdResponse])
+async def get_folders(
+    request: Request,
+    user=Depends(get_verified_user),
+    db: AsyncSession = Depends(get_async_session),
+):
+    if request.app.state.config.ENABLE_FOLDERS is False:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=ERROR_MESSAGES.ACCESS_PROHIBITED,
+        )
+
+    if user.role != 'admin' and not await has_permission(
+        user.id,
+        'features.folders',
+        request.app.state.config.USER_PERMISSIONS,
+        db=db,
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=ERROR_MESSAGES.ACCESS_PROHIBITED,
+        )
+
+    folders = await Folders.get_folders_by_user_id(user.id, db=db)
+
+    # Verify folder data integrity
+    folder_list = []
+    for folder in folders:
+        if folder.parent_id and not await Folders.get_folder_by_id_and_user_id(folder.parent_id, user.id, db=db):
+            folder = await Folders.update_folder_parent_id_by_id_and_user_id(folder.id, user.id, None, db=db)
+
+        if folder.data and 'files' in folder.data:
+            accessible_files = await get_accessible_folder_files(folder.data['files'], user, db=db)
+            if len(accessible_files) != len(folder.data.get('files', [])):
+                folder.data['files'] = accessible_files
+                await Folders.update_folder_by_id_and_user_id(
+                    folder.id, user.id, FolderUpdateForm(data=folder.data), db=db
+                )
+
+        folder_list.append(FolderNameIdResponse(**folder.model_dump()))
+
+    return folder_list
+
+
+############################
+# Create Folder
+############################
+
+
+@router.post('/')
+async def create_folder(
+    form_data: FolderForm,
+    user=Depends(get_verified_user),
+    db: AsyncSession = Depends(get_async_session),
+):
+    folder = await Folders.get_folder_by_parent_id_and_user_id_and_name(
+        form_data.parent_id, user.id, form_data.name, db=db
+    )
+
+    if folder:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=ERROR_MESSAGES.DEFAULT('Folder already exists'),
+        )
+
+    try:
+        folder = await Folders.insert_new_folder(user.id, form_data, form_data.parent_id, db=db)
+        return folder
+    except Exception as e:
+        log.exception(e)
+        log.error('Error creating folder')
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=ERROR_MESSAGES.DEFAULT('Error creating folder'),
+        )
+
+
+############################
+# Get Folders By Id
+############################
+
+
+@router.get('/{id}', response_model=Optional[FolderModel])
+async def get_folder_by_id(id: str, user=Depends(get_verified_user), db: AsyncSession = Depends(get_async_session)):
+    folder = await Folders.get_folder_by_id_and_user_id(id, user.id, db=db)
+    if folder:
+        return folder
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=ERROR_MESSAGES.NOT_FOUND,
+        )
+
+
+############################
+# Update Folder Name By Id
+############################
+
+
+@router.post('/{id}/update')
+async def update_folder_name_by_id(
+    id: str,
+    form_data: FolderUpdateForm,
+    user=Depends(get_verified_user),
+    db: AsyncSession = Depends(get_async_session),
+):
+    folder = await Folders.get_folder_by_id_and_user_id(id, user.id, db=db)
+    if folder:
+        if form_data.name is not None:
+            # Check if folder with same name exists
+            existing_folder = await Folders.get_folder_by_parent_id_and_user_id_and_name(
+                folder.parent_id, user.id, form_data.name, db=db
+            )
+            if existing_folder and existing_folder.id != id:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=ERROR_MESSAGES.DEFAULT('Folder already exists'),
+                )
+
+        # Validate read access to every file/collection being attached.
+        # Folder files are consumed by chat middleware as RAG context.
+        if form_data.data and isinstance(form_data.data.get('files'), list):
+            accessible_files = await get_accessible_folder_files(form_data.data['files'], user, db=db)
+            if len(accessible_files) != len(form_data.data['files']):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=ERROR_MESSAGES.ACCESS_PROHIBITED,
+                )
+
+        try:
+            folder = await Folders.update_folder_by_id_and_user_id(id, user.id, form_data, db=db)
+            return folder
+        except Exception as e:
+            log.exception(e)
+            log.error(f'Error updating folder: {id}')
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=ERROR_MESSAGES.DEFAULT('Error updating folder'),
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=ERROR_MESSAGES.NOT_FOUND,
+        )
+
+
+############################
+# Update Folder Parent Id By Id
+############################
+
+
+class FolderParentIdForm(BaseModel):
+    parent_id: Optional[str] = None
+
+
+@router.post('/{id}/update/parent')
+async def update_folder_parent_id_by_id(
+    id: str,
+    form_data: FolderParentIdForm,
+    user=Depends(get_verified_user),
+    db: AsyncSession = Depends(get_async_session),
+):
+    folder = await Folders.get_folder_by_id_and_user_id(id, user.id, db=db)
+    if folder:
+        existing_folder = await Folders.get_folder_by_parent_id_and_user_id_and_name(
+            form_data.parent_id, user.id, folder.name, db=db
+        )
+
+        if existing_folder:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=ERROR_MESSAGES.DEFAULT('Folder already exists'),
+            )
+
+        try:
+            folder = await Folders.update_folder_parent_id_by_id_and_user_id(id, user.id, form_data.parent_id, db=db)
+            return folder
+        except Exception as e:
+            log.exception(e)
+            log.error(f'Error updating folder: {id}')
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=ERROR_MESSAGES.DEFAULT('Error updating folder'),
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=ERROR_MESSAGES.NOT_FOUND,
+        )
+
+
+############################
+# Update Folder Is Expanded By Id
+############################
+
+
+class FolderIsExpandedForm(BaseModel):
+    is_expanded: bool
+
+
+@router.post('/{id}/update/expanded')
+async def update_folder_is_expanded_by_id(
+    id: str,
+    form_data: FolderIsExpandedForm,
+    user=Depends(get_verified_user),
+    db: AsyncSession = Depends(get_async_session),
+):
+    folder = await Folders.get_folder_by_id_and_user_id(id, user.id, db=db)
+    if folder:
+        try:
+            folder = await Folders.update_folder_is_expanded_by_id_and_user_id(
+                id, user.id, form_data.is_expanded, db=db
+            )
+            return folder
+        except Exception as e:
+            log.exception(e)
+            log.error(f'Error updating folder: {id}')
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=ERROR_MESSAGES.DEFAULT('Error updating folder'),
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=ERROR_MESSAGES.NOT_FOUND,
+        )
+
+
+############################
+# Delete Folder By Id
+############################
+
+
+@router.delete('/{id}')
+async def delete_folder_by_id(
+    request: Request,
+    id: str,
+    delete_contents: Optional[bool] = True,
+    user=Depends(get_verified_user),
+    db: AsyncSession = Depends(get_async_session),
+):
+    if await Chats.count_chats_by_folder_id_and_user_id(id, user.id, db=db):
+        chat_delete_permission = await has_permission(
+            user.id, 'chat.delete', request.app.state.config.USER_PERMISSIONS, db=db
+        )
+        if user.role != 'admin' and not chat_delete_permission:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=ERROR_MESSAGES.ACCESS_PROHIBITED,
+            )
+
+    folders = []
+    folders.append(await Folders.get_folder_by_id_and_user_id(id, user.id, db=db))
+    while folders:
+        folder = folders.pop()
+        if folder:
+            try:
+                folder_ids = await Folders.delete_folder_by_id_and_user_id(folder.id, user.id, db=db)
+
+                for folder_id in folder_ids:
+                    if delete_contents:
+                        await Chats.delete_chats_by_user_id_and_folder_id(user.id, folder_id, db=db)
+                    else:
+                        await Chats.move_chats_by_user_id_and_folder_id(user.id, folder_id, None, db=db)
+
+                return True
+            except Exception as e:
+                log.exception(e)
+                log.error(f'Error deleting folder: {id}')
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=ERROR_MESSAGES.DEFAULT('Error deleting folder'),
+                )
+            finally:
+                # Get all subfolders
+                subfolders = await Folders.get_folders_by_parent_id_and_user_id(folder.id, user.id, db=db)
+                folders.extend(subfolders)
+
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=ERROR_MESSAGES.NOT_FOUND,
+        )

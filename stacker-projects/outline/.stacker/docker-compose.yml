@@ -1,0 +1,58 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .stacker/Dockerfile
+    ports:
+    - 3000:3000
+    environment:
+      COLLABORATION_URL: http://localhost:3000
+      DATABASE_URL: postgres://outline:outline_local_pass_12345@postgres:5432/outline?sslmode=disable
+      FILE_STORAGE_LOCAL_ROOT_DIR: /var/lib/outline/data
+      FORCE_HTTPS: 'false'
+      NODE_ENV: production
+      PORT: '3000'
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY: 970cb0bea26ce221c6ecd4c9eb27ae61ec837284238d29d360d3a6935c14107c
+      URL: http://localhost:3000
+      UTILS_SECRET: 6ddc48cc14882126cbc84149528d8b93d8ae6316ce960a4cab43e0ceba51a2aa
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: app
+      my.stacker.scope: project
+      my.stacker.service: app
+  postgres:
+    image: postgres:16
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_DB: outline
+      POSTGRES_PASSWORD: outline_local_pass_12345
+      POSTGRES_USER: outline
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: postgres
+      my.stacker.scope: project
+      my.stacker.service: postgres
+  redis:
+    image: redis:7-alpine
+    ports:
+    - 6380:6379
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: redis
+      my.stacker.scope: project
+      my.stacker.service: redis
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  postgres_data: null

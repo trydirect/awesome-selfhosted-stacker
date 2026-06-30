@@ -1,0 +1,57 @@
+name: plausible
+version: "1.0.0"
+
+app:
+  type: custom
+  path: .
+  dockerfile: Dockerfile
+  ports:
+    - "8000:8000"
+  environment:
+    BASE_URL: "${BASE_URL}"
+    SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
+    DATABASE_URL: "postgres://postgres:${DB_PASSWORD}@plausible_db:5432/plausible"
+    CLICKHOUSE_DATABASE_URL: "http://plausible_events_db:8123/plausible"
+    DISABLE_REGISTRATION: "${DISABLE_REGISTRATION}"
+    TOTP_VAULT_KEY: "${TOTP_VAULT_KEY}"
+
+services:
+  - name: plausible_db
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U postgres"
+      interval: 10s
+      timeout: 5s
+      retries: "5"
+
+  - name: plausible_events_db
+    image: clickhouse/clickhouse-server:24.12-alpine
+    ports:
+      - "127.0.0.1:8123:8123"
+    environment:
+      CLICKHOUSE_SKIP_USER_SETUP: "1"
+    volumes:
+      - event_data:/var/lib/clickhouse
+      - event_logs:/var/log/clickhouse-server
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cx22
+
+monitoring:
+  status_panel: true
+
+env_file: .env

@@ -1,0 +1,51 @@
+name: outline
+version: "1.0.0"
+
+app:
+  type: node
+  path: .
+  dockerfile: Dockerfile
+  ports:
+    - "3000:3000"
+  environment:
+    PORT: "3000"
+    NODE_ENV: production
+    FILE_STORAGE_LOCAL_ROOT_DIR: /var/lib/outline/data
+    DATABASE_URL: "postgres://outline:${DB_PASSWORD}@postgres:5432/outline?sslmode=disable"
+    REDIS_URL: "redis://redis:6379"
+    SECRET_KEY: "${SECRET_KEY}"
+    UTILS_SECRET: "${UTILS_SECRET}"
+    URL: "${URL}"
+    COLLABORATION_URL: "${COLLABORATION_URL}"
+    FORCE_HTTPS: "false"
+
+services:
+  - name: postgres
+    image: postgres:16
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: outline
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: outline
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6380:6379"
+    environment: {}
+    volumes: []
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+
+monitoring:
+  status_panel: true
+
+env_file: .env

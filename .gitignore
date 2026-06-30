@@ -1,0 +1,12 @@
+.env
+stacker-projects/**/.env
+stacker-projects/.deployed
+stacker-projects/.visited
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/deploy/data/certs/
+.visited
+.deployed
+stacker-autodeploy.py

@@ -1,0 +1,183 @@
+name: supabase
+version: "1.0.0"
+
+app:
+  type: custom
+  image: kong/kong:3.9.1
+  ports:
+    - "8000:8000"
+    - "8443:8443"
+  volumes:
+    - ./kong.yml:/usr/local/kong/kong.yml
+  environment:
+    KONG_DATABASE: "off"
+    KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
+    KONG_DNS_ORDER: LAST,A,CNAME
+    KONG_DNS_NOT_FOUND_TTL: "1"
+    KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function
+    KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+    KONG_NGINX_PROXY_PROXY_BUFFERS: "64 160k"
+    KONG_PROXY_ACCESS_LOG: /dev/stdout combined
+    SUPABASE_ANON_KEY: "${ANON_KEY}"
+    SUPABASE_SERVICE_KEY: "${SERVICE_ROLE_KEY}"
+    SUPABASE_PUBLIC_URL: "${SUPABASE_PUBLIC_URL}"
+    ANON_KEY: "${ANON_KEY}"
+    SERVICE_ROLE_KEY: "${SERVICE_ROLE_KEY}"
+    JWT_SECRET: "${JWT_SECRET}"
+    DASHBOARD_USERNAME: "${DASHBOARD_USERNAME}"
+    DASHBOARD_PASSWORD: "${DASHBOARD_PASSWORD}"
+
+services:
+  - name: db
+    image: supabase/postgres:17.6.1.136
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+      JWT_SECRET: "${JWT_SECRET}"
+      JWT_EXP: "${JWT_EXPIRY}"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD pg_isready -U postgres"
+      interval: "5s"
+      timeout: "5s"
+      retries: "10"
+
+  - name: studio
+    image: supabase/studio:2026.06.03-sha-0bca601
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      HOSTNAME: "0.0.0.0"
+      STUDIO_PG_META_URL: http://meta:8080
+      POSTGRES_PORT: "${POSTGRES_PORT}"
+      POSTGRES_HOST: db
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      PG_META_CRYPTO_KEY: "${PG_META_CRYPTO_KEY}"
+      PGRST_DB_SCHEMAS: "${PGRST_DB_SCHEMAS}"
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_PUBLIC_URL: "${SUPABASE_PUBLIC_URL}"
+      SUPABASE_ANON_KEY: "${ANON_KEY}"
+      SUPABASE_SERVICE_KEY: "${SERVICE_ROLE_KEY}"
+      JWT_SECRET: "${JWT_SECRET}"
+    volumes:
+      - studio_snippets:/app/snippets
+
+  - name: auth
+    image: supabase/gotrue:v2.189.0
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: "${API_EXTERNAL_URL}"
+      GOTRUE_DB_DATABASE_URL: "postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}"
+      GOTRUE_DB_DRIVER: "postgres"
+      GOTRUE_SITE_URL: "${SITE_URL}"
+      GOTRUE_DISABLE_SIGNUP: "${DISABLE_SIGNUP}"
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_EXP: "${JWT_EXPIRY}"
+      GOTRUE_JWT_SECRET: "${JWT_SECRET}"
+      GOTRUE_JWT_ISSUER: "${API_EXTERNAL_URL}/auth/v1"
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "${ENABLE_EMAIL_SIGNUP}"
+      GOTRUE_MAILER_AUTOCONFIRM: "${ENABLE_EMAIL_AUTOCONFIRM}"
+      GOTRUE_SMTP_ADMIN_EMAIL: "${SMTP_ADMIN_EMAIL}"
+      GOTRUE_SMTP_HOST: "${SMTP_HOST}"
+      GOTRUE_SMTP_PORT: "${SMTP_PORT}"
+      GOTRUE_SMTP_USER: "${SMTP_USER}"
+      GOTRUE_SMTP_PASS: "${SMTP_PASS}"
+      GOTRUE_SMTP_SENDER_NAME: "${SMTP_SENDER_NAME}"
+
+  - name: rest
+    image: postgrest/postgrest:v14.12
+    environment:
+      PGRST_DB_URI: "postgres://authenticator:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}"
+      PGRST_DB_SCHEMAS: "${PGRST_DB_SCHEMAS}"
+      PGRST_DB_MAX_ROWS: "${PGRST_DB_MAX_ROWS}"
+      PGRST_DB_EXTRA_SEARCH_PATH: "${PGRST_DB_EXTRA_SEARCH_PATH}"
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: "${JWT_SECRET}"
+      PGRST_APP_SETTINGS_JWT_SECRET: "${JWT_SECRET}"
+      PGRST_APP_SETTINGS_JWT_EXP: "${JWT_EXPIRY}"
+
+  - name: realtime
+    image: supabase/realtime:v2.102.3
+    environment:
+      PORT: "4000"
+      DB_HOST: db
+      DB_PORT: "${POSTGRES_PORT}"
+      DB_USER: supabase_admin
+      DB_PASSWORD: "${POSTGRES_PASSWORD}"
+      DB_NAME: "${POSTGRES_DB}"
+      DB_ENC_KEY: supabaserealtime
+      JWT_SECRET: "${JWT_SECRET}"
+      SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
+      APP_NAME: realtime
+      SEED_SELF_HOST: "true"
+      RUN_JANITOR: "true"
+      DISABLE_HEALTHCHECK_LOGGING: "true"
+
+  - name: storage
+    image: supabase/storage-api:v1.60.4
+    environment:
+      ANON_KEY: "${ANON_KEY}"
+      SERVICE_KEY: "${SERVICE_ROLE_KEY}"
+      POSTGREST_URL: http://rest:3000
+      JWT_SECRET: "${JWT_SECRET}"
+      DATABASE_URL: "postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}"
+      STORAGE_PUBLIC_URL: "${SUPABASE_PUBLIC_URL}"
+      FILE_SIZE_LIMIT: "52428800"
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      REGION: "${REGION}"
+      ENABLE_IMAGE_TRANSFORMATION: "true"
+      IMGPROXY_URL: http://imgproxy:5001
+    volumes:
+      - storage_data:/var/lib/storage
+
+  - name: imgproxy
+    image: darthsim/imgproxy:v3.30.1
+    environment:
+      IMGPROXY_BIND: ":5001"
+      IMGPROXY_LOCAL_FILESYSTEM_ROOT: /
+      IMGPROXY_USE_ETAG: "true"
+
+  - name: meta
+    image: supabase/postgres-meta:v0.96.6
+    environment:
+      PG_META_PORT: "8080"
+      PG_META_DB_HOST: db
+      PG_META_DB_PORT: "${POSTGRES_PORT}"
+      PG_META_DB_NAME: "${POSTGRES_DB}"
+      PG_META_DB_USER: postgres
+      PG_META_DB_PASSWORD: "${POSTGRES_PASSWORD}"
+      CRYPTO_KEY: "${PG_META_CRYPTO_KEY}"
+
+  - name: functions
+    image: supabase/edge-runtime:v1.74.0
+    environment:
+      JWT_SECRET: "${JWT_SECRET}"
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_PUBLIC_URL: "${SUPABASE_PUBLIC_URL}"
+      SUPABASE_ANON_KEY: "${ANON_KEY}"
+      SUPABASE_SERVICE_ROLE_KEY: "${SERVICE_ROLE_KEY}"
+      VERIFY_JWT: "${FUNCTIONS_VERIFY_JWT}"
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cx32
+
+monitoring:
+  status_panel: true
+
+env_file: .env

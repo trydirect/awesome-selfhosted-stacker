@@ -1,0 +1,59 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .stacker/Dockerfile
+    ports:
+    - 8000:8000
+    environment:
+      BASE_URL: http://localhost:8000
+      CLICKHOUSE_DATABASE_URL: http://plausible_events_db:8123/plausible
+      DATABASE_URL: postgres://postgres:postgres@plausible_db:5432/plausible
+      DISABLE_REGISTRATION: 'false'
+      SECRET_KEY_BASE: 95011dd2e182872e88efe878e0fd661a3957c735eed96b89a1129baa3a3a4966872bed0b39ec53d72a5632c7c8c7c30605f128555fc19e07f895996f542e7e20
+      TOTP_VAULT_KEY: a/obB445Gq2RvjR5qTbGpWTX8v/CUQukE+bKjGxIqPQ=
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: app
+      my.stacker.scope: project
+      my.stacker.service: app
+  plausible_db:
+    image: postgres:16-alpine
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+    - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: plausible_db
+      my.stacker.scope: project
+      my.stacker.service: plausible_db
+  plausible_events_db:
+    image: clickhouse/clickhouse-server:24.12-alpine
+    ports:
+    - 8123:8123
+    environment:
+      CLICKHOUSE_SKIP_USER_SETUP: '1'
+    volumes:
+    - event_data:/var/lib/clickhouse
+    - event_logs:/var/log/clickhouse-server
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: plausible_events_db
+      my.stacker.scope: project
+      my.stacker.service: plausible_events_db
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  db_data: null
+  event_data: null
+  event_logs: null

@@ -1,0 +1,49 @@
+name: coolify
+version: '1.1'
+
+project:
+  identity: coolify
+
+app:
+  type: custom
+  image: 'coollabsio/coolify:latest'
+
+proxy:
+  type: nginx-proxy-manager
+  auto_detect: true
+
+deploy:
+  target: cloud
+  cloud:
+    provider: hetzner
+    region: ${HETZNER_REGION}
+    size: ${HETZNER_SERVER_TYPE}
+    ssh_key: ${STACKER_SSH_KEY}
+    token: ${STACKER_SSH_KEY}
+
+environments:
+  local:
+    compose_file: docker/local/compose.yml
+    env_file: docker/local/.env
+  production:
+    compose_file: docker/production/compose.yml
+    env_file: docker/production/.env
+
+ai:
+  enabled: true
+  provider: ollama
+  model: qwen2.5-coder
+  endpoint: http://192.168.100.245:11434
+  timeout: 0
+  tasks:
+    - compose
+    - troubleshoot
+    - security
+
+monitoring:
+  status_panel: true
+  healthcheck:
+    endpoint: /api/health
+    interval: 15s
+
+env_file: .env

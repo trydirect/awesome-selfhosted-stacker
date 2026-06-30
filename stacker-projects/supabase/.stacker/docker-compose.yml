@@ -1,0 +1,236 @@
+services:
+  app:
+    image: kong/kong:3.9.1
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+    environment:
+      ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE"
+      DASHBOARD_PASSWORD: "this_password_is_insecure_and_should_be_updated"
+      DASHBOARD_USERNAME: "supabase"
+      JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: "/usr/local/kong/kong.yml"
+      KONG_DNS_NOT_FOUND_TTL: "1"
+      KONG_DNS_ORDER: "LAST,A,CNAME"
+      KONG_NGINX_PROXY_PROXY_BUFFERS: "64 160k"
+      KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: "160k"
+      KONG_PLUGINS: "request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function"
+      KONG_PROXY_ACCESS_LOG: "/dev/stdout combined"
+      SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q"
+      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE"
+      SUPABASE_PUBLIC_URL: "http://localhost:8000"
+      SUPABASE_SERVICE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "app"
+      my.stacker.scope: "project"
+      my.stacker.service: "app"
+
+  db:
+    image: supabase/postgres:17.6.1.136
+    ports:
+      - "5432:5432"
+    environment:
+      JWT_EXP: "3600"
+      JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+      POSTGRES_DB: "postgres"
+      POSTGRES_PASSWORD: "your-super-secret-and-long-postgres-password"
+    volumes:
+      - "db_data:/var/lib/postgresql/data"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "db"
+      my.stacker.scope: "project"
+      my.stacker.service: "db"
+
+  studio:
+    image: supabase/studio:2026.06.03-sha-0bca601
+    ports:
+      - "3000:3000"
+    environment:
+      HOSTNAME: "0.0.0.0"
+      JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+      PGRST_DB_SCHEMAS: "public,storage,graphql_public"
+      PG_META_CRYPTO_KEY: "your-encryption-key-32-chars-min"
+      POSTGRES_DB: "postgres"
+      POSTGRES_HOST: "db"
+      POSTGRES_PASSWORD: "your-super-secret-and-long-postgres-password"
+      POSTGRES_PORT: "5432"
+      STUDIO_PG_META_URL: "http://meta:8080"
+      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE"
+      SUPABASE_PUBLIC_URL: "http://localhost:8000"
+      SUPABASE_SERVICE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q"
+      SUPABASE_URL: "http://kong:8000"
+    volumes:
+      - "studio_snippets:/app/snippets"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "studio"
+      my.stacker.scope: "project"
+      my.stacker.service: "studio"
+
+  auth:
+    image: supabase/gotrue:v2.189.0
+    environment:
+      API_EXTERNAL_URL: "http://localhost:8000"
+      GOTRUE_API_HOST: "0.0.0.0"
+      GOTRUE_API_PORT: "9999"
+      GOTRUE_DB_DATABASE_URL: "postgres://supabase_auth_admin:your-super-secret-and-long-postgres-password@db:5432/postgres"
+      GOTRUE_DB_DRIVER: "postgres"
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_JWT_ADMIN_ROLES: "service_role"
+      GOTRUE_JWT_AUD: "authenticated"
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
+      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_JWT_ISSUER: "http://localhost:8000/auth/v1"
+      GOTRUE_JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+      GOTRUE_MAILER_AUTOCONFIRM: "false"
+      GOTRUE_SITE_URL: "http://localhost:3000"
+      GOTRUE_SMTP_ADMIN_EMAIL: "admin@example.com"
+      GOTRUE_SMTP_HOST: "supabase-mail"
+      GOTRUE_SMTP_PASS: "fake_mail_password"
+      GOTRUE_SMTP_PORT: "2500"
+      GOTRUE_SMTP_SENDER_NAME: "fake_sender"
+      GOTRUE_SMTP_USER: "fake_mail_user"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "auth"
+      my.stacker.scope: "project"
+      my.stacker.service: "auth"
+
+  rest:
+    image: postgrest/postgrest:v14.12
+    environment:
+      PGRST_APP_SETTINGS_JWT_EXP: "3600"
+      PGRST_APP_SETTINGS_JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+      PGRST_DB_ANON_ROLE: "anon"
+      PGRST_DB_EXTRA_SEARCH_PATH: "public"
+      PGRST_DB_MAX_ROWS: "1000"
+      PGRST_DB_SCHEMAS: "public,storage,graphql_public"
+      PGRST_DB_URI: "postgres://authenticator:your-super-secret-and-long-postgres-password@db:5432/postgres"
+      PGRST_JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "rest"
+      my.stacker.scope: "project"
+      my.stacker.service: "rest"
+
+  realtime:
+    image: supabase/realtime:v2.102.3
+    environment:
+      APP_NAME: "realtime"
+      DB_ENC_KEY: "supabaserealtime"
+      DB_HOST: "db"
+      DB_NAME: "postgres"
+      DB_PASSWORD: "your-super-secret-and-long-postgres-password"
+      DB_PORT: "5432"
+      DB_USER: "supabase_admin"
+      DISABLE_HEALTHCHECK_LOGGING: "true"
+      JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+      PORT: "4000"
+      RUN_JANITOR: "true"
+      SECRET_KEY_BASE: "UpNVntn3cDxHJpq99YMc1T1AQgQpc8kfYTuRgBiYa15BLrx8etQoXz3gZv1/u2oq"
+      SEED_SELF_HOST: "true"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "realtime"
+      my.stacker.scope: "project"
+      my.stacker.service: "realtime"
+
+  storage:
+    image: supabase/storage-api:v1.60.4
+    environment:
+      ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE"
+      DATABASE_URL: "postgres://supabase_storage_admin:your-super-secret-and-long-postgres-password@db:5432/postgres"
+      ENABLE_IMAGE_TRANSFORMATION: "true"
+      FILE_SIZE_LIMIT: "52428800"
+      FILE_STORAGE_BACKEND_PATH: "/var/lib/storage"
+      IMGPROXY_URL: "http://imgproxy:5001"
+      JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+      POSTGREST_URL: "http://rest:3000"
+      REGION: "stub"
+      SERVICE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q"
+      STORAGE_BACKEND: "file"
+      STORAGE_PUBLIC_URL: "http://localhost:8000"
+    volumes:
+      - "storage_data:/var/lib/storage"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "storage"
+      my.stacker.scope: "project"
+      my.stacker.service: "storage"
+
+  imgproxy:
+    image: darthsim/imgproxy:v3.30.1
+    environment:
+      IMGPROXY_BIND: ":5001"
+      IMGPROXY_LOCAL_FILESYSTEM_ROOT: "/"
+      IMGPROXY_USE_ETAG: "true"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "imgproxy"
+      my.stacker.scope: "project"
+      my.stacker.service: "imgproxy"
+
+  meta:
+    image: supabase/postgres-meta:v0.96.6
+    environment:
+      CRYPTO_KEY: "your-encryption-key-32-chars-min"
+      PG_META_DB_HOST: "db"
+      PG_META_DB_NAME: "postgres"
+      PG_META_DB_PASSWORD: "your-super-secret-and-long-postgres-password"
+      PG_META_DB_PORT: "5432"
+      PG_META_DB_USER: "postgres"
+      PG_META_PORT: "8080"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "meta"
+      my.stacker.scope: "project"
+      my.stacker.service: "meta"
+
+  functions:
+    image: supabase/edge-runtime:v1.74.0
+    environment:
+      JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE"
+      SUPABASE_PUBLIC_URL: "http://localhost:8000"
+      SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q"
+      SUPABASE_URL: "http://kong:8000"
+      VERIFY_JWT: "false"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "functions"
+      my.stacker.scope: "project"
+      my.stacker.service: "functions"
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:
+  studio_snippets:
+  storage_data:
+

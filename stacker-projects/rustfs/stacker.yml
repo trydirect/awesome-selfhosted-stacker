@@ -1,0 +1,44 @@
+name: rustfs
+version: "1.0.0"
+
+app:
+  type: custom
+  path: .
+  dockerfile: Dockerfile
+  ports:
+    - "9000:9000"
+    - "9001:9001"
+  environment:
+    RUSTFS_VOLUMES: /data/rustfs0 /data/rustfs1 /data/rustfs2 /data/rustfs3
+    RUSTFS_ADDRESS: 0.0.0.0:9000
+    RUSTFS_CONSOLE_ADDRESS: 0.0.0.0:9001
+    RUSTFS_CONSOLE_ENABLE: "true"
+    RUSTFS_CONSOLE_CORS_ALLOWED_ORIGINS: "*"
+    RUSTFS_ACCESS_KEY: "${RUSTFS_ACCESS_KEY}"
+    RUSTFS_SECRET_KEY: "${RUSTFS_SECRET_KEY}"
+    RUSTFS_OBS_LOGGER_LEVEL: info
+    RUSTFS_UNSAFE_BYPASS_DISK_CHECK: "true"
+  volumes:
+    - rustfs_data:/data
+    - rustfs_logs:/app/logs
+
+services:
+  - name: otel-collector
+    image: otel/opentelemetry-collector:latest
+    ports:
+      - "4318:4318"
+    environment: {}
+    volumes: []
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+env: {}

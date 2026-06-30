@@ -1,0 +1,17 @@
+name: swarm-ui
+version: 1.0.0
+organization: null
+deploy:
+  target: local
+monitoring:
+    status_panel: true
+app:
+  type: custom
+  path: .
+  dockerfile: Dockerfile
+  image: null
+  build: null
+  ports: []
+  volumes: []
+  environment: {}
+services: []

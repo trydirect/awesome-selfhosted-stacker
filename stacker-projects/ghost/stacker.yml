@@ -1,0 +1,48 @@
+name: ghost
+version: "1.0.0"
+
+app:
+  type: custom
+  path: .
+  dockerfile: Dockerfile
+  ports:
+    - "2368:2368"
+  volumes:
+    - ghost_content:/var/lib/ghost/content
+  environment:
+    url: "${GHOST_URL}"
+    database__client: mysql
+    database__connection__host: mysql
+    database__connection__user: ghost
+    database__connection__password: "${DB_PASSWORD}"
+    database__connection__database: ghost
+    NODE_ENV: production
+
+services:
+  - name: mysql
+    image: mysql:8
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: ghost
+      MYSQL_USER: ghost
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cx22
+
+monitoring:
+  status_panel: true
+
+env_file: .env

@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .stacker/Dockerfile
+    ports:
+    - 8000:8000
+    - 8001:8001
+    environment:
+      HERMES_GID: '1000'
+      HERMES_UID: '1000'
+      PYTHONUNBUFFERED: '1'
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: app
+      my.stacker.scope: project
+      my.stacker.service: app
+networks:
+  app-network:
+    driver: bridge

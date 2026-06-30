@@ -1,0 +1,63 @@
+name: dify
+version: null
+organization: null
+project:
+  identity: dify
+app:
+  type: static
+  path: ''
+  dockerfile: null
+  image: null
+  build: null
+  ports: []
+  volumes: []
+  environment: {}
+services: []
+proxy:
+  type: none
+  auto_detect: false
+  domains: []
+  config: null
+deploy:
+  target: cloud
+  environment: null
+  compose_file: null
+  deployment_hash: null
+  cloud:
+    provider: hetzner
+    orchestrator: remote
+    region: null
+    size: null
+    install_image: null
+    remote_payload_file: null
+    ssh_key: null
+    key: htz-10
+    server: null
+  server: null
+  registry: null
+  default_target: null
+  targets: {}
+install:
+  inputs:
+    commonDomain: dify.my
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
+monitoring:
+  status_panel: false
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: null
+  post_deploy: null
+  on_failure: null
+env_file: null
+env: {}
+config_contract:
+  services: {}

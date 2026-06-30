@@ -1,0 +1,49 @@
+name: umami
+version: "1.0.0"
+
+app:
+  type: node
+  path: .
+  dockerfile: Dockerfile
+  ports:
+    - "3000:3000"
+  environment:
+    DATABASE_URL: "postgresql://umami:${DB_PASSWORD}@postgres:5432/umami"
+    APP_SECRET: "${APP_SECRET}"
+    HOSTNAME: "0.0.0.0"
+    PORT: "3000"
+    NODE_ENV: "production"
+    NEXT_TELEMETRY_DISABLED: "1"
+
+services:
+  - name: postgres
+    image: postgres:15-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U umami -d umami"
+      interval: "5s"
+      timeout: "5s"
+      retries: "5"
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cx22
+monitoring:
+  status_panel: true
+
+env_file: .env
+env: {}

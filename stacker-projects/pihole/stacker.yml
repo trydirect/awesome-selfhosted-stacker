@@ -1,0 +1,34 @@
+name: pihole
+version: "1.0.0"
+
+app:
+  type: custom
+  path: .
+  dockerfile: Dockerfile
+  ports:
+    - "8080:80"
+    - "53:53"
+  environment:
+    TZ: "${TZ}"
+    WEBPASSWORD: "${WEBPASSWORD}"
+    PIHOLE_DNS_: "${PIHOLE_DNS_}"
+    DNSSEC: "true"
+    CONDITIONAL_FORWARDING: "false"
+
+services: []
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cx22
+
+monitoring:
+  status_panel: true
+
+env_file: .env

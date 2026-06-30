@@ -1,0 +1,33 @@
+name: vaultwarden
+version: "1.0.0"
+
+app:
+  type: custom
+  path: .
+  dockerfile: Dockerfile
+  ports:
+    - "8080:80"
+  environment:
+    DOMAIN: "http://localhost:8080"
+    SIGNUPS_ALLOWED: "true"
+    ADMIN_TOKEN: "${ADMIN_TOKEN}"
+  volumes:
+    - vaultwarden_data:/data
+
+services: []
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cx22
+
+monitoring:
+  status_panel: true
+
+env_file: .env
