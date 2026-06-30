@@ -121,7 +121,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
-    "@netlify/plugin-nextjs": "^5.15.11",
+    "@netlify/plugin-nextjs": "^5.15.12",
     "@rollup/plugin-alias": "^6.0.0",
     "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-json": "^6.0.0",
