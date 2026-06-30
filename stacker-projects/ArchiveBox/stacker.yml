@@ -33,5 +33,10 @@ deploy:
 monitoring:
   status_panel: true
 
+hooks:
+  pre_build: null
+  post_deploy: ./entrypoint.sh
+  on_failure: null
+
 env_file: .env
 env: {}

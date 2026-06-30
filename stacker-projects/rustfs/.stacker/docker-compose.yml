@@ -14,8 +14,8 @@ services:
       RUSTFS_CONSOLE_ENABLE: 'true'
       RUSTFS_OBS_LOGGER_LEVEL: info
       RUSTFS_SECRET_KEY: rustfsadmin
+      RUSTFS_UNSAFE_BYPASS_DISK_CHECK: 'true'
       RUSTFS_VOLUMES: /data/rustfs0 /data/rustfs1 /data/rustfs2 /data/rustfs3
-      RUSTFS_UNSAFE_BYPASS_DISK_CHECK: "true"
     volumes:
     - rustfs_data:/data
     - rustfs_logs:/app/logs
@@ -41,7 +41,5 @@ networks:
   app-network:
     driver: bridge
 volumes:
-  rustfs_data:
-    driver: local
-  rustfs_logs:
-    driver: local
+  rustfs_data: null
+  rustfs_logs: null

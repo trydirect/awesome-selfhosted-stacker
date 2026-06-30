@@ -1,0 +1,11 @@
+target: cloud
+server_ip: null
+ssh_user: null
+ssh_port: null
+server_name: rustfs-24ae
+deployment_id: 137
+project_id: 245
+cloud_id: null
+project_name: rustfs
+stacker_email: info@optimum-web.com
+deployed_at: 2026-06-30T12:11:47.010287+00:00

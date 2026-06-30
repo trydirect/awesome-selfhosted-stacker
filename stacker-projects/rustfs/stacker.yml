@@ -35,10 +35,20 @@ proxy:
   auto_detect: false
 
 deploy:
-  target: local
+  target: cloud
+  cloud:
+    provider: hetzner
+    region: nbg1
+    size: cx23
+    ssh_key: ~/.ssh/id_ed25519
 
 monitoring:
   status_panel: true
+
+hooks:
+  pre_build: null
+  post_deploy: ./entrypoint.sh
+  on_failure: null
 
 env_file: .env
 env: {}

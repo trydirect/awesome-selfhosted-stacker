@@ -26,7 +26,7 @@ services:
   postgres:
     image: postgres:16
     ports:
-    - 5432:5432
+    - 127.0.0.1:5432:5432
     environment:
       POSTGRES_DB: outline
       POSTGRES_PASSWORD: outline_local_pass_12345
@@ -43,7 +43,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-    - 6380:6379
+    - 127.0.0.1:6380:6379
     restart: unless-stopped
     networks:
     - app-network
