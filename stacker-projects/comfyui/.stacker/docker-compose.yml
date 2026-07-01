@@ -1,0 +1,20 @@
+services:
+  app:
+    image: ashleykza/comfyui:latest
+    ports:
+      - "8188:8188"
+    environment:
+      CLI_ARGS: ""
+      PRELOAD_MODELS: "[]"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "app"
+      my.stacker.scope: "project"
+      my.stacker.service: "app"
+
+networks:
+  app-network:
+    driver: bridge
+

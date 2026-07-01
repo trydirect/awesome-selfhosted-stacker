@@ -50,7 +50,7 @@ monitoring:
 
 hooks:
   pre_build: null
-  post_deploy: .stacker/entrypoint.sh
+  post_deploy: .stacker/migrate.sh
   on_failure: null
 
 env_file: .env
