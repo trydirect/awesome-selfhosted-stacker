@@ -3,9 +3,9 @@ server_ip: 5.75.226.91
 ssh_user: null
 ssh_port: 22
 server_name: rustfs-c3af
-deployment_id: 163
+deployment_id: 165
 project_id: 245
-cloud_id: 13
+cloud_id: 11
 project_name: rustfs
 stacker_email: info@optimum-web.com
-deployed_at: 2026-07-01T09:02:05.703901+00:00
+deployed_at: 2026-07-01T12:35:45.500242+00:00

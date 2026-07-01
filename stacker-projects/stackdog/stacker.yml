@@ -1,0 +1,81 @@
+name: stackdog
+version: null
+organization: null
+project:
+  identity: null
+app:
+  type: static
+  path: ''
+  dockerfile: null
+  image: null
+  build: null
+  ports: []
+  volumes: []
+  environment: {}
+services:
+- name: stackdog
+  image: trydirect/stackdog:latest
+  ports:
+  - 5000:5000
+  environment:
+    STACKDOG_AI_API_URL: https://api.openai.com/v1
+    STACKDOG_LOG_SOURCES: /var/log/syslog,/var/log/auth.log
+    APP_HOST: 0.0.0.0
+    STACKDOG_SNIFF_INTERVAL: '600'
+    STACKDOG_AI_MODEL: gpt-4o-mini
+    STACKDOG_AI_API_KEY: '***REDACTED***'
+    APP_PORT: '5000'
+    STACKDOG_SLACK_WEBHOOK_URL: yourslackchannelwebhook
+    DATABASE_URL: /data/stackdog.db
+    STACKDOG_AI_PROVIDER: openai
+  volumes:
+  - stackdog-data:/data
+  - /var/run/docker.sock:/var/run/docker.sock
+  depends_on: []
+proxy:
+  type: none
+  auto_detect: false
+  domains: []
+  config: null
+deploy:
+  target: cloud
+  environment: null
+  compose_file: null
+  deployment_hash: null
+  cloud:
+    provider: hetzner
+    orchestrator: remote
+    region: nbg1
+    size: cpx22
+    install_image: null
+    remote_payload_file: null
+    ssh_key: ~/.ssh/id_rsa
+    key: null
+    server: null
+  server: null
+  registry: null
+  default_target: null
+  targets: {}
+install:
+  inputs: {}
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
+monitoring:
+  status_panel: false
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: null
+  post_deploy: null
+  on_failure: null
+env_file: null
+env: {}
+config_contract:
+  services: {}

@@ -26,8 +26,7 @@ services:
       my.stacker.service: app
   otel-collector:
     image: otel/opentelemetry-collector:latest
-    ports:
-    - 4318:4318
+    ports: []
     restart: unless-stopped
     networks:
     - app-network

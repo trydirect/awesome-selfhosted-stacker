@@ -25,8 +25,7 @@ app:
 services:
   - name: otel-collector
     image: otel/opentelemetry-collector:latest
-    ports:
-      - "4318:4318"
+    ports: []
     environment: {}
     volumes: []
 

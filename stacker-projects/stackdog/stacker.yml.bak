@@ -1,0 +1,20 @@
+name: stackdog
+services:
+  stackdog:
+    image: trydirect/stackdog:latest
+    ports:
+    - 5000:5000
+    volumes:
+    - stackdog-data:/data
+    - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      APP_HOST: 0.0.0.0
+      APP_PORT: '5000'
+      DATABASE_URL: /data/stackdog.db
+      STACKDOG_SNIFF_INTERVAL: '600'
+      STACKDOG_AI_PROVIDER: openai
+      STACKDOG_AI_API_URL: https://api.openai.com/v1
+      STACKDOG_AI_MODEL: gpt-4o-mini
+      STACKDOG_AI_API_KEY: '***REDACTED***'
+      STACKDOG_SLACK_WEBHOOK_URL: yourslackchannelwebhook
+      STACKDOG_LOG_SOURCES: /var/log/syslog,/var/log/auth.log
