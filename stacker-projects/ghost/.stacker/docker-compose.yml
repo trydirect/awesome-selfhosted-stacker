@@ -1,8 +1,6 @@
 services:
   app:
-    build:
-      context: ..
-      dockerfile: .stacker/Dockerfile
+    image: ghost:5-alpine
     ports:
     - 2368:2368
     environment:

@@ -1,8 +1,6 @@
 services:
   app:
-    build:
-      context: ..
-      dockerfile: .stacker/Dockerfile
+    image: pihole/pihole:latest
     ports:
     - 8080:80
     - 53:53

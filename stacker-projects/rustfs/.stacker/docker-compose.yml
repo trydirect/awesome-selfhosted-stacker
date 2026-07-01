@@ -1,8 +1,6 @@
 services:
   app:
-    build:
-      context: ..
-      dockerfile: .stacker/Dockerfile
+    image: rustfs/rustfs:latest
     ports:
     - 9000:9000
     - 9001:9001

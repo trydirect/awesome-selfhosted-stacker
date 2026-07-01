@@ -1,4 +1,5 @@
 .env
+**/.env
 stacker-projects/**/.env
 stacker-projects/.deployed
 stacker-projects/.visited
@@ -6,8 +7,7 @@ stacker-projects/.visited
 **/*.key
 **/*.p12
 **/*.pfx
+**/*.lock
 **/deploy/data/certs/
 .visited
 .deployed
-stacker-autodeploy.py
-autodeploy-requirements.txt

@@ -1,11 +1,11 @@
 target: cloud
-server_ip: null
+server_ip: 5.75.226.91
 ssh_user: null
-ssh_port: null
-server_name: rustfs-24ae
-deployment_id: 137
+ssh_port: 22
+server_name: rustfs-c3af
+deployment_id: 163
 project_id: 245
-cloud_id: null
+cloud_id: 13
 project_name: rustfs
 stacker_email: info@optimum-web.com
-deployed_at: 2026-06-30T12:11:47.010287+00:00
+deployed_at: 2026-07-01T09:02:05.703901+00:00

@@ -4,7 +4,7 @@ version: "1.0.0"
 app:
   type: custom
   path: .
-  dockerfile: Dockerfile
+  image: ghcr.io/plausible/community-edition:v3.2.1
   ports:
     - "8000:8000"
   environment:

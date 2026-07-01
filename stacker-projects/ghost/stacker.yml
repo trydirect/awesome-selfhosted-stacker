@@ -4,7 +4,7 @@ version: "1.0.0"
 app:
   type: custom
   path: .
-  dockerfile: Dockerfile
+  image: ghost:5-alpine
   ports:
     - "2368:2368"
   volumes:

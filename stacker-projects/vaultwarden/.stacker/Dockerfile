@@ -1,1 +1,0 @@
-FROM vaultwarden/server:latest

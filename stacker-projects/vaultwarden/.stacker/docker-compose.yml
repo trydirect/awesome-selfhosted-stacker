@@ -1,8 +1,6 @@
 services:
   app:
-    build:
-      context: ..
-      dockerfile: .stacker/Dockerfile
+    image: vaultwarden/server:latest
     ports:
     - 8080:80
     environment:

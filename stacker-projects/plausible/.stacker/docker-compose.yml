@@ -1,8 +1,7 @@
 services:
   app:
-    build:
-      context: ..
-      dockerfile: .stacker/Dockerfile
+    image: ghcr.io/plausible/community-edition:v3.2.1
+    command: ["sh", "-c", "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"]
     ports:
     - 8000:8000
     environment:

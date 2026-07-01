@@ -4,7 +4,7 @@ version: "1.0.0"
 app:
   type: custom
   path: .
-  dockerfile: Dockerfile
+  image: pihole/pihole:latest
   ports:
     - "8080:80"
     - "53:53"

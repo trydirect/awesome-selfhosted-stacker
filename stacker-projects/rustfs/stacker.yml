@@ -4,7 +4,7 @@ version: "1.0.0"
 app:
   type: custom
   path: .
-  dockerfile: Dockerfile
+  image: rustfs/rustfs:latest
   ports:
     - "9000:9000"
     - "9001:9001"
@@ -38,8 +38,8 @@ deploy:
   target: cloud
   cloud:
     provider: hetzner
-    region: nbg1
-    size: cx23
+    region: fsn1
+    size: cpx22
     ssh_key: ~/.ssh/id_ed25519
 
 monitoring:

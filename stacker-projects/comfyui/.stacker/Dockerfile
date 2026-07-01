@@ -1,1 +1,0 @@
-FROM ashleykza/comfyui:latest
