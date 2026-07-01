@@ -28,7 +28,7 @@ deploy:
   cloud:
     provider: hetzner
     region: fsn1
-    size: cx22
+    size: cpx22
     ssh_key: ~/.ssh/id_ed25519
 monitoring:
   status_panel: true

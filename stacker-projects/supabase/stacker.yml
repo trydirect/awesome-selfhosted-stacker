@@ -175,7 +175,7 @@ deploy:
   cloud:
     provider: hetzner
     region: fsn1
-    size: cx32
+    size: cpx32
 
 monitoring:
   status_panel: true
