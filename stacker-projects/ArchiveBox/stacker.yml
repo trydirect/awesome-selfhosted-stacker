@@ -3,8 +3,7 @@ version: "1.0.0"
 
 app:
   type: python
-  path: .
-  dockerfile: Dockerfile
+  image: archivebox/archivebox:latest
   ports:
     - "8000:8000"
   environment:

@@ -22,6 +22,7 @@ services:
       - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: plausible
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -39,6 +40,7 @@ services:
     volumes:
       - event_data:/var/lib/clickhouse
       - event_logs:/var/log/clickhouse-server
+      - ./init-clickhouse.sql:/docker-entrypoint-initdb.d/init.sql
 
 proxy:
   type: none
@@ -55,5 +57,10 @@ deploy:
 
 monitoring:
   status_panel: true
+
+hooks:
+  pre_build: null
+  post_deploy: ./post-deploy.sh
+  on_failure: null
 
 env_file: .env

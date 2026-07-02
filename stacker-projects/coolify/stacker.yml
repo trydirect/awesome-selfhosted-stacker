@@ -7,6 +7,8 @@ project:
 app:
   type: custom
   image: 'coollabsio/coolify:latest'
+  environment:
+    APP_KEY: "${APP_KEY}"
 
 proxy:
   type: nginx-proxy-manager
