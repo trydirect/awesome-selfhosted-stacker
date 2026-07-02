@@ -52,6 +52,8 @@ deploy:
     ssh_key: ~/.ssh/id_rsa
     key: null
     server: null
+    public_ports:
+      - "5000"
   server: null
   registry: null
   default_target: null

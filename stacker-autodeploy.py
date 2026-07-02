@@ -407,7 +407,8 @@ def notify(title: str, body: str) -> None:
 # ── Cloud / Hetzner helpers ────────────────────────────────────────────────────
 
 def add_cloud_config_to_stacker_yml(
-    project_dir: str, region: str, size: str, ssh_key: str
+    project_dir: str, region: str, size: str, ssh_key: str,
+    public_ports: Optional[list[str]] = None,
 ) -> bool:
     """Inject a cloud: sub-section into the deploy: block of stacker.yml.
 
@@ -431,6 +432,11 @@ def add_cloud_config_to_stacker_yml(
         f"    size: {size}\n"
         f"    ssh_key: {ssh_key}\n"
     )
+    if public_ports:
+        cloud_deploy_block += (
+            "    public_ports:\n" +
+            "".join(f"      - \"{p}\"\n" for p in public_ports)
+        )
     # Replace the existing deploy: block (everything from 'deploy:' to the
     # next top-level key or end-of-file).
     new_content = re.sub(
@@ -1110,6 +1116,13 @@ proxy:
 
 deploy:
   target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    # public_ports:        # opt-in: open these in cloud firewall (omit to keep firewall closed)
+    #   - "8000"
+    #   - "80"
 
 monitoring:
   status_panel: true

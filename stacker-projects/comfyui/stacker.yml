@@ -23,6 +23,8 @@ deploy:
     provider: hetzner
     region: fsn1
     size: cpx22
+    public_ports:
+      - "8188"
 
 monitoring:
   status_panel: true

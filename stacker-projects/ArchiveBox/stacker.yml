@@ -30,6 +30,8 @@ deploy:
     region: fsn1
     size: cpx22
     ssh_key: ~/.ssh/id_ed25519
+    public_ports:
+      - "8000"
 monitoring:
   status_panel: true
 

@@ -20,6 +20,8 @@ deploy:
     size: ${HETZNER_SERVER_TYPE}
     ssh_key: ${STACKER_SSH_KEY}
     token: ${STACKER_SSH_KEY}
+    public_ports:
+      - "8000"
 
 environments:
   local:
