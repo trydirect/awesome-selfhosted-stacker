@@ -2,21 +2,24 @@ services:
   app:
     image: pihole/pihole:latest
     ports:
-    - 8080:80
-    - 53:53
+      - "8080:80"
+      - "8053:53/udp"
+      - "8053:53/tcp"
     environment:
-      CONDITIONAL_FORWARDING: 'false'
-      DNSSEC: 'true'
-      PIHOLE_DNS_: 1.1.1.1;1.0.0.1
-      TZ: UTC
-      WEBPASSWORD: admin
+      CONDITIONAL_FORWARDING: "false"
+      DNSSEC: "true"
+      PIHOLE_DNS_: "1.1.1.1;1.0.0.1"
+      TZ: "UTC"
+      WEBPASSWORD: "admin"
     restart: unless-stopped
     networks:
-    - app-network
+      - app-network
     labels:
-      my.stacker.dns: app
-      my.stacker.scope: project
-      my.stacker.service: app
+      my.stacker.dns: "app"
+      my.stacker.scope: "project"
+      my.stacker.service: "app"
+
 networks:
   app-network:
     driver: bridge
+

@@ -7,7 +7,8 @@ app:
   image: pihole/pihole:latest
   ports:
     - "8080:80"
-    - "53:53"
+    - "8053:53/udp"
+    - "8053:53/tcp"
   environment:
     TZ: "${TZ}"
     WEBPASSWORD: "${WEBPASSWORD}"
@@ -29,8 +30,8 @@ deploy:
     size: cpx22
     public_ports:
       - "8080"
-      - "53/tcp"
-      - "53/udp"
+      - "8053/tcp"
+      - "8053/udp"
 
 monitoring:
   status_panel: true

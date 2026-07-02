@@ -3,8 +3,7 @@ version: "1.0.0"
 
 app:
   type: node
-  path: .
-  dockerfile: Dockerfile
+  image: ghcr.io/umami-software/umami:postgresql-latest
   ports:
     - "3000:3000"
   environment:
