@@ -16,6 +16,20 @@ log() {
   echo "[plausible-post-deploy] $*"
 }
 
+should_skip() {
+  if [[ -z "$(find_container "${POSTGRES_SERVICE}")" ]]; then
+    log "No local ${POSTGRES_SERVICE} container found; skipping host-side bootstrap"
+    return 0
+  fi
+
+  if [[ -z "$(find_container "${CLICKHOUSE_SERVICE}")" ]]; then
+    log "No local ${CLICKHOUSE_SERVICE} container found; skipping host-side bootstrap"
+    return 0
+  fi
+
+  return 1
+}
+
 find_container() {
   local service_name="${1}"
 
@@ -97,6 +111,10 @@ restart_app() {
 }
 
 main() {
+  if should_skip; then
+    return 0
+  fi
+
   wait_for_postgres
   wait_for_clickhouse
   ensure_clickhouse_database

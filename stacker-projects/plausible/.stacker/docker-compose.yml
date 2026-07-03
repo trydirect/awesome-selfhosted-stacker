@@ -44,7 +44,7 @@ services:
     volumes:
       - "event_data:/var/lib/clickhouse"
       - "event_logs:/var/log/clickhouse-server"
-      - "./init-clickhouse.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./configs/init-clickhouse.sql:/docker-entrypoint-initdb.d/init.sql"
     restart: unless-stopped
     networks:
       - app-network
