@@ -1,0 +1,67 @@
+services:
+  plausible_db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:5432:5432'
+    environment:
+      POSTGRES_DB: plausible
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U postgres -d plausible
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  plausible_events_db:
+    image: clickhouse/clickhouse-server:24.12-alpine
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:8123:8123'
+    environment:
+      CLICKHOUSE_SKIP_USER_SETUP: '1'
+    volumes:
+      - event_data:/var/lib/clickhouse
+      - event_logs:/var/log/clickhouse-server
+      - ../../.deploy-config/init-clickhouse.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --no-verbose --tries=1 -O - http://127.0.0.1:8123/ping || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  plausible:
+    image: ghcr.io/plausible/community-edition:v3.2.1
+    restart: unless-stopped
+    depends_on:
+      plausible_db:
+        condition: service_healthy
+      plausible_events_db:
+        condition: service_healthy
+    command: >-
+      sh -c "/entrypoint.sh db createdb &&
+      /entrypoint.sh db migrate &&
+      /entrypoint.sh run"
+    ports:
+      - '8000:8000'
+    environment:
+      BASE_URL: ${BASE_URL}
+      CLICKHOUSE_DATABASE_URL: http://plausible_events_db:8123/plausible
+      DATABASE_URL: postgres://postgres:${DB_PASSWORD}@plausible_db:5432/plausible
+      DISABLE_REGISTRATION: ${DISABLE_REGISTRATION}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      TOTP_VAULT_KEY: ${TOTP_VAULT_KEY}
+    volumes:
+      - plausible_data:/var/lib/plausible
+
+volumes:
+  db_data:
+  event_data:
+  event_logs:
+  plausible_data:

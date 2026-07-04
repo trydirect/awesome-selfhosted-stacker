@@ -1,5 +1,5 @@
 name: coolify
-version: '1.1'
+version: '1.2'
 
 project:
   identity: coolify
@@ -7,8 +7,59 @@ project:
 app:
   type: custom
   image: 'coollabsio/coolify:latest'
+  ports:
+    - "8000:8080"
   environment:
+    APP_ENV: production
+    APP_NAME: Coolify
     APP_KEY: "${APP_KEY}"
+    APP_URL: "http://localhost:8000"
+    DB_CONNECTION: pgsql
+    DB_HOST: postgres
+    DB_PORT: "5432"
+    DB_DATABASE: coolify
+    DB_USERNAME: coolify
+    DB_PASSWORD: "${DB_PASSWORD}"
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+    PUSHER_APP_ID: coolify
+    PUSHER_APP_KEY: coolify
+    PUSHER_APP_SECRET: "${PUSHER_APP_SECRET}"
+    SOKETI_HOST: soketi
+    SOKETI_PORT: "6001"
+    SOKETI_DEBUG: "false"
+
+services:
+  - name: postgres
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: coolify
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: coolify
+    volumes:
+      - coolify-db:/var/lib/postgresql/data
+
+  - name: redis
+    image: redis:7-alpine
+    volumes:
+      - coolify-redis:/data
+
+  - name: soketi
+    image: 'ghcr.io/coollabsio/coolify-realtime:1.0.13'
+    ports:
+      - "6001:6001"
+      - "6002:6002"
+    environment:
+      APP_NAME: Coolify
+      SOKETI_DEBUG: "false"
+      SOKETI_DEFAULT_APP_ID: coolify
+      SOKETI_DEFAULT_APP_KEY: coolify
+      SOKETI_DEFAULT_APP_SECRET: "${PUSHER_APP_SECRET}"
+      SOKETI_HOST: 0.0.0.0
+
+volumes:
+  coolify-db: {}
+  coolify-redis: {}
 
 proxy:
   type: nginx-proxy-manager
@@ -21,17 +72,15 @@ deploy:
     region: ${HETZNER_REGION}
     size: ${HETZNER_SERVER_TYPE}
     ssh_key: ${STACKER_SSH_KEY}
-    token: ${STACKER_SSH_KEY}
     public_ports:
       - "8000"
-
-environments:
-  local:
-    compose_file: docker/local/compose.yml
-    env_file: docker/local/.env
-  production:
-    compose_file: docker/production/compose.yml
-    env_file: docker/production/.env
+      - "80"
+      - "81"
+      - "6001"
+      - "6002"
+      - "8053/tcp"
+      - "8053/udp"
+      - "5000"
 
 ai:
   enabled: true

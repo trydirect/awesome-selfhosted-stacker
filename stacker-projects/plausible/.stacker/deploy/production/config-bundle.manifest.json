@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "environment": "production",
+  "files": [
+    {
+      "source_path": ".deploy-config/init-clickhouse.sql",
+      "destination_path": ".deploy-config/init-clickhouse.sql",
+      "mode": "0644",
+      "size": 41,
+      "sha256": "24022f87600fa624f5b8a7dab73b2af31f375392c7babcb745a4e1e7a325efe0"
+    },
+    {
+      "source_path": ".env",
+      "destination_path": ".env",
+      "mode": "0644",
+      "size": 284,
+      "sha256": "dbe43cd26c39b7b75c59e8afe82e33ca49f8c822f404ca8b819adb191b360472"
+    }
+  ]
+}

@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Ensure Plausible's backing services are ready and the ClickHouse database
-# exists before we let the app retry its startup sequence.
+# Local-only bootstrap for Stacker's generated compose.
 set -euo pipefail
 
 readonly APP_SERVICE="app"
@@ -14,26 +13,6 @@ readonly RETRY_LIMIT=30
 
 log() {
   echo "[plausible-post-deploy] $*"
-}
-
-should_skip() {
-  if [[ -z "$(find_container "${POSTGRES_SERVICE}")" ]]; then
-    log "No local ${POSTGRES_SERVICE} container found; skipping host-side bootstrap"
-    return 0
-  fi
-
-  if [[ -z "$(find_container "${CLICKHOUSE_SERVICE}")" ]]; then
-    log "No local ${CLICKHOUSE_SERVICE} container found; skipping host-side bootstrap"
-    return 0
-  fi
-
-  return 1
-}
-
-find_container() {
-  local service_name="${1}"
-
-  docker ps -aq --filter "label=my.stacker.service=${service_name}" --latest
 }
 
 find_running_container() {
@@ -50,7 +29,7 @@ exec_in_container() {
   container_id="$(find_running_container "${service_name}")"
 
   if [[ -z "${container_id}" ]]; then
-    echo "Error: could not find container for service '${service_name}'" >&2
+    echo "Error: could not find running container for service '${service_name}'" >&2
     return 1
   fi
 
@@ -97,29 +76,16 @@ ensure_clickhouse_database() {
     --query "CREATE DATABASE IF NOT EXISTS ${CLICKHOUSE_DATABASE}"
 }
 
-restart_app() {
-  local app_container
-  app_container="$(find_container "${APP_SERVICE}")"
-
-  if [[ -z "${app_container}" ]]; then
-    echo "Error: could not find app container to restart" >&2
-    return 1
-  fi
-
-  log "Restarting Plausible app container"
-  docker restart "${app_container}" >/dev/null
-}
-
 main() {
-  if should_skip; then
+  if [[ -z "$(find_running_container "${POSTGRES_SERVICE}")" || -z "$(find_running_container "${CLICKHOUSE_SERVICE}")" ]]; then
+    log "No local Plausible service containers found; skipping local bootstrap"
     return 0
   fi
 
   wait_for_postgres
   wait_for_clickhouse
   ensure_clickhouse_database
-  restart_app
-  log "Post-deploy bootstrap complete"
+  log "Local bootstrap complete"
 }
 
 main "$@"
