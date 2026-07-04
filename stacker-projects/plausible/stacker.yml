@@ -7,9 +7,15 @@ project:
 app:
   type: custom
   image: ghcr.io/plausible/community-edition:v3.2.1
+  command: >-
+    sh -c "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
   environment:
     BASE_URL: "${BASE_URL}"
     SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
+    DATABASE_URL: "postgres://postgres:${DB_PASSWORD}@plausible_db:5432/plausible"
+    CLICKHOUSE_DATABASE_URL: "http://plausible_events_db:8123/plausible"
+    DISABLE_REGISTRATION: "${DISABLE_REGISTRATION}"
+    TOTP_VAULT_KEY: "${TOTP_VAULT_KEY}"
 
 services:
   - name: plausible_db

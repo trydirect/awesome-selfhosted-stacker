@@ -22,12 +22,19 @@ app:
     DB_PASSWORD: "${DB_PASSWORD}"
     REDIS_HOST: redis
     REDIS_PORT: "6379"
+    REDIS_PASSWORD: "${REDIS_PASSWORD}"
     PUSHER_APP_ID: coolify
     PUSHER_APP_KEY: coolify
     PUSHER_APP_SECRET: "${PUSHER_APP_SECRET}"
     SOKETI_HOST: soketi
     SOKETI_PORT: "6001"
     SOKETI_DEBUG: "false"
+  volumes:
+    - coolify-ssh:/var/www/html/storage/app/ssh
+    - coolify-applications:/var/www/html/storage/app/applications
+    - coolify-databases:/var/www/html/storage/app/databases
+    - coolify-services:/var/www/html/storage/app/services
+    - coolify-backups:/var/www/html/storage/app/backups
 
 services:
   - name: postgres
@@ -38,11 +45,22 @@ services:
       POSTGRES_DB: coolify
     volumes:
       - coolify-db:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U coolify -d coolify"
+      interval: 5s
+      timeout: 2s
+      retries: 10
 
   - name: redis
     image: redis:7-alpine
+    command: redis-server --save 20 1 --loglevel warning --requirepass "${REDIS_PASSWORD}"
     volumes:
       - coolify-redis:/data
+    healthcheck:
+      test: "CMD-SHELL redis-cli -a ${REDIS_PASSWORD} ping | grep PONG"
+      interval: 5s
+      timeout: 2s
+      retries: 10
 
   - name: soketi
     image: 'ghcr.io/coollabsio/coolify-realtime:1.0.13'
@@ -60,6 +78,11 @@ services:
 volumes:
   coolify-db: {}
   coolify-redis: {}
+  coolify-ssh: {}
+  coolify-applications: {}
+  coolify-databases: {}
+  coolify-services: {}
+  coolify-backups: {}
 
 proxy:
   type: nginx-proxy-manager
