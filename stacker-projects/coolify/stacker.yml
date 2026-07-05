@@ -10,8 +10,8 @@ app:
   ports:
     - "8000:8080"
   environment:
-    APP_ENV: production
-    APP_NAME: Coolify
+    APP_ENV: "${APP_ENV}"
+    APP_NAME: "${APP_NAME}"
     APP_KEY: "${APP_KEY}"
     APP_URL: "http://localhost:8000"
     DB_CONNECTION: pgsql
@@ -68,7 +68,7 @@ services:
       - "6001:6001"
       - "6002:6002"
     environment:
-      APP_NAME: Coolify
+      APP_NAME: "${APP_NAME}"
       SOKETI_DEBUG: "false"
       SOKETI_DEFAULT_APP_ID: coolify
       SOKETI_DEFAULT_APP_KEY: coolify
@@ -88,6 +88,10 @@ proxy:
   type: nginx-proxy-manager
   auto_detect: true
 
+install:
+  inputs:
+    commonDomain: coolify.example.com
+
 deploy:
   target: cloud
   cloud:
@@ -105,16 +109,22 @@ deploy:
       - "8053/udp"
       - "5000"
 
-ai:
-  enabled: true
-  provider: ollama
-  model: qwen2.5-coder
-  endpoint: http://192.168.100.245:11434
-  timeout: 0
-  tasks:
-    - compose
-    - troubleshoot
-    - security
+config_contract:
+  services:
+    postgres:
+      required: [POSTGRES_DB, POSTGRES_USER]
+      secret: [POSTGRES_PASSWORD]
+    redis:
+      secret: [REDIS_PASSWORD]
+    soketi:
+      required: [SOKETI_DEFAULT_APP_ID]
+      secret: [SOKETI_DEFAULT_APP_SECRET]
+    coolify:
+      required: [APP_KEY, DB_DATABASE, DB_USERNAME]
+      secret: [DB_PASSWORD, REDIS_PASSWORD, PUSHER_APP_SECRET]
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
 
 monitoring:
   status_panel: true
