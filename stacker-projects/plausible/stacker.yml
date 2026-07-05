@@ -25,6 +25,11 @@ services:
       POSTGRES_DB: plausible
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U postgres -d plausible"
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   - name: plausible_events_db
     image: clickhouse/clickhouse-server:24.12-alpine
@@ -33,6 +38,11 @@ services:
     volumes:
       - event_data:/var/lib/clickhouse
       - event_logs:/var/log/clickhouse-server
+    healthcheck:
+      test: "CMD-SHELL wget -qO- http://127.0.0.1:8123/ping || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
 volumes:
   db_data: {}
@@ -44,20 +54,33 @@ proxy:
   type: none
   auto_detect: false
 
+install:
+  inputs:
+    commonDomain: plausible.example.com
+
 deploy:
   target: cloud
   compose_file: docker/production/compose.yml
   cloud:
     provider: hetzner
-    region: fsn1
-    size: cpx22
+    region: ${HETZNER_REGION}
+    size: ${HETZNER_SERVER_TYPE}
     public_ports:
       - "8000/tcp"
 
-monitoring:
-  status_panel: true
+config_contract:
+  services:
+    plausible_db:
+      required: [POSTGRES_DB]
+      secret: [POSTGRES_PASSWORD]
+    plausible:
+      required: [BASE_URL, DATABASE_URL, CLICKHOUSE_DATABASE_URL]
+      secret: [SECRET_KEY_BASE, TOTP_VAULT_KEY]
 
 hooks:
-  post_deploy: ./post-deploy.sh
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
 
 env_file: .env
