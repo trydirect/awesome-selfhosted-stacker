@@ -6,22 +6,20 @@ project:
 app:
   type: static
   path: ''
-  dockerfile: null
+  environment: {}
   image: null
   build: null
   ports: []
   volumes: []
-  environment: {}
 services: []
 proxy:
   type: none
   auto_detect: false
   domains: []
-  config: null
 deploy:
   target: cloud
   environment: null
-  compose_file: null
+  targets: {}
   deployment_hash: null
   cloud:
     provider: hetzner
@@ -29,14 +27,11 @@ deploy:
     region: null
     size: null
     install_image: null
-    remote_payload_file: null
-    ssh_key: null
-    key: htz-10
     server: null
+    key: htz-10
   server: null
   registry: null
   default_target: null
-  targets: {}
 install:
   inputs:
     commonDomain: dify.my
@@ -53,11 +48,7 @@ monitoring:
   status_panel: false
   healthcheck: null
   metrics: null
-hooks:
-  pre_build: null
-  post_deploy: null
-  on_failure: null
-env_file: null
-env: {}
+hooks: {}
 config_contract:
   services: {}
+env: {}

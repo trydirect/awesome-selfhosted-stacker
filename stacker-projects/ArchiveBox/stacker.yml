@@ -1,27 +1,23 @@
 name: ArchiveBox
-version: "1.0.0"
-
+version: 1.0.0
 app:
   type: python
   image: archivebox/archivebox:latest
   ports:
-    - "8000:8000"
+  - 8000:8000
   environment:
-    BIND_ADDR: "0.0.0.0:8000"
-    BASE_URL: "http://archivebox.localhost:8000"
-    ALLOWED_HOSTS: "*"
-    PUBLIC_INDEX: "True"
-    PUBLIC_SNAPSHOTS: "True"
-    PUBLIC_ADD_VIEW: "False"
-    ADMIN_USERNAME: "admin"
-    ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
-
+    BIND_ADDR: 0.0.0.0:8000
+    BASE_URL: http://archivebox.localhost:8000
+    ALLOWED_HOSTS: '*'
+    PUBLIC_INDEX: 'True'
+    PUBLIC_SNAPSHOTS: 'True'
+    PUBLIC_ADD_VIEW: 'False'
+    ADMIN_USERNAME: admin
+    ADMIN_PASSWORD: ${ADMIN_PASSWORD}
 services: []
-
 proxy:
   type: none
   auto_detect: false
-
 deploy:
   target: local
   cloud:
@@ -30,14 +26,10 @@ deploy:
     size: cpx22
     ssh_key: ~/.ssh/id_ed25519
     public_ports:
-      - "8000"
+    - '8000'
 monitoring:
   status_panel: true
-
 hooks:
-  pre_build: null
   post_deploy: ./entrypoint.sh
-  on_failure: null
-
 env_file: .env
 env: {}

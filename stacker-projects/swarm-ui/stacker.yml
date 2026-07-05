@@ -1,22 +1,24 @@
-name: astrbot
+name: swarm-ui
 version: "1.0.0"
 
 project:
-  identity: astrbot
+  identity: swarm-ui
 
 app:
   type: custom
-  image: soulter/astrbot:latest
+  path: .
+  dockerfile: Dockerfile
   ports:
-    - "6185:6185"
-    - "6199:6199"
-  environment:
-    TZ: Asia/Shanghai
+    - "7801:7801"
   volumes:
-    - astrbot_data:/AstrBot/data
+    - swarm_data:/Data
+    - swarm_backend:/dlbackend
+    - ./Models:/Models
+    - ./Output:/Output
 
 volumes:
-  astrbot_data: {}
+  swarm_data: {}
+  swarm_backend: {}
 
 proxy:
   type: none
@@ -29,8 +31,7 @@ deploy:
     region: ${HETZNER_REGION}
     size: ${HETZNER_SERVER_TYPE}
     public_ports:
-      - "6185"
-      - "6199"
+      - "7801"
 
 monitoring:
   status_panel: true

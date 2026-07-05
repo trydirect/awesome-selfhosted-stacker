@@ -2,16 +2,15 @@ name: stackdog
 version: null
 organization: null
 project:
-  identity: null
+  identity: stackdog
 app:
   type: static
   path: ''
-  dockerfile: null
+  environment: {}
   image: null
   build: null
   ports: []
   volumes: []
-  environment: {}
 services:
 - name: stackdog
   image: trydirect/stackdog:latest
@@ -36,11 +35,10 @@ proxy:
   type: none
   auto_detect: false
   domains: []
-  config: null
 deploy:
   target: cloud
   environment: null
-  compose_file: null
+  targets: {}
   deployment_hash: null
   cloud:
     provider: hetzner
@@ -48,16 +46,14 @@ deploy:
     region: nbg1
     size: cpx22
     install_image: null
-    remote_payload_file: null
+    public_ports:
+    - '5000'
     ssh_key: ~/.ssh/id_rsa
     key: null
     server: null
-    public_ports:
-      - "5000"
   server: null
   registry: null
   default_target: null
-  targets: {}
 install:
   inputs: {}
 environments: {}
@@ -73,11 +69,7 @@ monitoring:
   status_panel: false
   healthcheck: null
   metrics: null
-hooks:
-  pre_build: null
-  post_deploy: null
-  on_failure: null
-env_file: null
-env: {}
+hooks: {}
 config_contract:
   services: {}
+env: {}

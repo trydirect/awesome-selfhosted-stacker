@@ -1,0 +1,25 @@
+services:
+  app:
+    image: soulter/astrbot:latest
+    ports:
+      - "6185:6185"
+      - "6199:6199"
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - "astrbot_data:/AstrBot/data"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "app"
+      my.stacker.scope: "project"
+      my.stacker.service: "app"
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  astrbot_data:
+

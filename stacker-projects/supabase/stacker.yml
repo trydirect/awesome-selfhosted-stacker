@@ -43,7 +43,7 @@ services:
       test: "CMD pg_isready -U postgres"
       interval: "5s"
       timeout: "5s"
-      retries: "10"
+      retries: 10
 
   - name: studio
     image: supabase/studio:2026.06.03-sha-0bca601
