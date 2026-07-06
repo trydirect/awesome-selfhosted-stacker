@@ -1,6 +1,35 @@
 name: open-webui
 version: "1.0.0"
 
+project:
+  identity: open-webui
+
+install:
+  inputs:
+    commonDomain: ""
+
+config_contract:
+  app:
+    environment:
+      - name: OLLAMA_BASE_URL
+        required: true
+        secret: false
+      - name: WEBUI_SECRET_KEY
+        required: true
+        secret: true
+      - name: SCARF_NO_ANALYTICS
+        required: false
+        secret: false
+      - name: DO_NOT_TRACK
+        required: false
+        secret: false
+      - name: ANONYMIZED_TELEMETRY
+        required: false
+        secret: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
 app:
   type: python
   path: .

@@ -66,51 +66,36 @@ stacker cloud firewall add --public-ports 8000/tcp [--server-id <ID>]
 
 ---
 
-## 2. Install Service Image Override Bug
-
-### Symptom
-
-Postgres containers restart-loop with:
-
-```
-there appears to be PostgreSQL data in:
-  /var/lib/postgresql/data (unused mount/volume)
-This is usually the result of upgrading the Docker image...
-```
+## 2. Image Tag Preservation (`dockerhub_tag`)
 
 ### Root cause
 
-The Install Service (`trydirect/install-service`) Ansible roles replace
-user-configured image tags with `latest` defaults:
+The server-side `DockerImage` struct (`src/forms/project/docker_image.rs`) was missing
+a `dockerhub_tag` field. The CLI correctly parses `postgres:15-alpine` into
+`dockerhub_name=postgres` + `dockerhub_tag=15-alpine`, but when the JSON reached the
+server, `dockerhub_tag` was silently dropped (not in the struct). The `Display` impl
+then fell back to `:latest` for any image without an inline tag.
 
-| User config | Server's compose |
-|---|---|
-| `postgres:16-alpine` | `postgres:latest` |
-| `clickhouse/clickhouse-server:24.12-alpine` | `clickhouse/clickhouse-server:latest` |
+### Fix
 
-Environment variables and custom volume mounts (init SQL scripts) are also
-silently dropped.
+Added `pub dockerhub_tag: Option<String>` to `DockerImage`. The `Display` impl now
+prefers the detached tag over the `:latest` fallback. The `build_project_body` path
+(CLI → server) correctly preserves version pins from `stacker.yml` into the DB.
 
 ### Impact
 
-Every project using postgres on cloud deploy is affected (plausible, umami,
-ghost, outline, supabase, etc.).
+Every project using postgres on cloud deploy **was** affected (plausible, umami,
+ghost, outline, supabase, etc.). After server rebuild, tags are preserved through
+the full pipeline.
 
-### Temporary workaround
-
-SSH into the server and patch the compose:
+### Workaround (no server rebuild)
 
 ```bash
-sed -i 's|image: postgres:latest|image: postgres:16-alpine|' \
-  /home/trydirect/project/docker-compose.yml
-docker compose -f /home/trydirect/project/docker-compose.yml down -v
-docker compose -f /home/trydirect/project/docker-compose.yml up -d
+stacker secrets apps sync --project <name>
 ```
 
-### Permanent fix
-
-In the Install Service's Ansible roles: never override user-provided image tags.
-If the user specified `postgres:16-alpine`, keep `postgres:16-alpine`.
+This bypasses `DockerImage` entirely, sending the raw `image:` string directly
+to `POST /project/{id}/apps`.
 
 ---
 
@@ -176,26 +161,202 @@ CREATE DATABASE IF NOT EXISTS plausible;
 ### Generic pattern
 
 For apps needing a one-time setup (ArchiveBox: `archivebox init`, Django:
-`manage.py migrate`), the `post_deploy` hook can run the command. But it runs
-**locally** on the CLI machine — it needs SSH or `stacker agent exec` to reach
-the remote server.
+`manage.py migrate`), use `command:` on the `app:` section:
+
+```yaml
+app:
+  command: >-
+    sh -c "./manage.py migrate && ./manage.py runserver 0.0.0.0:8000"
+```
+
+This is now supported on both `AppSource` and `ServiceDefinition`. The `command`
+field survives the config renderer pipeline (DB → Vault → agent compose).
 
 ---
 
-## 5. Known Project-Specific Issues
+## 5. Secure Project Pattern
+
+Every reusable stacker project should follow this layout:
+
+```
+project/
+  .env.example           # Template with empty secrets — COMMITTED
+  .env                   # Actual secrets — GITIGNORED
+  .gitignore             # Protects .env and .stacker/
+  scripts/
+    generate-secrets.sh  # Idempotent — fills empty keys with openssl rand
+  stacker.yml            # Main config
+```
+
+### stacker.yml skeleton
+
+```yaml
+name: myproject
+version: "1.0.0"
+
+project:
+  identity: myproject
+
+app:
+  type: custom
+  image: owner/myproject:latest
+  environment:
+    DATABASE_URL: "postgres://user:${DB_PASSWORD}@postgres:5432/db"
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U postgres"
+      interval: 5s
+      timeout: 2s
+      retries: 10
+
+install:
+  inputs:
+    commonDomain: myproject.example.com
+
+config_contract:
+  services:
+    postgres:
+      secret: [POSTGRES_PASSWORD]
+    app:
+      secret: [DB_PASSWORD]
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env
+```
+
+### generate-secrets.sh template
+
+```bash
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+[ ! -f .env ] && cp .env.example .env
+
+need() {
+  local val
+  val=$(grep "^$1=" .env 2>/dev/null | cut -d= -f2- || true)
+  [ -z "$val" ]
+}
+
+if need "DB_PASSWORD"; then
+  sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=$(openssl rand -hex 16)/" .env
+fi
+# ... repeat for each secret
+```
+
+### .env.example template
+
+```
+# Copy to .env and generate secrets before first deploy:
+#   cp .env.example .env && ./scripts/generate-secrets.sh
+
+# Public config
+PUBLIC_VAR=default_value
+
+# Secrets (generated by ./scripts/generate-secrets.sh)
+DB_PASSWORD=
+SECRET_KEY_BASE=
+```
+
+---
+
+## 6. Template Variables (`install.inputs`)
+
+Stacker supports injecting dynamic values at deploy time:
+
+```yaml
+install:
+  inputs:
+    commonDomain: myapp.example.com   # Special: auto-injected into deploy form
+    plan: pro                         # Becomes a stack var: {key: "plan", value: "pro"}
+```
+
+### CLI overrides
+
+```bash
+stacker deploy --domain myapp.example.com     # sets commonDomain
+stacker deploy --set plan=pro                # sets any input key
+stacker deploy --set admin_email=a@b.com     # multiple --set allowed
+```
+
+### Key normalisation
+
+`domain` and `base_domain` input keys are automatically mapped to `commonDomain`.
+
+### Default
+
+If not set, `commonDomain` defaults to `{sanitized_project_name}.example.com`.
+
+### What they should NOT contain
+
+`install.inputs` values are sent to the server as stack vars and stored in the DB.
+Use them only for non-sensitive config (domains, emails, plan names). Secrets
+must use `${ENV_VAR}` references that resolve from `.env` at deploy time.
+
+---
+
+## 7. `command` and `healthcheck` Support
+
+Both are now available on `AppSource` and `ServiceDefinition`:
+
+```yaml
+app:
+  command: >-
+    sh -c "init.sh && start.sh"
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U postgres -d mydb"
+      interval: 5s
+      timeout: 2s
+      retries: 10
+
+  - name: redis
+    image: redis:7-alpine
+    command: redis-server --requirepass "${REDIS_PASSWORD}"
+    healthcheck:
+      test: "CMD-SHELL redis-cli -a ${REDIS_PASSWORD} ping | grep PONG"
+      interval: 5s
+      timeout: 2s
+      retries: 10
+```
+
+These fields survive the config renderer pipeline (parser → compose gen →
+DB → Vault → agent compose).
+
+### Type note
+
+`retries` must be an unquoted integer (`retries: 10`), not a string
+(`retries: "10"`). The latter causes a parse error since `ComposeHealthcheck.retries`
+is `u32`.
+
+---
+
+## 8. Known Project-Specific Issues
 
 | Project | Issue | Fix |
 |---|---|---|
 | **pihole** | Port 53 taken by systemd-resolved | Use `8053:53/udp` + `8053:53/tcp` |
-| **coolify** | Laravel `APP_KEY` missing | Add `APP_KEY` env var |
-| **umami** | Old postgres data dir | Use `postgres:15-alpine` + fresh volume |
-| **plausible** | DB not auto-created | Add `POSTGRES_DB: plausible` + ClickHouse init SQL |
-| **supabase** | 10+ services, complex | Install Service times out |
+| **coolify** | `command`/`healthcheck` support needed for redis + postgres | Now available on `ServiceDefinition` as of the compose pipeline update |
+| **plausible** | DB not auto-created, `command:` overwritten by config renderer | Add `command:` to `app:` in stacker.yml — it now survives config rendering |
+| **supabase** | 10+ services, complex | `config_contract` declares all required/secret vars per service |
 | **dify** | `orchestrator: remote` | Uses marketplace deploy path, not standard CLI |
+| **AstrBot** | `stacker.yml` was template placeholder `<stacker.yml content here>` | Created from official compose |
+| **swarm-ui** | No `stacker.yml` at root, misconfigured subdirectory | Created proper config at project root with ports/volumes |
+| **All projects** | `healthcheck.retries: "10"` (string) caused parse error | Must be unquoted integer: `retries: 10` |
 
 ---
 
-## 6. Port Conflict Validation
+## 10. Port Conflict Validation
 
 Stacker validates that two services don't bind the same host port. This
 validation is now protocol-aware: `8053/tcp` and `8053/udp` are treated as
@@ -207,7 +368,7 @@ preventing false conflicts when the same host port is used for both protocols.
 
 ---
 
-## 7. Deployment Verification Checklist
+## 11. Deployment Verification Checklist
 
 After a cloud deploy:
 
@@ -241,7 +402,7 @@ stacker agent logs <app-name>
 
 ---
 
-## 8. Common Failure Patterns
+## 12. Common Failure Patterns
 
 ### "Deployment paused — internal error"
 
@@ -271,25 +432,32 @@ or check `~/.config/stacker/ssh/` for the key file.
 
 ---
 
-## 9. Config Pipeline (Rust Source Map)
+## 13. Config Pipeline (Rust Source Map)
 
 | File | Role |
 |---|---|
+| `src/cli/config_parser.rs:246` | `ServiceDefinition` — `name`, `image`, `ports`, `environment`, `volumes`, `depends_on`, `command`, `healthcheck` |
+| `src/cli/config_parser.rs:195` | `AppSource` — `app_type`, `path`, `dockerfile`, `image`, `build`, `ports`, `volumes`, `environment`, `command`, `healthcheck` |
+| `src/cli/config_parser.rs:270` | `ComposeHealthcheck` — `test`, `interval`, `timeout`, `retries` |
+| `src/cli/config_parser.rs:573` | `InstallConfig` — `inputs` map (template variables) |
+| `src/cli/config_parser.rs:739` | `ConfigContract` — `services` with `required`, `optional`, `secret` declarations |
+| `src/cli/config_parser.rs:1295` | `${VAR_NAME}` substitution — resolves from OS env + `env_file` |
 | `src/cli/config_parser.rs:542` | `CloudConfig` struct — `provider`, `region`, `size`, `public_ports` |
+| `src/cli/generator/compose.rs:179` | `build_app_service` — constructs `ComposeService` from `AppSource` (now includes `command`/`healthcheck`) |
+| `src/cli/generator/compose.rs:324` | `render()` — writes docker-compose.yml from `ComposeService` structs |
+| `src/cli/compose_service_sync.rs:232` | `service_to_compose_value` — converts `ServiceDefinition` to compose YAML |
+| `src/cli/config_bundle.rs:67` | `build_config_bundle` — rewrites compose references, collects files, creates tar.zst bundle |
+| `src/cli/config_bundle.rs:283` | `rewrite_volumes` — processes volume mounts (**NB: skips advanced YAML mapping syntax**) |
+| `src/cli/stacker_client.rs:3493` | `parse_docker_image` — splits `user/repo:tag` into name + tag |
 | `src/cli/stacker_client.rs:3890` | `build_deploy_form` — builds JSON sent to API |
+| `src/forms/project/docker_image.rs:7` | `DockerImage` — struct with `dockerhub_user`, `dockerhub_name`, `dockerhub_image`, `dockerhub_tag`, `dockerhub_password` |
 | `src/forms/project/deploy.rs:59` | API `Deploy` form — receives deploy request |
 | `src/routes/project/deploy.rs:1235` | `execute_deployment` — orchestrates deploy |
-| `src/console/commands/mq/listener.rs:94` | `extract_public_ports` — reads ports from metadata |
-| `src/console/commands/mq/listener.rs:216` | `configure_public_firewall_for_deployment` — auto-firewall |
-| `src/forms/cloud_firewall.rs:287` | `publish_public_firewall_rules` — publishes firewall message to MQ |
-| `src/routes/server/cloud_firewall.rs:21` | Manual firewall endpoint `POST /{id}/cloud-firewall` |
 | `src/forms/firewall.rs:40` | `parse_public_port` — parses "8000" or "53/udp" |
-| `src/forms/cloud_firewall.rs:158` | `CloudFirewallOperationMessage` — MQ message format |
-| `src/connectors/install_service/client.rs:183` | `configure_cloud_firewall` — publishes to `install.firewall.htz.v1` |
 
 ---
 
-## 10. Testing
+## 14. Testing
 
 ```bash
 # Build
@@ -310,7 +478,7 @@ cargo sqlx prepare
 
 ---
 
-## 11. Deploy command reference
+## 15. Deploy command reference
 
 ```bash
 # Standard cloud deploy (new server)

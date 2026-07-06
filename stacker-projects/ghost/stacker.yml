@@ -1,6 +1,59 @@
 name: ghost
 version: "1.0.0"
 
+project:
+  identity: ghost
+
+install:
+  inputs:
+    commonDomain: ""
+
+config_contract:
+  app:
+    environment:
+      - name: GHOST_URL
+        required: true
+        secret: false
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: database__client
+        required: false
+        secret: false
+      - name: database__connection__host
+        required: false
+        secret: false
+      - name: database__connection__user
+        required: false
+        secret: false
+      - name: database__connection__password
+        required: true
+        secret: true
+      - name: database__connection__database
+        required: false
+        secret: false
+      - name: NODE_ENV
+        required: false
+        secret: false
+  services:
+    mysql:
+      environment:
+        - name: MYSQL_ROOT_PASSWORD
+          required: true
+          secret: true
+        - name: MYSQL_DATABASE
+          required: false
+          secret: false
+        - name: MYSQL_USER
+          required: false
+          secret: false
+        - name: MYSQL_PASSWORD
+          required: true
+          secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
 app:
   type: custom
   path: .

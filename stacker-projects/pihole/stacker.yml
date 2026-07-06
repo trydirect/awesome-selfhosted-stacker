@@ -1,6 +1,35 @@
 name: pihole
 version: "1.0.0"
 
+project:
+  identity: pihole
+
+install:
+  inputs:
+    commonDomain: ""
+
+config_contract:
+  app:
+    environment:
+      - name: TZ
+        required: false
+        secret: false
+      - name: WEBPASSWORD
+        required: true
+        secret: true
+      - name: PIHOLE_DNS_
+        required: false
+        secret: false
+      - name: DNSSEC
+        required: false
+        secret: false
+      - name: CONDITIONAL_FORWARDING
+        required: false
+        secret: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
 app:
   type: custom
   path: .

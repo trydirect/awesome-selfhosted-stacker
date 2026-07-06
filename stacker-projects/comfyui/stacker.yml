@@ -1,4 +1,7 @@
 name: comfyui
+
+project:
+  identity: comfyui
 version: "1.0.0"
 
 app:

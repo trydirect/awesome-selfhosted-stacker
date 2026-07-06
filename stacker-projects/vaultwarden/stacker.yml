@@ -1,6 +1,29 @@
 name: vaultwarden
 version: "1.0.0"
 
+project:
+  identity: vaultwarden
+
+install:
+  inputs:
+    commonDomain: ""
+
+config_contract:
+  app:
+    environment:
+      - name: DOMAIN
+        required: true
+        secret: false
+      - name: SIGNUPS_ALLOWED
+        required: false
+        secret: false
+      - name: ADMIN_TOKEN
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
 app:
   type: custom
   path: .

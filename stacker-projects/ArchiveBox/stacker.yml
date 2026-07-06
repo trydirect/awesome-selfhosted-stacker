@@ -1,5 +1,7 @@
 name: ArchiveBox
 version: 1.0.0
+project:
+  identity: archivebox
 app:
   type: python
   image: archivebox/archivebox:latest
@@ -30,6 +32,19 @@ deploy:
 monitoring:
   status_panel: true
 hooks:
+  pre_build: ./scripts/generate-secrets.sh
   post_deploy: ./entrypoint.sh
 env_file: .env
 env: {}
+
+install:
+  inputs:
+    commonDomain: example.com
+
+config_contract:
+  services:
+    app:
+      environment:
+        - name: ADMIN_PASSWORD
+          required: true
+          secret: true

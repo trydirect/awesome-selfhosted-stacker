@@ -24,6 +24,12 @@ curl -fsSL https://raw.githubusercontent.com/trydirect/stacker/main/install.sh |
 
 ## 2. Set up the project
 
+
+Quick way is to use
+stacker deploy --key=htz-0 --domain coolify.mydomain.com --force-new
+
+
+
 Create the Stacker cloud settings:
 
 ```bash
@@ -114,3 +120,5 @@ If Stacker SSH access breaks, inject the Stacker-managed key again:
 ```bash
 stacker ssh-key inject --server-id <server-id> --with-key ~/.ssh/id_ed25519
 ```
+
+

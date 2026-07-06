@@ -1,6 +1,9 @@
 name: umami
 version: "1.0.0"
 
+project:
+  identity: umami
+
 app:
   type: node
   image: ghcr.io/umami-software/umami:postgresql-latest
@@ -46,5 +49,23 @@ deploy:
 monitoring:
   status_panel: true
 
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
 env_file: .env
 env: {}
+
+install:
+  inputs:
+    commonDomain: example.com
+
+config_contract:
+  services:
+    app:
+      environment:
+        - name: DB_PASSWORD
+          required: true
+          secret: true
+        - name: APP_SECRET
+          required: true
+          secret: true

@@ -1,6 +1,9 @@
 name: supabase
 version: "1.0.0"
 
+project:
+  identity: supabase
+
 app:
   type: custom
   image: kong/kong:3.9.1
@@ -182,5 +185,51 @@ deploy:
 
 monitoring:
   status_panel: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+install:
+  inputs:
+    commonDomain: supabase.example.com
+
+config_contract:
+  services:
+    db:
+      secrets:
+        - POSTGRES_PASSWORD
+    studio:
+      secrets:
+        - POSTGRES_PASSWORD
+        - PG_META_CRYPTO_KEY
+    auth:
+      secrets:
+        - POSTGRES_PASSWORD
+        - JWT_SECRET
+        - SMTP_PASS
+    rest:
+      secrets:
+        - POSTGRES_PASSWORD
+        - JWT_SECRET
+    realtime:
+      secrets:
+        - POSTGRES_PASSWORD
+        - JWT_SECRET
+        - SECRET_KEY_BASE
+    storage:
+      secrets:
+        - ANON_KEY
+        - SERVICE_ROLE_KEY
+        - JWT_SECRET
+        - POSTGRES_PASSWORD
+    meta:
+      secrets:
+        - POSTGRES_PASSWORD
+        - PG_META_CRYPTO_KEY
+    functions:
+      secrets:
+        - JWT_SECRET
+        - ANON_KEY
+        - SERVICE_ROLE_KEY
 
 env_file: .env

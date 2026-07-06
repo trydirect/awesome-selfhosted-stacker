@@ -1,4 +1,7 @@
 name: hermes-agent
+
+project:
+  identity: hermes-agent
 version: "1.0.0"
 
 app:

@@ -1070,7 +1070,12 @@ Your workflow:
 2. Identify ALL services: database (postgres/mysql/mongo), cache (redis/memcached),
    queue (rabbitmq/kafka), storage (minio/s3), and the main app
 3. Detect the app type: node, python, rust, go, php, custom
-4. Write a stacker.yml to the project directory (filename "stacker.yml" only)
+4. Create the project skeleton:
+   a. Write stacker.yml (see template below)
+   b. Create .env.example — copy all non-secret vars from .env, empty out secret values
+   c. Create scripts/generate-secrets.sh — idempotent script that fills empty secrets with openssl rand
+   d. Create .gitignore with: .env .stacker/
+   e. Run scripts/generate-secrets.sh to populate .env
 5. Dry-run, then deploy
 6. On first failure: immediately check logs BEFORE making changes:
    `docker compose -f .stacker/docker-compose.yml logs --tail=50`
@@ -1083,6 +1088,9 @@ stacker.yml schema — copy this structure exactly:
 name: <repo-name>
 version: "1.0.0"
 
+project:
+  identity: <repo-name>
+
 app:
   type: python          # one of: node, python, rust, go, php, custom
   path: .
@@ -1090,29 +1098,63 @@ app:
   # dockerfile: Dockerfile  # use only when no public app image exists
   ports:
     - "8080:8080"       # host:container
-  environment: {}
+  environment:
+    # Non-secret config (user-editable in .env.example)
+    PUBLIC_VAR: "value"
+    # Secrets resolved from .env via ${VAR_NAME}
+    APP_SECRET: "${APP_SECRET}"
+  # For apps needing one-time init (Django migrate, Plausible createdb, etc.)
+  # command: >- sh -c "/app/init.sh && /app/start.sh"
 
 services:
   - name: postgres
-    image: postgres:16
+    image: postgres:16-alpine
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"   # bind to localhost for security
     environment:
       POSTGRES_DB: app
       POSTGRES_USER: app
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U app -d app"
+      interval: 5s
+      timeout: 2s
+      retries: 10
   - name: redis
     image: redis:7-alpine
     ports:
-      - "6379:6379"
-    environment: {}
-    volumes: []
+      - "127.0.0.1:6379:6379"
+    command: redis-server --requirepass "${REDIS_PASSWORD}"
+    healthcheck:
+      test: "CMD-SHELL redis-cli -a ${REDIS_PASSWORD} ping | grep PONG"
+      interval: 5s
+      timeout: 2s
+      retries: 10
+
+volumes:
+  postgres_data: {}
+
+install:
+  inputs:
+    commonDomain: <repo-name>.example.com
+
+config_contract:
+  services:
+    postgres:
+      required: [POSTGRES_DB, POSTGRES_USER]
+      secret: [POSTGRES_PASSWORD]
+    app:
+      required: [PUBLIC_VAR]
+      secret: [APP_SECRET, DB_PASSWORD]
 
 proxy:
   type: none
   auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
 
 deploy:
   target: local
@@ -1120,28 +1162,60 @@ deploy:
     provider: hetzner
     region: fsn1
     size: cpx22
-    # public_ports:        # opt-in: open these in cloud firewall (omit to keep firewall closed)
+    # public_ports:        # opt-in: open these in cloud firewall
     #   - "8000"
-    #   - "80"
 
 monitoring:
   status_panel: true
 
 env_file: .env
-env: {}
 ```
 
 Critical rules:
 - deploy.target MUST be "local"
+- ALWAYS include project.identity
+- ALWAYS include install.inputs with commonDomain
+- ALWAYS include config_contract declaring required/secret vars per service
+- ALWAYS include hooks.pre_build pointing to ./scripts/generate-secrets.sh
 - monitoring.status_panel MUST be true
 - proxy.type should be "none" unless the repo explicitly uses a reverse proxy
 - Prefer `app.image` over `app.dockerfile` when the upstream project publishes a public Docker image.
 - Use `app.dockerfile` only when there is no public app image or the Dockerfile materially customizes the app.
-- Use ${VAR_NAME} for all passwords/secrets from .env
-- Never hardcode passwords
-- Postgres: postgres:16 | MySQL: mysql:8 | Redis: redis:7-alpine
+- Use ${VAR_NAME} for ALL passwords/secrets — these resolve from .env at deploy time
+- Never hardcode passwords or API keys in stacker.yml
+- Add healthcheck to all database services (pg_isready, redis-cli ping, etc.)
+- Bind database ports to 127.0.0.1 for security (not 0.0.0.0)
+- Use `command:` on app for one-time init (Django migrate, Plausible createdb, etc.)
+- Postgres: postgres:16-alpine | MySQL: mysql:8 | Redis: redis:7-alpine
   Mongo: mongo:7 | RabbitMQ: rabbitmq:3-management | MinIO: minio/minio:latest
 - Write ONLY real YAML — never write placeholder text like <value here>
+
+generate-secrets.sh MUST follow this template:
+```bash
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+[ ! -f .env ] && cp .env.example .env
+# Fill each empty secret key — idempotent, skips already-set values
+need() { local v; v=$(grep "^$1=" .env 2>/dev/null | cut -d= -f2- || true); [ -z "$v" ]; }
+if need "DB_PASSWORD"; then
+  sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=$(openssl rand -hex 16)/" .env; echo "  Generated DB_PASSWORD"
+fi
+if need "APP_SECRET"; then
+  sed -i "s/^APP_SECRET=.*/APP_SECRET=$(openssl rand -hex 32)/" .env; echo "  Generated APP_SECRET"
+fi
+echo "Secrets ready."
+```
+Then chmod +x scripts/generate-secrets.sh
+
+.env.example MUST have empty secret values:
+```
+# Copy to .env and generate secrets before first deploy:
+#   cp .env.example .env && ./scripts/generate-secrets.sh
+PUBLIC_VAR=default_value
+DB_PASSWORD=
+APP_SECRET=
+```
 
 Local deployment rules (CRITICAL — apply these before writing stacker.yml):
 - TLS/SSL: for local deploys, DISABLE TLS. If the compose file sets a TLS_PATH, TLS_DIR,
@@ -1158,24 +1232,6 @@ Local deployment rules (CRITICAL — apply these before writing stacker.yml):
 - Remote/cloud note: Stacker does not build and push local Dockerfile images to a registry.
   If you use app.dockerfile, local deploy can work, but cloud deploy needs CI/CD to publish
   the image first and stacker.yml must set app.image to that registry tag.
-
-Init requirements:
-- Many apps crash on first start because their data directory isn't initialized.
-  Examples: ArchiveBox needs `archivebox init`, Django needs `manage.py migrate`,
-  Rails needs `db:setup`, etc.
-- Detect: check logs immediately after deploy. If you see "not initialized" / "run init first"
-  in logs and the container is restarting, that's an init requirement.
-- Fix workflow (CRITICAL — follow this order exactly):
-  1. Run initial deploy once to let stacker generate .stacker/Dockerfile.
-  2. Write entrypoint.sh to the project dir:
-       write_file("entrypoint.sh", "#!/bin/sh\n<init-cmd> || true\nexec <start-cmd>\n")
-  3. Append to .stacker/Dockerfile (do NOT use --force-rebuild after this):
-       write_file(".stacker/Dockerfile",
-         "<existing content>\nCOPY entrypoint.sh /entrypoint.sh\nRUN chmod +x /entrypoint.sh\nENTRYPOINT [\"/entrypoint.sh\"]\n")
-  4. Rebuild WITHOUT --force-rebuild (stacker reuses the modified .stacker/Dockerfile):
-       run_shell("docker compose -f .stacker/docker-compose.yml build && docker compose -f .stacker/docker-compose.yml up -d")
-  NOTE: --force-rebuild regenerates .stacker/Dockerfile from scratch, erasing your changes.
-  NOTE: write_file paths are relative to the project directory (e.g. ".stacker/Dockerfile" is correct).
 """
 
 SYSTEM_QA = """\
@@ -2002,6 +2058,14 @@ def main() -> int:
             + f"Write stacker.yml using ONLY the bare filename 'stacker.yml' (no path prefix).\n"
             f"CRITICAL: write_file content must be real valid YAML — never use placeholders like "
             f"'<stacker.yml content here>'.\n\n"
+            f"SECRETS — create these files too:\n"
+            f"  1. Write .env.example — copy non-secret config, leave all secret values empty\n"
+            f"  2. Write scripts/generate-secrets.sh — idempotent, fills empty secrets with openssl rand\n"
+            f"  3. Make generate-secrets.sh executable: run_shell('chmod +x scripts/generate-secrets.sh')\n"
+            f"  4. Run it: run_shell('./scripts/generate-secrets.sh')\n"
+            f"  5. Write .gitignore containing: .env\\n.stacker/\\n"
+            f"Every ${VAR_NAME} in stacker.yml MUST have a corresponding entry in .env.example ",
+            f"(even if empty). stacker config validate will fail otherwise.\n\n"
             f"Steps:\n"
             f"1. Identify all services from the compose file above\n"
             f"2. Write stacker.yml\n"
