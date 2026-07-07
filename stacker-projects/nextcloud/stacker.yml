@@ -1,0 +1,94 @@
+name: nextcloud
+version: "28.0.0"
+
+project:
+  identity: nextcloud
+
+install:
+  inputs:
+    commonDomain: nextcloud.example.com
+
+app:
+  type: php
+  image: nextcloud:latest
+  ports:
+    - "8080:80"
+  environment:
+    NEXTCLOUD_ADMIN_USER: admin
+    NEXTCLOUD_ADMIN_PASSWORD: "${NEXTCLOUD_ADMIN_PASSWORD}"
+    NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.example.com"
+    MYSQL_DATABASE: nextcloud
+    MYSQL_USER: nextcloud
+    MYSQL_PASSWORD: "${DB_PASSWORD}"
+    MYSQL_HOST: nextcloud_db
+  volumes:
+    - nextcloud_data:/var/www/html
+
+services:
+  - name: nextcloud_db
+    image: mariadb:latest
+    environment:
+      MARIADB_DATABASE: nextcloud
+      MARIADB_USER: nextcloud
+      MARIADB_PASSWORD: "${DB_PASSWORD}"
+      MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - nextcloud_db:/var/lib/mysql
+    healthcheck:
+      test: "CMD mysqladmin ping -h localhost"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - nextcloud_redis:/data
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  nextcloud_db: {}
+  nextcloud_data: {}
+  nextcloud_redis: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+config_contract:
+  app:
+    environment:
+      - name: NEXTCLOUD_ADMIN_PASSWORD
+        required: true
+        secret: true
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: DB_ROOT_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env

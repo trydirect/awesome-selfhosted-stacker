@@ -1,0 +1,78 @@
+name: matomo
+version: "5.0.0"
+
+project:
+  identity: matomo
+
+install:
+  inputs:
+    commonDomain: matomo.example.com
+
+app:
+  type: php
+  image: matomo:latest
+  ports:
+    - "8080:80"
+  environment:
+    MATOMO_DATABASE_HOST: matomo_db
+    MATOMO_DATABASE_DBNAME: matomo
+    MATOMO_DATABASE_USERNAME: matomo
+    MATOMO_DATABASE_PASSWORD: "${DB_PASSWORD}"
+    MATOMO_DATABASE_TABLES_PREFIX: "matomo_"
+  volumes:
+    - matomo_config:/var/www/html/config
+    - matomo_logs:/var/www/html/logs
+
+services:
+  - name: matomo_db
+    image: mariadb:latest
+    environment:
+      MARIADB_DATABASE: matomo
+      MARIADB_USER: matomo
+      MARIADB_PASSWORD: "${DB_PASSWORD}"
+      MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - matomo_db:/var/lib/mysql
+    healthcheck:
+      test: "CMD mysqladmin ping -h localhost"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  matomo_db: {}
+  matomo_config: {}
+  matomo_logs: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: DB_ROOT_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env

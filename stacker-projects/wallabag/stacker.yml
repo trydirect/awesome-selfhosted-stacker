@@ -1,0 +1,95 @@
+name: wallabag
+version: "2.6.0"
+
+project:
+  identity: wallabag
+
+install:
+  inputs:
+    commonDomain: wallabag.example.com
+
+app:
+  type: php
+  image: wallabag/wallabag:latest
+  ports:
+    - "80:80"
+  environment:
+    SYMFONY_ENV: prod
+    SYMFONY_DEBUG: "0"
+    SYMFONY_SECRET: "${SYMFONY_SECRET}"
+    DATABASE_DRIVER: pdo_pgsql
+    DATABASE_HOST: wallabag_db
+    DATABASE_PORT: "5432"
+    DATABASE_NAME: wallabag
+    DATABASE_USER: wallabag
+    DATABASE_PASSWORD: "${DB_PASSWORD}"
+    MAILER_TRANSPORT: "null"
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+  volumes:
+    - wallabag_data:/var/www/wallabag/data
+
+services:
+  - name: wallabag_db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: wallabag
+      POSTGRES_USER: wallabag
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - wallabag_db:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U wallabag -d wallabag"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - wallabag_redis:/data
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  wallabag_db: {}
+  wallabag_data: {}
+  wallabag_redis: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "80"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: SYMFONY_SECRET
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env

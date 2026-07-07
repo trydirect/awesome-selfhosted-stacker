@@ -1,0 +1,46 @@
+name: uptimekuma
+version: "1.0.0"
+
+project:
+  identity: uptimekuma
+
+app:
+  type: custom
+  image: louislam/uptime-kuma:2
+  ports:
+    - "3001:3001"
+  environment:
+    TZ: "${TZ}"
+    UMASK: "0022"
+  volumes:
+    - uptime_kuma_data:/app/data
+  healthcheck:
+    test: "CMD-SHELL curl -fsS http://localhost:3001 || exit 1"
+    interval: 30s
+    timeout: 10s
+    retries: 5
+
+volumes:
+  uptime_kuma_data: {}
+
+install:
+  inputs:
+    commonDomain: uptimekuma.example.com
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: cloud
+  cloud:
+    provider: hetzner
+    region: ${HETZNER_REGION}
+    size: ${HETZNER_SERVER_TYPE}
+    public_ports:
+      - "3001"
+
+monitoring:
+  status_panel: true
+
+env_file: .env

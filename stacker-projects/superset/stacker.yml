@@ -1,0 +1,86 @@
+name: superset
+version: "3.1.0"
+
+project:
+  identity: superset
+
+install:
+  inputs:
+    commonDomain: superset.example.com
+
+app:
+  type: python
+  image: apache/superset:latest
+  ports:
+    - "8088:8088"
+  environment:
+    SUPERSET_DATABASE_URL: "postgresql://superset:${DB_PASSWORD}@superset_db:5432/superset"
+    REDIS_URL: "redis://redis:6379"
+    SUPERSET_SECRET_KEY: "${SECRET_KEY}"
+    SUPERSET_LOAD_EXAMPLES: "false"
+    ROW_LIMIT: "50000"
+    SUPERSET_ENV: production
+
+services:
+  - name: superset_db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: superset
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - superset_db:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U superset -d superset"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - superset_redis:/data
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  superset_db: {}
+  superset_redis: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8088"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: SECRET_KEY
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env

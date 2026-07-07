@@ -1,0 +1,54 @@
+name: linkding
+version: "1.27.0"
+
+project:
+  identity: linkding
+
+install:
+  inputs:
+    commonDomain: bookmarks.example.com
+
+app:
+  type: python
+  image: sissbruecker/linkding:latest
+  ports:
+    - "9090:9090"
+  environment:
+    DJANGO_SUPERUSER_USERNAME: admin
+    DJANGO_SUPERUSER_PASSWORD: "${ADMIN_PASSWORD}"
+    DJANGO_SUPERUSER_EMAIL: "admin@example.com"
+    LD_DISABLE_URL_VALIDATION: "false"
+    LD_ENABLE_AUTH_PROXY: "false"
+  volumes:
+    - linkding_data:/etc/linkding/data
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "9090"
+
+config_contract:
+  app:
+    environment:
+      - name: ADMIN_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  linkding_data: {}

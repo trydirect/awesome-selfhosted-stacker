@@ -1,0 +1,87 @@
+name: gitea
+version: "1.21.0"
+
+project:
+  identity: gitea
+
+install:
+  inputs:
+    commonDomain: git.example.com
+
+app:
+  type: custom
+  image: gitea/gitea:latest
+  ports:
+    - "3000:3000"
+    - "2222:22"
+  environment:
+    GITEA_DATABASE_TYPE: postgres
+    GITEA_DATABASE_HOST: gitea_db:5432
+    GITEA_DATABASE_NAME: gitea
+    GITEA_DATABASE_USER: gitea
+    GITEA_DATABASE_PASSWD: "${DB_PASSWORD}"
+    GITEA_RUN_MODE: prod
+    GITEA_SECURITY_SECRET_KEY: "${SECRET_KEY}"
+    GITEA_SECURITY_INTERNAL_TOKEN: "${INTERNAL_TOKEN}"
+    GITEA_SERVER_HTTP_PORT: "3000"
+    GITEA_SERVER_SSH_PORT: "2222"
+    GITEA_SERVER_DOMAIN: "git.example.com"
+    GITEA_SERVER_ROOT_URL: "https://git.example.com/"
+  volumes:
+    - gitea_data:/data
+
+services:
+  - name: gitea_db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: gitea
+      POSTGRES_USER: gitea
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - gitea_db:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U gitea -d gitea"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  gitea_db: {}
+  gitea_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+      - "2222"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: SECRET_KEY
+        required: true
+        secret: true
+      - name: INTERNAL_TOKEN
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env

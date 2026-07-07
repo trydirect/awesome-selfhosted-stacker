@@ -1,0 +1,104 @@
+name: paperless-ngx
+version: "2.11.0"
+
+project:
+  identity: paperless-ngx
+
+install:
+  inputs:
+    commonDomain: paperless.example.com
+
+app:
+  type: python
+  image: ghcr.io/paperless-ngx/paperless-ngx:latest
+  ports:
+    - "8000:8000"
+  environment:
+    PAPERLESS_REDIS: redis://redis:6379
+    PAPERLESS_DBHOST: paperless_db
+    PAPERLESS_DBNAME: paperless
+    PAPERLESS_DBUSER: paperless
+    PAPERLESS_DBPASS: "${DB_PASSWORD}"
+    PAPERLESS_ADMIN_USER: admin
+    PAPERLESS_ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+    PAPERLESS_ADMIN_MAIL: "admin@example.com"
+    PAPERLESS_SECRET_KEY: "${SECRET_KEY}"
+    PAPERLESS_TASK_WORKERS: "2"
+    PAPERLESS_ENABLE_COMPRESSION: "true"
+    PAPERLESS_TASK_WORKERS_BACKUP: "1"
+  volumes:
+    - paperless_data:/usr/src/paperless/data
+    - paperless_media:/usr/src/paperless/media
+    - paperless_export:/usr/src/paperless/export
+    - paperless_consume:/usr/src/paperless/consume
+
+services:
+  - name: paperless_db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_INITDB_ARGS: "-c max_wal_level=replica"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - paperless_db:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U paperless -d paperless"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - paperless_redis:/data
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  paperless_db: {}
+  paperless_data: {}
+  paperless_media: {}
+  paperless_export: {}
+  paperless_redis: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: ADMIN_PASSWORD
+        required: true
+        secret: true
+      - name: SECRET_KEY
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env

@@ -1,0 +1,76 @@
+name: synapse
+version: "1.128.0"
+
+project:
+  identity: synapse
+
+install:
+  inputs:
+    commonDomain: matrix.example.com
+
+app:
+  type: custom
+  image: matrixdotorg/synapse:latest
+  ports:
+    - "8008:8008"
+    - "8448:8448"
+  environment:
+    SYNAPSE_SERVER_NAME: matrix.example.com
+    SYNAPSE_REPORT_STATS: "no"
+    POSTGRES_DB: synapse
+    POSTGRES_USER: synapse
+    POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    POSTGRES_HOST: synapse_db
+  volumes:
+    - synapse_data:/data
+
+services:
+  - name: synapse_db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: synapse
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - synapse_db:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U synapse -d synapse"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  synapse_db: {}
+  synapse_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8008"
+      - "8448"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env

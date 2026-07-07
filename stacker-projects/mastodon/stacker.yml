@@ -1,0 +1,121 @@
+name: mastodon
+version: "4.2.0"
+
+project:
+  identity: mastodon
+
+install:
+  inputs:
+    commonDomain: mastodon.example.com
+
+app:
+  type: custom
+  image: ghcr.io/mastodon/mastodon:latest
+  ports:
+    - "3000:3000"
+  environment:
+    LOCAL_DOMAIN: mastodon.example.com
+    SINGLE_USER_MODE: "false"
+    SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
+    OTP_SECRET: "${OTP_SECRET}"
+    VAPID_PRIVATE_KEY: "${VAPID_PRIVATE_KEY}"
+    VAPID_PUBLIC_KEY: "${VAPID_PUBLIC_KEY}"
+    DB_HOST: mastodon_db
+    DB_PORT: "5432"
+    DB_NAME: mastodon_production
+    DB_USER: mastodon
+    DB_PASS: "${DB_PASSWORD}"
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+    RAILS_ENV: production
+
+services:
+  - name: mastodon_db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: mastodon_production
+      POSTGRES_USER: mastodon
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - mastodon_db:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U mastodon -d mastodon_production"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - mastodon_redis:/data
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: sidekiq
+    image: ghcr.io/mastodon/mastodon:latest
+    command: bundle exec sidekiq -c 5 -v
+    environment:
+      DB_HOST: mastodon_db
+      DB_PORT: "5432"
+      DB_NAME: mastodon_production
+      DB_USER: mastodon
+      DB_PASS: "${DB_PASSWORD}"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      RAILS_ENV: production
+      SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
+    depends_on:
+      - mastodon_db
+      - redis
+
+volumes:
+  mastodon_db: {}
+  mastodon_redis: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx31
+    public_ports:
+      - "3000"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: SECRET_KEY_BASE
+        required: true
+        secret: true
+      - name: OTP_SECRET
+        required: true
+        secret: true
+      - name: VAPID_PRIVATE_KEY
+        required: true
+        secret: true
+      - name: VAPID_PUBLIC_KEY
+        required: true
+        secret: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env

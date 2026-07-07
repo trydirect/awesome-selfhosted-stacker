@@ -1,0 +1,59 @@
+name: rocket-chat
+version: "6.12.0"
+
+project:
+  identity: rocket-chat
+
+install:
+  inputs:
+    commonDomain: chat.example.com
+
+app:
+  type: custom
+  image: rocket.chat:latest
+  ports:
+    - "3000:3000"
+  environment:
+    MONGO_URL: "mongodb://mongo:27017/rocketchat"
+    MONGO_OPLOG_URL: "mongodb://mongo:27017/local"
+    ROOT_URL: "https://chat.example.com"
+  depends_on:
+    - mongo
+
+services:
+  - name: mongo
+    image: mongo:7.0
+    environment:
+      MONGO_INITDB_DATABASE: rocketchat
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    command: >
+      mongod --replSet rs0
+    healthcheck:
+      test: "CMD mongosh --eval 'db.adminCommand(\"ping\")'"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mongo_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+monitoring:
+  status_panel: true
+
+env_file: .env

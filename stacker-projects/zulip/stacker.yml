@@ -1,0 +1,90 @@
+name: zulip
+version: "2.1.0"
+
+project:
+  identity: zulip
+
+install:
+  inputs:
+    commonDomain: zulip.example.com
+
+app:
+  type: custom
+  image: zulip/docker-zulip:latest
+  ports:
+    - "80:80"
+    - "443:443"
+  environment:
+    SETTING_EXTERNAL_HOST: zulip.example.com
+    SETTING_ZULIP_ADMINISTRATOR: "admin@example.com"
+    SETTING_EMAIL_HOST: smtp.example.com
+    SETTING_EMAIL_HOST_USER: "${SMTP_USER}"
+    SETTING_EMAIL_HOST_PASSWORD: "${SMTP_PASSWORD}"
+    SETTING_EMAIL_PORT: "587"
+    SETTING_EMAIL_USE_TLS: "true"
+    SETTING_EMAIL_USE_SSL: "false"
+    SETTING_DEFAULT_EMAIL_FORMAT: "text/html"
+    SETTING_NOREPLY_EMAIL_ADDRESS: "noreply@example.com"
+    SETTING_QUEUE_WORKERS: "4"
+    POSTGRES_HOST: zulip_db
+    POSTGRES_USER: zulip
+    POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    POSTGRES_DB: zulip
+  volumes:
+    - zulip_data:/data
+
+services:
+  - name: zulip_db
+    image: zulip/zulip-postgresql:16
+    environment:
+      POSTGRES_DB: zulip
+      POSTGRES_USER: zulip
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - zulip_db:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U zulip -d zulip"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  zulip_db: {}
+  zulip_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx31
+    public_ports:
+      - "80"
+      - "443"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: SMTP_USER
+        required: true
+        secret: false
+      - name: SMTP_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env

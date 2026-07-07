@@ -1,0 +1,44 @@
+name: jellyfin
+version: "10.9.0"
+
+project:
+  identity: jellyfin
+
+install:
+  inputs:
+    commonDomain: jellyfin.example.com
+
+app:
+  type: custom
+  image: jellyfin/jellyfin:latest
+  ports:
+    - "8096:8096"
+  environment:
+    JELLYFIN_PublishedServerUrl: "https://jellyfin.example.com"
+  volumes:
+    - jellyfin_config:/config
+    - jellyfin_cache:/cache
+    - jellyfin_media:/media:ro
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8096"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  jellyfin_config: {}
+  jellyfin_cache: {}
+  jellyfin_media: {}
