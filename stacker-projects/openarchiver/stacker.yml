@@ -1,0 +1,94 @@
+name: "openarchiver"
+version: "1.0.0"
+project:
+  identity: "openarchiver"
+install:
+  inputs:
+    commonDomain: "openarchiver.example.com"
+config_contract:
+  app:
+    environment:
+      - name: "POSTGRES_PASSWORD"
+        required: true
+        secret: true
+      - name: "REDIS_PASSWORD"
+        required: true
+        secret: true
+      - name: "MEILI_MASTER_KEY"
+        required: true
+        secret: true
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "logiclabshq/open-archiver:latest"
+  ports:
+    - "3000:3000"
+  volumes:
+    - "openarchiver_storage:/data/storage"
+  environment:
+    PORT_FRONTEND: "3000"
+    STORAGE_LOCAL_ROOT_PATH: "/data/storage"
+    POSTGRES_DB: "open_archive"
+    POSTGRES_USER: "admin"
+    POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    REDIS_PASSWORD: "${REDIS_PASSWORD}"
+    MEILI_MASTER_KEY: "${MEILI_MASTER_KEY}"
+services:
+  - name: "postgres"
+    image: "postgres:17-alpine"
+    environment:
+      POSTGRES_DB: "open_archive"
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - "openarchiver_postgres_data:/var/lib/postgresql/data"
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U admin -d open_archive"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+  - name: "valkey"
+    image: "valkey/valkey:8-alpine"
+    command: "valkey-server --requirepass ${REDIS_PASSWORD}"
+    volumes:
+      - "openarchiver_valkey_data:/data"
+    healthcheck:
+      test: "CMD-SHELL valkey-cli -a ${REDIS_PASSWORD} ping || exit 1"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+  - name: "meilisearch"
+    image: "getmeili/meilisearch:v1.38"
+    environment:
+      MEILI_MASTER_KEY: "${MEILI_MASTER_KEY}"
+      MEILI_SCHEDULE_SNAPSHOT: "86400"
+    volumes:
+      - "openarchiver_meili_data:/meili_data"
+    healthcheck:
+      test: "CMD-SHELL wget -qO- http://127.0.0.1:7700/health || exit 1"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+  - name: "tika"
+    image: "apache/tika:3.2.2.0-full"
+    environment: {}
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "3000"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  openarchiver_storage: {}
+  openarchiver_postgres_data: {}
+  openarchiver_valkey_data: {}
+  openarchiver_meili_data: {}

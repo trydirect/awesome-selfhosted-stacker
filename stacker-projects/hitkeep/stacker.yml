@@ -1,0 +1,79 @@
+name: "hitkeep"
+version: "1.0.0"
+project:
+  identity: "hitkeep"
+install:
+  inputs:
+    commonDomain: "hitkeep.example.com"
+config_contract:
+  app:
+    environment:
+      - name: "HITKEEP_PUBLIC_URL"
+        required: true
+        secret: false
+      - name: "HITKEEP_JWT_SECRET"
+        required: true
+        secret: true
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "ghcr.io/pascalebeier/hitkeep:2.10.1"
+  ports:
+    - "8080:8080"
+  volumes:
+    - "hitkeep_data:/var/lib/hitkeep/data"
+    - "hitkeep_archive:/var/lib/hitkeep/archive"
+    - "hitkeep_backups:/var/lib/hitkeep/backups"
+  environment:
+    HITKEEP_PUBLIC_URL: "${HITKEEP_PUBLIC_URL}"
+    HITKEEP_JWT_SECRET: "${HITKEEP_JWT_SECRET}"
+    HITKEEP_DB_PATH: "/var/lib/hitkeep/data/hitkeep.db"
+    HITKEEP_DATA_PATH: "/var/lib/hitkeep/data"
+    HITKEEP_ARCHIVE_PATH: "/var/lib/hitkeep/archive"
+    HITKEEP_BACKUP_PATH: "/var/lib/hitkeep/backups"
+    HITKEEP_BACKUP_INTERVAL: "${HITKEEP_BACKUP_INTERVAL}"
+    HITKEEP_BACKUP_RETENTION: "${HITKEEP_BACKUP_RETENTION}"
+    HITKEEP_SPAM_FILTER_AUTO_UPDATE: "true"
+    HITKEEP_SPAM_FILTER_UPDATE_INTERVAL: "1440"
+    HITKEEP_SPAM_FILTER_PATH: "/var/lib/hitkeep/data/spam-filter.json"
+    HITKEEP_MCP_ENABLED: "true"
+    HITKEEP_MCP_PATH: "/mcp"
+    HITKEEP_MCP_MAX_RANGE_DAYS: "${HITKEEP_MCP_MAX_RANGE_DAYS}"
+    HITKEEP_AI_ENABLED: "false"
+    HITKEEP_AI_PROVIDER: ""
+    HITKEEP_AI_MODEL: ""
+    HITKEEP_AI_BASE_URL: ""
+    HITKEEP_AI_REGION: ""
+    HITKEEP_AI_API_KEY: "${HITKEEP_AI_API_KEY}"
+    HITKEEP_AI_REQUEST_LIMIT: "100"
+    HITKEEP_AI_TOKEN_LIMIT: "100000"
+    HITKEEP_AI_BUDGET_WINDOW: "1440"
+    HITKEEP_GOOGLE_SEARCH_CONSOLE_CLIENT_ID: "${HITKEEP_GOOGLE_SEARCH_CONSOLE_CLIENT_ID}"
+    HITKEEP_GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET: "${HITKEEP_GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET}"
+    HITKEEP_GOOGLE_SEARCH_CONSOLE_REDIRECT_URL: "${HITKEEP_GOOGLE_SEARCH_CONSOLE_REDIRECT_URL}"
+    HITKEEP_MAIL_HOST: "${HITKEEP_MAIL_HOST}"
+    HITKEEP_MAIL_PORT: "${HITKEEP_MAIL_PORT}"
+    HITKEEP_MAIL_USERNAME: "${HITKEEP_MAIL_USERNAME}"
+    HITKEEP_MAIL_PASSWORD: "${HITKEEP_MAIL_PASSWORD}"
+    HITKEEP_MAIL_ENCRYPTION: "tls"
+    HITKEEP_MAIL_FROM_ADDRESS: "${HITKEEP_MAIL_FROM_ADDRESS}"
+    HITKEEP_MAIL_FROM_NAME: "${HITKEEP_MAIL_FROM_NAME}"
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "8080"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  hitkeep_data: {}
+  hitkeep_archive: {}
+  hitkeep_backups: {}

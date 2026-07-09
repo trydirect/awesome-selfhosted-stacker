@@ -1,0 +1,114 @@
+name: "activepieces"
+version: "1.0.0"
+project:
+  identity: "activepieces"
+install:
+  inputs:
+    commonDomain: "activepieces.example.com"
+config_contract:
+  app:
+    environment:
+      - name: "AP_FRONTEND_URL"
+        required: true
+        secret: false
+      - name: "AP_POSTGRES_PASSWORD"
+        required: true
+        secret: true
+      - name: "AP_ENCRYPTION_KEY"
+        required: true
+        secret: true
+      - name: "AP_JWT_SECRET"
+        required: true
+        secret: true
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "ghcr.io/activepieces/activepieces:0.86.2"
+  ports:
+    - "8080:80"
+  volumes:
+    - "activepieces_cache:/usr/src/app/cache"
+  environment:
+    AP_CONTAINER_TYPE: "APP"
+    AP_ENGINE_EXECUTABLE_PATH: "dist/packages/engine/main.js"
+    AP_ENVIRONMENT: "prod"
+    AP_FRONTEND_URL: "${AP_FRONTEND_URL}"
+    AP_WEBHOOK_TIMEOUT_SECONDS: "30"
+    AP_TRIGGER_DEFAULT_POLL_INTERVAL: "5"
+    AP_POSTGRES_DATABASE: "activepieces"
+    AP_POSTGRES_HOST: "postgres"
+    AP_POSTGRES_PORT: "5432"
+    AP_POSTGRES_USERNAME: "postgres"
+    AP_POSTGRES_PASSWORD: "${AP_POSTGRES_PASSWORD}"
+    AP_EXECUTION_MODE: "UNSANDBOXED"
+    AP_REDIS_HOST: "redis"
+    AP_REDIS_PORT: "6379"
+    AP_FLOW_TIMEOUT_SECONDS: "600"
+    AP_TELEMETRY_ENABLED: "true"
+    AP_TEMPLATES_SOURCE_URL: "https://cloud.activepieces.com/api/v1/flow-templates"
+    AP_ENCRYPTION_KEY: "${AP_ENCRYPTION_KEY}"
+    AP_JWT_SECRET: "${AP_JWT_SECRET}"
+services:
+  - name: "worker"
+    image: "ghcr.io/activepieces/activepieces:0.86.2"
+    volumes:
+      - "activepieces_cache:/usr/src/app/cache"
+    environment:
+      AP_CONTAINER_TYPE: "WORKER"
+      AP_ENGINE_EXECUTABLE_PATH: "dist/packages/engine/main.js"
+      AP_ENVIRONMENT: "prod"
+      AP_FRONTEND_URL: "${AP_FRONTEND_URL}"
+      AP_POSTGRES_DATABASE: "activepieces"
+      AP_POSTGRES_HOST: "postgres"
+      AP_POSTGRES_PORT: "5432"
+      AP_POSTGRES_USERNAME: "postgres"
+      AP_POSTGRES_PASSWORD: "${AP_POSTGRES_PASSWORD}"
+      AP_EXECUTION_MODE: "UNSANDBOXED"
+      AP_REDIS_HOST: "redis"
+      AP_REDIS_PORT: "6379"
+      AP_FLOW_TIMEOUT_SECONDS: "600"
+      AP_TELEMETRY_ENABLED: "true"
+      AP_TEMPLATES_SOURCE_URL: "https://cloud.activepieces.com/api/v1/flow-templates"
+      AP_ENCRYPTION_KEY: "${AP_ENCRYPTION_KEY}"
+      AP_JWT_SECRET: "${AP_JWT_SECRET}"
+  - name: "postgres"
+    image: "pgvector/pgvector:0.8.0-pg14"
+    environment:
+      POSTGRES_DB: "activepieces"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "${AP_POSTGRES_PASSWORD}"
+    volumes:
+      - "activepieces_postgres_data:/var/lib/postgresql/data"
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U postgres -d activepieces"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+  - name: "redis"
+    image: "redis:7.0.7"
+    volumes:
+      - "activepieces_redis_data:/data"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "8080"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  activepieces_cache: {}
+  activepieces_postgres_data: {}
+  activepieces_redis_data: {}

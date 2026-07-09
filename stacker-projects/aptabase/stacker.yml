@@ -1,0 +1,79 @@
+name: "aptabase"
+version: "1.0.0"
+project:
+  identity: "aptabase"
+install:
+  inputs:
+    commonDomain: "aptabase.example.com"
+config_contract:
+  app:
+    environment:
+      - name: "BASE_URL"
+        required: true
+        secret: false
+      - name: "DB_PASSWORD"
+        required: true
+        secret: true
+      - name: "CLICKHOUSE_PASSWORD"
+        required: true
+        secret: true
+      - name: "AUTH_SECRET"
+        required: true
+        secret: true
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "ghcr.io/aptabase/aptabase:main"
+  ports:
+    - "3000:8080"
+  environment:
+    ASPNETCORE_URLS: "http://0.0.0.0:8080"
+    BASE_URL: "${BASE_URL}"
+    DATABASE_URL: "Host=postgres;Port=5432;Database=aptabase;Username=aptabase;Password=${DB_PASSWORD}"
+    CLICKHOUSE_URL: "Host=clickhouse;Protocol=http;Port=8123;Username=aptabase;Password=${CLICKHOUSE_PASSWORD};Database=default"
+    AUTH_SECRET: "${AUTH_SECRET}"
+services:
+  - name: "postgres"
+    image: "postgres:16-alpine"
+    environment:
+      POSTGRES_DB: "aptabase"
+      POSTGRES_USER: "aptabase"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - "aptabase_postgres_data:/var/lib/postgresql/data"
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U aptabase -d aptabase"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+  - name: "clickhouse"
+    image: "clickhouse/clickhouse-server:23.8.4.69"
+    environment:
+      CLICKHOUSE_DB: "default"
+      CLICKHOUSE_USER: "aptabase"
+      CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
+    volumes:
+      - "aptabase_clickhouse_data:/var/lib/clickhouse"
+    healthcheck:
+      test: "CMD-SHELL wget -qO- http://127.0.0.1:8123/ping || exit 1"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "3000"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  aptabase_postgres_data: {}
+  aptabase_clickhouse_data: {}

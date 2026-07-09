@@ -1,0 +1,26 @@
+warehouse:
+  driver: console
+  table: events
+
+dbip:
+  enabled: false
+
+device_detector:
+  provider: stub
+
+receiver:
+  batch_timeout: 1s
+
+sessions:
+  timeout: 30m
+
+monitoring:
+  enabled: false
+
+storage:
+  bolt_directory: /var/lib/d8a/bolt
+  queue_directory: /var/lib/d8a/queue
+  spool_enabled: false
+
+filters:
+  conditions: []

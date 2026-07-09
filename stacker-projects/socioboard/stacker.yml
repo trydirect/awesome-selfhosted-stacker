@@ -1,0 +1,174 @@
+name: "socioboard"
+version: "1.0.0"
+project:
+  identity: "socioboard"
+install:
+  inputs:
+    commonDomain: "socio.localtest.me"
+config_contract:
+  app:
+    environment:
+      - name: "BASE_DOMAIN"
+        required: true
+        secret: false
+      - name: "TWILIO_ACC_SID"
+        required: false
+        secret: true
+      - name: "TWILIO_AUTH_KEY"
+        required: false
+        secret: true
+      - name: "TWILIO_SERVICE_ID"
+        required: false
+        secret: true
+      - name: "AUTH_SECRET"
+        required: true
+        secret: true
+      - name: "AUTH_TOKEN_SECRET"
+        required: true
+        secret: true
+      - name: "SQL_DB_PASS"
+        required: true
+        secret: true
+      - name: "SQL_DB_ROOT_PASS"
+        required: true
+        secret: true
+      - name: "MONGO_PASS"
+        required: true
+        secret: true
+      - name: "LARAVEL_KEY"
+        required: true
+        secret: true
+      - name: "ADMIN_PASSWORD"
+        required: true
+        secret: true
+      - name: "ADMIN_SESSION_KEY"
+        required: true
+        secret: true
+      - name: "API_SESSION_KEY_1"
+        required: true
+        secret: true
+      - name: "API_SESSION_KEY_2"
+        required: true
+        secret: true
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "sintelli/socioboard-web:latest"
+  ports:
+    - "80:80"
+  environment:
+    BASE_DOMAIN: "${BASE_DOMAIN}"
+    HTTPS_PORT: "${HTTPS_PORT}"
+    LARAVEL_KEY: "${LARAVEL_KEY}"
+services:
+  - name: "socioboard"
+    image: "sintelli/socioboard:latest"
+    volumes:
+      - "socioboard_api_data:/data"
+    environment:
+      BASE_DOMAIN: "${BASE_DOMAIN}"
+      HTTP_PORT: "${HTTP_PORT}"
+      HTTPS_PORT: "${HTTPS_PORT}"
+      AUTH_SECRET: "${AUTH_SECRET}"
+      AUTH_TOKEN_SECRET: "${AUTH_TOKEN_SECRET}"
+      SQL_DB_NAME: "${SQL_DB_NAME}"
+      SQL_DB_USER: "${SQL_DB_USER}"
+      SQL_DB_PASS: "${SQL_DB_PASS}"
+      SQL_DB_ROOT_PASS: "${SQL_DB_ROOT_PASS}"
+      MONGO_DB_NAME: "${MONGO_DB_NAME}"
+      MONGO_USER: "${MONGO_USER}"
+      MONGO_PASS: "${MONGO_PASS}"
+      LARAVEL_KEY: "${LARAVEL_KEY}"
+      FACEBOOK_API_APP_ID: "${FACEBOOK_API_APP_ID}"
+      FACEBOOK_API_APP_SECRET: "${FACEBOOK_API_APP_SECRET}"
+      GOOGLE_API_ID: "${GOOGLE_API_ID}"
+      GOOGLE_API_SECRET: "${GOOGLE_API_SECRET}"
+      GOOGLE_API_KEY: "${GOOGLE_API_KEY}"
+      GITHUB_API_ID: "${GITHUB_API_ID}"
+      GITHUB_API_SECRET: "${GITHUB_API_SECRET}"
+      TWITTER_API_KEY: "${TWITTER_API_KEY}"
+      TWITTER_API_SECRET: "${TWITTER_API_SECRET}"
+      TWITTER_API_APP_NAME: "${TWITTER_API_APP_NAME}"
+      LINKEDIN_API_ID: "${LINKEDIN_API_ID}"
+      LINKEDIN_API_SECRET: "${LINKEDIN_API_SECRET}"
+      IG_API_ID: "${IG_API_ID}"
+      IG_API_SECRET: "${IG_API_SECRET}"
+      IG_BUSINESS_API_ID: "${IG_BUSINESS_API_ID}"
+      IG_BUSINESS_API_SECRET: "${IG_BUSINESS_API_SECRET}"
+      PINTEREST_API_ID: "${PINTEREST_API_ID}"
+      PINTEREST_API_SECRET: "${PINTEREST_API_SECRET}"
+      BITLY_API_ID: "${BITLY_API_ID}"
+      BITLY_API_SECRET: "${BITLY_API_SECRET}"
+      BITLY_REDIRECT_URI: "${BITLY_REDIRECT_URI}"
+      BITLY_ACCESS_TOKEN: "${BITLY_ACCESS_TOKEN}"
+      TINY_LINK_API_KEY: "${TINY_LINK_API_KEY}"
+      TUMBLR_API_KEY: "${TUMBLR_API_KEY}"
+      TUMBLR_API_SECRET: "${TUMBLR_API_SECRET}"
+      JEST_ACCESS_TOKEN: "${JEST_ACCESS_TOKEN}"
+      MAIL_HANDLER: "${MAIL_HANDLER}"
+      SENDGRID_USERNAME: "${SENDGRID_USERNAME}"
+      SENDGRID_PASSWORD: "${SENDGRID_PASSWORD}"
+      SENDGRID_FROM_MAIL: "${SENDGRID_FROM_MAIL}"
+      SENDGRID_CC_ADDR: "${SENDGRID_CC_ADDR}"
+      SENDGRID_API_KEY: "${SENDGRID_API_KEY}"
+      GOOGLE_EMAIL: "${GOOGLE_EMAIL}"
+      GOOGLE_EMAIL_PASSWORD: "${GOOGLE_EMAIL_PASSWORD}"
+      SOCIOBOARD_TWITTER_HANDLER: "${SOCIOBOARD_TWITTER_HANDLER}"
+      AMEMBER_ENABLED: "${AMEMBER_ENABLED}"
+      AMEMBER_KEY: "${AMEMBER_KEY}"
+      AMEMBER_DOMAIN: "${AMEMBER_DOMAIN}"
+      TWILIO_ACC_SID: "${TWILIO_ACC_SID}"
+      TWILIO_AUTH_KEY: "${TWILIO_AUTH_KEY}"
+      TWILIO_SERVICE_ID: "${TWILIO_SERVICE_ID}"
+      ADMIN_PANEL_ENABLED: "${ADMIN_PANEL_ENABLED}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      ADMIN_SESSION_NAME: "${ADMIN_SESSION_NAME}"
+      ADMIN_SESSION_KEY: "${ADMIN_SESSION_KEY}"
+      SESSION_NAME: "${API_SESSION_NAME}"
+      SESSION_KEY_1: "${API_SESSION_KEY_1}"
+      SESSION_KEY_2: "${API_SESSION_KEY_2}"
+      NODE_ENV: "production"
+  - name: "socioboard-mysql"
+    image: "mysql:8"
+    environment:
+      MYSQL_DATABASE: "${SQL_DB_NAME}"
+      MYSQL_USER: "${SQL_DB_USER}"
+      MYSQL_PASSWORD: "${SQL_DB_PASS}"
+      MYSQL_ROOT_PASSWORD: "${SQL_DB_ROOT_PASS}"
+    volumes:
+      - "socioboard_mysql:/var/lib/mysql"
+      - "./perma-act-users.sql:/perma-act-users.sql:ro"
+    healthcheck:
+      test: "CMD-SHELL mysqladmin ping -h 127.0.0.1 -u root -p${SQL_DB_ROOT_PASS} || exit 1"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+  - name: "socioboard-mongo"
+    image: "mongo:6"
+    environment:
+      MONGO_INITDB_DATABASE: "${MONGO_DB_NAME}"
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_USER}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASS}"
+    volumes:
+      - "./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro"
+      - "socioboard_mongo:/data/db"
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "80"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  socioboard_api_data: {}
+  socioboard_mysql: {}
+  socioboard_mongo: {}

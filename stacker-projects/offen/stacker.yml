@@ -1,0 +1,47 @@
+name: "offen"
+version: "1.0.0"
+project:
+  identity: "offen"
+install:
+  inputs:
+    commonDomain: "offen.example.com"
+config_contract:
+  app:
+    environment:
+      - name: "OFFEN_SECRET"
+        required: true
+        secret: true
+      - name: "OFFEN_APP_ROOTACCOUNT"
+        required: true
+        secret: true
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "offen/offen:latest"
+  ports:
+    - "3000:3000"
+  volumes:
+    - "offen_data:/var/opt/offen"
+  environment:
+    OFFEN_SERVER_PORT: "3000"
+    OFFEN_DATABASE_DIALECT: "sqlite3"
+    OFFEN_DATABASE_CONNECTIONSTRING: "/var/opt/offen/db.sqlite"
+    OFFEN_SECRET: "${OFFEN_SECRET}"
+    OFFEN_APP_ROOTACCOUNT: "${OFFEN_APP_ROOTACCOUNT}"
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "3000"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  offen_data: {}

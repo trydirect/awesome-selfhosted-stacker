@@ -1,0 +1,46 @@
+name: "goaccess"
+version: "1.0.0"
+project:
+  identity: "goaccess"
+install:
+  inputs:
+    commonDomain: "goaccess.example.com"
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "nginx:1.27-alpine"
+  ports:
+    - "8080:80"
+  volumes:
+    - "goaccess_logs:/var/log/nginx"
+    - "goaccess_public:/usr/share/nginx/html"
+    - "./configs/nginx.conf:/etc/nginx/nginx.conf:ro"
+  environment: {}
+services:
+  - name: "goaccess"
+    image: "allinurl/goaccess:latest"
+    ports:
+      - "127.0.0.1:7890:7890"
+    volumes:
+      - "goaccess_logs:/srv/logs"
+      - "goaccess_public:/srv/report"
+      - "./configs/goaccess.conf:/srv/config/goaccess.conf:ro"
+    command: "sh -c 'mkdir -p /srv/report && touch /srv/logs/access.log && exec goaccess --no-global-config --config-file=/srv/config/goaccess.conf'"
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "8080"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  goaccess_logs: {}
+  goaccess_public: {}

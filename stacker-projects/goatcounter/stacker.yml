@@ -1,0 +1,34 @@
+name: "goatcounter"
+version: "1.0.0"
+project:
+  identity: "goatcounter"
+install:
+  inputs:
+    commonDomain: "stats.example.com"
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "arp242/goatcounter:latest"
+  ports:
+    - "8080:8080"
+  command: "serve -listen :8080 -automigrate"
+  volumes:
+    - "goatcounter_data:/home/goatcounter/goatcounter-data"
+  environment: {}
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "8080"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  goatcounter_data: {}

@@ -1,0 +1,87 @@
+name: s4core
+version: "1.0.0"
+
+project:
+  identity: s4core
+
+install:
+  inputs:
+    commonDomain: storage.example.com
+
+config_contract:
+  app:
+    environment:
+      - name: S4_ROOT_PASSWORD
+        required: true
+        secret: true
+      - name: S4_ACCESS_KEY_ID
+        required: true
+        secret: true
+      - name: S4_SECRET_ACCESS_KEY
+        required: true
+        secret: true
+      - name: S4_MAX_UPLOAD_SIZE
+        required: false
+        secret: false
+      - name: RUST_LOG
+        required: false
+        secret: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+app:
+  type: custom
+  image: s4core/s4core:latest
+  ports:
+    - "9000:9000"
+  environment:
+    S4_BIND: "0.0.0.0:9000"
+    S4_DATA_DIR: /data
+    S4_ROOT_USERNAME: root
+    S4_ROOT_PASSWORD: "${S4_ROOT_PASSWORD}"
+    S4_ACCESS_KEY_ID: "${S4_ACCESS_KEY_ID}"
+    S4_SECRET_ACCESS_KEY: "${S4_SECRET_ACCESS_KEY}"
+    S4_MAX_UPLOAD_SIZE: "${S4_MAX_UPLOAD_SIZE}"
+    RUST_LOG: "${RUST_LOG}"
+  volumes:
+    - s4_data:/data
+  healthcheck:
+    test: "CMD-SHELL wget --spider -q http://localhost:9000/health || exit 1"
+    interval: 30s
+    timeout: 10s
+    retries: 5
+
+services:
+  - name: s4console
+    image: s4core/s4console:latest
+    ports:
+      - "3000:3000"
+    environment:
+      S4_BACKEND_URL: "http://app:9000"
+      NODE_ENV: production
+
+volumes:
+  s4_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: ${HETZNER_REGION}
+    size: ${HETZNER_SERVER_TYPE}
+    public_ports:
+      - "9000"
+      - "3000"
+
+monitoring:
+  status_panel: true
+  healthcheck:
+    endpoint: /health
+    interval: 30s
+
+env_file: .env

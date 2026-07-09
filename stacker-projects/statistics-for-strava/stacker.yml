@@ -1,0 +1,72 @@
+name: "statistics-for-strava"
+version: "1.0.0"
+project:
+  identity: "statistics-for-strava"
+install:
+  inputs:
+    commonDomain: "strava.example.com"
+config_contract:
+  app:
+    environment:
+      - name: "TZ"
+        required: false
+        secret: false
+      - name: "STRAVA_CLIENT_ID"
+        required: true
+        secret: false
+      - name: "STRAVA_CLIENT_SECRET"
+        required: true
+        secret: true
+      - name: "STRAVA_REFRESH_TOKEN"
+        required: true
+        secret: true
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "robiningelbrecht/strava-statistics:latest"
+  ports:
+    - "8081:8080"
+  volumes:
+    - "strava_database:/var/www/storage/database"
+    - "strava_files:/var/www/storage/files"
+    - "strava_gear_maintenance:/var/www/storage/gear-maintenance"
+    - "strava_watch:/var/www/watch"
+  environment:
+    TZ: "${TZ}"
+    STRAVA_CLIENT_ID: "${STRAVA_CLIENT_ID}"
+    STRAVA_CLIENT_SECRET: "${STRAVA_CLIENT_SECRET}"
+    STRAVA_REFRESH_TOKEN: "${STRAVA_REFRESH_TOKEN}"
+services:
+  - name: "daemon"
+    image: "robiningelbrecht/strava-statistics:latest"
+    command: "bin/console app:daemon:run"
+    volumes:
+      - "strava_database:/var/www/storage/database"
+      - "strava_files:/var/www/storage/files"
+      - "strava_gear_maintenance:/var/www/storage/gear-maintenance"
+      - "strava_watch:/var/www/watch"
+    environment:
+      TZ: "${TZ}"
+      STRAVA_CLIENT_ID: "${STRAVA_CLIENT_ID}"
+      STRAVA_CLIENT_SECRET: "${STRAVA_CLIENT_SECRET}"
+      STRAVA_REFRESH_TOKEN: "${STRAVA_REFRESH_TOKEN}"
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "8081"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  strava_database: {}
+  strava_files: {}
+  strava_gear_maintenance: {}
+  strava_watch: {}

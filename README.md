@@ -338,17 +338,17 @@ Deployed and confirmed working (2026-07-07). Start here for production.
 | Umami      | Analytics    |
 | UptimeKuma | Monitoring   |
 
-### Configured, not yet verified (32)
+### Configured, not yet verified (53)
 
 Use these for testing; report results on GitHub to help verify them.
 
-- **Analytics & BI:** Matomo, Metabase, PostHog, Redash, Superset
-- **Collaboration:** Rocket.Chat, Synapse, Zulip, Jitsi Meet, Mastodon, Lemmy, Discourse
+- **Analytics & BI:** Aptabase, Countly, d8a, Daily Stars Explorer, Druid, GoAccess, GoatCounter, HitKeep, Matomo, Metabase, Offen, Plausible, PostHog, Redash, Rybbit, Superset
+- **Collaboration:** Rocket.Chat, Synapse, Zulip, Jitsi Meet, Mastodon, Lemmy, Discourse, Postiz App, Socioboard
 - **Content & CMS:** WordPress, Strapi, Nextcloud, ComfyUI, Dify
-- **Documents:** Paperless-ngx, Wallabag, linkding
-- **Developer tools:** Gitea, Coolify, HermesAgent, insforge
-- **Media & storage:** Jellyfin, Bitwarden
-- **Other:** Open-WebUI, Supabase, SwarmUI, Vaultwarden
+- **Documents:** Paperless-ngx, Wallabag, linkding, ArchivesSpace, Mail Archiver, OpenArchiver
+- **Developer tools:** Activepieces, Gitea, Coolify, HermesAgent, insforge, Middleware
+- **Media & storage:** Jellyfin, Bitwarden, Bitmagnet, Ganymede, Pi-hole, RustFS, S4Core
+- **Other:** Open-WebUI, Statistics for Strava, Supabase, SwarmUI, Vaultwarden
 
 ---
 
@@ -361,4 +361,4 @@ Use these for testing; report results on GitHub to help verify them.
 | Docker Hub         | https://hub.docker.com                                   |
 | Hetzner Docs       | https://docs.hetzner.cloud                               |
 
-Last updated: 2026-07-08 — 10/42 projects tested, 32 awaiting verification.
+Last updated: 2026-07-08 — 10/63 projects tested, 53 awaiting verification.

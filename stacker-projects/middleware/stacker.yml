@@ -1,0 +1,47 @@
+name: "middleware"
+version: "1.0.0"
+project:
+  identity: "middleware"
+install:
+  inputs:
+    commonDomain: "middleware.example.com"
+config_contract:
+  app:
+    environment:
+      - name: "DEFAULT_SYNC_DAYS"
+        required: false
+        secret: false
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "middlewareeng/middleware:latest"
+  ports:
+    - "3333:3333"
+    - "127.0.0.1:9696:9696"
+    - "127.0.0.1:9697:9697"
+  volumes:
+    - "middleware_postgres_data:/var/lib/postgresql/data"
+    - "middleware_keys:/app/keys"
+  environment:
+    PORT: "3333"
+    ANALYTICS_SERVER_PORT: "9696"
+    SYNC_SERVER_PORT: "9697"
+    DEFAULT_SYNC_DAYS: "${DEFAULT_SYNC_DAYS}"
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "3333"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  middleware_postgres_data: {}
+  middleware_keys: {}

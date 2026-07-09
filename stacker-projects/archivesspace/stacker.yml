@@ -1,0 +1,92 @@
+name: "archivesspace"
+version: "1.0.0"
+project:
+  identity: "archivesspace"
+install:
+  inputs:
+    commonDomain: "archivesspace.example.com"
+config_contract:
+  app:
+    environment:
+      - name: "PUBLIC_URL"
+        required: true
+        secret: false
+      - name: "DB_PASSWORD"
+        required: true
+        secret: true
+      - name: "DB_ROOT_PASSWORD"
+        required: true
+        secret: true
+      - name: "FRONTEND_COOKIE_SECRET"
+        required: true
+        secret: true
+      - name: "PUBLIC_COOKIE_SECRET"
+        required: true
+        secret: true
+      - name: "PUBLIC_USER_SECRET"
+        required: true
+        secret: true
+      - name: "SEARCH_USER_SECRET"
+        required: true
+        secret: true
+      - name: "STAFF_USER_SECRET"
+        required: true
+        secret: true
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "archivesspace/archivesspace:latest"
+  ports:
+    - "8080:8080"
+  environment:
+    APPCONFIG_DB_URL: "jdbc:mysql://db:3306/archivesspace?useUnicode=true&characterEncoding=UTF-8&user=as&password=${DB_PASSWORD}"
+    APPCONFIG_SOLR_URL: "http://solr:8983/solr/archivesspace"
+    APPCONFIG_FRONTEND_PROXY_URL: "${PUBLIC_URL}/staff/"
+    APPCONFIG_OAI_PROXY_URL: "${PUBLIC_URL}/oai"
+    APPCONFIG_PUBLIC_PROXY_URL: "${PUBLIC_URL}/"
+    APPCONFIG_BACKEND_URL: "${PUBLIC_URL}"
+    APPCONFIG_FRONTEND_COOKIE_SECRET: "${FRONTEND_COOKIE_SECRET}"
+    APPCONFIG_PUBLIC_COOKIE_SECRET: "${PUBLIC_COOKIE_SECRET}"
+    APPCONFIG_PUBLIC_USER_SECRET: "${PUBLIC_USER_SECRET}"
+    APPCONFIG_SEARCH_USER_SECRET: "${SEARCH_USER_SECRET}"
+    APPCONFIG_STAFF_USER_SECRET: "${STAFF_USER_SECRET}"
+    JAVA_OPTS: "-Djava.awt.headless=true -Dfile.encoding=UTF-8"
+services:
+  - name: "db"
+    image: "mysql:8"
+    command: "--character-set-server=UTF8MB4 --innodb_buffer_pool_size=2G --innodb_buffer_pool_instances=2 --log_bin_trust_function_creators=1"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "archivesspace"
+      MYSQL_USER: "as"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - "archivesspace_mysql:/var/lib/mysql"
+    healthcheck:
+      test: "CMD-SHELL mysqladmin ping -h 127.0.0.1 -u root -p${DB_ROOT_PASSWORD} || exit 1"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+  - name: "solr"
+    image: "archivesspace/solr:latest"
+    command: "solr-create -p 8983 -c archivesspace -d archivesspace"
+    volumes:
+      - "archivesspace_solr:/var/solr"
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "8080"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  archivesspace_mysql: {}
+  archivesspace_solr: {}

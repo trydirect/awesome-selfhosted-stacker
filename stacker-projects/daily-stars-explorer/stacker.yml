@@ -1,0 +1,36 @@
+name: "daily-stars-explorer"
+version: "1.0.0"
+project:
+  identity: "daily-stars-explorer"
+install:
+  inputs:
+    commonDomain: "daily-stars.example.com"
+config_contract:
+  app:
+    environment:
+      - name: "PAT"
+        required: true
+        secret: true
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "ghcr.io/emanuelef/daily-stars-explorer:latest"
+  ports:
+    - "8080:8080"
+  environment:
+    PAT: "${PAT}"
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "8080"
+monitoring:
+  status_panel: true
+env_file: ".env"

@@ -1,0 +1,53 @@
+name: "countly-server"
+version: "1.0.0"
+project:
+  identity: "countly-server"
+install:
+  inputs:
+    commonDomain: "countly.example.com"
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "bitnami/nginx:latest"
+  ports:
+    - "8080:8080"
+  volumes:
+    - "./nginx.server.conf:/opt/bitnami/nginx/conf/server_blocks/countly.conf:ro"
+  environment: {}
+services:
+  - name: "mongodb"
+    image: "bitnami/mongodb:latest"
+    volumes:
+      - "countly_mongodb_data:/bitnami"
+    environment: {}
+  - name: "countly-api"
+    image: "countly/api:latest"
+    environment:
+      COUNTLY_PLUGINS: "mobile,web,desktop,plugins,density,locale,browser,sources,views,logger,systemlogs,populator,reports,crashes,push,star-rating,slipping-away-users,compare,server-stats,dbviewer,times-of-day,compliance-hub,alerts,onboarding,consolidate,remote-config,hooks,dashboards,sdk,data-manager"
+      COUNTLY_CONFIG__MONGODB_HOST: "mongodb"
+      COUNTLY_CONFIG_API_API_WORKERS: "4"
+      COUNTLY_CONFIG__FILESTORAGE: "gridfs"
+      NODE_OPTIONS: "--max-old-space-size=2048"
+  - name: "countly-frontend"
+    image: "countly/frontend:latest"
+    environment:
+      COUNTLY_PLUGINS: "mobile,web,desktop,plugins,density,locale,browser,sources,views,logger,systemlogs,populator,reports,crashes,push,star-rating,slipping-away-users,compare,server-stats,dbviewer,times-of-day,compliance-hub,alerts,onboarding,consolidate,remote-config,hooks,dashboards,sdk,data-manager"
+      COUNTLY_CONFIG__MONGODB_HOST: "mongodb"
+      NODE_OPTIONS: "--max-old-space-size=2048"
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "8080"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  countly_mongodb_data: {}
