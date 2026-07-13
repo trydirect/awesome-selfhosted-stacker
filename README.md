@@ -49,7 +49,7 @@ stacker deploy
 
 ### Own Server
 
-Deploy to a Linux server you control (Ubuntu 20.04+/Debian 11+, 2 GB+ RAM,
+Deploy to a Linux server you control (Ubuntu 24.04+/Debian 12+, 2 GB+ RAM,
 20 GB+ disk, key-based SSH, Docker installed).
 
 ```bash
