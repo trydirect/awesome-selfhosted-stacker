@@ -354,6 +354,73 @@ is `u32`.
 | **swarm-ui** | No `stacker.yml` at root, misconfigured subdirectory | Created proper config at project root with ports/volumes |
 | **All projects** | `healthcheck.retries: "10"` (string) caused parse error | Must be unquoted integer: `retries: 10` |
 | **archivesspace** | Requires one-time `setup-database.sh` on first deploy | Add `app.command:` or run `docker exec ... /archivesspace/scripts/setup-database.sh` |
+| **All projects** | `generate-secrets.sh` sed delimiter bug — `-base64` output contains `/` which breaks sed's `/` delimiter, corrupting `.env` values | Use `|` delimiter: `sed -i "" "s|^KEY=.*|KEY=$(openssl rand -base64 32)|" .env` |
+
+---
+
+## 9. Config Bundle / Bind Mount Pipeline
+
+### Overview
+
+Config files (`.env`, `config.yaml`, etc.) referenced in `app.volumes` bind mounts are
+collected into a config bundle (`config-bundle.tar.zst`) and shipped to the remote server.
+The bundle is stored under `.stacker/deploy/<environment>/`.
+
+### Pipeline
+
+```
+stacker.yml (app.volumes) → build_config_bundle() → tar.zst archive + manifest
+→ attach to deploy form (config_files + config_bundle fields)
+→ Stacker API → MQ → Install Service extracts files → compose references rewritten
+```
+
+### Bug 1: Environment Gate (fixed)
+
+**Root cause:** `build_config_bundle` at `deploy.rs:3266` was gated on
+`selected_environment` being `Some`. Without `deploy.environment` + `environments:`
+block (or `--env` flag), `config_bundle` was `None` and no config files were collected.
+
+**Manifestation:** `config_files=[]` in Install Service Ansible/Terraform command for
+every deployment without an environment configured.
+
+**Fix (#1):** Removed the environment gate. `build_config_bundle` now uses `"default"`
+as the environment name when none is configured. Added `reference_base: &Path` parameter
+so the caller specifies path resolution semantics:
+- Generated compose (`.stacker/…`): resolve against `project_root`
+- User-supplied compose: resolve against the compose's own parent directory
+
+### Bug 2: `./` Prefix Stripped from Bind Mount Sources (fixed)
+
+**Root cause:** `collect_reference` in `config_bundle.rs:368` returned
+`destination_path` (e.g., `config.yaml`) without the `./` prefix. When
+`rewrite_volumes` at `config_bundle.rs:318` substituted it back into the volume spec,
+the result was `config.yaml:/etc/d8a/config.yaml:ro` — Docker treats bare names as
+**named volumes**, not bind mounts.
+
+**Manifestation:** Container started but the config file was not mounted. Docker created
+an empty named volume "config.yaml" instead.
+
+**Fix (#2):** `collect_reference` now re-adds `./` prefix when the original reference
+started with `./`:
+```rust
+if reference.starts_with("./") && !dest.starts_with("./") {
+    dest.insert_str(0, "./");
+}
+```
+
+### Verification
+
+1. Deploy must show "Config bundle:" with collected files
+2. Remote compose must have `./` prefix on bind mount sources: `./config.yaml:`
+3. `docker inspect` should show `Type: bind` for the mount
+4. File content must be readable inside the container
+
+### Out of scope
+
+The same `.stacker/`-vs-project-root path mismatch affects local `docker compose up`
+on the generated compose — `normalize_generated_compose_paths` doesn't rewrite volume
+sources the way it rewrites `build.context`. If local deploys fail with missing bind
+mount files, extend `normalize_generated_compose_paths` to rewrite volume sources too.
 
 ---
 
@@ -436,7 +503,7 @@ or check `~/.config/stacker/ssh/` for the key file.
 ## 13. Config Pipeline (Rust Source Map)
 
 | File | Role |
-|---|---|
+|---|---|---|
 | `src/cli/config_parser.rs:246` | `ServiceDefinition` — `name`, `image`, `ports`, `environment`, `volumes`, `depends_on`, `command`, `healthcheck` |
 | `src/cli/config_parser.rs:195` | `AppSource` — `app_type`, `path`, `dockerfile`, `image`, `build`, `ports`, `volumes`, `environment`, `command`, `healthcheck` |
 | `src/cli/config_parser.rs:270` | `ComposeHealthcheck` — `test`, `interval`, `timeout`, `retries` |
@@ -444,16 +511,24 @@ or check `~/.config/stacker/ssh/` for the key file.
 | `src/cli/config_parser.rs:739` | `ConfigContract` — `services` with `required`, `optional`, `secret` declarations |
 | `src/cli/config_parser.rs:1295` | `${VAR_NAME}` substitution — resolves from OS env + `env_file` |
 | `src/cli/config_parser.rs:542` | `CloudConfig` struct — `provider`, `region`, `size`, `public_ports` |
-| `src/cli/generator/compose.rs:179` | `build_app_service` — constructs `ComposeService` from `AppSource` (now includes `command`/`healthcheck`) |
+| `src/cli/generator/compose.rs:179` | `build_app_service` — constructs `ComposeService` from `AppSource` |
 | `src/cli/generator/compose.rs:324` | `render()` — writes docker-compose.yml from `ComposeService` structs |
 | `src/cli/compose_service_sync.rs:232` | `service_to_compose_value` — converts `ServiceDefinition` to compose YAML |
-| `src/cli/config_bundle.rs:67` | `build_config_bundle` — rewrites compose references, collects files, creates tar.zst bundle |
-| `src/cli/config_bundle.rs:283` | `rewrite_volumes` — processes volume mounts (**NB: skips advanced YAML mapping syntax**) |
+| `src/cli/config_bundle.rs:67` | `build_config_bundle` — collects bind-mount files, env_file, creates tar.zst archive |
+| `src/cli/config_bundle.rs:224` | `rewrite_compose_references` — rewrites compose volume refs to bundle destinations |
+| `src/cli/config_bundle.rs:301` | `rewrite_volumes` — processes each volume mount in compose |
+| `src/cli/config_bundle.rs:348` | `parse_bind_mount` — identifies bind mounts (starts with `.`, `/`, `~`, or contains `/`) |
+| `src/cli/config_bundle.rs:361` | `collect_reference` — resolves path, collects file, returns destination path (with `./` prefix fix) |
+| `src/cli/config_bundle.rs:373` | `collect_file` — canonicalizes, validates, reads file bytes |
+| `src/cli/config_bundle.rs:519` | `display_project_path` — strips project root from canonical path |
 | `src/cli/stacker_client.rs:3493` | `parse_docker_image` — splits `user/repo:tag` into name + tag |
 | `src/cli/stacker_client.rs:3890` | `build_deploy_form` — builds JSON sent to API |
+| `src/cli/stacker_client.rs:3826` | `attach_config_bundle_to_deploy_form` — adds `config_files` + `config_bundle` to deploy form |
 | `src/forms/project/docker_image.rs:7` | `DockerImage` — struct with `dockerhub_user`, `dockerhub_name`, `dockerhub_image`, `dockerhub_tag`, `dockerhub_password` |
 | `src/forms/project/deploy.rs:59` | API `Deploy` form — receives deploy request |
 | `src/routes/project/deploy.rs:1235` | `execute_deployment` — orchestrates deploy |
+| `src/routes/project/deploy.rs:1277` | `apply_deploy_bundle` — stores `config_files`/`config_bundle` in `project.metadata` |
+| `src/console/commands/cli/deploy.rs:3268` | `build_config_bundle` call site — passes `project_dir` or compose parent as `reference_base` |
 | `src/forms/firewall.rs:40` | `parse_public_port` — parses "8000" or "53/udp" |
 
 ---

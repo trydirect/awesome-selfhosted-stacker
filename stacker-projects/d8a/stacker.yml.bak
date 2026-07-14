@@ -1,0 +1,35 @@
+name: "d8a"
+version: "1.0.0"
+project:
+  identity: "d8a"
+install:
+  inputs:
+    commonDomain: "d8a.example.com"
+hooks:
+  pre_build: "./scripts/generate-secrets.sh"
+app:
+  type: "custom"
+  image: "ghcr.io/d8a-tech/d8a:latest"
+  ports:
+    - "8080:8080"
+  command: "server --config /etc/d8a/config.yaml"
+  volumes:
+    - "d8a_data:/var/lib/d8a"
+    - "./config.yaml:/etc/d8a/config.yaml:ro"
+  environment: {}
+proxy:
+  type: "none"
+  auto_detect: false
+deploy:
+  target: "local"
+  cloud:
+    provider: "hetzner"
+    region: "fsn1"
+    size: "cpx22"
+    public_ports:
+      - "8080"
+monitoring:
+  status_panel: true
+env_file: ".env"
+volumes:
+  d8a_data: {}

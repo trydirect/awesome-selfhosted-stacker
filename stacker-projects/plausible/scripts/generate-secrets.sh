@@ -28,7 +28,7 @@ if need "DB_PASSWORD"; then
 fi
 
 if need "TOTP_VAULT_KEY"; then
-  sed -i '' "s/^TOTP_VAULT_KEY=.*/TOTP_VAULT_KEY=$(openssl rand -base64 32)/" .env
+  sed -i '' "s|^TOTP_VAULT_KEY=.*|TOTP_VAULT_KEY=$(openssl rand -base64 32)|" .env
   echo "  Generated TOTP_VAULT_KEY"
 fi
 

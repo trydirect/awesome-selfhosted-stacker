@@ -12,7 +12,7 @@ need() {
 }
 
 if need "APP_KEY"; then
-  sed -i '' "s/^APP_KEY=.*/APP_KEY=base64:$(openssl rand -base64 32)/" .env
+  sed -i '' "s|^APP_KEY=.*|APP_KEY=base64:$(openssl rand -base64 32)|" .env
   echo "  Generated APP_KEY"
 fi
 

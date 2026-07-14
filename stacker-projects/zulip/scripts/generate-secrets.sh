@@ -48,7 +48,7 @@ if need "SECRET_KEY_BASE"; then
 fi
 
 if need "OTP_SECRET"; then
-  sed -i '' "s/^OTP_SECRET=.*/OTP_SECRET=$(openssl rand -base64 32)/" .env
+  sed -i '' "s|^OTP_SECRET=.*|OTP_SECRET=$(openssl rand -base64 32)|" .env
   echo "  Generated OTP_SECRET"
 fi
 

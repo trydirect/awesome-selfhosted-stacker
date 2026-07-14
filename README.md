@@ -321,7 +321,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (14)
+### Tested and verified (19)
 
 Deployed and confirmed working. Start here for production.
 
@@ -337,12 +337,21 @@ Deployed and confirmed working. Start here for production.
 | Countly Server | Analytics   | ✅   | —              | All 4 containers running; nginx config requires manual SCP to server (Stacker does not copy bind-mount files) |
 | Floci         | Deployment   | —     | —               | Pre-existing |
 | Ghost         | Blogging     | —     | —               | Pre-existing |
+| GoAccess      | Analytics    | ⚠️   | ⚠️              | Config bind-mount files not copied to server; app missing from server compose |
+| GoatCounter   | Analytics    | ✅    | ✅              | Single-container, no secrets needed |
+| HitKeep       | Bookmarks   | ✅    | —               | Single container, no config files |
+| Linkding      | Bookmarks   | ✅    | —               | Single container, returns 302 |
+| Matomo        | Analytics    | ✅    | —               | App + MariaDB, returns 200 |
+| Offen         | Analytics    | ✅   | —              | Single container; first attempt failed (Hetzner contention), retry succeeded |
 | Outline       | Team wiki    | —     | —               | Pre-existing |
 | Plausible     | Analytics    | —     | —               | Pre-existing |
 | ROMM          | ROM manager  | —     | —               | Pre-existing |
+| Rybbit        | Analytics    | ❌   | —              | Clickhouse config bind mounts not copied to server |
+| StackDog      | DevOps tool  | —     | —               | Pre-existing |
 | StackDog      | DevOps tool  | —     | —               | Pre-existing |
 | Umami         | Analytics    | —     | —               | Pre-existing |
 | UptimeKuma    | Monitoring   | —     | —               | Pre-existing |
+| Wallabag      | Read-it-later | ✅   | —              | App + postgres + redis, returns 302 |
 
 Local deploys fail on all projects — Docker daemon not available on test machine. All results from cloud (Hetzner) and existing server (Ubuntu 26.04).
 
@@ -350,10 +359,10 @@ Local deploys fail on all projects — Docker daemon not available on test machi
 
 Use these for testing; report results on GitHub to help verify them.
 
-- **Analytics & BI:** d8a, Daily Stars Explorer, Druid, GoAccess, GoatCounter, HitKeep, Matomo, Metabase, Offen, Plausible, PostHog, Redash, Rybbit, Superset
+- **Analytics & BI:** d8a, Daily Stars Explorer, Druid, Metabase, Plausible, PostHog, Redash, Superset
 - **Collaboration:** Rocket.Chat, Synapse, Zulip, Jitsi Meet, Mastodon, Lemmy, Discourse, Postiz App, Socioboard
 - **Content & CMS:** WordPress, Strapi, Nextcloud, ComfyUI, Dify
-- **Documents:** Paperless-ngx, Wallabag, linkding, ArchivesSpace, Mail Archiver, OpenArchiver
+- **Documents:** Paperless-ngx, ArchivesSpace, Mail Archiver, OpenArchiver
 - **Developer tools:** Activepieces, Gitea, Coolify, HermesAgent, insforge, Middleware
 - **Media & storage:** Jellyfin, Ganymede, Pi-hole, RustFS, S4Core
 - **Other:** Open-WebUI, Statistics for Strava, Supabase, SwarmUI, Vaultwarden
@@ -369,4 +378,4 @@ Use these for testing; report results on GitHub to help verify them.
 | Docker Hub         | https://hub.docker.com                                   |
 | Hetzner Docs       | https://docs.hetzner.cloud                               |
 
-Last updated: 2026-07-14 — 18/63 projects tested, 45 awaiting verification.
+Last updated: 2026-07-14 — 26/63 projects tested, 37 awaiting verification.
