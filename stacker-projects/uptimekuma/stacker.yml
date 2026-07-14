@@ -1,46 +1,79 @@
 name: uptimekuma
-version: "1.0.0"
-
+version: 1.0.0
+organization: null
 project:
   identity: uptimekuma
-
 app:
   type: custom
+  path: .
+  dockerfile: null
   image: louislam/uptime-kuma:2
+  build: null
   ports:
-    - "3001:3001"
-  environment:
-    TZ: "${TZ}"
-    UMASK: "0022"
+  - 3001:3001
   volumes:
-    - uptime_kuma_data:/app/data
+  - uptime_kuma_data:/app/data
+  environment:
+    TZ: ${TZ}
+    UMASK: '0022'
+  command: null
   healthcheck:
-    test: "CMD-SHELL curl -fsS http://localhost:3001 || exit 1"
+    test: CMD-SHELL curl -fsS http://localhost:3001 || exit 1
     interval: 30s
     timeout: 10s
     retries: 5
-
-volumes:
-  uptime_kuma_data: {}
-
-install:
-  inputs:
-    commonDomain: uptimekuma.example.com
-
+services: []
 proxy:
   type: none
   auto_detect: false
-
+  domains: []
+  config: null
 deploy:
-  target: cloud
+  target: server
+  environment: null
+  compose_file: null
+  deployment_hash: null
   cloud:
     provider: hetzner
+    orchestrator: remote
     region: ${HETZNER_REGION}
     size: ${HETZNER_SERVER_TYPE}
+    install_image: null
+    remote_payload_file: null
+    ssh_key: null
+    key: null
+    server: null
     public_ports:
-      - "3001"
-
+    - '3001'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    port: 22
+  registry: null
+  default_target: null
+  targets: {}
+install:
+  inputs:
+    commonDomain: uptimekuma.example.com
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
 monitoring:
   status_panel: true
-
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: null
+  post_deploy: null
+  on_failure: null
 env_file: .env
+env: {}
+config_contract:
+  services: {}

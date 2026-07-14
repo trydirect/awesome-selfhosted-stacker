@@ -2,21 +2,25 @@ services:
   app:
     image: vaultwarden/server:latest
     ports:
-    - 8080:80
+      - "8080:80"
     environment:
-      DOMAIN: http://localhost:8080
-      SIGNUPS_ALLOWED: 'true'
+      ADMIN_TOKEN: "ovEAH4/6K38td8xN/satkoKy0BWQOIriwXqEmLbWNOtLPOyk8TzuDHXIQ8aphnQ6"
+      DOMAIN: "http://localhost:8080"
+      SIGNUPS_ALLOWED: "true"
     volumes:
-    - vaultwarden_data:/data
+      - "vaultwarden_data:/data"
     restart: unless-stopped
     networks:
-    - app-network
+      - app-network
     labels:
-      my.stacker.dns: app
-      my.stacker.scope: project
-      my.stacker.service: app
+      my.stacker.dns: "app"
+      my.stacker.scope: "project"
+      my.stacker.service: "app"
+
 networks:
   app-network:
     driver: bridge
+
 volumes:
-  vaultwarden_data: null
+  vaultwarden_data:
+
