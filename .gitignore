@@ -11,3 +11,8 @@ stacker-projects/.visited
 **/deploy/data/certs/
 .visited
 .deployed
+stacker-project-test
+stacker-project-test.pub
+EXISTING_DEPLOY_SUCCESS.md
+CLOUD_DEPLOY_SUCCESS.md
+BUGS.md

@@ -12,15 +12,14 @@ app:
   image: "bitnami/nginx:latest"
   ports:
     - "8080:8080"
-  volumes:
-    - "./nginx.server.conf:/opt/bitnami/nginx/conf/server_blocks/countly.conf:ro"
   environment: {}
 services:
   - name: "mongodb"
     image: "bitnami/mongodb:latest"
     volumes:
       - "countly_mongodb_data:/bitnami"
-    environment: {}
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
   - name: "countly-api"
     image: "countly/api:latest"
     environment:

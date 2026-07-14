@@ -353,6 +353,7 @@ is `u32`.
 | **AstrBot** | `stacker.yml` was template placeholder `<stacker.yml content here>` | Created from official compose |
 | **swarm-ui** | No `stacker.yml` at root, misconfigured subdirectory | Created proper config at project root with ports/volumes |
 | **All projects** | `healthcheck.retries: "10"` (string) caused parse error | Must be unquoted integer: `retries: 10` |
+| **archivesspace** | Requires one-time `setup-database.sh` on first deploy | Add `app.command:` or run `docker exec ... /archivesspace/scripts/setup-database.sh` |
 
 ---
 

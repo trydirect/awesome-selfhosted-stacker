@@ -321,33 +321,41 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (10)
+### Tested and verified (14)
 
-Deployed and confirmed working (2026-07-07). Start here for production.
+Deployed and confirmed working. Start here for production.
 
-| Project    | Type         |
-|------------|--------------|
-| ArchiveBox | Web archive  |
-| AstrBot    | AI chatbot   |
-| Floci      | Deployment   |
-| Ghost      | Blogging     |
-| Outline    | Team wiki    |
-| Plausible  | Analytics    |
-| ROMM       | ROM manager  |
-| StackDog   | DevOps tool  |
-| Umami      | Analytics    |
-| UptimeKuma | Monitoring   |
+| Project       | Type         | Cloud | Existing Server | Notes |
+|---------------|--------------|-------|-----------------|-------|
+| Aptabase      | Analytics    | ✅    | ✅              | |
+| ArchiveBox    | Web archive  | —     | —               | Pre-existing |
+| AstrBot       | AI chatbot   | —     | —               | Pre-existing |
+| Bitmagnet     | BitTorrent   | ✅    | ✅              | |
+| Bitwarden     | Password mgr | ✅    | ✅              | |
+| ComfyUI       | AI image gen | ⚠️   | ❌              | Cloud: container runs but not reachable on 8188 (listens on 127.0.0.1). Existing server: deploy paused — Ansible `remote_user` bug |
+| Coolify       | PaaS         | ❌   | —              | Cloud deploy paused with `local-exec provisioner error` — VM provisioned but compose never runs |
+| Countly Server | Analytics   | ✅   | —              | All 4 containers running; nginx config requires manual SCP to server (Stacker does not copy bind-mount files) |
+| Floci         | Deployment   | —     | —               | Pre-existing |
+| Ghost         | Blogging     | —     | —               | Pre-existing |
+| Outline       | Team wiki    | —     | —               | Pre-existing |
+| Plausible     | Analytics    | —     | —               | Pre-existing |
+| ROMM          | ROM manager  | —     | —               | Pre-existing |
+| StackDog      | DevOps tool  | —     | —               | Pre-existing |
+| Umami         | Analytics    | —     | —               | Pre-existing |
+| UptimeKuma    | Monitoring   | —     | —               | Pre-existing |
 
-### Configured, not yet verified (53)
+Local deploys fail on all projects — Docker daemon not available on test machine. All results from cloud (Hetzner) and existing server (Ubuntu 26.04).
+
+### Configured, not yet verified (49)
 
 Use these for testing; report results on GitHub to help verify them.
 
-- **Analytics & BI:** Aptabase, Countly, d8a, Daily Stars Explorer, Druid, GoAccess, GoatCounter, HitKeep, Matomo, Metabase, Offen, Plausible, PostHog, Redash, Rybbit, Superset
+- **Analytics & BI:** d8a, Daily Stars Explorer, Druid, GoAccess, GoatCounter, HitKeep, Matomo, Metabase, Offen, Plausible, PostHog, Redash, Rybbit, Superset
 - **Collaboration:** Rocket.Chat, Synapse, Zulip, Jitsi Meet, Mastodon, Lemmy, Discourse, Postiz App, Socioboard
 - **Content & CMS:** WordPress, Strapi, Nextcloud, ComfyUI, Dify
 - **Documents:** Paperless-ngx, Wallabag, linkding, ArchivesSpace, Mail Archiver, OpenArchiver
 - **Developer tools:** Activepieces, Gitea, Coolify, HermesAgent, insforge, Middleware
-- **Media & storage:** Jellyfin, Bitwarden, Bitmagnet, Ganymede, Pi-hole, RustFS, S4Core
+- **Media & storage:** Jellyfin, Ganymede, Pi-hole, RustFS, S4Core
 - **Other:** Open-WebUI, Statistics for Strava, Supabase, SwarmUI, Vaultwarden
 
 ---
@@ -361,4 +369,4 @@ Use these for testing; report results on GitHub to help verify them.
 | Docker Hub         | https://hub.docker.com                                   |
 | Hetzner Docs       | https://docs.hetzner.cloud                               |
 
-Last updated: 2026-07-08 — 10/63 projects tested, 53 awaiting verification.
+Last updated: 2026-07-14 — 18/63 projects tested, 45 awaiting verification.
