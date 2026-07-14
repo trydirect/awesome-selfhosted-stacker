@@ -11,6 +11,7 @@ install:
 app:
   type: custom
   image: ghcr.io/mastodon/mastodon:latest
+  command: bash -c "bundle exec rails db:prepare && bundle exec puma -C config/puma.rb"
   ports:
     - "3000:3000"
   environment:
@@ -20,6 +21,9 @@ app:
     OTP_SECRET: "${OTP_SECRET}"
     VAPID_PRIVATE_KEY: "${VAPID_PRIVATE_KEY}"
     VAPID_PUBLIC_KEY: "${VAPID_PUBLIC_KEY}"
+    ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "${ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY}"
+    ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "${ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT}"
+    ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "${ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY}"
     DB_HOST: mastodon_db
     DB_PORT: "5432"
     DB_NAME: mastodon_production
@@ -72,6 +76,9 @@ services:
       REDIS_PORT: "6379"
       RAILS_ENV: production
       SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
+      ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "${ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY}"
+      ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "${ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT}"
+      ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "${ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY}"
     depends_on:
       - mastodon_db
       - redis
@@ -89,7 +96,7 @@ deploy:
   cloud:
     provider: hetzner
     region: fsn1
-    size: cpx31
+    size: cpx22
     public_ports:
       - "3000"
 

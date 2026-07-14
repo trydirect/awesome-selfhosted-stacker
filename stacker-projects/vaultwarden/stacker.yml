@@ -1,58 +1,76 @@
 name: vaultwarden
-version: "1.0.0"
-
+version: 1.0.0
+organization: null
 project:
   identity: vaultwarden
-
-install:
-  inputs:
-    commonDomain: ""
-
-config_contract:
-  app:
-    environment:
-      - name: DOMAIN
-        required: true
-        secret: false
-      - name: SIGNUPS_ALLOWED
-        required: false
-        secret: false
-      - name: ADMIN_TOKEN
-        required: true
-        secret: true
-
-hooks:
-  pre_build: ./scripts/generate-secrets.sh
-
 app:
   type: custom
   path: .
+  dockerfile: null
   image: vaultwarden/server:latest
+  build: null
   ports:
-    - "8080:80"
-  environment:
-    DOMAIN: "http://localhost:8080"
-    SIGNUPS_ALLOWED: "true"
-    ADMIN_TOKEN: "${ADMIN_TOKEN}"
+  - 8080:80
   volumes:
-    - vaultwarden_data:/data
-
+  - vaultwarden_data:/data
+  environment:
+    ADMIN_TOKEN: ${ADMIN_TOKEN}
+    SIGNUPS_ALLOWED: 'true'
+    DOMAIN: http://localhost:8080
+  command: null
+  healthcheck: null
 services: []
-
 proxy:
   type: none
   auto_detect: false
-
+  domains: []
+  config: null
 deploy:
-  target: local
+  target: server
+  environment: null
+  compose_file: null
+  deployment_hash: null
   cloud:
     provider: hetzner
+    orchestrator: remote
     region: fsn1
     size: cpx22
+    install_image: null
+    remote_payload_file: null
+    ssh_key: null
+    key: null
+    server: null
     public_ports:
-      - "8080"
-
+    - '8080'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    port: 22
+  registry: null
+  default_target: null
+  targets: {}
+install:
+  inputs:
+    commonDomain: ''
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
 monitoring:
   status_panel: true
-
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+  post_deploy: null
+  on_failure: null
 env_file: .env
+env: {}
+config_contract:
+  services: {}

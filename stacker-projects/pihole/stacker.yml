@@ -1,68 +1,81 @@
 name: pihole
-version: "1.0.0"
-
+version: 1.0.0
+organization: null
 project:
   identity: pihole
-
-install:
-  inputs:
-    commonDomain: ""
-
-config_contract:
-  app:
-    environment:
-      - name: TZ
-        required: false
-        secret: false
-      - name: WEBPASSWORD
-        required: true
-        secret: true
-      - name: PIHOLE_DNS_
-        required: false
-        secret: false
-      - name: DNSSEC
-        required: false
-        secret: false
-      - name: CONDITIONAL_FORWARDING
-        required: false
-        secret: false
-
-hooks:
-  pre_build: ./scripts/generate-secrets.sh
-
 app:
   type: custom
   path: .
+  dockerfile: null
   image: pihole/pihole:latest
+  build: null
   ports:
-    - "8080:80"
-    - "8053:53/udp"
-    - "8053:53/tcp"
+  - 8080:80
+  - 8053:53/udp
+  - 8053:53/tcp
+  volumes: []
   environment:
-    TZ: "${TZ}"
-    WEBPASSWORD: "${WEBPASSWORD}"
-    PIHOLE_DNS_: "${PIHOLE_DNS_}"
-    DNSSEC: "true"
-    CONDITIONAL_FORWARDING: "false"
-
+    PIHOLE_DNS_: ${PIHOLE_DNS_}
+    DNSSEC: 'true'
+    TZ: ${TZ}
+    CONDITIONAL_FORWARDING: 'false'
+    WEBPASSWORD: ${WEBPASSWORD}
+  command: null
+  healthcheck: null
 services: []
-
 proxy:
   type: none
   auto_detect: false
-
+  domains: []
+  config: null
 deploy:
-  target: local
+  target: server
+  environment: null
+  compose_file: null
+  deployment_hash: null
   cloud:
     provider: hetzner
+    orchestrator: remote
     region: fsn1
     size: cpx22
+    install_image: null
+    remote_payload_file: null
+    ssh_key: null
+    key: null
+    server: null
     public_ports:
-      - "8080"
-      - "8053/tcp"
-      - "8053/udp"
-
+    - '8080'
+    - 8053/tcp
+    - 8053/udp
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    port: 22
+  registry: null
+  default_target: null
+  targets: {}
+install:
+  inputs:
+    commonDomain: ''
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
 monitoring:
   status_panel: true
-
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+  post_deploy: null
+  on_failure: null
 env_file: .env
+env: {}
+config_contract:
+  services: {}
