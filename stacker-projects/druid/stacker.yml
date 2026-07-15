@@ -1,163 +1,163 @@
-name: "druid"
-version: "1.0.0"
+name: druid
+version: 1.0.0
 project:
-  identity: "druid"
+  identity: druid
 install:
   inputs:
-    commonDomain: "druid.example.com"
+    commonDomain: druid.example.com
 config_contract:
   app:
     environment:
-      - name: "DB_PASSWORD"
-        required: true
-        secret: true
+    - name: DB_PASSWORD
+      required: true
+      secret: true
 hooks:
-  pre_build: "./scripts/generate-secrets.sh"
+  pre_build: ./scripts/generate-secrets.sh
 app:
-  type: "custom"
-  image: "apache/druid:38.0.0"
+  type: custom
+  image: apache/druid:31.0.0
   ports:
-    - "8888:8888"
-  command: "router"
+  - 8888:8888
+  command: router
   volumes:
-    - "druid_shared:/opt/shared"
-    - "druid_router_var:/opt/druid/var"
+  - druid_shared:/opt/shared
+  - druid_router_var:/opt/druid/var
   environment:
-    DRUID_SINGLE_NODE_CONF: "micro-quickstart"
-    druid_emitter_logging_logLevel: "debug"
-    druid_extensions_loadList: "[\"druid-histogram\", \"druid-datasketches\", \"druid-lookups-cached-global\", \"postgresql-metadata-storage\"]"
-    druid_zk_service_host: "zookeeper"
-    druid_metadata_storage_type: "postgresql"
-    druid_metadata_storage_connector_connectURI: "jdbc:postgresql://postgres:5432/druid"
-    druid_metadata_storage_connector_user: "druid"
-    druid_metadata_storage_connector_password: "${DB_PASSWORD}"
-    druid_storage_type: "local"
-    druid_storage_storageDirectory: "/opt/shared/segments"
-    druid_indexer_logs_type: "file"
-    druid_indexer_logs_directory: "/opt/shared/indexing-logs"
-    druid_processing_numThreads: "2"
-    druid_processing_numMergeBuffers: "2"
+    DRUID_SINGLE_NODE_CONF: micro-quickstart
+    druid_emitter_logging_logLevel: debug
+    druid_zk_service_host: zookeeper
+    druid_metadata_storage_type: postgresql
+    druid_metadata_storage_connector_connectURI: jdbc:postgresql://postgres:5432/druid
+    druid_metadata_storage_connector_user: druid
+    druid_metadata_storage_connector_password: ${DB_PASSWORD}
+    druid_storage_type: local
+    druid_storage_storageDirectory: /opt/shared/segments
+    druid_indexer_logs_type: file
+    druid_indexer_logs_directory: /opt/shared/indexing-logs
+    druid_processing_numThreads: '2'
+    druid_processing_numMergeBuffers: '2'
 services:
-  - name: "postgres"
-    image: "postgres:17.6"
-    environment:
-      POSTGRES_DB: "druid"
-      POSTGRES_USER: "druid"
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-    volumes:
-      - "druid_metadata_data:/var/lib/postgresql/data"
-    healthcheck:
-      test: "CMD-SHELL pg_isready -U druid -d druid"
-      interval: "10s"
-      timeout: "5s"
-      retries: 10
-  - name: "zookeeper"
-    image: "zookeeper:3.5.10"
-    environment:
-      ZOO_MY_ID: "1"
-    volumes:
-      - "druid_zookeeper_data:/data"
-      - "druid_zookeeper_datalog:/datalog"
-  - name: "coordinator"
-    image: "apache/druid:38.0.0"
-    command: "coordinator"
-    volumes:
-      - "druid_shared:/opt/shared"
-      - "druid_coordinator_var:/opt/druid/var"
-    environment:
-      DRUID_SINGLE_NODE_CONF: "micro-quickstart"
-      druid_emitter_logging_logLevel: "debug"
-      druid_extensions_loadList: "[\"druid-histogram\", \"druid-datasketches\", \"druid-lookups-cached-global\", \"postgresql-metadata-storage\"]"
-      druid_zk_service_host: "zookeeper"
-      druid_metadata_storage_type: "postgresql"
-      druid_metadata_storage_connector_connectURI: "jdbc:postgresql://postgres:5432/druid"
-      druid_metadata_storage_connector_user: "druid"
-      druid_metadata_storage_connector_password: "${DB_PASSWORD}"
-      druid_storage_type: "local"
-      druid_storage_storageDirectory: "/opt/shared/segments"
-      druid_indexer_logs_type: "file"
-      druid_indexer_logs_directory: "/opt/shared/indexing-logs"
-      druid_processing_numThreads: "2"
-      druid_processing_numMergeBuffers: "2"
-  - name: "broker"
-    image: "apache/druid:38.0.0"
-    command: "broker"
-    volumes:
-      - "druid_broker_var:/opt/druid/var"
-    environment:
-      DRUID_SINGLE_NODE_CONF: "micro-quickstart"
-      druid_emitter_logging_logLevel: "debug"
-      druid_extensions_loadList: "[\"druid-histogram\", \"druid-datasketches\", \"druid-lookups-cached-global\", \"postgresql-metadata-storage\"]"
-      druid_zk_service_host: "zookeeper"
-      druid_metadata_storage_type: "postgresql"
-      druid_metadata_storage_connector_connectURI: "jdbc:postgresql://postgres:5432/druid"
-      druid_metadata_storage_connector_user: "druid"
-      druid_metadata_storage_connector_password: "${DB_PASSWORD}"
-      druid_storage_type: "local"
-      druid_storage_storageDirectory: "/opt/shared/segments"
-      druid_indexer_logs_type: "file"
-      druid_indexer_logs_directory: "/opt/shared/indexing-logs"
-      druid_processing_numThreads: "2"
-      druid_processing_numMergeBuffers: "2"
-  - name: "historical"
-    image: "apache/druid:38.0.0"
-    command: "historical"
-    volumes:
-      - "druid_shared:/opt/shared"
-      - "druid_historical_var:/opt/druid/var"
-    environment:
-      DRUID_SINGLE_NODE_CONF: "micro-quickstart"
-      druid_emitter_logging_logLevel: "debug"
-      druid_extensions_loadList: "[\"druid-histogram\", \"druid-datasketches\", \"druid-lookups-cached-global\", \"postgresql-metadata-storage\"]"
-      druid_zk_service_host: "zookeeper"
-      druid_metadata_storage_type: "postgresql"
-      druid_metadata_storage_connector_connectURI: "jdbc:postgresql://postgres:5432/druid"
-      druid_metadata_storage_connector_user: "druid"
-      druid_metadata_storage_connector_password: "${DB_PASSWORD}"
-      druid_storage_type: "local"
-      druid_storage_storageDirectory: "/opt/shared/segments"
-      druid_indexer_logs_type: "file"
-      druid_indexer_logs_directory: "/opt/shared/indexing-logs"
-      druid_processing_numThreads: "2"
-      druid_processing_numMergeBuffers: "2"
-  - name: "middlemanager"
-    image: "apache/druid:38.0.0"
-    ports:
-      - "8091:8091"
-      - "8100-8105:8100-8105"
-    command: "middleManager"
-    volumes:
-      - "druid_shared:/opt/shared"
-      - "druid_middlemanager_var:/opt/druid/var"
-    environment:
-      DRUID_SINGLE_NODE_CONF: "micro-quickstart"
-      druid_emitter_logging_logLevel: "debug"
-      druid_extensions_loadList: "[\"druid-histogram\", \"druid-datasketches\", \"druid-lookups-cached-global\", \"postgresql-metadata-storage\"]"
-      druid_zk_service_host: "zookeeper"
-      druid_metadata_storage_type: "postgresql"
-      druid_metadata_storage_connector_connectURI: "jdbc:postgresql://postgres:5432/druid"
-      druid_metadata_storage_connector_user: "druid"
-      druid_metadata_storage_connector_password: "${DB_PASSWORD}"
-      druid_storage_type: "local"
-      druid_storage_storageDirectory: "/opt/shared/segments"
-      druid_indexer_logs_type: "file"
-      druid_indexer_logs_directory: "/opt/shared/indexing-logs"
-      druid_processing_numThreads: "2"
-      druid_processing_numMergeBuffers: "2"
+- name: postgres
+  image: postgres:17.6
+  environment:
+    POSTGRES_DB: druid
+    POSTGRES_USER: druid
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+  volumes:
+  - druid_metadata_data:/var/lib/postgresql/data
+  healthcheck:
+    test: CMD-SHELL pg_isready -U druid -d druid
+    interval: 10s
+    timeout: 5s
+    retries: 10
+- name: zookeeper
+  image: zookeeper:3.5.10
+  environment:
+    ZOO_MY_ID: '1'
+  volumes:
+  - druid_zookeeper_data:/data
+  - druid_zookeeper_datalog:/datalog
+- name: coordinator
+  image: apache/druid:31.0.0
+  command: coordinator
+  volumes:
+  - druid_shared:/opt/shared
+  - druid_coordinator_var:/opt/druid/var
+  environment:
+    DRUID_SINGLE_NODE_CONF: micro-quickstart
+    druid_emitter_logging_logLevel: debug
+    druid_zk_service_host: zookeeper
+    druid_metadata_storage_type: postgresql
+    druid_metadata_storage_connector_connectURI: jdbc:postgresql://postgres:5432/druid
+    druid_metadata_storage_connector_user: druid
+    druid_metadata_storage_connector_password: ${DB_PASSWORD}
+    druid_storage_type: local
+    druid_storage_storageDirectory: /opt/shared/segments
+    druid_indexer_logs_type: file
+    druid_indexer_logs_directory: /opt/shared/indexing-logs
+    druid_processing_numThreads: '2'
+    druid_processing_numMergeBuffers: '2'
+- name: broker
+  image: apache/druid:31.0.0
+  command: broker
+  volumes:
+  - druid_broker_var:/opt/druid/var
+  environment:
+    DRUID_SINGLE_NODE_CONF: micro-quickstart
+    druid_emitter_logging_logLevel: debug
+    druid_zk_service_host: zookeeper
+    druid_metadata_storage_type: postgresql
+    druid_metadata_storage_connector_connectURI: jdbc:postgresql://postgres:5432/druid
+    druid_metadata_storage_connector_user: druid
+    druid_metadata_storage_connector_password: ${DB_PASSWORD}
+    druid_storage_type: local
+    druid_storage_storageDirectory: /opt/shared/segments
+    druid_indexer_logs_type: file
+    druid_indexer_logs_directory: /opt/shared/indexing-logs
+    druid_processing_numThreads: '2'
+    druid_processing_numMergeBuffers: '2'
+- name: historical
+  image: apache/druid:31.0.0
+  command: historical
+  volumes:
+  - druid_shared:/opt/shared
+  - druid_historical_var:/opt/druid/var
+  environment:
+    DRUID_SINGLE_NODE_CONF: micro-quickstart
+    druid_emitter_logging_logLevel: debug
+    druid_zk_service_host: zookeeper
+    druid_metadata_storage_type: postgresql
+    druid_metadata_storage_connector_connectURI: jdbc:postgresql://postgres:5432/druid
+    druid_metadata_storage_connector_user: druid
+    druid_metadata_storage_connector_password: ${DB_PASSWORD}
+    druid_storage_type: local
+    druid_storage_storageDirectory: /opt/shared/segments
+    druid_indexer_logs_type: file
+    druid_indexer_logs_directory: /opt/shared/indexing-logs
+    druid_processing_numThreads: '2'
+    druid_processing_numMergeBuffers: '2'
+- name: middlemanager
+  image: apache/druid:31.0.0
+  ports:
+  - 8091:8091
+  - 8100-8105:8100-8105
+  command: middleManager
+  volumes:
+  - druid_shared:/opt/shared
+  - druid_middlemanager_var:/opt/druid/var
+  environment:
+    DRUID_SINGLE_NODE_CONF: micro-quickstart
+    druid_emitter_logging_logLevel: debug
+    druid_zk_service_host: zookeeper
+    druid_metadata_storage_type: postgresql
+    druid_metadata_storage_connector_connectURI: jdbc:postgresql://postgres:5432/druid
+    druid_metadata_storage_connector_user: druid
+    druid_metadata_storage_connector_password: ${DB_PASSWORD}
+    druid_storage_type: local
+    druid_storage_storageDirectory: /opt/shared/segments
+    druid_indexer_logs_type: file
+    druid_indexer_logs_directory: /opt/shared/indexing-logs
+    druid_processing_numThreads: '2'
+    druid_processing_numMergeBuffers: '2'
 proxy:
-  type: "none"
+  type: none
   auto_detect: false
 deploy:
-  target: "local"
+  target: server
   cloud:
-    provider: "hetzner"
-    region: "fsn1"
-    size: "cpx22"
+    provider: hetzner
+    region: fsn1
+    size: cpx22
     public_ports:
-      - "8888"
+    - '8888'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
 monitoring:
   status_panel: true
-env_file: ".env"
+env_file: .env
 volumes:
   druid_metadata_data: {}
   druid_zookeeper_data: {}
