@@ -1,96 +1,89 @@
 name: lemmy
-version: "0.19.0"
-
+version: 0.19.0
 project:
   identity: lemmy
-
 install:
   inputs:
     commonDomain: lemmy.example.com
-
 app:
   type: custom
-  image: dessalines/lemmy:latest
+  image: dessalines/lemmy:0.19.11
   ports:
-    - "8536:8536"
+  - 8536:8536
   environment:
     LEMMY_HOSTNAME: lemmy.example.com
-    LEMMY_DATABASE_URL: "postgresql://lemmy:${DB_PASSWORD}@lemmy_db:5432/lemmy"
-    LEMMY_JWT_SECRET: "${JWT_SECRET}"
+    LEMMY_DATABASE_URL: postgresql://lemmy:${DB_PASSWORD}@lemmy_db:5432/lemmy
+    LEMMY_JWT_SECRET: ${JWT_SECRET}
     LEMMY_DEFAULT_ADMIN_USERNAME: admin
-    LEMMY_DEFAULT_ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
-    LEMMY_DEFAULT_ADMIN_EMAIL: "admin@example.com"
-    LEMMY_RATE_LIMIT_POST: "6"
-    LEMMY_RATE_LIMIT_POST_INTERVAL: "600"
-    LEMMY_FEDERATION_ENABLED: "true"
-    LEMMY_FEDERATION_STRICT_ALLOWLIST: "false"
+    LEMMY_DEFAULT_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    LEMMY_DEFAULT_ADMIN_EMAIL: admin@example.com
+    LEMMY_RATE_LIMIT_POST: '6'
+    LEMMY_RATE_LIMIT_POST_INTERVAL: '600'
+    LEMMY_FEDERATION_ENABLED: 'true'
+    LEMMY_FEDERATION_STRICT_ALLOWLIST: 'false'
   depends_on:
-    - lemmy_db
-    - lemmy_pictrs
-
+  - lemmy_db
+  - lemmy_pictrs
 services:
-  - name: lemmy_db
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: lemmy
-      POSTGRES_USER: lemmy
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-      POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB"
-    ports:
-      - "127.0.0.1:5432:5432"
-    volumes:
-      - lemmy_db:/var/lib/postgresql/data
-    healthcheck:
-      test: "CMD-SHELL pg_isready -U lemmy -d lemmy"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-  - name: lemmy_pictrs
-    image: asonix/pictrs:latest
-    environment:
-      PICTRS_OPENTELEMETRY_URL: "http://otel:4137"
-      PICTRS_LOG_TARGETS: "warn"
-      PICTRS_MEDIA_LOCATION: /mnt/pictrs
-    ports:
-      - "127.0.0.1:6969:6969"
-    volumes:
-      - lemmy_pictrs:/mnt/pictrs
-
+- name: lemmy_db
+  image: postgres:16-alpine
+  environment:
+    POSTGRES_DB: lemmy
+    POSTGRES_USER: lemmy
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+    POSTGRES_INITDB_ARGS: -c shared_buffers=256MB
+  ports:
+  - 127.0.0.1:5432:5432
+  volumes:
+  - lemmy_db:/var/lib/postgresql/data
+  healthcheck:
+    test: CMD-SHELL pg_isready -U lemmy -d lemmy
+    interval: 10s
+    timeout: 5s
+    retries: 10
+- name: lemmy_pictrs
+  image: asonix/pictrs:latest
+  environment:
+    PICTRS_OPENTELEMETRY_URL: http://otel:4137
+    PICTRS_LOG_TARGETS: warn
+    PICTRS_MEDIA_LOCATION: /mnt/pictrs
+  ports:
+  - 127.0.0.1:6969:6969
+  volumes:
+  - lemmy_pictrs:/mnt/pictrs
 volumes:
   lemmy_db: {}
   lemmy_pictrs: {}
-
 proxy:
   type: none
   auto_detect: false
-
 deploy:
-  target: local
+  target: server
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx31
     public_ports:
-      - "8536"
-
+    - '8536'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
 config_contract:
   app:
     environment:
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: JWT_SECRET
-        required: true
-        secret: true
-      - name: ADMIN_PASSWORD
-        required: true
-        secret: true
-
+    - name: DB_PASSWORD
+      required: true
+      secret: true
+    - name: JWT_SECRET
+      required: true
+      secret: true
+    - name: ADMIN_PASSWORD
+      required: true
+      secret: true
 hooks:
   pre_build: ./scripts/generate-secrets.sh
-
 monitoring:
   status_panel: true
-
 env_file: .env
