@@ -1,94 +1,112 @@
 name: nextcloud
-version: "28.0.0"
-
+version: 28.0.0
+organization: null
 project:
   identity: nextcloud
-
-install:
-  inputs:
-    commonDomain: nextcloud.example.com
-
 app:
   type: php
+  path: .
+  dockerfile: null
   image: nextcloud:latest
+  build: null
   ports:
-    - "8080:80"
-  environment:
-    NEXTCLOUD_ADMIN_USER: admin
-    NEXTCLOUD_ADMIN_PASSWORD: "${NEXTCLOUD_ADMIN_PASSWORD}"
-    NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.example.com"
-    MYSQL_DATABASE: nextcloud
-    MYSQL_USER: nextcloud
-    MYSQL_PASSWORD: "${DB_PASSWORD}"
-    MYSQL_HOST: nextcloud_db
+  - 8080:80
   volumes:
-    - nextcloud_data:/var/www/html
-
+  - nextcloud_data:/var/www/html
+  environment:
+    NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.example.com
+    NEXTCLOUD_ADMIN_USER: admin
+    NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
+    MYSQL_DATABASE: nextcloud
+    MYSQL_HOST: nextcloud_db
+    MYSQL_PASSWORD: ${DB_PASSWORD}
+    MYSQL_USER: nextcloud
+  command: null
+  healthcheck: null
 services:
-  - name: nextcloud_db
-    image: mariadb:latest
-    environment:
-      MARIADB_DATABASE: nextcloud
-      MARIADB_USER: nextcloud
-      MARIADB_PASSWORD: "${DB_PASSWORD}"
-      MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
-    ports:
-      - "127.0.0.1:3306:3306"
-    volumes:
-      - nextcloud_db:/var/lib/mysql
-    healthcheck:
-      test: "CMD mysqladmin ping -h localhost"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-  - name: redis
-    image: redis:7-alpine
-    ports:
-      - "127.0.0.1:6379:6379"
-    volumes:
-      - nextcloud_redis:/data
-    healthcheck:
-      test: "CMD redis-cli ping"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-volumes:
-  nextcloud_db: {}
-  nextcloud_data: {}
-  nextcloud_redis: {}
-
+- name: nextcloud_db
+  image: mariadb:latest
+  ports:
+  - 127.0.0.1:3306:3306
+  environment:
+    MARIADB_USER: nextcloud
+    MARIADB_PASSWORD: ${DB_PASSWORD}
+    MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    MARIADB_DATABASE: nextcloud
+  volumes:
+  - nextcloud_db:/var/lib/mysql
+  depends_on: []
+  command: null
+  healthcheck:
+    test: CMD mysqladmin ping -h localhost
+    interval: 10s
+    timeout: 5s
+    retries: 10
+- name: redis
+  image: redis:7-alpine
+  ports:
+  - 127.0.0.1:6379:6379
+  environment: {}
+  volumes:
+  - nextcloud_redis:/data
+  depends_on: []
+  command: null
+  healthcheck:
+    test: CMD redis-cli ping
+    interval: 10s
+    timeout: 5s
+    retries: 10
 proxy:
   type: none
   auto_detect: false
-
+  domains: []
+  config: null
 deploy:
-  target: local
+  target: server
+  environment: null
+  compose_file: null
+  deployment_hash: null
   cloud:
     provider: hetzner
+    orchestrator: remote
     region: fsn1
     size: cpx22
+    install_image: null
+    remote_payload_file: null
+    ssh_key: null
+    key: null
+    server: null
     public_ports:
-      - "8080"
-
-config_contract:
-  app:
-    environment:
-      - name: NEXTCLOUD_ADMIN_PASSWORD
-        required: true
-        secret: true
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: DB_ROOT_PASSWORD
-        required: true
-        secret: true
-
-hooks:
-  pre_build: ./scripts/generate-secrets.sh
-
+    - '8080'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
+  registry: null
+  default_target: null
+  targets: {}
+install:
+  inputs:
+    commonDomain: nextcloud.example.com
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
 monitoring:
   status_panel: true
-
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+  post_deploy: null
+  on_failure: null
 env_file: .env
+env: {}
+config_contract:
+  services: {}

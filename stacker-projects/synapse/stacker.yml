@@ -1,76 +1,99 @@
 name: synapse
-version: "1.128.0"
-
+version: 1.128.0
+organization: null
 project:
   identity: synapse
-
-install:
-  inputs:
-    commonDomain: matrix.example.com
-
 app:
   type: custom
+  path: .
+  dockerfile: null
   image: matrixdotorg/synapse:latest
+  build: null
   ports:
-    - "8008:8008"
-    - "8448:8448"
-  environment:
-    SYNAPSE_SERVER_NAME: matrix.example.com
-    SYNAPSE_REPORT_STATS: "no"
-    POSTGRES_DB: synapse
-    POSTGRES_USER: synapse
-    POSTGRES_PASSWORD: "${DB_PASSWORD}"
-    POSTGRES_HOST: synapse_db
+  - 8008:8008
+  - 8448:8448
   volumes:
-    - synapse_data:/data
-
+  - synapse_data:/data
+  environment:
+    POSTGRES_USER: synapse
+    POSTGRES_DB: synapse
+    SYNAPSE_REPORT_STATS: no
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+    POSTGRES_HOST: synapse_db
+    SYNAPSE_SERVER_NAME: matrix.example.com
+  command: null
+  healthcheck: null
 services:
-  - name: synapse_db
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: synapse
-      POSTGRES_USER: synapse
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-      POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB"
-    ports:
-      - "127.0.0.1:5432:5432"
-    volumes:
-      - synapse_db:/var/lib/postgresql/data
-    healthcheck:
-      test: "CMD-SHELL pg_isready -U synapse -d synapse"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-volumes:
-  synapse_db: {}
-  synapse_data: {}
-
+- name: synapse_db
+  image: postgres:16-alpine
+  ports:
+  - 127.0.0.1:5432:5432
+  environment:
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+    POSTGRES_USER: synapse
+    POSTGRES_INITDB_ARGS: -c shared_buffers=256MB
+    POSTGRES_DB: synapse
+  volumes:
+  - synapse_db:/var/lib/postgresql/data
+  depends_on: []
+  command: null
+  healthcheck:
+    test: CMD-SHELL pg_isready -U synapse -d synapse
+    interval: 10s
+    timeout: 5s
+    retries: 10
 proxy:
   type: none
   auto_detect: false
-
+  domains: []
+  config: null
 deploy:
-  target: local
+  target: server
+  environment: null
+  compose_file: null
+  deployment_hash: null
   cloud:
     provider: hetzner
+    orchestrator: remote
     region: fsn1
     size: cpx22
+    install_image: null
+    remote_payload_file: null
+    ssh_key: null
+    key: null
+    server: null
     public_ports:
-      - "8008"
-      - "8448"
-
-config_contract:
-  app:
-    environment:
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-
-hooks:
-  pre_build: ./scripts/generate-secrets.sh
-
+    - '8008'
+    - '8448'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
+  registry: null
+  default_target: null
+  targets: {}
+install:
+  inputs:
+    commonDomain: matrix.example.com
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
 monitoring:
   status_panel: true
-
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+  post_deploy: null
+  on_failure: null
 env_file: .env
+env: {}
+config_contract:
+  services: {}

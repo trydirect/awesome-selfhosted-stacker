@@ -2,41 +2,44 @@ services:
   app:
     image: rustfs/rustfs:latest
     ports:
-    - 9000:9000
-    - 9001:9001
+      - "9000:9000"
+      - "9001:9001"
     environment:
-      RUSTFS_ACCESS_KEY: rustfsadmin
-      RUSTFS_ADDRESS: 0.0.0.0:9000
-      RUSTFS_CONSOLE_ADDRESS: 0.0.0.0:9001
-      RUSTFS_CONSOLE_CORS_ALLOWED_ORIGINS: '*'
-      RUSTFS_CONSOLE_ENABLE: 'true'
-      RUSTFS_OBS_LOGGER_LEVEL: info
-      RUSTFS_SECRET_KEY: rustfsadmin
-      RUSTFS_UNSAFE_BYPASS_DISK_CHECK: 'true'
-      RUSTFS_VOLUMES: /data/rustfs0 /data/rustfs1 /data/rustfs2 /data/rustfs3
+      RUSTFS_ACCESS_KEY: "58dcd17d7f15c4a31bfffb63d9435318"
+      RUSTFS_ADDRESS: "0.0.0.0:9000"
+      RUSTFS_CONSOLE_ADDRESS: "0.0.0.0:9001"
+      RUSTFS_CONSOLE_CORS_ALLOWED_ORIGINS: "*"
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_OBS_LOGGER_LEVEL: "info"
+      RUSTFS_SECRET_KEY: "2135ef365c092d7396fd0b10c9a79a33797c3747b3a6c14116f51306e9e330e2"
+      RUSTFS_UNSAFE_BYPASS_DISK_CHECK: "true"
+      RUSTFS_VOLUMES: "/data/rustfs0 /data/rustfs1 /data/rustfs2 /data/rustfs3"
     volumes:
-    - rustfs_data:/data
-    - rustfs_logs:/app/logs
+      - "rustfs_data:/data"
+      - "rustfs_logs:/app/logs"
     restart: unless-stopped
     networks:
-    - app-network
+      - app-network
     labels:
-      my.stacker.dns: app
-      my.stacker.scope: project
-      my.stacker.service: app
+      my.stacker.dns: "app"
+      my.stacker.scope: "project"
+      my.stacker.service: "app"
+
   otel-collector:
     image: otel/opentelemetry-collector:latest
-    ports: []
     restart: unless-stopped
     networks:
-    - app-network
+      - app-network
     labels:
-      my.stacker.dns: otel-collector
-      my.stacker.scope: project
-      my.stacker.service: otel-collector
+      my.stacker.dns: "otel-collector"
+      my.stacker.scope: "project"
+      my.stacker.service: "otel-collector"
+
 networks:
   app-network:
     driver: bridge
+
 volumes:
-  rustfs_data: null
-  rustfs_logs: null
+  rustfs_data:
+  rustfs_logs:
+

@@ -1,103 +1,95 @@
 name: ghost
-version: "1.0.0"
-
+version: 1.0.0
+organization: null
 project:
   identity: ghost
-
-install:
-  inputs:
-    commonDomain: ""
-
-config_contract:
-  app:
-    environment:
-      - name: GHOST_URL
-        required: true
-        secret: false
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: database__client
-        required: false
-        secret: false
-      - name: database__connection__host
-        required: false
-        secret: false
-      - name: database__connection__user
-        required: false
-        secret: false
-      - name: database__connection__password
-        required: true
-        secret: true
-      - name: database__connection__database
-        required: false
-        secret: false
-      - name: NODE_ENV
-        required: false
-        secret: false
-  services:
-    mysql:
-      environment:
-        - name: MYSQL_ROOT_PASSWORD
-          required: true
-          secret: true
-        - name: MYSQL_DATABASE
-          required: false
-          secret: false
-        - name: MYSQL_USER
-          required: false
-          secret: false
-        - name: MYSQL_PASSWORD
-          required: true
-          secret: true
-
-hooks:
-  pre_build: ./scripts/generate-secrets.sh
-
 app:
   type: custom
   path: .
+  dockerfile: null
   image: ghost:5-alpine
+  build: null
   ports:
-    - "2368:2368"
+  - 2368:2368
   volumes:
-    - ghost_content:/var/lib/ghost/content
+  - ghost_content:/var/lib/ghost/content
   environment:
-    url: "${GHOST_URL}"
     database__client: mysql
+    url: ${GHOST_URL}
     database__connection__host: mysql
     database__connection__user: ghost
-    database__connection__password: "${DB_PASSWORD}"
+    database__connection__password: ${DB_PASSWORD}
     database__connection__database: ghost
     NODE_ENV: production
-
+  command: null
+  healthcheck: null
 services:
-  - name: mysql
-    image: mysql:8
-    ports:
-      - "127.0.0.1:3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
-      MYSQL_DATABASE: ghost
-      MYSQL_USER: ghost
-      MYSQL_PASSWORD: "${DB_PASSWORD}"
-    volumes:
-      - mysql_data:/var/lib/mysql
-
+- name: mysql
+  image: mysql:8
+  ports:
+  - 127.0.0.1:3306:3306
+  environment:
+    MYSQL_USER: ghost
+    MYSQL_DATABASE: ghost
+    MYSQL_PASSWORD: ${DB_PASSWORD}
+    MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+  volumes:
+  - mysql_data:/var/lib/mysql
+  depends_on: []
+  command: null
+  healthcheck: null
 proxy:
   type: none
   auto_detect: false
-
+  domains: []
+  config: null
 deploy:
-  target: local
+  target: server
+  environment: null
+  compose_file: null
+  deployment_hash: null
   cloud:
     provider: hetzner
+    orchestrator: remote
     region: fsn1
     size: cpx22
+    install_image: null
+    remote_payload_file: null
+    ssh_key: null
+    key: null
+    server: null
     public_ports:
-      - "2368"
-
+    - '2368'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
+  registry: null
+  default_target: null
+  targets: {}
+install:
+  inputs:
+    commonDomain: ''
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
 monitoring:
   status_panel: true
-
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+  post_deploy: null
+  on_failure: null
 env_file: .env
+env: {}
+config_contract:
+  services:
+    mysql: {}
