@@ -87,24 +87,4 @@ if need "ADMIN_TOKEN"; then
   echo "  Generated ADMIN_TOKEN"
 fi
 
-if need "VAPID_PRIVATE_KEY"; then
-  sed -i '' "s/^VAPID_PRIVATE_KEY=.*/VAPID_PRIVATE_KEY=$(openssl rand -hex 32)/" .env
-  echo "  Generated VAPID_PRIVATE_KEY"
-fi
-
-if need "VAPID_PUBLIC_KEY"; then
-  sed -i '' "s/^VAPID_PUBLIC_KEY=.*/VAPID_PUBLIC_KEY=$(openssl rand -hex 32)/" .env
-  echo "  Generated VAPID_PUBLIC_KEY"
-fi
-
-if need "NEXTCLOUD_ADMIN_PASSWORD"; then
-  sed -i '' "s/^NEXTCLOUD_ADMIN_PASSWORD=.*/NEXTCLOUD_ADMIN_PASSWORD=$(openssl rand -hex 16)/" .env
-  echo "  Generated NEXTCLOUD_ADMIN_PASSWORD"
-fi
-
-if need "DB_ROOT_PASSWORD"; then
-  sed -i '' "s/^DB_ROOT_PASSWORD=.*/DB_ROOT_PASSWORD=$(openssl rand -hex 16)/" .env
-  echo "  Generated DB_ROOT_PASSWORD"
-fi
-
 echo "Secrets ready."

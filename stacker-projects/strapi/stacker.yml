@@ -7,7 +7,7 @@ app:
   type: node
   path: .
   dockerfile: null
-  image: strapi:latest
+  image: naskio/strapi:latest
   build: null
   ports:
   - 1337:1337
