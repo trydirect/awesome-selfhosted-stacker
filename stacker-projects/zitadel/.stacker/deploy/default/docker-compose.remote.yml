@@ -1,0 +1,64 @@
+services:
+  app:
+    image: ghcr.io/zitadel/zitadel:v4.16.0
+    ports:
+    - 8080:8080
+    environment:
+      ZITADEL_CACHES_CONNECTORS_REDIS_ENABLED: 'false'
+      ZITADEL_DATABASE_POSTGRES_DSN: postgresql://postgres:postgres@postgres:5432/zitadel?sslmode=disable
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_REQUIRED: 'false'
+      ZITADEL_EXTERNALDOMAIN: 46.224.127.228
+      ZITADEL_EXTERNALPORT: '8080'
+      ZITADEL_EXTERNALSECURE: 'false'
+      ZITADEL_LOGSTORE_ACCESS_STDOUT_ENABLED: 'true'
+      ZITADEL_PORT: '8080'
+      ZITADEL_PUBLIC_SCHEME: http
+      ZITADEL_TLS_ENABLED: 'false'
+    command: start-from-init --masterkey "74d2fa46449dddd28d97075347a5d522"
+    healthcheck:
+      test: CMD /app/zitadel ready
+      interval: 10s
+      timeout: 30s
+      retries: 12
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: app
+      my.stacker.scope: project
+      my.stacker.service: app
+  postgres:
+    image: postgres:17.10-alpine
+    environment:
+      POSTGRES_DB: zitadel
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    volumes:
+    - postgres-data:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: CMD-SHELL pg_isready -d zitadel -U postgres
+      interval: 10s
+      timeout: 30s
+      retries: 10
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: postgres
+      my.stacker.scope: project
+      my.stacker.service: postgres
+  redis:
+    image: redis:7.4.9-alpine
+    command: --save "" --appendonly no
+    restart: unless-stopped
+    networks:
+    - app-network
+    labels:
+      my.stacker.dns: redis
+      my.stacker.scope: project
+      my.stacker.service: redis
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  postgres-data: null
