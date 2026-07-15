@@ -1,82 +1,87 @@
-name: "ganymede"
-version: "1.0.0"
+name: ganymede
+version: 1.0.0
 project:
-  identity: "ganymede"
+  identity: ganymede
 install:
   inputs:
-    commonDomain: "ganymede.example.com"
+    commonDomain: ganymede.example.com
 config_contract:
   app:
     environment:
-      - name: "TZ"
-        required: false
-        secret: false
-      - name: "DB_PASSWORD"
-        required: true
-        secret: true
+    - name: TZ
+      required: false
+      secret: false
+    - name: DB_PASSWORD
+      required: true
+      secret: true
 hooks:
-  pre_build: "./scripts/generate-secrets.sh"
+  pre_build: ./scripts/generate-secrets.sh
 app:
-  type: "custom"
-  image: "ghcr.io/zibbp/ganymede:latest"
+  type: custom
+  image: ghcr.io/zibbp/ganymede:latest
   ports:
-    - "4800:4000"
+  - 4800:4000
   volumes:
-    - "ganymede_videos:/data/videos"
-    - "ganymede_temp:/data/temp"
-    - "ganymede_logs:/data/logs"
-    - "ganymede_config:/data/config"
+  - ganymede_videos:/data/videos
+  - ganymede_temp:/data/temp
+  - ganymede_logs:/data/logs
+  - ganymede_config:/data/config
   environment:
-    DEBUG: "false"
-    TZ: "${TZ}"
-    VIDEOS_DIR: "/data/videos"
-    TEMP_DIR: "/data/temp"
-    LOGS_DIR: "/data/logs"
-    CONFIG_DIR: "/data/config"
-    DB_HOST: "ganymede-db"
-    DB_PORT: "5432"
-    DB_USER: "ganymede"
-    DB_PASS: "${DB_PASSWORD}"
-    DB_NAME: "ganymede-prd"
-    DB_SSL: "disable"
-    TWITCH_CLIENT_ID: "${TWITCH_CLIENT_ID}"
-    TWITCH_CLIENT_SECRET: "${TWITCH_CLIENT_SECRET}"
-    MAX_CHAT_DOWNLOAD_EXECUTIONS: "3"
-    MAX_CHAT_RENDER_EXECUTIONS: "2"
-    MAX_VIDEO_DOWNLOAD_EXECUTIONS: "2"
-    MAX_VIDEO_CONVERT_EXECUTIONS: "3"
-    MAX_VIDEO_SPRITE_THUMBNAIL_EXECUTIONS: "2"
-    SHOW_SSO_LOGIN_BUTTON: "true"
-    FORCE_SSO_AUTH: "false"
-    REQUIRE_LOGIN: "false"
+    DEBUG: 'false'
+    TZ: ${TZ}
+    VIDEOS_DIR: /data/videos
+    TEMP_DIR: /data/temp
+    LOGS_DIR: /data/logs
+    CONFIG_DIR: /data/config
+    DB_HOST: ganymede-db
+    DB_PORT: '5432'
+    DB_USER: ganymede
+    DB_PASS: ${DB_PASSWORD}
+    DB_NAME: ganymede-prd
+    DB_SSL: disable
+    TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID}
+    TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET}
+    MAX_CHAT_DOWNLOAD_EXECUTIONS: '3'
+    MAX_CHAT_RENDER_EXECUTIONS: '2'
+    MAX_VIDEO_DOWNLOAD_EXECUTIONS: '2'
+    MAX_VIDEO_CONVERT_EXECUTIONS: '3'
+    MAX_VIDEO_SPRITE_THUMBNAIL_EXECUTIONS: '2'
+    SHOW_SSO_LOGIN_BUTTON: 'true'
+    FORCE_SSO_AUTH: 'false'
+    REQUIRE_LOGIN: 'false'
 services:
-  - name: "ganymede-db"
-    image: "postgres:14"
-    environment:
-      POSTGRES_DB: "ganymede-prd"
-      POSTGRES_USER: "ganymede"
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-    volumes:
-      - "ganymede_postgres_data:/var/lib/postgresql/data"
-    healthcheck:
-      test: "CMD-SHELL pg_isready -U ganymede -d ganymede-prd"
-      interval: "10s"
-      timeout: "5s"
-      retries: 10
+- name: ganymede-db
+  image: postgres:14
+  environment:
+    POSTGRES_DB: ganymede-prd
+    POSTGRES_USER: ganymede
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+  volumes:
+  - ganymede_postgres_data:/var/lib/postgresql/data
+  healthcheck:
+    test: CMD-SHELL pg_isready -U ganymede -d ganymede-prd
+    interval: 10s
+    timeout: 5s
+    retries: 10
 proxy:
-  type: "none"
+  type: none
   auto_detect: false
 deploy:
-  target: "local"
+  target: server
   cloud:
-    provider: "hetzner"
-    region: "fsn1"
-    size: "cpx22"
+    provider: hetzner
+    region: fsn1
+    size: cpx22
     public_ports:
-      - "4800"
+    - '4800'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
 monitoring:
   status_panel: true
-env_file: ".env"
+env_file: .env
 volumes:
   ganymede_videos: {}
   ganymede_temp: {}
