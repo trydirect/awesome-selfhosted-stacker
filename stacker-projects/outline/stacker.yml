@@ -39,34 +39,37 @@ proxy:
   type: none
   auto_detect: false
 deploy:
-  target: local
+  target: server
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
     public_ports:
     - '3000'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
 monitoring:
   status_panel: true
 hooks:
   pre_build: ./scripts/generate-secrets.sh
   post_deploy: .stacker/migrate.sh
 env_file: .env
-
 install:
   inputs:
     commonDomain: example.com
-
 config_contract:
   services:
     app:
       environment:
-        - name: DB_PASSWORD
-          required: true
-          secret: true
-        - name: SECRET_KEY
-          required: true
-          secret: true
-        - name: UTILS_SECRET
-          required: true
-          secret: true
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: SECRET_KEY
+        required: true
+        secret: true
+      - name: UTILS_SECRET
+        required: true
+        secret: true
