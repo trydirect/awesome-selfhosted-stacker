@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: discourse:latest
+  image: discourse/base
   ports:
     - "80:80"
     - "443:443"

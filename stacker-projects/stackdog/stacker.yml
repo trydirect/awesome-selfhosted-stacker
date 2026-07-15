@@ -16,7 +16,7 @@ app:
   healthcheck: null
 services:
 - name: stackdog
-  image: trydirect/stackdog:latest
+  image: trydirect/stackdog
   ports:
   - 5000:5000
   environment:
