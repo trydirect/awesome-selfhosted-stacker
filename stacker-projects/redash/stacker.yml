@@ -1,89 +1,82 @@
 name: redash
-version: "13.0.0"
-
+version: 13.0.0
 project:
   identity: redash
-
 install:
   inputs:
     commonDomain: redash.example.com
-
 app:
   type: custom
   image: redash/redash:latest
   ports:
-    - "5000:5000"
+  - 5000:5000
   environment:
-    REDASH_DATABASE_URL: "postgresql://redash:${DB_PASSWORD}@redash_db:5432/redash"
-    REDASH_REDIS_URL: "redis://redis:6379"
-    REDASH_SECRET_KEY: "${SECRET_KEY}"
-    REDASH_LOG_LEVEL: "INFO"
-    REDASH_MULTI_ORG: "false"
-    REDASH_ENFORCE_HTTPS: "false"
-    REDASH_GOOGLE_CLIENT_ID: ""
-    REDASH_GOOGLE_CLIENT_SECRET: ""
-    REDASH_QUERY_RESULTS_MAX_AGE: "43200"
-
+    REDASH_DATABASE_URL: postgresql://redash:${DB_PASSWORD}@redash_db:5432/redash
+    REDASH_REDIS_URL: redis://redis:6379
+    REDASH_SECRET_KEY: ${SECRET_KEY}
+    REDASH_LOG_LEVEL: INFO
+    REDASH_MULTI_ORG: 'false'
+    REDASH_ENFORCE_HTTPS: 'false'
+    REDASH_GOOGLE_CLIENT_ID: ''
+    REDASH_GOOGLE_CLIENT_SECRET: ''
+    REDASH_QUERY_RESULTS_MAX_AGE: '43200'
 services:
-  - name: redash_db
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: redash
-      POSTGRES_USER: redash
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-    ports:
-      - "127.0.0.1:5432:5432"
-    volumes:
-      - redash_db:/var/lib/postgresql/data
-    healthcheck:
-      test: "CMD-SHELL pg_isready -U redash -d redash"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-  - name: redis
-    image: redis:7-alpine
-    ports:
-      - "127.0.0.1:6379:6379"
-    volumes:
-      - redash_redis:/data
-    healthcheck:
-      test: "CMD redis-cli ping"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
+- name: redash_db
+  image: postgres:16-alpine
+  environment:
+    POSTGRES_DB: redash
+    POSTGRES_USER: redash
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+  ports:
+  - 127.0.0.1:5432:5432
+  volumes:
+  - redash_db:/var/lib/postgresql/data
+  healthcheck:
+    test: CMD-SHELL pg_isready -U redash -d redash
+    interval: 10s
+    timeout: 5s
+    retries: 10
+- name: redis
+  image: redis:7-alpine
+  ports:
+  - 127.0.0.1:6379:6379
+  volumes:
+  - redash_redis:/data
+  healthcheck:
+    test: CMD redis-cli ping
+    interval: 10s
+    timeout: 5s
+    retries: 10
 volumes:
   redash_db: {}
   redash_redis: {}
-
 proxy:
   type: none
   auto_detect: false
-
 deploy:
-  target: local
+  target: server
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
     public_ports:
-      - "5000"
-
+    - '5000'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
 config_contract:
   app:
     environment:
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: SECRET_KEY
-        required: true
-        secret: true
-
+    - name: DB_PASSWORD
+      required: true
+      secret: true
+    - name: SECRET_KEY
+      required: true
+      secret: true
 hooks:
   pre_build: ./scripts/generate-secrets.sh
-
 monitoring:
   status_panel: true
-
 env_file: .env
