@@ -1,125 +1,130 @@
-name: "rybbit"
-version: "1.0.0"
+name: rybbit
+version: 1.0.0
 project:
-  identity: "rybbit"
+  identity: rybbit
 install:
   inputs:
-    commonDomain: "rybbit.example.com"
+    commonDomain: rybbit.example.com
 config_contract:
   app:
     environment:
-      - name: "BASE_URL"
-        required: true
-        secret: false
-      - name: "DISABLE_SIGNUP"
-        required: false
-        secret: false
-      - name: "BETTER_AUTH_SECRET"
-        required: true
-        secret: true
-      - name: "CLICKHOUSE_PASSWORD"
-        required: true
-        secret: true
-      - name: "POSTGRES_PASSWORD"
-        required: true
-        secret: true
-      - name: "REDIS_PASSWORD"
-        required: true
-        secret: true
+    - name: BASE_URL
+      required: true
+      secret: false
+    - name: DISABLE_SIGNUP
+      required: false
+      secret: false
+    - name: BETTER_AUTH_SECRET
+      required: true
+      secret: true
+    - name: CLICKHOUSE_PASSWORD
+      required: true
+      secret: true
+    - name: POSTGRES_PASSWORD
+      required: true
+      secret: true
+    - name: REDIS_PASSWORD
+      required: true
+      secret: true
 hooks:
-  pre_build: "./scripts/generate-secrets.sh"
+  pre_build: ./scripts/generate-secrets.sh
 app:
-  type: "custom"
-  image: "ghcr.io/rybbit-io/rybbit-client:latest"
+  type: custom
+  image: ghcr.io/rybbit-io/rybbit-client:latest
   ports:
-    - "3002:3002"
+  - 3002:3002
   environment:
-    NODE_ENV: "production"
-    NEXT_PUBLIC_BACKEND_URL: "${BASE_URL}"
-    NEXT_PUBLIC_DISABLE_SIGNUP: "${DISABLE_SIGNUP}"
-    NEXT_PUBLIC_DEPLOYMENT: "stacker"
-    NEXT_PUBLIC_LITE_DASHBOARD: "false"
+    NODE_ENV: production
+    NEXT_PUBLIC_BACKEND_URL: ${BASE_URL}
+    NEXT_PUBLIC_DISABLE_SIGNUP: ${DISABLE_SIGNUP}
+    NEXT_PUBLIC_DEPLOYMENT: stacker
+    NEXT_PUBLIC_LITE_DASHBOARD: 'false'
 services:
-  - name: "clickhouse"
-    image: "clickhouse/clickhouse-server:25.4.2"
-    environment:
-      CLICKHOUSE_DB: "analytics"
-      CLICKHOUSE_USER: "default"
-      CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
-    volumes:
-      - "rybbit_clickhouse_data:/var/lib/clickhouse"
-      - "./clickhouse/config.d/network.xml:/etc/clickhouse-server/config.d/network.xml:ro"
-      - "./clickhouse/config.d/enable_json.xml:/etc/clickhouse-server/config.d/enable_json.xml:ro"
-    healthcheck:
-      test: "CMD-SHELL wget -qO- http://127.0.0.1:8123/ping || exit 1"
-      interval: "10s"
-      timeout: "5s"
-      retries: 10
-  - name: "postgres"
-    image: "postgres:17.4"
-    environment:
-      POSTGRES_DB: "analytics"
-      POSTGRES_USER: "frog"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-    volumes:
-      - "rybbit_postgres_data:/var/lib/postgresql/data"
-    healthcheck:
-      test: "CMD-SHELL pg_isready -U frog -d analytics"
-      interval: "10s"
-      timeout: "5s"
-      retries: 10
-  - name: "redis"
-    image: "redis:7-alpine"
-    command: "redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes --appendfsync everysec --maxmemory-policy noeviction"
-    volumes:
-      - "rybbit_redis_data:/data"
-    healthcheck:
-      test: "CMD-SHELL redis-cli -a ${REDIS_PASSWORD} --no-auth-warning ping || exit 1"
-      interval: "10s"
-      timeout: "5s"
-      retries: 10
-  - name: "backend"
-    image: "ghcr.io/rybbit-io/rybbit-backend:latest"
-    ports:
-      - "3001:3001"
-    environment:
-      NODE_ENV: "production"
-      CLICKHOUSE_HOST: "http://clickhouse:8123"
-      CLICKHOUSE_DB: "analytics"
-      CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
-      POSTGRES_HOST: "postgres"
-      POSTGRES_PORT: "5432"
-      POSTGRES_DB: "analytics"
-      POSTGRES_USER: "frog"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-      REDIS_HOST: "redis"
-      REDIS_PORT: "6379"
-      REDIS_PASSWORD: "${REDIS_PASSWORD}"
-      BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET}"
-      BASE_URL: "${BASE_URL}"
-      DISABLE_SIGNUP: "${DISABLE_SIGNUP}"
-      DISABLE_TELEMETRY: "true"
-      MAPBOX_TOKEN: "${MAPBOX_TOKEN}"
-      CLUSTER_WORKERS: "2"
-      DEPLOYMENT: "stacker"
-      LITE_DASHBOARD: "false"
-      OPENROUTER_API_KEY: ""
-      OPENROUTER_MODEL: ""
+- name: clickhouse
+  image: clickhouse/clickhouse-server:25.4.2
+  environment:
+    CLICKHOUSE_DB: analytics
+    CLICKHOUSE_USER: default
+    CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+  volumes:
+  - rybbit_clickhouse_data:/var/lib/clickhouse
+  - ./clickhouse/config.d/network.xml:/etc/clickhouse-server/config.d/network.xml:ro
+  - ./clickhouse/config.d/enable_json.xml:/etc/clickhouse-server/config.d/enable_json.xml:ro
+  healthcheck:
+    test: CMD-SHELL wget -qO- http://127.0.0.1:8123/ping || exit 1
+    interval: 10s
+    timeout: 5s
+    retries: 10
+- name: postgres
+  image: postgres:17.4
+  environment:
+    POSTGRES_DB: analytics
+    POSTGRES_USER: frog
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  volumes:
+  - rybbit_postgres_data:/var/lib/postgresql/data
+  healthcheck:
+    test: CMD-SHELL pg_isready -U frog -d analytics
+    interval: 10s
+    timeout: 5s
+    retries: 10
+- name: redis
+  image: redis:7-alpine
+  command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes --appendfsync everysec --maxmemory-policy noeviction
+  volumes:
+  - rybbit_redis_data:/data
+  healthcheck:
+    test: CMD-SHELL redis-cli -a ${REDIS_PASSWORD} --no-auth-warning ping || exit 1
+    interval: 10s
+    timeout: 5s
+    retries: 10
+- name: backend
+  image: ghcr.io/rybbit-io/rybbit-backend:latest
+  ports:
+  - 3001:3001
+  environment:
+    NODE_ENV: production
+    CLICKHOUSE_HOST: http://clickhouse:8123
+    CLICKHOUSE_DB: analytics
+    CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+    POSTGRES_HOST: postgres
+    POSTGRES_PORT: '5432'
+    POSTGRES_DB: analytics
+    POSTGRES_USER: frog
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    REDIS_HOST: redis
+    REDIS_PORT: '6379'
+    REDIS_PASSWORD: ${REDIS_PASSWORD}
+    BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+    BASE_URL: ${BASE_URL}
+    DISABLE_SIGNUP: ${DISABLE_SIGNUP}
+    DISABLE_TELEMETRY: 'true'
+    MAPBOX_TOKEN: ${MAPBOX_TOKEN}
+    CLUSTER_WORKERS: '2'
+    DEPLOYMENT: stacker
+    LITE_DASHBOARD: 'false'
+    OPENROUTER_API_KEY: ''
+    OPENROUTER_MODEL: ''
 proxy:
-  type: "none"
+  type: none
   auto_detect: false
 deploy:
-  target: "local"
+  target: server
   cloud:
-    provider: "hetzner"
-    region: "fsn1"
-    size: "cpx22"
+    provider: hetzner
+    region: fsn1
+    size: cpx22
     public_ports:
-      - "3001"
-      - "3002"
+    - '3001'
+    - '3002'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
 monitoring:
   status_panel: true
-env_file: ".env"
+env_file: .env
 volumes:
   rybbit_clickhouse_data: {}
   rybbit_postgres_data: {}
