@@ -1,86 +1,120 @@
 name: plausible
-version: "1.1.0"
-
+version: 1.1.0
+organization: null
 project:
   identity: plausible
-
 app:
   type: custom
+  path: .
+  dockerfile: null
   image: ghcr.io/plausible/community-edition:v3.2.1
-  command: >-
-    sh -c "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
+  build: null
+  ports: []
+  volumes: []
   environment:
-    BASE_URL: "${BASE_URL}"
-    SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
-    DATABASE_URL: "postgres://postgres:${DB_PASSWORD}@plausible_db:5432/plausible"
-    CLICKHOUSE_DATABASE_URL: "http://plausible_events_db:8123/plausible"
-    DISABLE_REGISTRATION: "${DISABLE_REGISTRATION}"
-    TOTP_VAULT_KEY: "${TOTP_VAULT_KEY}"
-
+    CLICKHOUSE_DATABASE_URL: http://plausible_events_db:8123/plausible
+    TOTP_VAULT_KEY: ${TOTP_VAULT_KEY}
+    SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+    DATABASE_URL: postgres://postgres:${DB_PASSWORD}@plausible_db:5432/plausible
+    BASE_URL: ${BASE_URL}
+    DISABLE_REGISTRATION: ${DISABLE_REGISTRATION}
+  command: sh -c "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
+  healthcheck: null
 services:
-  - name: plausible_db
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-      POSTGRES_DB: plausible
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: "CMD-SHELL pg_isready -U postgres -d plausible"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-  - name: plausible_events_db
-    image: clickhouse/clickhouse-server:24.12-alpine
-    environment:
-      CLICKHOUSE_SKIP_USER_SETUP: "1"
-    volumes:
-      - event_data:/var/lib/clickhouse
-      - event_logs:/var/log/clickhouse-server
-    healthcheck:
-      test: "CMD-SHELL wget -qO- http://127.0.0.1:8123/ping || exit 1"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-volumes:
-  db_data: {}
-  event_data: {}
-  event_logs: {}
-  plausible_data: {}
-
+- name: plausible_db
+  image: postgres:16-alpine
+  ports: []
+  environment:
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+    POSTGRES_DB: plausible
+  volumes:
+  - db_data:/var/lib/postgresql/data
+  depends_on: []
+  command: null
+  healthcheck:
+    test: CMD-SHELL pg_isready -U postgres -d plausible
+    interval: 10s
+    timeout: 5s
+    retries: 10
+- name: plausible_events_db
+  image: clickhouse/clickhouse-server:24.12-alpine
+  ports: []
+  environment:
+    CLICKHOUSE_SKIP_USER_SETUP: '1'
+  volumes:
+  - event_data:/var/lib/clickhouse
+  - event_logs:/var/log/clickhouse-server
+  depends_on: []
+  command: null
+  healthcheck:
+    test: CMD-SHELL wget -qO- http://127.0.0.1:8123/ping || exit 1
+    interval: 10s
+    timeout: 5s
+    retries: 10
 proxy:
   type: none
   auto_detect: false
-
+  domains: []
+  config: null
+deploy:
+  target: server
+  environment: null
+  compose_file: docker/production/compose.yml
+  deployment_hash: null
+  cloud:
+    provider: hetzner
+    orchestrator: remote
+    region: ${HETZNER_REGION}
+    size: ${HETZNER_SERVER_TYPE}
+    install_image: null
+    remote_payload_file: null
+    ssh_key: null
+    key: null
+    server: null
+    public_ports:
+    - 8000/tcp
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
+  registry: null
+  default_target: null
+  targets: {}
 install:
   inputs:
     commonDomain: plausible.example.com
-
-deploy:
-  target: cloud
-  compose_file: docker/production/compose.yml
-  cloud:
-    provider: hetzner
-    region: ${HETZNER_REGION}
-    size: ${HETZNER_SERVER_TYPE}
-    public_ports:
-      - "8000/tcp"
-
-config_contract:
-  services:
-    plausible_db:
-      required: [POSTGRES_DB]
-      secret: [POSTGRES_PASSWORD]
-    plausible:
-      required: [BASE_URL, DATABASE_URL, CLICKHOUSE_DATABASE_URL]
-      secret: [SECRET_KEY_BASE, TOTP_VAULT_KEY]
-
-hooks:
-  pre_build: ./scripts/generate-secrets.sh
-
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
 monitoring:
   status_panel: true
-
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+  post_deploy: null
+  on_failure: null
 env_file: .env
+env: {}
+config_contract:
+  services:
+    plausible:
+      required:
+      - BASE_URL
+      - DATABASE_URL
+      - CLICKHOUSE_DATABASE_URL
+      secret:
+      - SECRET_KEY_BASE
+      - TOTP_VAULT_KEY
+    plausible_db:
+      required:
+      - POSTGRES_DB
+      secret:
+      - POSTGRES_PASSWORD
