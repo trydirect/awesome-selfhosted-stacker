@@ -1,66 +1,94 @@
 name: rustfs
-
+version: 1.0.0
+organization: null
 project:
   identity: rustfs
-version: 1.0.0
 app:
   type: custom
   path: .
+  dockerfile: null
   image: rustfs/rustfs:latest
+  build: null
   ports:
   - 9000:9000
   - 9001:9001
-  environment:
-    RUSTFS_VOLUMES: /data/rustfs0 /data/rustfs1 /data/rustfs2 /data/rustfs3
-    RUSTFS_ADDRESS: 0.0.0.0:9000
-    RUSTFS_CONSOLE_ADDRESS: 0.0.0.0:9001
-    RUSTFS_CONSOLE_ENABLE: 'true'
-    RUSTFS_CONSOLE_CORS_ALLOWED_ORIGINS: '*'
-    RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY}
-    RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY}
-    RUSTFS_OBS_LOGGER_LEVEL: info
-    RUSTFS_UNSAFE_BYPASS_DISK_CHECK: 'true'
   volumes:
   - rustfs_data:/data
   - rustfs_logs:/app/logs
+  environment:
+    RUSTFS_CONSOLE_ADDRESS: 0.0.0.0:9001
+    RUSTFS_OBS_LOGGER_LEVEL: info
+    RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY}
+    RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY}
+    RUSTFS_CONSOLE_ENABLE: 'true'
+    RUSTFS_VOLUMES: /data/rustfs0 /data/rustfs1 /data/rustfs2 /data/rustfs3
+    RUSTFS_ADDRESS: 0.0.0.0:9000
+    RUSTFS_CONSOLE_CORS_ALLOWED_ORIGINS: '*'
+    RUSTFS_UNSAFE_BYPASS_DISK_CHECK: 'true'
+  command: null
+  healthcheck: null
 services:
 - name: otel-collector
   image: otel/opentelemetry-collector:latest
   ports: []
   environment: {}
   volumes: []
+  depends_on: []
+  command: null
+  healthcheck: null
 proxy:
   type: none
   auto_detect: false
+  domains: []
+  config: null
 deploy:
-  target: cloud
+  target: server
+  environment: null
+  compose_file: null
+  deployment_hash: null
   cloud:
     provider: hetzner
+    orchestrator: remote
     region: fsn1
     size: cpx22
+    install_image: null
+    remote_payload_file: null
     ssh_key: ~/.ssh/id_ed25519
+    key: null
+    server: null
     public_ports:
     - '9000'
     - '9001'
-monitoring:
-  status_panel: true
-hooks:
-  pre_build: ./scripts/generate-secrets.sh
-  post_deploy: ./entrypoint.sh
-env_file: .env
-env: {}
-
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
+  registry: null
+  default_target: null
+  targets: {}
 install:
   inputs:
     commonDomain: example.com
-
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
+monitoring:
+  status_panel: true
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+  post_deploy: ./entrypoint.sh
+  on_failure: null
+env_file: .env
+env: {}
 config_contract:
   services:
-    app:
-      environment:
-        - name: RUSTFS_ACCESS_KEY
-          required: true
-          secret: true
-        - name: RUSTFS_SECRET_KEY
-          required: true
-          secret: true
+    app: {}

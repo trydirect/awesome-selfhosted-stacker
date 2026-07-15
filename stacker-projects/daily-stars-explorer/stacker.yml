@@ -1,36 +1,73 @@
-name: "daily-stars-explorer"
-version: "1.0.0"
+name: daily-stars-explorer
+version: 1.0.0
+organization: null
 project:
-  identity: "daily-stars-explorer"
+  identity: daily-stars-explorer
+app:
+  type: custom
+  path: .
+  dockerfile: null
+  image: ghcr.io/emanuelef/daily-stars-explorer:latest
+  build: null
+  ports:
+  - 8080:8080
+  volumes: []
+  environment:
+    PAT: ${PAT}
+  command: null
+  healthcheck: null
+services: []
+proxy:
+  type: none
+  auto_detect: false
+  domains: []
+  config: null
+deploy:
+  target: server
+  environment: null
+  compose_file: null
+  deployment_hash: null
+  cloud:
+    provider: hetzner
+    orchestrator: remote
+    region: fsn1
+    size: cpx22
+    install_image: null
+    remote_payload_file: null
+    ssh_key: null
+    key: null
+    server: null
+    public_ports:
+    - '8080'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
+  registry: null
+  default_target: null
+  targets: {}
 install:
   inputs:
-    commonDomain: "daily-stars.example.com"
-config_contract:
-  app:
-    environment:
-      - name: "PAT"
-        required: true
-        secret: true
-hooks:
-  pre_build: "./scripts/generate-secrets.sh"
-app:
-  type: "custom"
-  image: "ghcr.io/emanuelef/daily-stars-explorer:latest"
-  ports:
-    - "8080:8080"
-  environment:
-    PAT: "${PAT}"
-proxy:
-  type: "none"
-  auto_detect: false
-deploy:
-  target: "local"
-  cloud:
-    provider: "hetzner"
-    region: "fsn1"
-    size: "cpx22"
-    public_ports:
-      - "8080"
+    commonDomain: daily-stars.example.com
+environments: {}
+ai:
+  enabled: false
+  provider: openai
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
 monitoring:
   status_panel: true
-env_file: ".env"
+  healthcheck: null
+  metrics: null
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+  post_deploy: null
+  on_failure: null
+env_file: .env
+env: {}
+config_contract:
+  services: {}
