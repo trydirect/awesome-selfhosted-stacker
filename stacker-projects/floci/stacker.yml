@@ -34,7 +34,7 @@ proxy:
   domains: []
   config: null
 deploy:
-  target: cloud
+  target: server
   environment: null
   compose_file: null
   deployment_hash: null
@@ -48,8 +48,13 @@ deploy:
     ssh_key: ~/.ssh/id_rsa
     key: null
     server: null
-    public_ports: ["4566"]
-  server: null
+    public_ports:
+    - '4566'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
   registry: null
   default_target: null
   targets: {}
