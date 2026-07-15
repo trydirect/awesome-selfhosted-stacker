@@ -1,32 +1,30 @@
 name: hermes-agent
-
 project:
   identity: hermes-agent
-version: "1.0.0"
-
+version: 1.0.0
 app:
   type: python
   path: .
   dockerfile: Dockerfile
   ports:
-    - "8000:8000"
-    - "8001:8001"
+  - 8000:8000
+  - 8001:8001
   environment:
-    HERMES_UID: "1000"
-    HERMES_GID: "1000"
-    PYTHONUNBUFFERED: "1"
-
+    HERMES_UID: '1000'
+    HERMES_GID: '1000'
+    PYTHONUNBUFFERED: '1'
 services: []
-
 proxy:
   type: none
   auto_detect: false
-
 deploy:
-  target: local
-
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
 monitoring:
   status_panel: true
-
 env_file: .env
 env: {}
