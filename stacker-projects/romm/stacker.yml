@@ -1,84 +1,91 @@
 name: romm
-version: "1.0.0"
-
+version: 1.0.0
 project:
   identity: romm
-
 app:
   type: custom
   image: rommapp/romm:latest
   ports:
-    - "8080:8080"
+  - 8080:8080
   environment:
     DB_HOST: romm-db
     DB_NAME: romm
     DB_USER: romm-user
-    DB_PASSWD: "${DB_PASSWD}"
-    ROMM_AUTH_SECRET_KEY: "${ROMM_AUTH_SECRET_KEY}"
-    SCREENSCRAPER_USER: "${SCREENSCRAPER_USER}"
-    SCREENSCRAPER_PASSWORD: "${SCREENSCRAPER_PASSWORD}"
-    RETROACHIEVEMENTS_API_KEY: "${RETROACHIEVEMENTS_API_KEY}"
-    STEAMGRIDDB_API_KEY: "${STEAMGRIDDB_API_KEY}"
-    HASHEOUS_API_ENABLED: "true"
+    DB_PASSWD: ${DB_PASSWD}
+    ROMM_AUTH_SECRET_KEY: ${ROMM_AUTH_SECRET_KEY}
+    SCREENSCRAPER_USER: ${SCREENSCRAPER_USER}
+    SCREENSCRAPER_PASSWORD: ${SCREENSCRAPER_PASSWORD}
+    RETROACHIEVEMENTS_API_KEY: ${RETROACHIEVEMENTS_API_KEY}
+    STEAMGRIDDB_API_KEY: ${STEAMGRIDDB_API_KEY}
+    HASHEOUS_API_ENABLED: 'true'
   volumes:
-    - romm_resources:/romm/resources
-    - romm_redis_data:/redis-data
-    - ./library:/romm/library
-    - ./assets:/romm/assets
-    - ./config:/romm/config
-
+  - romm_resources:/romm/resources
+  - romm_redis_data:/redis-data
+  - ./library:/romm/library
+  - ./assets:/romm/assets
+  - ./config:/romm/config
 services:
-  - name: romm-db
-    image: mariadb:11
-    environment:
-      MARIADB_ROOT_PASSWORD: "${MARIADB_ROOT_PASSWORD}"
-      MARIADB_DATABASE: romm
-      MARIADB_USER: romm-user
-      MARIADB_PASSWORD: "${DB_PASSWD}"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: "CMD healthcheck.sh --connect --innodb_initialized"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
+- name: romm-db
+  image: mariadb:11
+  environment:
+    MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    MARIADB_DATABASE: romm
+    MARIADB_USER: romm-user
+    MARIADB_PASSWORD: ${DB_PASSWD}
+  volumes:
+  - mysql_data:/var/lib/mysql
+  healthcheck:
+    test: CMD healthcheck.sh --connect --innodb_initialized
+    interval: 10s
+    timeout: 5s
+    retries: 10
 volumes:
   mysql_data: {}
   romm_resources: {}
   romm_redis_data: {}
-
 install:
   inputs:
     commonDomain: romm.example.com
-
 config_contract:
   services:
     romm-db:
-      required: [MARIADB_DATABASE, MARIADB_USER]
-      secret: [MARIADB_ROOT_PASSWORD, MARIADB_PASSWORD]
+      required:
+      - MARIADB_DATABASE
+      - MARIADB_USER
+      secret:
+      - MARIADB_ROOT_PASSWORD
+      - MARIADB_PASSWORD
     romm:
-      required: [DB_HOST, DB_NAME, DB_USER]
-      secret: [DB_PASSWD, ROMM_AUTH_SECRET_KEY]
-      optional: [SCREENSCRAPER_USER, SCREENSCRAPER_PASSWORD, RETROACHIEVEMENTS_API_KEY, STEAMGRIDDB_API_KEY]
-
+      required:
+      - DB_HOST
+      - DB_NAME
+      - DB_USER
+      secret:
+      - DB_PASSWD
+      - ROMM_AUTH_SECRET_KEY
+      optional:
+      - SCREENSCRAPER_USER
+      - SCREENSCRAPER_PASSWORD
+      - RETROACHIEVEMENTS_API_KEY
+      - STEAMGRIDDB_API_KEY
 hooks:
   pre_build: ./scripts/generate-secrets.sh
-
 proxy:
   type: none
   auto_detect: false
-
 deploy:
-  target: cloud
+  target: server
   cloud:
     provider: hetzner
     region: ${HETZNER_REGION}
     size: ${HETZNER_SERVER_TYPE}
     public_ports:
-      - "8080"
-
+    - '8080'
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
 monitoring:
   status_panel: true
-
 env_file: .env
