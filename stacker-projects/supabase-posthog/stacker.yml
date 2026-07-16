@@ -1,0 +1,308 @@
+name: supabase-posthog
+version: "1.0.0"
+
+project:
+  identity: supabase-posthog
+
+install:
+  inputs:
+    commonDomain: supabase-posthog.example.com
+
+# Supabase is the primary application (Kong gateway).
+app:
+  type: custom
+  image: kong/kong:3.9.1
+  ports:
+    - "8000:8000"
+    - "8443:8443"
+  volumes:
+    - ./kong.yml:/usr/local/kong/kong.yml
+  environment:
+    KONG_DATABASE: "off"
+    KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
+    KONG_DNS_ORDER: LAST,A,CNAME
+    KONG_DNS_NOT_FOUND_TTL: "1"
+    KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function,correlation-id
+    KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+    KONG_NGINX_PROXY_PROXY_BUFFERS: "64 160k"
+    KONG_PROXY_ACCESS_LOG: /dev/stdout combined
+    SUPABASE_ANON_KEY: "${ANON_KEY}"
+    SUPABASE_SERVICE_KEY: "${SERVICE_ROLE_KEY}"
+    SUPABASE_PUBLIC_URL: "${SUPABASE_PUBLIC_URL}"
+    ANON_KEY: "${ANON_KEY}"
+    SERVICE_ROLE_KEY: "${SERVICE_ROLE_KEY}"
+    JWT_SECRET: "${JWT_SECRET}"
+    DASHBOARD_USERNAME: "${DASHBOARD_USERNAME}"
+    DASHBOARD_PASSWORD: "${DASHBOARD_PASSWORD}"
+
+services:
+  # --- Supabase services ---
+  - name: db
+    image: supabase/postgres:17.6.1.136
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+      JWT_SECRET: "${JWT_SECRET}"
+      JWT_EXP: "${JWT_EXPIRY}"
+      DB_INIT_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db-init-fix.sh:/docker-entrypoint-initdb.d/zz-fix-passwords.sh:ro
+    healthcheck:
+      test: "CMD pg_isready -U supabase_admin"
+      interval: "5s"
+      timeout: "5s"
+      retries: 10
+
+  - name: studio
+    image: supabase/studio:2026.06.03-sha-0bca601
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      HOSTNAME: "0.0.0.0"
+      STUDIO_PG_META_URL: http://meta:8080
+      POSTGRES_PORT: "${POSTGRES_PORT}"
+      POSTGRES_HOST: db
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      PG_META_CRYPTO_KEY: "${PG_META_CRYPTO_KEY}"
+      PGRST_DB_SCHEMAS: "${PGRST_DB_SCHEMAS}"
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_PUBLIC_URL: "${SUPABASE_PUBLIC_URL}"
+      SUPABASE_ANON_KEY: "${ANON_KEY}"
+      SUPABASE_SERVICE_KEY: "${SERVICE_ROLE_KEY}"
+      JWT_SECRET: "${JWT_SECRET}"
+    volumes:
+      - studio_snippets:/app/snippets
+
+  - name: auth
+    image: supabase/gotrue:v2.189.0
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: "${API_EXTERNAL_URL}"
+      GOTRUE_DB_DATABASE_URL: "postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}"
+      GOTRUE_DB_DRIVER: "postgres"
+      GOTRUE_SITE_URL: "${SITE_URL}"
+      GOTRUE_DISABLE_SIGNUP: "${DISABLE_SIGNUP}"
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_EXP: "${JWT_EXPIRY}"
+      GOTRUE_JWT_SECRET: "${JWT_SECRET}"
+      GOTRUE_JWT_ISSUER: "${API_EXTERNAL_URL}/auth/v1"
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "${ENABLE_EMAIL_SIGNUP}"
+      GOTRUE_MAILER_AUTOCONFIRM: "${ENABLE_EMAIL_AUTOCONFIRM}"
+      GOTRUE_SMTP_ADMIN_EMAIL: "${SMTP_ADMIN_EMAIL}"
+      GOTRUE_SMTP_HOST: "${SMTP_HOST}"
+      GOTRUE_SMTP_PORT: "${SMTP_PORT}"
+      GOTRUE_SMTP_USER: "${SMTP_USER}"
+      GOTRUE_SMTP_PASS: "${SMTP_PASS}"
+      GOTRUE_SMTP_SENDER_NAME: "${SMTP_SENDER_NAME}"
+
+  - name: rest
+    image: postgrest/postgrest:v14.12
+    environment:
+      PGRST_DB_URI: "postgres://authenticator:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}"
+      PGRST_DB_SCHEMAS: "${PGRST_DB_SCHEMAS}"
+      PGRST_DB_MAX_ROWS: "${PGRST_DB_MAX_ROWS}"
+      PGRST_DB_EXTRA_SEARCH_PATH: "${PGRST_DB_EXTRA_SEARCH_PATH}"
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: "${JWT_SECRET}"
+      PGRST_APP_SETTINGS_JWT_SECRET: "${JWT_SECRET}"
+      PGRST_APP_SETTINGS_JWT_EXP: "${JWT_EXPIRY}"
+
+  - name: realtime
+    image: supabase/realtime:v2.102.3
+    environment:
+      PORT: "4000"
+      DB_HOST: db
+      DB_PORT: "${POSTGRES_PORT}"
+      DB_USER: supabase_admin
+      DB_PASSWORD: "${POSTGRES_PASSWORD}"
+      DB_NAME: "${POSTGRES_DB}"
+      DB_ENC_KEY: supabaserealtime
+      JWT_SECRET: "${JWT_SECRET}"
+      METRICS_JWT_SECRET: "${JWT_SECRET}"
+      SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
+      APP_NAME: realtime
+      SEED_SELF_HOST: "true"
+      RUN_JANITOR: "true"
+      DISABLE_HEALTHCHECK_LOGGING: "true"
+
+  - name: storage
+    image: supabase/storage-api:v1.60.4
+    environment:
+      ANON_KEY: "${ANON_KEY}"
+      SERVICE_KEY: "${SERVICE_ROLE_KEY}"
+      POSTGREST_URL: http://rest:3000
+      JWT_SECRET: "${JWT_SECRET}"
+      PGRST_JWT_SECRET: "${JWT_SECRET}"
+      DATABASE_URL: "postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}"
+      STORAGE_PUBLIC_URL: "${SUPABASE_PUBLIC_URL}"
+      FILE_SIZE_LIMIT: "52428800"
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      REGION: "${REGION}"
+      ENABLE_IMAGE_TRANSFORMATION: "true"
+      IMGPROXY_URL: http://imgproxy:5001
+    volumes:
+      - storage_data:/var/lib/storage
+
+  - name: imgproxy
+    image: darthsim/imgproxy:v3.30.1
+    environment:
+      IMGPROXY_BIND: ":5001"
+      IMGPROXY_LOCAL_FILESYSTEM_ROOT: /
+      IMGPROXY_USE_ETAG: "true"
+
+  - name: meta
+    image: supabase/postgres-meta:v0.96.6
+    environment:
+      PG_META_PORT: "8080"
+      PG_META_DB_HOST: db
+      PG_META_DB_PORT: "${POSTGRES_PORT}"
+      PG_META_DB_NAME: "${POSTGRES_DB}"
+      PG_META_DB_USER: postgres
+      PG_META_DB_PASSWORD: "${POSTGRES_PASSWORD}"
+      CRYPTO_KEY: "${PG_META_CRYPTO_KEY}"
+
+  # --- PostHog services (deployed separately via `stacker service deploy posthog`) ---
+  - name: posthog
+    image: posthog/posthog:latest
+    ports:
+      - "8001:8000"
+    environment:
+      DEPLOYMENT: docker
+      SITE_URL: "${POSTHOG_SITE_URL}"
+      POSTHOG_DOMAIN: analytics.example.com
+      SECURE_COOKIES: "false"
+      DISABLE_SECURE_SSL_REDIRECT: "true"
+      SECRET_KEY: "${POSTHOG_SECRET_KEY}"
+      REDIS_URL: redis://posthog_redis:6379
+      POSTGRES_HOST: posthog_db
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: posthog
+      POSTGRES_PASSWORD: "${POSTHOG_DB_PASSWORD}"
+      POSTGRES_DB: posthog
+      POSTHOG_DB_NAME: posthog
+      DATABASE_URL: "postgres://posthog:${POSTHOG_DB_PASSWORD}@posthog_db:5432/posthog"
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_DATABASE: posthog
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ""
+      CLICKHOUSE_SECURE: "false"
+      CLICKHOUSE_VERIFY: "false"
+      CLICKHOUSE_HTTP_URL: "http://clickhouse:8123"
+      KAFKA_URL: "kafka://kafka:9092"
+      SKIP_CLICKHOUSE_MIGRATIONS: "false"
+
+  - name: posthog_db
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_USER: posthog
+      POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB"
+      POSTGRES_PASSWORD: "${POSTHOG_DB_PASSWORD}"
+      POSTGRES_DB: posthog
+    volumes:
+      - posthog_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U posthog -d posthog"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+
+  - name: posthog_redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6380:6379"
+    volumes:
+      - posthog_redis_data:/data
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+
+  - name: clickhouse
+    image: clickhouse/clickhouse-server:24.8-alpine
+    ports:
+      - "127.0.0.1:8123:8123"
+    environment:
+      CLICKHOUSE_DB: posthog
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ""
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    healthcheck:
+      test: "CMD wget -qO- http://localhost:8123/ping || exit 1"
+      interval: "10s"
+      timeout: "5s"
+      retries: 10
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx32
+    public_ports:
+      - "8000"
+      - "8443"
+      - "8001"
+
+monitoring:
+  status_panel: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+config_contract:
+  app:
+    environment:
+      - name: POSTGRES_PASSWORD
+        required: true
+        secret: true
+      - name: JWT_SECRET
+        required: true
+        secret: true
+      - name: ANON_KEY
+        required: true
+        secret: true
+      - name: SERVICE_ROLE_KEY
+        required: true
+        secret: true
+      - name: SECRET_KEY_BASE
+        required: true
+        secret: true
+      - name: PG_META_CRYPTO_KEY
+        required: true
+        secret: true
+      - name: DASHBOARD_PASSWORD
+        required: true
+        secret: true
+      - name: POSTHOG_DB_PASSWORD
+        required: true
+        secret: true
+      - name: POSTHOG_SECRET_KEY
+        required: true
+        secret: true
+
+env_file: .env
+
+volumes:
+  db_data: {}
+  studio_snippets: {}
+  storage_data: {}
+  posthog_db_data: {}
+  posthog_redis_data: {}
+  clickhouse_data: {}

@@ -19,9 +19,9 @@ if need "DB_PASSWORD"; then
   echo "  Generated DB_PASSWORD"
 fi
 
-if need "HASH_SALT"; then
-  sed -i '' "s|^HASH_SALT=.*|HASH_SALT=$(openssl rand -hex 32)|" .env
-  echo "  Generated HASH_SALT"
+if need "DB_ROOT_PASSWORD"; then
+  sed -i '' "s|^DB_ROOT_PASSWORD=.*|DB_ROOT_PASSWORD=$(openssl rand -hex 16)|" .env
+  echo "  Generated DB_ROOT_PASSWORD"
 fi
 
 echo "Secrets ready."

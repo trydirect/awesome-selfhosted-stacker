@@ -1,0 +1,54 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: auth-v1
+    url: http://auth:9999
+    routes:
+      - name: auth-all
+        paths:
+          - /auth/v1/
+    plugins:
+      - name: cors
+
+  - name: rest-v1
+    url: http://rest:3000
+    routes:
+      - name: rest-all
+        paths:
+          - /rest/v1/
+    plugins:
+      - name: cors
+
+  - name: realtime-v1
+    url: http://realtime:4000
+    routes:
+      - name: realtime-all
+        paths:
+          - /realtime/v1/
+    plugins:
+      - name: cors
+
+  - name: storage-v1
+    url: http://storage:5000
+    routes:
+      - name: storage-all
+        paths:
+          - /storage/v1/
+    plugins:
+      - name: cors
+
+consumers:
+  - username: anon
+    keyauth_credentials:
+      - key: 3ac3cc6aa64e9de6a9a897aa09eae16f145beb2c006698addda824b52eefc815
+  - username: service_role
+    keyauth_credentials:
+      - key: 18b6d56591953eeeae84546a570c2c3a382c65511babf1ff19726004fc9d48f1
+
+plugins:
+  - name: correlation-id
+    config:
+      header_name: X-Request-ID
+      generator: uuid
+      echo_downstream: true
