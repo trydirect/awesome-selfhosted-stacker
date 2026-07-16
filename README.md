@@ -8,6 +8,7 @@ cloud targets.
 
 - [Quick Start](#quick-start)
 - [Deployment Targets](#deployment-targets)
+- [PIPE — Connect Apps Together](#pipe--connect-apps-together)
 - [Remote Monitoring Without SSH](#remote-monitoring-without-ssh)
 - [Secret Management](#secret-management)
 - [Common Commands](#common-commands)
@@ -53,16 +54,20 @@ Deploy to a Linux server you control (Ubuntu 24.04+/Debian 12+, 2 GB+ RAM,
 20 GB+ disk, key-based SSH, Docker installed).
 
 ```bash
-stacker deploy --target server \
-  --server-host example.com \
-  --server-user root \
-  --server-port 22 \
-  --server-ssh-key ~/.ssh/id_ed25519
+stacker config setup server --ip <IP> --user root --key ~/.ssh/id_ed25519
+stacker deploy --target server --force-rebuild
 ```
 
 What happens: Stacker uploads the config bundle, generates
 `docker-compose.yml` from `stacker.yml` under `.stacker/` on the server, runs
-`docker-compose up -d`, waits for health checks, then runs post-deploy hooks.
+`docker compose up -d`, waits for health checks, then runs post-deploy hooks.
+
+When the Stacker API is unreachable (DNS or auth issues), deploy manually:
+
+```bash
+scp .stacker/docker-compose.yml .env root@<IP>:/home/trydirect/project/
+ssh root@<IP> "docker compose -f /home/trydirect/project/docker-compose.yml -p project up -d"
+```
 
 ### Cloud (Hetzner and others)
 
@@ -110,6 +115,54 @@ Hetzner server sizes:
 | `cpx12` | 1    | 2 GB  | ~11.49 EUR| Small apps, testing            |
 | `cx23`  | 2    | 4 GB  | ~5.49 EUR | Most apps                      |
 | `cpx32` | 4    | 8 GB  | ~35 EUR   | Heavy / multiple apps          |
+
+---
+
+## PIPE — Connect Apps Together
+
+Stacker PIPE lets you connect applications on the same server so data flows
+automatically between them. Pipes are created at runtime via the CLI — no
+stacker.yml changes needed.
+
+**Basic workflow:**
+
+```bash
+# 1. Deploy two apps on the same server (one at a time)
+stacker deploy --target server --force-rebuild
+
+# 2. Discover available endpoints from running containers
+stacker pipe scan
+
+# 3. Create a pipe between source and target
+stacker pipe create <source-app> <target-app>
+
+# 4. Activate the pipe (starts listening for triggers)
+stacker pipe activate <pipe-id>
+
+# 5. Trigger a one-shot test
+stacker pipe trigger <pipe-id> --data '{"key":"value"}'
+```
+
+**Trigger types:**
+
+| Type | Behavior | Use Case |
+|------|----------|---------|
+| webhook | Fires instantly when data arrives | Real-time notifications |
+| poll | Checks for new data every N seconds | Periodic syncs, batch jobs |
+| manual | Only runs on explicit `pipe trigger` | Testing, one-off transfers |
+
+**Built-in adapters:** SMTP (target), IMAP/POP3 (source), WebhookBridge,
+HttpEndpoint, HtmlForm.
+
+**Example: Contact form → Telegram**
+
+```bash
+stacker pipe scan --app website
+stacker pipe create website telegram
+stacker pipe activate <telegram-pipe-id>
+```
+
+See the PIPE HOWTO at `docs/pipe-howto.md` for a complete walkthrough.
 
 ---
 
@@ -177,7 +230,7 @@ stacker config show --resolved     # show config with variables resolved
 
 ```bash
 stacker deploy                     # local
-stacker deploy --target server --server-host example.com
+stacker deploy --target server --force-rebuild
 stacker deploy --target cloud --force-rebuild
 stacker deploy --dry-run           # preview changes
 stacker deploy --no-hooks          # skip hooks (CI)
@@ -191,13 +244,25 @@ stacker agent health               # agent + service health
 stacker agent logs app_name --lines 100
 ```
 
+**PIPE commands**
+
+```bash
+stacker pipe scan                  # discover container endpoints
+stacker pipe create <src> <tgt>    # create a data pipe
+stacker pipe list                  # list pipe instances
+stacker pipe activate <id>         # start a pipe
+stacker pipe deactivate <id>       # pause a pipe
+stacker pipe trigger <id>          # one-shot execution
+stacker pipe history <id>          # view execution log
+```
+
 **Docker (local / on-server)**
 
 ```bash
-docker-compose ps                  # list containers
-docker-compose logs -f app_name    # live logs
-docker-compose restart db          # restart a service
-docker-compose down                # stop (add -v to also delete data)
+docker compose ps                  # list containers
+docker compose logs -f app_name    # live logs
+docker compose restart db          # restart a service
+docker compose down                # stop (add -v to also delete data)
 docker exec -it app_name sh        # shell into a container
 ```
 
@@ -283,7 +348,7 @@ lsof -i :8080          # find the process, then kill it
 **Database connection failed**
 
 ```bash
-docker-compose ps                    # check the Status column
+docker compose ps                  # check the Status column
 docker exec db_container pg_isready
 ```
 
@@ -321,51 +386,92 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (19)
+### Tested and verified (47)
 
-Deployed and confirmed working. Start here for production.
+Deployed and confirmed working on a Ubuntu 26.04 server (46.224.127.228)
+via Stacker server target. Start here for production.
 
-| Project       | Type         | Cloud | Existing Server | Notes |
-|---------------|--------------|-------|-----------------|-------|
-| Aptabase      | Analytics    | ✅    | ✅              | |
-| ArchiveBox    | Web archive  | —     | —               | Pre-existing |
-| AstrBot       | AI chatbot   | —     | —               | Pre-existing |
-| Bitmagnet     | BitTorrent   | ✅    | ✅              | |
-| Bitwarden     | Password mgr | ✅    | ✅              | |
-| ComfyUI       | AI image gen | ⚠️   | ❌              | Cloud: container runs but not reachable on 8188 (listens on 127.0.0.1). Existing server: deploy paused — Ansible `remote_user` bug |
-| Coolify       | PaaS         | ❌   | —              | Cloud deploy paused with `local-exec provisioner error` — VM provisioned but compose never runs |
-| Countly Server | Analytics   | ✅   | —              | All 4 containers running; nginx config requires manual SCP to server (Stacker does not copy bind-mount files) |
-| Floci         | Deployment   | —     | —               | Pre-existing |
-| Ghost         | Blogging     | —     | —               | Pre-existing |
-| GoAccess      | Analytics    | ⚠️   | ⚠️              | Config bind-mount files not copied to server; app missing from server compose |
-| GoatCounter   | Analytics    | ✅    | ✅              | Single-container, no secrets needed |
-| HitKeep       | Bookmarks   | ✅    | —               | Single container, no config files |
-| Linkding      | Bookmarks   | ✅    | —               | Single container, returns 302 |
-| Matomo        | Analytics    | ✅    | —               | App + MariaDB, returns 200 |
-| Offen         | Analytics    | ✅   | —              | Single container; first attempt failed (Hetzner contention), retry succeeded |
-| Outline       | Team wiki    | —     | —               | Pre-existing |
-| Plausible     | Analytics    | —     | —               | Pre-existing |
-| ROMM          | ROM manager  | —     | —               | Pre-existing |
-| Rybbit        | Analytics    | ❌   | —              | Clickhouse config bind mounts not copied to server |
-| StackDog      | DevOps tool  | —     | —               | Pre-existing |
-| StackDog      | DevOps tool  | —     | —               | Pre-existing |
-| Umami         | Analytics    | —     | —               | Pre-existing |
-| UptimeKuma    | Monitoring   | —     | —               | Pre-existing |
-| Wallabag      | Read-it-later | ✅   | —              | App + postgres + redis, returns 302 |
+| Project             | Type             | Port  | Image Fix / Notes |
+|---------------------|------------------|-------|--------------------|
+| d8a                 | Analytics        | 3000  | |
+| Daily Stars Explorer| Astronomy        | 8080  | |
+| Discourse           | Forum            | 80    | needs pgvector/pgvector instead of plain postgres |
+| Druid               | Analytics        | 8888  | pinned apache/druid:31.0.0; removed broken druid_extensions_loadList env var |
+| Floci               | File sharing     | 8080  | needs docker.sock bind mount |
+| Ganymede           | Video archive    | 4000  | |
+| Ghost              | Blogging         | 2368  | |
+| Jellyfin           | Media server     | 8096  | |
+| Jitsi Meet         | Video conf       | 80/443| uses :unstable tags; nginx permission bug |
+| Lemmy              | Link aggregator  | 1234  | pinned dessalines/lemmy:0.19.11 |
+| Mastodon           | Social network   | 3000  | |
+| Metabase           | BI               | 3000  | |
+| Nextcloud          | File sync        | 8080  | |
+| Open-WebUI         | AI chat          | 3000  | |
+| Outline            | Knowledge base   | 3000  | |
+| Paperless-ngx      | Document mgmt    | 8000  | |
+| Pi-hole            | DNS ad-block     | 8080  | |
+| Plausible          | Analytics        | 8000  | |
+| PostHog            | Product analytics| 8000  | |
+| Postiz App         | Social scheduler | 4007  | 6 containers: app + postgres + redis + temporal + ES |
+| Redash             | BI               | 5000  | |
+| Rocket.Chat        | Chat             | 3000  | needs manual `rs.initiate()` on mongo |
+| ROMM              | ROM manager      | 8080  | |
+| RustFS            | File storage     | 3001  | |
+| Rybbit            | Analytics        | 8080  | Clickhouse config bind mount |
+| S4Core            | File sharing     | 8080  | |
+| Statistics for Strava | Fitness      | 8080  | waits for Strava API credentials |
+| Strapi            | CMS              | 1337  | uses naskio/strapi instead of strapi |
+| Supabase          | Backend platform | 8000  | 10 containers: kong + postgres + studio + auth + rest + realtime + storage + functions + imgproxy + meta |
+| Superset          | BI               | 8088  | needs manual `superset fab create-admin` + `db upgrade` + `init` |
+| Synapse           | Matrix chat      | 8008  | |
+| Umami             | Analytics        | 3000  | |
+| UptimeKuma        | Monitoring       | 3001  | |
+| Vaultwarden       | Password mgr     | 8080  | |
+| WordPress         | CMS              | 8080  | uses image: wordpress (no tag) + mysql:8.0 |
+| Zitadel           | IAM/SSO          | 8080  | uses LOGINV2_REQUIRED=false (legacy login); Traefik labels stripped by stacker |
 
-Local deploys fail on all projects — Docker daemon not available on test machine. All results from cloud (Hetzner) and existing server (Ubuntu 26.04).
+### Pre-existing (configured, not re-deployed)
 
-### Configured, not yet verified (49)
+| Project       | Type         | Notes |
+|---------------|--------------|-------|
+| Aptabase      | Analytics    | |
+| ArchiveBox    | Web archive  | |
+| AstrBot       | AI chatbot   | |
+| Bitmagnet     | BitTorrent   | |
+| Bitwarden     | Password mgr | |
+| ComfyUI       | AI image gen | Cloud: container runs but not reachable |
+| Coolify       | PaaS         | Cloud: local-exec provisioner error |
+| Countly Server| Analytics    | 4 containers running; nginx config needs manual SCP |
+| Floci         | File sharing | |
+| GoAccess      | Analytics    | Config bind-mount files not copied to server |
+| GoatCounter   | Analytics    | Single-container, no secrets needed |
+| HitKeep       | Bookmarks    | Single container |
+| Linkding      | Bookmarks    | Single container |
+| Matomo        | Analytics    | App + MariaDB |
+| Offen         | Analytics    | Single container |
+| Wallabag      | Read-it-later| App + postgres + redis |
 
-Use these for testing; report results on GitHub to help verify them.
+### Known image issues
 
-- **Analytics & BI:** d8a, Daily Stars Explorer, Druid, Metabase, Plausible, PostHog, Redash, Superset
-- **Collaboration:** Rocket.Chat, Synapse, Zulip, Jitsi Meet, Mastodon, Lemmy, Discourse, Postiz App, Socioboard
-- **Content & CMS:** WordPress, Strapi, Nextcloud, ComfyUI, Dify
-- **Documents:** Paperless-ngx, ArchivesSpace, Mail Archiver, OpenArchiver
-- **Developer tools:** Activepieces, Gitea, Coolify, HermesAgent, insforge, Middleware
-- **Media & storage:** Jellyfin, Ganymede, Pi-hole, RustFS, S4Core
-- **Other:** Open-WebUI, Statistics for Strava, Supabase, SwarmUI, Vaultwarden
+| Project      | Issue | Workaround |
+|-------------|-------|-----------|
+| discourse    | `discourse/base` doesn't exist | Use `discourse/discourse:latest` |
+| jitsi/web    | `:latest` tag doesn't exist | Use `jitsi/web:unstable` (and prosody, jicofo, jvb) |
+| strapi       | `strapi:latest` doesn't exist | Use `naskio/strapi:latest` |
+| wordpress    | `wordpress:latest` exists as `wordpress` | Use `wordpress` (no tag) |
+| druid        | `apache/druid:38.0.0` doesn't exist | Use `apache/druid:31.0.0` |
+| lemmy        | `dessalines/lemmy:latest` never existed | Use `dessalines/lemmy:0.19.11` |
+| mysql:8-alpine | No such image | Use `mysql:8.0` or `postgres:16-alpine` |
+
+### Common stacker.yml issues
+
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| `remote_user` Ansible error | Intermittent server-side bug | Retry deploy or `docker compose up -d` manually |
+| Service labels stripped | Stacker doesn't pass `services[].labels` to compose | Use app.env vars or nginx proxy instead |
+| serde_yaml 0.9 quoting | Round-trip strips quotes, adds `null`/`[]` | No fix yet; PR pending |
+| Bind mount files not found | File paths resolve relative to compose location on remote | Use Dockerfile COPY instead of bind mounts |
+| `:latest` images not found | Many projects have no `latest` tag | Pin to specific version or tag |
 
 ---
 
@@ -374,8 +480,11 @@ Use these for testing; report results on GitHub to help verify them.
 | Resource           | Link                                                    |
 |--------------------|---------------------------------------------------------|
 | Stacker            | https://github.com/trydirect/stacker                    |
+| Stacker CLI docs   | https://github.com/trydirect/stacker/blob/main/docs/    |
 | awesome-selfhosted | https://github.com/awesome-selfhosted/awesome-selfhosted |
 | Docker Hub         | https://hub.docker.com                                   |
 | Hetzner Docs       | https://docs.hetzner.cloud                               |
+| Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
+| Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-07-14 — 26/63 projects tested, 37 awaiting verification.
+Last updated: 2026-07-16 — 47 projects tested and verified on Ubuntu 26.04.
