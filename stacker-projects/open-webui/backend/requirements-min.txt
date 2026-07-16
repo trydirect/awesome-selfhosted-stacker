@@ -42,7 +42,7 @@ RestrictedPython==8.1
 loguru==0.7.3
 asgiref==3.11.1
 
-mcp==1.26.0
+mcp==1.28.1
 openai
 
 langchain==1.2.10
