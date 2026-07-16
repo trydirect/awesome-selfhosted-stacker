@@ -1,122 +1,114 @@
 name: jitsi
-version: "stable-9191-1"
-
+version: stable-9191-1
 project:
   identity: jitsi
-
 install:
   inputs:
     commonDomain: meet.example.com
-
 app:
   type: custom
-  image: jitsi/web:latest
+  image: jitsi/web:unstable
   ports:
-    - "80:80"
-    - "443:443"
+  - 80:80
+  - 443:443
   environment:
     XMPP_SERVER: xmpp.meet.jitsi
     XMPP_DOMAIN: meet.jitsi
     XMPP_MUC_DOMAIN: muc.meet.jitsi
     XMPP_INTERNAL_MUC_DOMAIN: internal-muc.meet.jitsi
-    XMPP_BOSH_URL_BASE: "http://xmpp.meet.jitsi:5280"
+    XMPP_BOSH_URL_BASE: http://xmpp.meet.jitsi:5280
     JVB_HOST: jvb.meet.jitsi
-    JVB_TCP_HARVESTER_DISABLED: "true"
-    JICOFO_COMPONENT_SECRET: "${JICOFO_SECRET}"
+    JVB_TCP_HARVESTER_DISABLED: 'true'
+    JICOFO_COMPONENT_SECRET: ${JICOFO_SECRET}
     JVB_AUTH_USER: jvb
-    JVB_AUTH_PASSWORD: "${JVB_PASSWORD}"
+    JVB_AUTH_PASSWORD: ${JVB_PASSWORD}
     JIGASI_XMPP_USER: jigasi
-    JIGASI_XMPP_PASSWORD: "${JIGASI_PASSWORD}"
+    JIGASI_XMPP_PASSWORD: ${JIGASI_PASSWORD}
     JIBRI_XMPP_USER: jibri
-    JIBRI_XMPP_PASSWORD: "${JIBRI_PASSWORD}"
-    ENABLE_AUTH: "0"
-    ENABLE_GUESTS: "1"
-
+    JIBRI_XMPP_PASSWORD: ${JIBRI_PASSWORD}
+    ENABLE_AUTH: '0'
+    ENABLE_GUESTS: '1'
 services:
-  - name: prosody
-    image: jitsi/prosody:latest
-    environment:
-      XMPP_DOMAIN: meet.jitsi
-      XMPP_AUTH_DOMAIN: auth.meet.jitsi
-      XMPP_MUC_DOMAIN: muc.meet.jitsi
-      XMPP_INTERNAL_MUC_DOMAIN: internal-muc.meet.jitsi
-      JICOFO_COMPONENT_SECRET: "${JICOFO_SECRET}"
-      JVB_AUTH_USER: jvb
-      JVB_AUTH_PASSWORD: "${JVB_PASSWORD}"
-      JIGASI_XMPP_USER: jigasi
-      JIGASI_XMPP_PASSWORD: "${JIGASI_PASSWORD}"
-      JIBRI_XMPP_USER: jibri
-      JIBRI_XMPP_PASSWORD: "${JIBRI_PASSWORD}"
-    volumes:
-      - jitsi_prosody:/var/lib/prosody
-
-  - name: jicofo
-    image: jitsi/jicofo:latest
-    environment:
-      XMPP_DOMAIN: meet.jitsi
-      XMPP_SERVER: prosody
-      XMPP_AUTH_DOMAIN: auth.meet.jitsi
-      XMPP_INTERNAL_MUC_DOMAIN: internal-muc.meet.jitsi
-      JICOFO_COMPONENT_SECRET: "${JICOFO_SECRET}"
-      JICOFO_AUTH_USER: focus
-      JICOFO_AUTH_PASSWORD: "${JICOFO_PASSWORD}"
-      JVB_BREWERY_MUC: jvbbrewery
-
-  - name: jvb
-    image: jitsi/jvb:latest
-    ports:
-      - "10000:10000/udp"
-      - "4443:4443"
-    environment:
-      XMPP_AUTH_DOMAIN: auth.meet.jitsi
-      XMPP_INTERNAL_MUC_DOMAIN: internal-muc.meet.jitsi
-      XMPP_SERVER: prosody
-      JVB_AUTH_USER: jvb
-      JVB_AUTH_PASSWORD: "${JVB_PASSWORD}"
-      JVB_BREWERY_MUC: jvbbrewery
-      JICOFO_COMPONENT_SECRET: "${JICOFO_SECRET}"
-
+- name: prosody
+  image: jitsi/prosody:unstable
+  environment:
+    XMPP_DOMAIN: meet.jitsi
+    XMPP_AUTH_DOMAIN: auth.meet.jitsi
+    XMPP_MUC_DOMAIN: muc.meet.jitsi
+    XMPP_INTERNAL_MUC_DOMAIN: internal-muc.meet.jitsi
+    JICOFO_COMPONENT_SECRET: ${JICOFO_SECRET}
+    JVB_AUTH_USER: jvb
+    JVB_AUTH_PASSWORD: ${JVB_PASSWORD}
+    JIGASI_XMPP_USER: jigasi
+    JIGASI_XMPP_PASSWORD: ${JIGASI_PASSWORD}
+    JIBRI_XMPP_USER: jibri
+    JIBRI_XMPP_PASSWORD: ${JIBRI_PASSWORD}
+  volumes:
+  - jitsi_prosody:/var/lib/prosody
+- name: jicofo
+  image: jitsi/jicofo:unstable
+  environment:
+    XMPP_DOMAIN: meet.jitsi
+    XMPP_SERVER: prosody
+    XMPP_AUTH_DOMAIN: auth.meet.jitsi
+    XMPP_INTERNAL_MUC_DOMAIN: internal-muc.meet.jitsi
+    JICOFO_COMPONENT_SECRET: ${JICOFO_SECRET}
+    JICOFO_AUTH_USER: focus
+    JICOFO_AUTH_PASSWORD: ${JICOFO_PASSWORD}
+    JVB_BREWERY_MUC: jvbbrewery
+- name: jvb
+  image: jitsi/jvb:unstable
+  ports:
+  - 10000:10000/udp
+  - 4443:4443
+  environment:
+    XMPP_AUTH_DOMAIN: auth.meet.jitsi
+    XMPP_INTERNAL_MUC_DOMAIN: internal-muc.meet.jitsi
+    XMPP_SERVER: prosody
+    JVB_AUTH_USER: jvb
+    JVB_AUTH_PASSWORD: ${JVB_PASSWORD}
+    JVB_BREWERY_MUC: jvbbrewery
+    JICOFO_COMPONENT_SECRET: ${JICOFO_SECRET}
 volumes:
   jitsi_prosody: {}
-
 proxy:
   type: none
   auto_detect: false
-
 deploy:
-  target: local
+  target: server
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx31
     public_ports:
-      - "80"
-      - "443"
-      - "10000/udp"
-
+    - '80'
+    - '443'
+    - 10000/udp
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
 config_contract:
   app:
     environment:
-      - name: JICOFO_SECRET
-        required: true
-        secret: true
-      - name: JVB_PASSWORD
-        required: true
-        secret: true
-      - name: JIGASI_PASSWORD
-        required: true
-        secret: true
-      - name: JIBRI_PASSWORD
-        required: true
-        secret: true
-      - name: JICOFO_PASSWORD
-        required: true
-        secret: true
-
+    - name: JICOFO_SECRET
+      required: true
+      secret: true
+    - name: JVB_PASSWORD
+      required: true
+      secret: true
+    - name: JIGASI_PASSWORD
+      required: true
+      secret: true
+    - name: JIBRI_PASSWORD
+      required: true
+      secret: true
+    - name: JICOFO_PASSWORD
+      required: true
+      secret: true
 hooks:
   pre_build: ./scripts/generate-secrets.sh
-
 monitoring:
   status_panel: true
-
 env_file: .env
