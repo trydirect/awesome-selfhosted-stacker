@@ -68,7 +68,7 @@ deploy:
   server:
     host: 46.224.127.228
     user: root
-    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22
 config_contract:
   app:
