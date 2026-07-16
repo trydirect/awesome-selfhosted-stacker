@@ -17,3 +17,5 @@ EXISTING_DEPLOY_SUCCESS.md
 CLOUD_DEPLOY_SUCCESS.md
 BUGS.md
 *.bak
+.stacker/
+**/.stacker

@@ -1,0 +1,80 @@
+name: wordpress-matomo
+app:
+  type: php
+  image: wordpress
+  ports:
+  - 8080:80
+  environment:
+    WORDPRESS_DB_HOST: wp-db:3306
+    WORDPRESS_DB_NAME: wordpress
+    WORDPRESS_DB_USER: wordpress
+    WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+    WORDPRESS_TABLE_PREFIX: wp_
+    WORDPRESS_DEBUG: 'false'
+  volumes:
+  - wordpress_data:/var/www/html
+services:
+- name: wp-db
+  image: mysql:8.0
+  environment:
+    MYSQL_DATABASE: wordpress
+    MYSQL_USER: wordpress
+    MYSQL_PASSWORD: ${DB_PASSWORD}
+    MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+  ports:
+  - 127.0.0.1:3306:3306
+  volumes:
+  - wp_db:/var/lib/mysql
+  healthcheck:
+    test: CMD mysqladmin ping -h localhost
+    interval: 10s
+    timeout: 5s
+    retries: 10
+- name: matomo
+  image: matomo:latest
+  ports:
+  - 8081:80
+  environment:
+    MATOMO_DATABASE_HOST: matomo-db
+    MATOMO_DATABASE_DBNAME: matomo
+    MATOMO_DATABASE_USERNAME: matomo
+    MATOMO_DATABASE_PASSWORD: ${DB_PASSWORD}
+    MATOMO_DATABASE_TABLES_PREFIX: matomo_
+  volumes:
+  - matomo_config:/var/www/html/config
+  - matomo_logs:/var/www/html/logs
+- name: matomo-db
+  image: mariadb:11
+  environment:
+    MARIADB_DATABASE: matomo
+    MARIADB_USER: matomo
+    MARIADB_PASSWORD: ${DB_PASSWORD}
+    MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+  ports:
+  - 127.0.0.1:3307:3306
+  volumes:
+  - matomo_db:/var/lib/mysql
+  healthcheck:
+    test: CMD mysqladmin ping -h localhost
+    interval: 10s
+    timeout: 5s
+    retries: 10
+volumes:
+  wordpress_data: {}
+  wp_db: {}
+  matomo_config: {}
+  matomo_logs: {}
+  matomo_db: {}
+proxy:
+  type: none
+  auto_detect: false
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+env_file: .env
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
