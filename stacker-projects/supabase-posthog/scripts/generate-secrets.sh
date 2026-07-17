@@ -36,8 +36,6 @@ set_if_empty "JWT_SECRET"          "$(openssl rand -hex 32)"
 set_if_empty "SECRET_KEY_BASE"     "$(openssl rand -hex 64)"
 set_if_empty "PG_META_CRYPTO_KEY"  "$(openssl rand -hex 32)"
 set_if_empty "DASHBOARD_PASSWORD"  "$(openssl rand -hex 16)"
-set_if_empty "POSTHOG_DB_PASSWORD" "$(openssl rand -hex 16)"
-set_if_empty "POSTHOG_SECRET_KEY"  "$(openssl rand -hex 32)"
 
 # ANON_KEY and SERVICE_ROLE_KEY are JWT tokens signed with JWT_SECRET.
 # For a self-hosted demo, random hex strings are sufficient for Kong to boot;
@@ -58,8 +56,24 @@ _format_version: "3.0"
 _transform: true
 
 services:
+  - name: openapi-v1
+    url: http://rest:3000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
+    routes:
+      - name: openapi-all
+        paths:
+          - /openapi.json
+          - /
+    plugins:
+      - name: cors
+
   - name: auth-v1
     url: http://auth:9999
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
     routes:
       - name: auth-all
         paths:
@@ -69,6 +83,9 @@ services:
 
   - name: rest-v1
     url: http://rest:3000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
     routes:
       - name: rest-all
         paths:
@@ -78,6 +95,9 @@ services:
 
   - name: realtime-v1
     url: http://realtime:4000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
     routes:
       - name: realtime-all
         paths:
@@ -87,10 +107,25 @@ services:
 
   - name: storage-v1
     url: http://storage:5000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
     routes:
       - name: storage-all
         paths:
           - /storage/v1/
+    plugins:
+      - name: cors
+
+  - name: posthog-v1
+    url: http://posthog:8000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
+    routes:
+      - name: posthog-capture
+        paths:
+          - /posthog/
     plugins:
       - name: cors
 
