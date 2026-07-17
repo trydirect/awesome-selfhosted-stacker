@@ -1,221 +1,215 @@
-# Building a Supabase → PostHog Pipe with Stacker
+# How To: Connect Supabase and PostHog with a Stacker Pipe
 
-**Date:** July 17, 2026  
-**Project:** `supabase-posthog` — a Stacker pipe demo combining Supabase and a PostHog-compatible event receiver
-
----
-
-## What we built
-
-A fully working Stacker pipe that connects **Supabase** (Kong API gateway + PostgREST) to a **PostHog-compatible event receiver**. Events flow from a Supabase table through a pipe and land in PostHog — all without custom code.
-
-## Architecture
-
-```
-User → Kong (8000) → PostgREST (rest:3000) → Pipe → PostHog Receiver (posthog:8000)
-                          └── /posthog/capture ──→ Kong ──→ PostHog (alt route)
-```
-
-- **App:** Kong/kong:3.9.1 — the API gateway
-- **Services:** Supabase stack (db, auth, rest, realtime, storage, meta, studio)
-- **Pipe target:** A lightweight Python stdlib HTTP server implementing PostHog's `/capture` API
-- **Proxy:** None (Kong is the entry point)
+Create a working data pipe between a Supabase stack (Kong + PostgREST) and a PostHog-compatible event receiver using Stacker.
 
 ---
 
-## The journey
+## Prerequisites
 
-### Phase 1: Project analysis
+- Stacker CLI installed and authenticated (`stacker login`)
+- Hetzner cloud credentials configured (`stacker clouds`)
+- Docker running locally (for image transfer if needed)
 
-The `supabase-posthog` project was created by a Copilot agent but had several issues preventing it from working. I identified the problems by reading `stacker.yml`, `kong.yml`, and the generated `.stacker/docker-compose.yml`.
+---
 
-**Issues found:**
-
-| # | File | Problem | Fix |
-|---|------|---------|-----|
-| 1 | `kong.yml` | No route to PostHog | Added `posthog-v1` service routing `/posthog/` → `http://posthog:8000` |
-| 2 | `scripts/generate-secrets.sh` | Template didn't match kong.yml | Same route added to heredoc template |
-| 3 | `posthog-receiver/Dockerfile` | Unused, installed flask/gunicorn but app uses stdlib | Removed |
-| 4 | `setup-pipe.sql` | Used non-existent `http_post()` | Rewritten to use `net.http_post()` from `pg_net` |
-| 5 | `README.md` | Wrong app code (`supabase` instead of `supabase-posthog`) | Fixed |
-
-### Phase 2: Deploying to cloud
-
-We deployed to Hetzner cloud (fsn1, cpx32) using:
+## Step 1 — Create the project
 
 ```bash
-stacker deploy --target cloud --key htz-0
+stacker init supabase-posthog
 ```
 
-This worked, but the status panel agent was deployed with the wrong image (`registry-intl.eu-central-1.aliyuncs.com/trydirect/status`) instead of `trydirect/status` from Docker Hub.
+Set the project identity in `stacker.yml`:
 
-### Phase 3: Swapping the agent image
-
-The agent image was pulled from the wrong registry. We:
-
-1. Pulled `trydirect/status:latest` on the server
-2. Edited `/home/trydirect/statuspanel/docker-compose.yml` to replace the image reference
-3. Ran `docker compose up -d` to recreate both `statuspanel` and `statuspanel_agent` containers
-4. Later uploaded a test build `status-panel:test-amd64` via SCP + `docker load`
-
-This fixed the container name resolution — the agent could now resolve `supabase-posthog` → `project-app-1` via the `my.stacker.service` label.
-
-### Phase 4: Kong timeout discovery
-
-Probes were timing out because Kong's default upstream timeouts (60s) caused HTTP requests to hang when upstream services were down. I verified this by probing from inside a container:
-
-```bash
-# From project-posthog-1 container
-$ wget -q -O- --timeout=2 http://project-app-1:8000/openapi.json
-→ download timed out  # Hang until 2s timeout!
-$ wget -q -O- --timeout=2 http://project-app-1:8000/swagger.json
-→ 503 Service Unavailable  # Fast response
+```yaml
+name: supabase-posthog
+project:
+  identity: supabase-posthog
 ```
 
-Endpoints that route to downstream services (rest, auth) would hang until timeout. **Fix:** Added 5s `connect_timeout`, `write_timeout`, and `read_timeout` to all Kong services in `kong.yml`.
+## Step 2 — Define the stack
+
+Configure the application and services in `stacker.yml`. The main app is Kong, acting as the API gateway. Add Supabase services (db, auth, rest, realtime, storage, meta, studio) and a PostHog-compatible event receiver.
+
+**Key config:**
+
+```yaml
+app:
+  type: custom
+  image: kong/kong:3.9.1
+  ports:
+    - "8000:8000"
+    - "8443:8443"
+
+services:
+  - name: db
+    image: supabase/postgres:17.6.1.136
+    # ... database init, healthcheck, volumes
+
+  - name: posthog
+    image: python:3.11-alpine
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./posthog-receiver/app.py:/app/app.py:ro
+    command: python /app/app.py
+```
+
+### Kong route configuration
+
+Create `kong.yml` with upstream timeouts to avoid probe hangs:
 
 ```yaml
 services:
-  - name: openapi-v1
+  - name: rest-v1
     url: http://rest:3000
     connect_timeout: 5000
     write_timeout: 5000
     read_timeout: 5000
+    routes:
+      - name: rest-all
+        paths:
+          - /rest/v1/
+
+  - name: posthog-v1
+    url: http://posthog:8000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
+    routes:
+      - name: posthog-capture
+        paths:
+          - /posthog/
 ```
 
-### Phase 5: ConfigRenderer compose bug
+Without explicit timeouts, Kong defaults to 60s per upstream operation. Probes that hit a down service would hang for the full duration.
 
-The remote server had a broken `docker-compose.yml` generated by Stacker's ConfigRenderer:
+## Step 3 — Deploy to cloud
 
-- **Network mismatch:** Services referenced `default_network` but the `networks:` section only had `trydirect_network`
-- **Missing volumes:** `db_data`, `studio_snippets`, `storage_data` were referenced by services but not defined
-- **Wrong ownership:** Files owned by `root` instead of `trydirect`
-- **Obsolete `version` key:** `version: '3.8'` which newer Docker Compose ignores
-
-**Fix:** Replaced the remote compose file with the correct `docker-compose.remote.yml` from `.stacker/deploy/default/`, and removed `null` values from volume definitions.
-
-### Phase 6: Database password mismatch
-
-The Supabase services (PostgREST, GoTrue, Storage) were failing with:
-
-```
-password authentication failed for user "authenticator"
-password authentication failed for user "supabase_storage_admin"
-password authentication failed for user "supabase_auth_admin"
+```bash
+stacker deploy --target cloud --key htz-0
 ```
 
-The `db-init-fix.sh` script (mounted at `/docker-entrypoint-initdb.d/`) only runs on **first database initialization**. When containers were restarted or the deployment was re-run, the init script was skipped, causing a password mismatch between the database and the services.
+This provisions a Hetzner server, installs Docker and the status panel agent, copies the config bundle, and starts all containers.
 
-**Fix:** Connected to the running Postgres container and reset the passwords manually:
+After deployment completes, verify:
 
-```sql
-ALTER USER authenticator WITH PASSWORD '...';
-ALTER USER supabase_auth_admin WITH PASSWORD '...';
-ALTER USER supabase_storage_admin WITH PASSWORD '...';
+```bash
+stacker status
+stacker agent status
+stacker agent containers
 ```
 
-### Phase 7: The agent probe loop
+All services should show `running`. If some are `restarting`, check their logs:
 
-The `stacker pipe scan` and `stacker pipe create` CLI commands kept timing out. The root cause: the probe takes 3-5 minutes to complete (it's thorough), but the CLI's internal polling timeout is shorter.
-
-**The discovery that changed everything:**
-
-The agent logs showed:
-
-```
-INFO executing stacker command  probe_endpoints
-INFO Container name resolved via service label  app_code="supabase-posthog" → "project-app-1"
+```bash
+stacker agent logs rest --limit 20   # rest - is the container name
 ```
 
-But **nothing else** appeared in the logs during the probe! This is because the probe loop has zero logging — the agent was actually working, it just wasn't telling us. The diagnostic approach (SSHing and grepping Docker logs) was the wrong tool. **Use `stacker agent logs` instead.**
+## Step 4 — Create the pipe
 
-### Phase 8: It works
+The pipe connects a source endpoint (Supabase PostgREST) to a target endpoint (PostHog `/capture`).
 
-Using `stacker agent exec probe_endpoints --timeout 600`, the probe returned:
+First, scan the running apps to discover endpoints — note that the probe takes 3-5 minutes, so the CLI timeout may need extending:
 
-```json
-{
-  "containers": [{"name": "project-app-1", "ports": ["8000", ...]}],
-  "protocols_detected": ["openapi"],
-  "endpoints": [{
-    "protocol": "openapi",
-    "spec_url": "/openapi.json",
-    "operations": [
-      {"method": "GET", "path": "/"},
-      {"method": "GET", "path": "/extensions"},
-      {"method": "POST", "path": "/extensions"},
-      {"method": "GET", "path": "/tenants"},
-      ...
-    ]
-  }]
-}
+```bash
+# Using pipe scan (may time out if probe takes long)
+stacker pipe scan --app supabase-posthog
+
+# Alternative: use agent exec with a longer timeout
+stacker agent exec probe_endpoints \
+  --params '{"app_code":"supabase-posthog","capture_samples":true}' \
+  --timeout 600 --json
 ```
 
-Events flow end-to-end:
+Then create the pipe:
 
-```json
-// Direct to PostHog (port 8001)
-POST /capture → {"status": "ok"}
-// Through Kong (port 8000 via /posthog/ route)
-POST /posthog/capture → {"status": "ok"}
+```bash
+stacker pipe create supabase-posthog posthog --manual
 ```
 
-PostHog receiver logs confirm:
+## Step 5 — Test the pipe
+
+Verify the PostHog receiver accepts events:
+
+```bash
+# Direct to PostHog
+curl -X POST http://<SERVER_IP>:8001/capture \
+  -H "Content-Type: application/json" \
+  -d '{"event":"test","properties":{"source":"pipe-demo"}}'
+
+# Through Kong
+curl -X POST http://<SERVER_IP>:8000/posthog/capture \
+  -H "Content-Type: application/json" \
+  -d '{"event":"test","properties":{"source":"pipe-demo"}}'
+```
+
+Check the PostHog logs to confirm receipt:
+
+```bash
+stacker agent logs posthog --limit 10
+```
+
+Expected output:
 
 ```
-Received capture event: {"event": "pipe_test", "properties": {"source": "supabase-pipe-demo"}}
-Received capture event: {"event": "pipe_test_via_kong", "properties": {"demo": true}}
+Received capture event: {"event": "test", "properties": {"source": "pipe-demo"}}
 ```
 
 ---
 
-## Key commands reference
+## Troubleshooting
+
+### Probe hangs or times out
+
+**Symptom:** `pipe scan` or `pipe create` reports "timed out"
+
+**Most common cause:** The remote `docker-compose.yml` is invalid — missing volume definitions, undefined networks, or file ownership issues. Run `docker compose ps` on the server to check:
 
 ```bash
-# Deploy to cloud
-stacker deploy --target cloud --key htz-0
-
-# Check deployment status
-stacker status
-
-# Scan for endpoints (use agent exec with timeout, not pipe scan)
-stacker agent exec probe_endpoints \
-  --params '{"app_code":"supabase-posthog","capture_samples":true}' \
-  --timeout 600 --json
-
-# Create pipe (if scan completes)
-stacker pipe create supabase-posthog posthog --manual
-
-# View agent logs
-stacker agent logs statuspanel_agent --limit 50
-
-# View posthog receiver logs
-stacker agent logs posthog --limit 10
+ssh trydirect@<SERVER_IP>
+cd /home/trydirect/project
+docker compose ps
 ```
 
-## Postmortem: What went wrong
+If it errors with "refers to undefined network" or "refers to undefined volume", the compose file is broken. Check that `networks:` and `volumes:` sections match what services reference.
 
-### Root causes
+**Validator:**
+```bash
+docker compose config
+```
 
-1. **Kong default timeouts (60s)** — upstream connection hangs caused probes to stall. Fixed by adding 5s timeouts to all Kong services.
-2. **ConfigRenderer compose bug** — the auto-generated `docker-compose.yml` had missing volume definitions and mismatched network names. This is a Stacker platform bug.
-3. **db-init script one-shot behavior** — the password initialization script (`db-init-fix.sh`) only runs on first DB boot, not on restart. Services failed to authenticate after container restarts.
-4. **Agent probe logging** — the probe loop has zero instrumentation, making it impossible to tell if it's working or stuck without direct `agent exec` usage.
+### Probe works but endpoints are empty
 
-### Things we fixed in source
+**Symptom:** Probe completes but returns `"endpoints": []`
 
-| File | Fix |
-|------|-----|
-| `kong.yml` | 5s upstream timeouts, PostHog route |
-| `scripts/generate-secrets.sh` | Same timeout/route changes |
-| `setup-pipe.sql` | `http_post()` → `net.http_post()` |
-| `posthog-receiver/Dockerfile` | Removed (unused) |
-| `README.md` | Correct app codes, architecture docs |
-| `.stacker/deploy/default/docker-compose.remote.yml` | `null` → empty volumes |
+**Check:** Kong upstream timeouts. If Kong's upstream connections hang (default 60s), the probe waits for each timeout. Set `connect_timeout`, `write_timeout`, `read_timeout` to 5000ms on all Kong services.
 
-### Things that belong in the Stacker platform
+### Container name not resolved
 
-- ConfigRenderer should generate valid compose files (correct network names, proper volume sections)
-- Agent install Ansible shouldn't fail on `remote_user` reserved variable
-- Agent image should default to `trydirect/status` from Docker Hub, not the Alibaba Cloud mirror
-- `stacker pipe create` should either use cached scans or extend its timeout to match the probe duration
+**Symptom:** Agent logs show `"Failed to inspect"` or containers list is empty
+
+**Check:** The agent needs access to Docker and a valid compose file. Run `docker compose ps` directly on the server. If it fails, fix the compose file first.
+
+### Agent responds slowly
+
+**Symptom:** Agent commands take minutes to execute
+
+**Check:** If the compose file is invalid, every agent operation (`list_containers`, `deploy_app`, etc.) that validates the compose will hang. Fix the compose file first, then restart the agent:
+
+```bash
+ssh trydirect@<SERVER_IP>
+sudo docker compose -f /home/trydirect/statuspanel/docker-compose.yml up -d
+```
+
+---
+
+## Verification checklist
+
+- [ ] `stacker deployments` shows all deployments 
+- [ ] `stacker status` shows last deployment status
+- [ ] `stacker agent containers` lists all services as `running`
+- [ ] `stacker agent exec probe_endpoints` returns endpoints with operations
+- [ ] Direct curl to PostHog `/capture` returns `{"status": "ok"}`
+- [ ] Events appear in `stacker agent logs posthog`
+
+---
