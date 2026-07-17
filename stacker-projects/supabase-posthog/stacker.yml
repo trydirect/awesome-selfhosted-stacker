@@ -169,81 +169,20 @@ services:
       PG_META_DB_PASSWORD: "${POSTGRES_PASSWORD}"
       CRYPTO_KEY: "${PG_META_CRYPTO_KEY}"
 
-  # --- PostHog services (deployed separately via `stacker service deploy posthog`) ---
+  # --- PostHog-compatible event receiver (deployed via `stacker service deploy posthog`)
+  # NOTE: This is a lightweight receiver that implements the PostHog /capture
+  # and /decide endpoints so the Stacker pipe demo can deliver events without
+  # needing the full ClickHouse/Kafka PostHog stack. For production analytics
+  # replace this service with the official PostHog hobby/self-hosted compose.
   - name: posthog
-    image: posthog/posthog:latest
+    image: python:3.11-alpine
     ports:
       - "8001:8000"
-    environment:
-      DEPLOYMENT: docker
-      SITE_URL: "${POSTHOG_SITE_URL}"
-      POSTHOG_DOMAIN: analytics.example.com
-      SECURE_COOKIES: "false"
-      DISABLE_SECURE_SSL_REDIRECT: "true"
-      SECRET_KEY: "${POSTHOG_SECRET_KEY}"
-      REDIS_URL: redis://posthog_redis:6379
-      POSTGRES_HOST: posthog_db
-      POSTGRES_PORT: "5432"
-      POSTGRES_USER: posthog
-      POSTGRES_PASSWORD: "${POSTHOG_DB_PASSWORD}"
-      POSTGRES_DB: posthog
-      POSTHOG_DB_NAME: posthog
-      DATABASE_URL: "postgres://posthog:${POSTHOG_DB_PASSWORD}@posthog_db:5432/posthog"
-      CLICKHOUSE_HOST: clickhouse
-      CLICKHOUSE_DATABASE: posthog
-      CLICKHOUSE_USER: default
-      CLICKHOUSE_PASSWORD: ""
-      CLICKHOUSE_SECURE: "false"
-      CLICKHOUSE_VERIFY: "false"
-      CLICKHOUSE_HTTP_URL: "http://clickhouse:8123"
-      KAFKA_URL: "kafka://kafka:9092"
-      SKIP_CLICKHOUSE_MIGRATIONS: "false"
-
-  - name: posthog_db
-    image: postgres:16-alpine
-    ports:
-      - "127.0.0.1:5433:5432"
-    environment:
-      POSTGRES_USER: posthog
-      POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB"
-      POSTGRES_PASSWORD: "${POSTHOG_DB_PASSWORD}"
-      POSTGRES_DB: posthog
     volumes:
-      - posthog_db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: "CMD-SHELL pg_isready -U posthog -d posthog"
-      interval: "10s"
-      timeout: "5s"
-      retries: 10
-
-  - name: posthog_redis
-    image: redis:7-alpine
-    ports:
-      - "127.0.0.1:6380:6379"
-    volumes:
-      - posthog_redis_data:/data
-    healthcheck:
-      test: "CMD redis-cli ping"
-      interval: "10s"
-      timeout: "5s"
-      retries: 10
-
-  - name: clickhouse
-    image: clickhouse/clickhouse-server:24.8-alpine
-    ports:
-      - "127.0.0.1:8123:8123"
+      - ./posthog-receiver/app.py:/app/app.py:ro
+    command: python /app/app.py
     environment:
-      CLICKHOUSE_DB: posthog
-      CLICKHOUSE_USER: default
-      CLICKHOUSE_PASSWORD: ""
-      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
-    volumes:
-      - clickhouse_data:/var/lib/clickhouse
-    healthcheck:
-      test: "CMD wget -qO- http://localhost:8123/ping || exit 1"
-      interval: "10s"
-      timeout: "5s"
-      retries: 10
+      POSTHOG_SITE_URL: "${POSTHOG_SITE_URL}"
 
 proxy:
   type: none
@@ -290,12 +229,6 @@ config_contract:
       - name: DASHBOARD_PASSWORD
         required: true
         secret: true
-      - name: POSTHOG_DB_PASSWORD
-        required: true
-        secret: true
-      - name: POSTHOG_SECRET_KEY
-        required: true
-        secret: true
 
 env_file: .env
 
@@ -303,6 +236,3 @@ volumes:
   db_data: {}
   studio_snippets: {}
   storage_data: {}
-  posthog_db_data: {}
-  posthog_redis_data: {}
-  clickhouse_data: {}

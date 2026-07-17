@@ -2,8 +2,24 @@ _format_version: "3.0"
 _transform: true
 
 services:
+  - name: openapi-v1
+    url: http://rest:3000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
+    routes:
+      - name: openapi-all
+        paths:
+          - /openapi.json
+          - /
+    plugins:
+      - name: cors
+
   - name: auth-v1
     url: http://auth:9999
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
     routes:
       - name: auth-all
         paths:
@@ -13,6 +29,9 @@ services:
 
   - name: rest-v1
     url: http://rest:3000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
     routes:
       - name: rest-all
         paths:
@@ -22,6 +41,9 @@ services:
 
   - name: realtime-v1
     url: http://realtime:4000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
     routes:
       - name: realtime-all
         paths:
@@ -31,10 +53,25 @@ services:
 
   - name: storage-v1
     url: http://storage:5000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
     routes:
       - name: storage-all
         paths:
           - /storage/v1/
+    plugins:
+      - name: cors
+
+  - name: posthog-v1
+    url: http://posthog:8000
+    connect_timeout: 5000
+    write_timeout: 5000
+    read_timeout: 5000
+    routes:
+      - name: posthog-capture
+        paths:
+          - /posthog/
     plugins:
       - name: cors
 

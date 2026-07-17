@@ -68,6 +68,9 @@ volumes:
 proxy:
   type: none
   auto_detect: false
+
+monitoring:
+  status_panel: true
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 env_file: .env
