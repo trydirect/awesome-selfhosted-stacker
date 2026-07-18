@@ -1,0 +1,19 @@
+name: screego
+
+app:
+  type: custom
+  image: ghcr.io/screego/server:latest
+  ports:
+    - "5050:5050"
+  environment:
+    SCREEGO_EXTERNAL_IP: auto
+    SCREEGO_TURN_PORT_RANGE: 10000:10100
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env

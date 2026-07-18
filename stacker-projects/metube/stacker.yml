@@ -1,0 +1,23 @@
+name: metube
+
+app:
+  type: custom
+  image: alexta69/metube:latest
+  ports:
+    - "8081:8081"
+  volumes:
+    - metube_downloads:/downloads
+    - metube_state:/state
+
+volumes:
+  metube_downloads: {}
+  metube_state: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env

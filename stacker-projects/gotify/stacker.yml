@@ -1,0 +1,21 @@
+name: gotify
+
+app:
+  type: custom
+  image: gotify/server:latest
+  ports:
+    - "8080:8080"
+  volumes:
+    - gotify_data:/app/data
+
+volumes:
+  gotify_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env

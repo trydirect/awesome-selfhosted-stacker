@@ -1,0 +1,45 @@
+title: "Dashboard"
+subtitle: "Self-hosted apps"
+logo: "logo.png"
+
+header: true
+footer: false
+
+columns: 3
+
+services:
+  - name: "Monitoring"
+    icon: "fas fa-heartbeat"
+    items:
+      - name: "Uptime Kuma"
+        logo: "https://raw.githubusercontent.com/louislam/uptime-kuma/master/public/icon.svg"
+        url: "http://<SERVER_IP>:3001"
+        target: "_blank"
+      - name: "Pi-hole"
+        logo: "https://raw.githubusercontent.com/pi-hole/pi-hole/master/.github/social_cover.png"
+        url: "http://<SERVER_IP>:8080/admin"
+        target: "_blank"
+
+  - name: "Media"
+    icon: "fas fa-play"
+    items:
+      - name: "Jellyfin"
+        logo: "https://raw.githubusercontent.com/jellyfin/jellyfin-ux/master/branding/SVG/icon-transparent.svg"
+        url: "http://<SERVER_IP>:8096"
+        target: "_blank"
+      - name: "Navidrome"
+        logo: "https://raw.githubusercontent.com/navidrome/navidrome/master/ui/public/logo-192x192.png"
+        url: "http://<SERVER_IP>:4533"
+        target: "_blank"
+
+  - name: "Productivity"
+    icon: "fas fa-briefcase"
+    items:
+      - name: "WordPress"
+        logo: "https://raw.githubusercontent.com/WordPress/wordpress-develop/trunk/src/wp-admin/images/wordpress-logo.svg"
+        url: "http://<SERVER_IP>:8080"
+        target: "_blank"
+      - name: "Ghost"
+        logo: "https://raw.githubusercontent.com/TryGhost/Ghost/main/apps/admin-x-design-system/public/favicon.ico"
+        url: "http://<SERVER_IP>:2368"
+        target: "_blank"
