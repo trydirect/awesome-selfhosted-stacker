@@ -1,0 +1,29 @@
+name: traefik
+
+app:
+  type: custom
+  image: traefik:v3.0
+  ports:
+    - "80:80"
+    - "443:443"
+    - "8080:8080"
+  command:
+    - --providers.docker=true
+    - --providers.docker.exposedbydefault=false
+    - --entrypoints.web.address=:80
+    - --entrypoints.websecure.address=:443
+    - --api.dashboard=true
+    - --api.insecure=true
+    - --ping=true
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - traefik_certs:/certs
+
+volumes:
+  traefik_certs: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env

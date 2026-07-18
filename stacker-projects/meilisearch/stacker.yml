@@ -1,0 +1,24 @@
+name: meilisearch
+
+app:
+  type: custom
+  image: getmeili/meilisearch:latest
+  ports:
+    - "7700:7700"
+  environment:
+    MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+    MEILI_ENV: production
+  volumes:
+    - meilisearch_data:/meili_data
+
+volumes:
+  meilisearch_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env

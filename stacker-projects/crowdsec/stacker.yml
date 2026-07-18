@@ -1,0 +1,22 @@
+name: crowdsec
+
+app:
+  type: custom
+  image: crowdsecurity/crowdsec:latest
+  environment:
+    COLLECTIONS: "crowdsecurity/nginx"
+    GID: "1000"
+  volumes:
+    - crowdsec_config:/etc/crowdsec
+    - crowdsec_data:/var/lib/crowdsec/data
+    - /var/log:/var/log:ro
+
+volumes:
+  crowdsec_config: {}
+  crowdsec_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
