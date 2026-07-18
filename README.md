@@ -468,6 +468,26 @@ server target. Start here for production.
 | Matomo        | Analytics    | App + MariaDB |
 | Offen         | Analytics    | Single container |
 | Wallabag      | Read-it-later| App + postgres + redis |
+| Automatisch   | Automation   | Workflow automation (Zapier alt) |
+| Audiobookshelf| Audiobooks   | Single container |
+| Cal.com       | Scheduling   | Calendly alternative + postgres |
+| Calibre-web   | E-books      | linuxserver/calibre-web |
+| changedetection.io | Monitoring | Website change detection |
+| Gotify        | Notifications| Push notification server |
+| Homer         | Dashboard    | Static dashboard, no DB |
+| Kopia         | Backup       | Backup solution, no DB |
+| Mattermost    | Team chat    | Slack alternative + postgres |
+| MeTube        | Media download| YouTube downloader |
+| Memos         | Notes        | Lightweight note-taking |
+| Mealie        | Recipes      | Recipe manager |
+| n8n           | Automation   | Workflow automation + postgres |
+| Navidrome     | Music        | Music streaming server |
+| One Time Secret | Secret sharing | Self-destructing secret links |
+| Rallly        | Scheduling   | Date polls + postgres |
+| Screego       | Screen sharing| WebRTC screen sharing |
+| Stirling-PDF  | PDF tools    | PDF manipulation, no DB |
+| Typebot       | Chatbots     | Conversational form builder + postgres |
+| Woodpecker CI | CI/CD        | CI/CD pipeline engine |
 
 ### Known image issues
 
@@ -551,7 +571,7 @@ official image is the whole point.
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-07-18 — 65+ projects configured, 47 tested and verified on
+Last updated: 2026-07-18 — 85+ projects configured, 47 tested and verified on
 Ubuntu 26.04.
 
 ---
