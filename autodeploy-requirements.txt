@@ -1,2 +1,0 @@
-requests>=2.31.0
-websockets>=12.0   # only needed for --mcp flag

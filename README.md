@@ -1,8 +1,26 @@
-# Stacker Self-Hosted Projects
+# awesome-selfhosted-stacker
 
-A collection of self-hostable applications, each with a complete `stacker.yml`:
-database setup, health checks, and deployment support for local, own-server, and
-cloud targets.
+> **65+ self-hostable apps, each deployable with a single `stacker.yml`.**
+> Deploy to your laptop, your own server, or the cloud with one command —
+> database setup, health checks, secrets, and remote monitoring included.
+
+<p>
+  <img alt="Projects" src="https://img.shields.io/badge/projects-65%2B-blue">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-47-brightgreen">
+  <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
+  <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
+</p>
+
+Unlike a typical [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted)
+list of links, every entry here is a **ready-to-run deployment**: pick a
+directory, generate secrets, and `stacker deploy`. Same layout, same commands,
+every app — from analytics and CMS to chat, password managers, and AI tools.
+
+```bash
+cd umami                          # pick any of 65+ projects
+./scripts/generate-secrets.sh     # generate .env from .env.example
+stacker deploy                    # → running locally in minutes
+```
 
 ## Contents
 
@@ -388,8 +406,8 @@ project-name/
 
 ### Tested and verified (47)
 
-Deployed and confirmed working on a Ubuntu 26.04 server (46.224.127.228)
-via Stacker server target. Start here for production.
+Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
+server target. Start here for production.
 
 | Project             | Type             | Port  | Image Fix / Notes |
 |---------------------|------------------|-------|--------------------|
@@ -475,6 +493,52 @@ via Stacker server target. Start here for production.
 
 ---
 
+## Contributing
+
+Contributions are welcome — **one app per pull request** keeps reviews fast.
+
+**Add a new app:**
+
+1. Create a directory named after the app (lowercase): `mkdir my-app && cd my-app`
+2. Add the four standard files:
+
+   ```
+   my-app/
+     stacker.yml               # deployment config (required)
+     .env.example              # public config + empty secret placeholders (required)
+     scripts/generate-secrets.sh   # fills .env from .env.example (required)
+     README.md                 # 3–5 lines: what it is, default port, any gotchas
+   ```
+
+3. Validate before opening the PR:
+
+   ```bash
+   stacker config validate
+   ./scripts/generate-secrets.sh
+   stacker deploy               # confirm it comes up locally
+   ```
+
+4. Add a row to the [Project Catalog](#project-catalog) with the correct status
+   badge (see legend below).
+
+**Please do:** pin image tags to a specific version (avoid `:latest` — see
+[Known image issues](#known-image-issues)); bind database ports to `127.0.0.1`;
+keep real secrets out of the PR (only `.env.example` is committed).
+
+**Please don't:** vendor the upstream app's full source tree — this repo ships
+**deployment configs**, not application code. A `stacker.yml` that references the
+official image is the whole point.
+
+**Status badges** used in the catalog:
+
+| Badge | Meaning |
+|-------|---------|
+| ✅ | Tested & verified on a real server |
+| 🧪 | Configured, not yet re-deployed/verified |
+| ⚠️ | Works with a documented workaround (see notes) |
+
+---
+
 ## Resources
 
 | Resource           | Link                                                    |
@@ -487,4 +551,12 @@ via Stacker server target. Start here for production.
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-07-16 — 47 projects tested and verified on Ubuntu 26.04.
+Last updated: 2026-07-18 — 65+ projects configured, 47 tested and verified on
+Ubuntu 26.04.
+
+---
+
+<p align="center">
+  <sub>⭐ Star this repo if it saved you a weekend of Docker Compose wrangling.</sub><br>
+  <sub>Built with <a href="https://github.com/trydirect/stacker">Stacker</a> · Contributions welcome — one app per PR.</sub>
+</p>

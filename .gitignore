@@ -19,3 +19,15 @@ BUGS.md
 *.bak
 .stacker/
 **/.stacker
+
+# Python tooling (autodeploy helper)
+.venv/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# Local notes / scratch not meant for the public repo
+TEST-PROMPT.md
+copilot-instructions.md
+**/STORY-*.md
+test/
