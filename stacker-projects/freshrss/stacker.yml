@@ -1,0 +1,23 @@
+name: freshrss
+
+app:
+  type: custom
+  image: lscr.io/linuxserver/freshrss:latest
+  ports:
+    - "8080:80"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: UTC
+  volumes:
+    - freshrss_data:/config
+    - freshrss_data:/data
+
+volumes:
+  freshrss_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env

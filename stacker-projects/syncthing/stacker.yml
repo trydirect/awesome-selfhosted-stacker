@@ -1,0 +1,26 @@
+name: syncthing
+
+app:
+  type: custom
+  image: lscr.io/linuxserver/syncthing:latest
+  ports:
+    - "8384:8384"
+    - "22000:22000/tcp"
+    - "22000:22000/udp"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: UTC
+  volumes:
+    - syncthing_config:/config
+    - syncthing_data:/data
+
+volumes:
+  syncthing_config: {}
+  syncthing_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env

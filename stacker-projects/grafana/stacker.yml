@@ -1,0 +1,24 @@
+name: grafana
+
+app:
+  type: custom
+  image: grafana/grafana:latest
+  ports:
+    - "3000:3000"
+  environment:
+    GF_SECURITY_ADMIN_USER: admin
+    GF_SECURITY_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+  volumes:
+    - grafana_data:/var/lib/grafana
+
+volumes:
+  grafana_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env
