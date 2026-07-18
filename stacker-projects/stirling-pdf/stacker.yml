@@ -1,0 +1,23 @@
+name: stirling-pdf
+
+app:
+  type: custom
+  image: frooodle/s-pdf:latest
+  ports:
+    - "8080:8080"
+  volumes:
+    - stirling_data:/usr/share/tessdata
+    - stirling_config:/configs
+
+volumes:
+  stirling_data: {}
+  stirling_config: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env

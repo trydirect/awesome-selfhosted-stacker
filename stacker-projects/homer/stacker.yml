@@ -1,0 +1,22 @@
+name: homer
+
+app:
+  type: custom
+  image: b4bz/homer:latest
+  ports:
+    - "8080:8080"
+  volumes:
+    - homer_config:/www/assets
+    - ./config.yml:/www/assets/config.yml
+
+volumes:
+  homer_config: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env
