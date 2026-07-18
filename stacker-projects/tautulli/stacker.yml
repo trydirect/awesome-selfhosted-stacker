@@ -1,0 +1,22 @@
+name: tautulli
+
+app:
+  type: custom
+  image: lscr.io/linuxserver/tautulli:latest
+  ports:
+    - "8181:8181"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: UTC
+  volumes:
+    - tautulli_config:/config
+
+volumes:
+  tautulli_config: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env

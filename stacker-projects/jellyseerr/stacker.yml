@@ -1,0 +1,21 @@
+name: jellyseerr
+app:
+  type: custom
+  image: fallenbagel/jellyseerr:latest
+  ports:
+  - 5055:5055
+  volumes:
+  - jellyseerr_config:/app/config
+volumes:
+  jellyseerr_config: {}
+proxy:
+  type: none
+  auto_detect: false
+env_file: .env
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
