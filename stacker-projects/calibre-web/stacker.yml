@@ -1,0 +1,27 @@
+name: calibre-web
+
+app:
+  type: custom
+  image: linuxserver/calibre-web:latest
+  ports:
+    - "8083:8083"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: UTC
+  volumes:
+    - calibre_config:/config
+    - calibre_library:/books
+
+volumes:
+  calibre_config: {}
+  calibre_library: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env

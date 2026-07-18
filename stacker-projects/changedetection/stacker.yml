@@ -1,0 +1,21 @@
+name: changedetection
+
+app:
+  type: custom
+  image: ghcr.io/dgtlmoon/changedetection.io:latest
+  ports:
+    - "5000:5000"
+  volumes:
+    - changedetection_data:/datastore
+
+volumes:
+  changedetection_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env
