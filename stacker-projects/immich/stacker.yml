@@ -1,0 +1,52 @@
+name: immich
+
+app:
+  type: custom
+  image: ghcr.io/immich-app/immich-server:latest
+  ports:
+    - "2283:2283"
+  environment:
+    DB_HOSTNAME: immich-db
+    DB_USERNAME: immich
+    DB_PASSWORD: ${DB_PASSWORD}
+    DB_DATABASE_NAME: immich
+    REDIS_HOSTNAME: immich-redis
+    UPLOAD_LOCATION: /usr/src/app/upload
+  volumes:
+    - immich_upload:/usr/src/app/upload
+
+services:
+  - name: immich-db
+    image: tensorchord/pgvecto-rs:pg16-v0.2.0
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: immich
+      POSTGRES_DB: immich
+    volumes:
+      - immich_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d immich -U immich
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: immich-redis
+    image: redis:7-alpine
+    healthcheck:
+      test: CMD redis-cli ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  immich_upload: {}
+  immich_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env
