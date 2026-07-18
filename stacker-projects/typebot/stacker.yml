@@ -1,0 +1,40 @@
+name: typebot
+
+app:
+  type: custom
+  image: baptistearno/typebot-builder:latest
+  ports:
+    - "3001:3000"
+  environment:
+    DATABASE_URL: postgresql://typebot:${DB_PASSWORD}@typebot-db:5432/typebot
+    NEXTAUTH_URL: http://localhost:3001
+    NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    ENCRYPTION_SECRET: ${ENCRYPTION_SECRET}
+    ADMIN_EMAIL: admin@example.com
+
+services:
+  - name: typebot-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: typebot
+      POSTGRES_USER: typebot
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - typebot_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d typebot -U typebot
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  typebot_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env

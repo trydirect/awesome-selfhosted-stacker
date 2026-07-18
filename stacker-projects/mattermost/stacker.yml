@@ -1,0 +1,48 @@
+name: mattermost
+
+app:
+  type: custom
+  image: mattermost/mattermost-enterprise-edition:latest
+  ports:
+    - "8065:8065"
+  environment:
+    MM_SQLSETTINGS_DRIVERNAME: postgres
+    MM_SQLSETTINGS_DATASOURCE: postgres://mattermost:${DB_PASSWORD}@mattermost-db:5432/mattermost?sslmode=disable
+    MM_SERVICESETTINGS_SITEURL: http://localhost:8065
+  volumes:
+    - mattermost_data:/mattermost/config
+    - mattermost_data:/mattermost/data
+    - mattermost_logs:/mattermost/logs
+    - mattermost_plugins:/mattermost/plugins
+    - mattermost_client_plugins:/mattermost/client/plugins
+
+services:
+  - name: mattermost-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: mattermost
+      POSTGRES_USER: mattermost
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mattermost_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d mattermost -U mattermost
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mattermost_data: {}
+  mattermost_logs: {}
+  mattermost_plugins: {}
+  mattermost_client_plugins: {}
+  mattermost_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env
