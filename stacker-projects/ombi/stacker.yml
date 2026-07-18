@@ -1,0 +1,23 @@
+name: ombi
+
+app:
+  type: custom
+  image: lscr.io/linuxserver/ombi:latest
+  ports:
+    - "3579:3579"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: UTC
+    BASE_URL: /
+  volumes:
+    - ombi_config:/config
+
+volumes:
+  ombi_config: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env

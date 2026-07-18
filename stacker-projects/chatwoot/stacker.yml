@@ -1,0 +1,51 @@
+name: chatwoot
+
+app:
+  type: custom
+  image: chatwoot/chatwoot:develop-ce
+  ports:
+    - "3000:3000"
+  environment:
+    SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+    DATABASE_URL: postgresql://chatwoot:${DB_PASSWORD}@chatwoot-db:5432/chatwoot
+    REDIS_URL: redis://chatwoot-redis:6379
+    RAILS_ENV: production
+    FRONTEND_URL: http://localhost:3000
+    MAILER_SENDER_EMAIL: admin@example.com
+    ENABLE_ACCOUNT_SIGNUP: "false"
+
+services:
+  - name: chatwoot-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: chatwoot
+      POSTGRES_USER: chatwoot
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - chatwoot_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d chatwoot -U chatwoot
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: chatwoot-redis
+    image: redis:7-alpine
+    healthcheck:
+      test: CMD redis-cli ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  chatwoot_db: {}
+  chatwoot_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env

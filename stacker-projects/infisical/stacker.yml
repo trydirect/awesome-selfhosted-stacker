@@ -1,0 +1,40 @@
+name: infisical
+
+app:
+  type: custom
+  image: infisical/infisical:v0.162.9
+  ports:
+    - "8080:8080"
+  environment:
+    ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    AUTH_SECRET: ${AUTH_SECRET}
+    DB_CONNECTION_URI: postgresql://infisical:${DB_PASSWORD}@infisical-db:5432/infisical
+    SITE_URL: http://localhost:8080
+    NODE_ENV: production
+
+services:
+  - name: infisical-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: infisical
+      POSTGRES_USER: infisical
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - infisical_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d infisical -U infisical
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  infisical_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env

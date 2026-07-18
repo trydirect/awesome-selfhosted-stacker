@@ -1,0 +1,44 @@
+name: hanko
+
+app:
+  type: custom
+  image: ghcr.io/teamhanko/hanko:latest
+  ports:
+    - "8000:8000"
+  environment:
+    HANKO_DATABASE_HOST: hanko-db
+    HANKO_DATABASE_PORT: "5432"
+    HANKO_DATABASE_USER: hanko
+    HANKO_DATABASE_PASSWORD: ${DB_PASSWORD}
+    HANKO_DATABASE_NAME: hanko
+    HANKO_SECRETS_DEFAULT: ${SECRETS_DEFAULT}
+    HANKO_SERVER_PUBLIC_PORT: "8000"
+    HANKO_URL: http://localhost:8000
+  command: serve --public
+
+services:
+  - name: hanko-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: hanko
+      POSTGRES_USER: hanko
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - hanko_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d hanko -U hanko
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  hanko_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env

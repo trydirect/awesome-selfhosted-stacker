@@ -1,0 +1,45 @@
+name: directus
+
+app:
+  type: custom
+  image: directus/directus:latest
+  ports:
+    - "8055:8055"
+  environment:
+    KEY: ${KEY}
+    SECRET: ${SECRET}
+    DB_CLIENT: pg
+    DB_HOST: directus-db
+    DB_PORT: "5432"
+    DB_DATABASE: directus
+    DB_USER: directus
+    DB_PASSWORD: ${DB_PASSWORD}
+    ADMIN_EMAIL: admin@example.com
+    ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+
+services:
+  - name: directus-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: directus
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - directus_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d directus -U directus
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  directus_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env

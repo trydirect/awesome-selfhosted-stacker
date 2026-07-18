@@ -1,0 +1,22 @@
+name: organizr
+
+app:
+  type: custom
+  image: organizr/organizr:latest
+  ports:
+    - "9983:80"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: UTC
+  volumes:
+    - organizr_config:/config
+
+volumes:
+  organizr_config: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env

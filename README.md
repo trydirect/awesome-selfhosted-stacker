@@ -509,6 +509,14 @@ server target. Start here for production.
 | Syncthing     | File sync    | P2P Dropbox alternative |
 | Traefik       | Reverse proxy| Auto-discovery proxy |
 | WireGuard     | VPN          | Modern VPN |
+| Chatwoot      | Support      | Customer support + REST API + webhooks |
+| Directus      | Headless CMS | REST + GraphQL API |
+| Hanko         | Auth         | Passkeys + REST API |
+| Infisical     | Secrets      | Secret management + REST API |
+| Jellyseerr    | Media requests| Media request management + REST API |
+| Ombi          | Media requests| Plex/Jellyfin requests + REST API |
+| Organizr      | Dashboard    | HTPC dashboard + REST API |
+| Tautulli      | Plex monitor | Plex analytics + REST API |
 
 ### Known image issues
 
@@ -592,7 +600,7 @@ official image is the whole point.
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-07-18 — 105+ projects configured, 47 tested and verified on
+Last updated: 2026-07-18 — 115+ projects configured, 47 tested and verified on
 Ubuntu 26.04.
 
 ---
