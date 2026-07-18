@@ -1,0 +1,25 @@
+name: audiobookshelf
+
+app:
+  type: custom
+  image: ghcr.io/advplyr/audiobookshelf:latest
+  ports:
+    - "13378:13378"
+  volumes:
+    - audiobooks_data:/audiobooks
+    - audiobooks_config:/config
+    - audiobooks_metadata:/metadata
+
+volumes:
+  audiobooks_data: {}
+  audiobooks_config: {}
+  audiobooks_metadata: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env

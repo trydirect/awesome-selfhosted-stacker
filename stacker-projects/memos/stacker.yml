@@ -1,0 +1,21 @@
+name: memos
+
+app:
+  type: custom
+  image: ghcr.io/usememos/memos:latest
+  ports:
+    - "5230:5230"
+  volumes:
+    - memos_data:/var/opt/memos
+
+volumes:
+  memos_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env

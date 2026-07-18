@@ -1,0 +1,25 @@
+name: mealie
+
+app:
+  type: custom
+  image: ghcr.io/mealie-recipes/mealie:latest
+  ports:
+    - "9925:9000"
+  environment:
+    ALLOW_SIGNUP: "true"
+    DB_ENGINE: sqlite
+    BASE_URL: http://localhost:9925
+  volumes:
+    - mealie_data:/app/data
+
+volumes:
+  mealie_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env
