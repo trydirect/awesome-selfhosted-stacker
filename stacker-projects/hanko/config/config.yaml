@@ -1,0 +1,19 @@
+database:
+  user: hanko
+  password: 81d9d77713f1294069419edd48fb2456
+  host: hanko-db
+  port: "5432"
+  dialect: postgres
+secrets:
+  keys:
+    - b22a8bf4070ac4a9ef047cea8a1b3510c2590256336337f8d877f8fda7084568
+server:
+  public:
+    cors:
+      allow_origins:
+        - http://localhost:8000
+webauthn:
+  relying_party:
+    id: localhost
+    origins:
+      - http://localhost:8000
