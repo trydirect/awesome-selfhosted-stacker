@@ -1,0 +1,22 @@
+name: grocy
+
+app:
+  type: custom
+  image: lscr.io/linuxserver/grocy:latest
+  ports:
+    - "9283:80"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: UTC
+  volumes:
+    - grocy_data:/config
+
+volumes:
+  grocy_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
