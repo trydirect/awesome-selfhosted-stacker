@@ -1,0 +1,47 @@
+name: n8n
+
+app:
+  type: custom
+  image: n8nio/n8n:latest
+  ports:
+    - "5678:5678"
+  environment:
+    DB_TYPE: postgresdb
+    DB_POSTGRESDB_HOST: n8n-db
+    DB_POSTGRESDB_PORT: "5432"
+    DB_POSTGRESDB_DATABASE: n8n
+    DB_POSTGRESDB_USER: n8n
+    DB_POSTGRESDB_PASSWORD: ${DB_PASSWORD}
+    N8N_BASIC_AUTH_ACTIVE: "true"
+    N8N_BASIC_AUTH_USER: admin
+    N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD}
+  volumes:
+    - n8n_data:/home/node/.n8n
+
+services:
+  - name: n8n-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: n8n
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - n8n_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d n8n -U n8n
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  n8n_data: {}
+  n8n_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env

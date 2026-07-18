@@ -1,0 +1,38 @@
+name: rallly
+
+app:
+  type: custom
+  image: lukevella/rallly:latest
+  ports:
+    - "3000:3000"
+  environment:
+    DATABASE_URL: postgresql://rallly:${DB_PASSWORD}@rallly-db:5432/rallly
+    SECRET: ${SECRET}
+    NEXT_PUBLIC_BASE_URL: http://localhost:3000
+
+services:
+  - name: rallly-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: rallly
+      POSTGRES_USER: rallly
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - rallly_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d rallly -U rallly
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  rallly_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env
