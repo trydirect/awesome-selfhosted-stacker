@@ -488,6 +488,27 @@ server target. Start here for production.
 | Stirling-PDF  | PDF tools    | PDF manipulation, no DB |
 | Typebot       | Chatbots     | Conversational form builder + postgres |
 | Woodpecker CI | CI/CD        | CI/CD pipeline engine |
+| Audiobookshelf| Audiobooks   | Single container |
+| BookStack     | Documentation| Wiki + MariaDB |
+| Caddy         | Web server   | Auto-HTTPS reverse proxy |
+| CrowdSec      | Security     | Threat detection |
+| Duplicati     | Backup       | Encrypted backup to cloud/local |
+| Frigate       | Video NVR    | AI object detection |
+| FreshRSS      | RSS reader   | Self-hosted RSS |
+| Grafana       | Monitoring   | Observability dashboards |
+| Grocy         | Household    | Groceries, chores, batteries |
+| Home Assistant| Smart home   | Home automation platform |
+| Immich        | Photos       | Google Photos alternative |
+| Kavita        | Reading      | Books, manga, comics |
+| Keycloak      | IAM/SSO      | OAuth2/OIDC/SAML identity |
+| Meilisearch   | Search       | Lightning-fast search engine |
+| MinIO         | Object store | S3-compatible storage |
+| NocoDB        | Database     | Airtable alternative |
+| Portainer     | Docker mgmt  | Container management UI |
+| Speedtest Tracker | Monitoring| Internet speed tracking |
+| Syncthing     | File sync    | P2P Dropbox alternative |
+| Traefik       | Reverse proxy| Auto-discovery proxy |
+| WireGuard     | VPN          | Modern VPN |
 
 ### Known image issues
 
@@ -571,7 +592,7 @@ official image is the whole point.
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-07-18 — 85+ projects configured, 47 tested and verified on
+Last updated: 2026-07-18 — 105+ projects configured, 47 tested and verified on
 Ubuntu 26.04.
 
 ---
