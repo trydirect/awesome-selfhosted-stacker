@@ -1,0 +1,28 @@
+name: wireguard
+
+app:
+  type: custom
+  image: lscr.io/linuxserver/wireguard:latest
+  ports:
+    - "51820:51820/udp"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: UTC
+    SERVERURL: auto
+    SERVERPORT: "51820"
+    PEERS: "1"
+  volumes:
+    - wireguard_config:/config
+  cap_add:
+    - NET_ADMIN
+    - SYS_MODULE
+
+volumes:
+  wireguard_config: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
