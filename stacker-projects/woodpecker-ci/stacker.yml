@@ -1,0 +1,38 @@
+name: woodpecker-ci
+
+app:
+  type: custom
+  image: woodpeckerci/woodpecker-server:latest
+  ports:
+    - "8000:8000"
+  environment:
+    WOODPECKER_OPEN: "true"
+    WOODPECKER_HOST: http://localhost:8000
+    WOODPECKER_AGENT_SECRET: ${AGENT_SECRET}
+    WOODPECKER_GITEA: "false"
+    WOODPECKER_GITHUB: "false"
+  volumes:
+    - woodpecker_data:/var/lib/woodpecker
+
+services:
+  - name: woodpecker-agent
+    image: woodpeckerci/woodpecker-agent:latest
+    environment:
+      WOODPECKER_SERVER: app:9000
+      WOODPECKER_AGENT_SECRET: ${AGENT_SECRET}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - app
+
+volumes:
+  woodpecker_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env
