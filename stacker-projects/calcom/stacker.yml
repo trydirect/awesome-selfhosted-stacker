@@ -1,0 +1,39 @@
+name: calcom
+
+app:
+  type: custom
+  image: calcom/cal.com:latest
+  ports:
+    - "3000:3000"
+  environment:
+    DATABASE_URL: postgresql://calcom:${DB_PASSWORD}@calcom-db:5432/calcom
+    NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    NEXT_PUBLIC_WEB_APP_URL: http://localhost:3000
+    CALENDSO_ENCRYPTION_KEY: ${CALENDSO_ENCRYPTION_KEY}
+
+services:
+  - name: calcom-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: calcom
+      POSTGRES_USER: calcom
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - calcom_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d calcom -U calcom
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  calcom_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env

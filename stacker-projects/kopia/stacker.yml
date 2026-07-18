@@ -1,0 +1,29 @@
+name: kopia
+
+app:
+  type: custom
+  image: kopia/kopia:latest
+  ports:
+    - "51515:51515"
+  environment:
+    KOPIA_PASSWORD: ${KOPIA_PASSWORD}
+    USER: root
+  command: server start --insecure --address=0.0.0.0:51515
+  volumes:
+    - kopia_config:/app/config
+    - kopia_cache:/app/cache
+    - kopia_logs:/app/logs
+
+volumes:
+  kopia_config: {}
+  kopia_cache: {}
+  kopia_logs: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env

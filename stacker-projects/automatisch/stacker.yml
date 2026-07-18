@@ -1,0 +1,43 @@
+name: automatisch
+
+app:
+  type: custom
+  image: automatisch/automatisch:latest
+  ports:
+    - "3000:3000"
+  environment:
+    APP_SECRET_KEY: ${APP_SECRET_KEY}
+    ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    POSTGRES_HOST: automatisch-db
+    POSTGRES_PORT: "5432"
+    POSTGRES_DATABASE: automatisch
+    POSTGRES_USERNAME: automatisch
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+    WEB_APP_URL: http://localhost:3000
+
+services:
+  - name: automatisch-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: automatisch
+      POSTGRES_USER: automatisch
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - automatisch_db:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d automatisch -U automatisch
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  automatisch_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env

@@ -1,0 +1,37 @@
+name: onetimesecret
+
+app:
+  type: custom
+  image: onetimesecret/onetimesecret:latest
+  ports:
+    - "3000:3000"
+  environment:
+    REDIS_URL: redis://onetimesecret-redis:6379
+    HOSTNAME: localhost
+    SECRET: ${SECRET}
+  volumes:
+    - ots_data:/var/lib/onetimesecret
+
+services:
+  - name: onetimesecret-redis
+    image: redis:7-alpine
+    volumes:
+      - ots_redis:/data
+    healthcheck:
+      test: CMD redis-cli ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  ots_data: {}
+  ots_redis: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env
