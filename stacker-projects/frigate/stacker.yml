@@ -1,0 +1,30 @@
+name: frigate
+
+app:
+  type: custom
+  image: ghcr.io/blakeblackshear/frigate:stable
+  ports:
+    - "5000:5000"
+    - "8554:8554"
+    - "8555:8555/tcp"
+    - "8555:8555/udp"
+  privileged: true
+  environment:
+    FRIGATE_RTSP_PASSWORD: ${FRIGATE_RTSP_PASSWORD}
+  volumes:
+    - frigate_config:/config
+    - frigate_storage:/media/frigate
+    - /dev/bus/usb:/dev/bus/usb
+
+volumes:
+  frigate_config: {}
+  frigate_storage: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+env_file: .env
