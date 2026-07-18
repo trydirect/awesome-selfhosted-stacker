@@ -35,7 +35,7 @@ email, and message fields. Then I also added a plain HTML form directly on the
 homepage to make sure the agent could find it.
 
 ```bash
-curl -s http://46.224.127.228:8080/ | grep '<form'
+curl -s http://<your-server-ip>:8080/ | grep '<form'
 ```
 
 Confirmed: one `<form>` element with action `/wp-json/demo/v1/submit`.
