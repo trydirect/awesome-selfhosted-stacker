@@ -154,6 +154,14 @@ stacker pipe scan
 # 3. Create a pipe between source and target
 stacker pipe create <source-app> <target-app>
 
+# 3b. Create a pipe with manual endpoints (no discovery)
+stacker pipe create <source> <target> \
+  --source-endpoint "METHOD /path" \
+  --target-endpoint "METHOD /path" \
+  --source-fields field1,field2 \
+  --target-fields field1,field2 \
+  --name "my-pipe"
+
 # 4. Activate the pipe (starts listening for triggers)
 stacker pipe activate <pipe-id>
 
@@ -176,7 +184,7 @@ HttpEndpoint, HtmlForm.
 
 ```bash
 stacker pipe scan --app website
-stacker pipe create website telegram
+stacker pipe create website telegram --name "contact-to-telegram"
 stacker pipe activate <telegram-pipe-id>
 ```
 
