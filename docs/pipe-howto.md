@@ -9,7 +9,8 @@ stacker pipe create <source> <target> \
   --source-endpoint "METHOD /path" \
   --target-endpoint "METHOD /path" \
   --source-fields field1,field2 \
-  --target-fields field1,field2
+  --target-fields field1,field2 \
+  --name "my-pipe"
 ```
 
 ## Example: Directus → Chatwoot
@@ -21,7 +22,8 @@ stacker pipe create directus chatwoot \
   --source-endpoint "POST /items" \
   --target-endpoint "POST /api/v1/conversations" \
   --source-fields "name,email,message" \
-  --target-fields "content"
+  --target-fields "content" \
+  --name "directus-chatwoot"
 ```
 
 ## How it works
@@ -29,6 +31,7 @@ stacker pipe create directus chatwoot \
 1. **Source endpoint**: Where data comes from (e.g., Directus webhook)
 2. **Target endpoint**: Where data goes (e.g., Chatwoot API)
 3. **Fields**: Data fields to map between source and target
+4. **Name**: Pipe name (skips interactive prompt)
 
 The pipe automatically maps source fields to target fields using deterministic matching.
 
@@ -58,7 +61,7 @@ stacker pipe history <pipe-id>       # view execution log
 ## Troubleshooting
 
 **Error: "not a terminal"**
-- Run in an interactive terminal, or use `--json` flag for non-interactive output
+- Use `--name` flag to skip interactive prompts
 
 **Error: "authentication token expired"**
 - Run `stacker login` to refresh your session
