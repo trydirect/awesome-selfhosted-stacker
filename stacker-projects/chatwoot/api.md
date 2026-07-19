@@ -14,6 +14,13 @@
 | GET | /api/v1/accounts/{id}/agents | List agents |
 | GET | /api/v1/accounts/{id}/inboxes | List inboxes |
 
+## Endpoint Specs (for `stacker pipe create`)
+| Method | Path | Fields |
+|--------|------|--------|
+| POST | /api/v1/conversations | content |
+| POST | /api/v1/contacts | name,email |
+| GET | /api/v1/conversations | — |
+
 ## Webhooks
 - Configure in Settings → Integrations → Webhooks
 - Events: message_created, conversation_created, conversation_updated, etc.

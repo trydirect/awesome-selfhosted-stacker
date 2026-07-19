@@ -21,5 +21,12 @@
 | POST | /auth/login | Login |
 | GET | /users/me | Current user |
 
+## Endpoint Specs (for `stacker pipe create`)
+| Method | Path | Fields |
+|--------|------|--------|
+| POST | /items | name,email,message |
+| GET | /items | — |
+| POST | /auth/login | email,password |
+
 ## OpenAPI Spec
 - URL: `http://localhost:8055/server/specs/oas`
