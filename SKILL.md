@@ -34,6 +34,7 @@ was fixed.
 15. [Deploy command reference](#15-deploy-command-reference)
 16. [Hooks — Execution & Safety](#16-hooks--execution--safety)
 17. [Secrets: Vault-backed vs `.env`](#17-secrets-vault-backed-vs-env)
+18. [Status Panel Agent — Daemon Mode & Pipe Execution](#18-status-panel-agent--daemon-mode--pipe-execution)
 
 ---
 
@@ -652,3 +653,139 @@ Reserved key prefixes are **rejected** by Vault: `STACKER_`, `DOCKER_`,
 Whichever you use, the rule from §6 holds: secrets are `${ENV_VAR}` references
 resolved at deploy time — never `install.inputs` values, which are stored in the
 DB as plaintext stack vars.
+
+---
+
+## 18. Status Panel Agent — Daemon Mode & Pipe Execution
+
+### Architecture overview
+
+The Stacker PIPE system uses two components on the target server:
+
+| Component | Purpose | Mode |
+|---|---|---|
+| `statuspanel` | Web UI + API on port 5000 | `serve --with-ui` |
+| `statuspanel_agent` | Long-polling daemon that receives and executes pipe commands | daemon (`-c /app/config.json`) |
+
+The agent polls the Stacker dashboard API for pending commands (e.g.,
+`trigger_pipe`, `pipe_scan`), executes them locally via `docker exec` on
+the target server, and reports results back.
+
+### Deployment
+
+Deploy both containers using the Stacker agent API:
+
+```bash
+# 1. Register agent (gets AGENT_TOKEN + deployment hash)
+curl -X POST "https://stacker.try.direct/api/v1/agent/register" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_code": "<PROJECT_CODE>",
+    "project_id": <PROJECT_ID>,
+    "deployment_hash": "deployment_<HASH>",
+    "deployment_id": <DEPLOYMENT_ID>,
+    "server_ip": "<SERVER_IP>",
+    "apps": ["directus", "chatwoot"]
+  }'
+
+# 2. Create agent config
+cat > agent-config.json << 'EOF'
+{
+  "api_base": "https://stacker.try.direct",
+  "agent_token": "<AGENT_TOKEN>",
+  "deployment_hash": "deployment_<HASH>",
+  "log_file": "/var/log/agent.log",
+  "log_level": "info"
+}
+EOF
+
+# 3. Deploy status panel (UI + daemon)
+docker run -d \
+  --name statuspanel \
+  --restart unless-stopped \
+  --network project_app-network \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  -v agent-config.json:/app/config.json:ro \
+  -e DATABASE_URL="..." \
+  -p 127.0.0.1:5000:5000 \
+  trydirect/status:pipe-agent-fixes \
+  --entrypoint /usr/local/bin/status \
+  -c /app/config.json
+
+# 4. Deploy agent daemon (separate container, no UI)
+docker run -d \
+  --name statuspanel_agent \
+  --restart unless-stopped \
+  --network project_app-network \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  -v agent-config.json:/app/config.json:ro \
+  trydirect/status:pipe-agent-fixes \
+  --entrypoint /usr/local/bin/status \
+  -c /app/config.json
+```
+
+**Critical:** The agent must run in daemon mode (`-c /app/config.json`),
+**not** `serve --with-ui`. The default Dockerfile entrypoint starts the web
+server, which does not poll for commands.
+
+### Network requirements
+
+The agent must be on the **same Docker network** as the project containers
+it manages:
+
+```bash
+docker network connect project_app-network statuspanel_agent
+```
+
+Without this, the agent can resolve container names but cannot reach them
+(IPs are not routable across networks).
+
+### Deployment hash
+
+The agent registers with a specific `deployment_hash` (format:
+`deployment_<hex>`). This hash is returned by the Stacker API after a
+successful deploy. Using the wrong hash causes 403 auth errors.
+
+```bash
+# Find the deployment hash
+curl -s "https://stacker.try.direct/api/v1/project/<ID>/deployments" \
+  -H "Authorization: Bearer $TOKEN" | jq '.[0].deployment_hash'
+```
+
+### Pipe trigger flow
+
+```
+CLI "stacker pipe trigger"
+  → Dashboard API enqueues trigger_pipe command
+  → Agent polls /api/v1/agent/commands/wait/{deployment_hash}
+  → Agent receives command JSON
+  → Agent executes via docker exec on target container
+  → Agent reports result back to API
+```
+
+### Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| Agent 403 auth error | Wrong deployment hash | Re-register with correct `deployment_hash` |
+| Agent running in serve mode | Dockerfile entrypoint | Override with `--entrypoint /usr/local/bin/status -c /app/config.json` |
+| Pipe scan timeout | Agent not on same network | `docker network connect project_app-network statuspanel_agent` |
+| Pipe trigger timeout | Agent not in daemon mode | Ensure `-c /app/config.json` flag, not `serve --with-ui` |
+| `curl: not found` in pipe trigger | Target container missing curl | Install curl in target container or use different HTTP client |
+
+### Verification
+
+```bash
+# Check agent mode
+docker logs statuspanel_agent --tail 20
+# Should show: mode="Status Panel Daemon", polling for commands
+
+# Test pipe scan
+stacker pipe scan <project> --server <IP>
+# Should return: "success", resolved container, endpoints: [...]
+
+# Test pipe trigger
+stacker pipe trigger <project> --server <IP> --pipe <PIPE_NAME>
+# Should execute command (may fail at curl if container lacks it, but mechanism works)
+```

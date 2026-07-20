@@ -1,0 +1,10 @@
+name: network-tools
+
+app:
+  type: custom
+  dockerfile: Dockerfile
+  image: trydirect/network-tools:latest
+
+proxy:
+  type: none
+  auto_detect: false
