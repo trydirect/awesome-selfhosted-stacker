@@ -1,0 +1,42 @@
+name: dashy
+version: "3.1.0"
+
+project:
+  identity: dashy
+
+install:
+  inputs:
+    commonDomain: dashboard.example.com
+
+app:
+  type: custom
+  image: lissy93/dashy:latest
+  ports:
+    - "8082:8080"
+  volumes:
+    - dashy_config:/app/user-data
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  dashy_config: {}

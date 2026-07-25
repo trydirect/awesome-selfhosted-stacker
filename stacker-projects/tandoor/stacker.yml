@@ -1,0 +1,86 @@
+name: tandoor
+version: "1.5.19"
+
+project:
+  identity: tandoor
+
+install:
+  inputs:
+    commonDomain: recipes.example.com
+
+app:
+  type: custom
+  image: vabene1111/recipes:latest
+  ports:
+    - "8080:80"
+  environment:
+    SECRET_KEY: "${SECRET_KEY}"
+    DB_ENGINE: django.db.backends.postgresql
+    POSTGRES_HOST: postgres
+    POSTGRES_PORT: "5432"
+    POSTGRES_DB: tandoor
+    POSTGRES_USER: tandoor
+    POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    ALLOWED_HOSTS: "*"
+  volumes:
+    - tandoor_staticfiles:/opt/recipes/staticfiles
+    - tandoor_mediafiles:/opt/recipes/mediafiles
+  depends_on:
+    - postgres
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: tandoor
+      POSTGRES_USER: tandoor
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - tandoor_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U tandoor
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+config_contract:
+  app:
+    environment:
+      - name: SECRET_KEY
+        required: true
+        secret: true
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  tandoor_staticfiles: {}
+  tandoor_mediafiles: {}
+  tandoor_pgdata: {}

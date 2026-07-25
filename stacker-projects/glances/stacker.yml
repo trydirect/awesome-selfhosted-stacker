@@ -1,0 +1,42 @@
+name: glances
+version: "4.1.0"
+
+project:
+  identity: glances
+
+install:
+  inputs:
+    commonDomain: monitor.example.com
+
+app:
+  type: custom
+  image: nicolargo/glances:latest-full
+  ports:
+    - "61208:61208"
+  environment:
+    GLANCES_OPT: "-w"
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+  privileged: true
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "61208"
+
+monitoring:
+  status_panel: true
+
+env_file: .env

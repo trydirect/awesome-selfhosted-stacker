@@ -1,0 +1,48 @@
+name: filebrowser
+version: "2.28.0"
+
+project:
+  identity: filebrowser
+
+install:
+  inputs:
+    commonDomain: files.example.com
+
+app:
+  type: custom
+  image: filebrowser/filebrowser:latest
+  ports:
+    - "8080:80"
+  environment:
+    FB_DATABASE: /database/filebrowser.db
+    FB_ROOT: /srv
+    FB_NOAUTH: "false"
+  volumes:
+    - filebrowser_data:/srv
+    - filebrowser_db:/database
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  filebrowser_data: {}
+  filebrowser_db: {}

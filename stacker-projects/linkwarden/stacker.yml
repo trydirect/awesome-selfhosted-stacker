@@ -1,0 +1,79 @@
+name: linkwarden
+version: "2.7.0"
+
+project:
+  identity: linkwarden
+
+install:
+  inputs:
+    commonDomain: links.example.com
+
+app:
+  type: custom
+  image: ghcr.io/linkwarden/linkwarden:latest
+  ports:
+    - "3000:3000"
+  environment:
+    DATABASE_URL: postgresql://linkwarden:${DB_PASSWORD}@postgres:5432/linkwarden
+    NEXTAUTH_SECRET: "${NEXTAUTH_SECRET}"
+    NEXTAUTH_URL: https://links.example.com
+  volumes:
+    - linkwarden_data:/data/data
+  depends_on:
+    - postgres
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: linkwarden
+      POSTGRES_USER: linkwarden
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - linkwarden_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U linkwarden
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: NEXTAUTH_SECRET
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  linkwarden_data: {}
+  linkwarden_pgdata: {}
