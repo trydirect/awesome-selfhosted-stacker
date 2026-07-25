@@ -1,0 +1,91 @@
+name: docmost
+version: "0.5.0"
+
+project:
+  identity: docmost
+
+install:
+  inputs:
+    commonDomain: docs.example.com
+
+app:
+  type: custom
+  image: docmost/docmost:latest
+  ports:
+    - "3000:3000"
+  environment:
+    APP_URL: https://docs.example.com
+    DATABASE_URL: postgresql://docmost:${DB_PASSWORD}@postgres:5432/docmost
+    REDIS_URL: redis://redis:6379
+    APP_SECRET: "${APP_SECRET}"
+  volumes:
+    - docmost_uploads:/app/uploads
+  depends_on:
+    - postgres
+    - redis
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: docmost
+      POSTGRES_USER: docmost
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - docmost_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U docmost
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: redis-cli ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: APP_SECRET
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  docmost_uploads: {}
+  docmost_pgdata: {}

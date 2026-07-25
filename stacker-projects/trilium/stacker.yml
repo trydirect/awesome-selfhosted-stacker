@@ -1,0 +1,44 @@
+name: trilium
+version: "0.63.7"
+
+project:
+  identity: trilium
+
+install:
+  inputs:
+    commonDomain: notes.example.com
+
+app:
+  type: custom
+  image: zadam/trilium:latest
+  ports:
+    - "8081:8080"
+  environment:
+    TRILIUM_DATA_DIR: /home/node/trilium-data
+  volumes:
+    - trilium_data:/home/node/trilium-data
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8081"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  trilium_data: {}

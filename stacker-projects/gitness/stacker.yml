@@ -1,0 +1,57 @@
+name: gitness
+version: "latest"
+
+project:
+  identity: gitness
+
+install:
+  inputs:
+    commonDomain: git.example.com
+
+app:
+  type: custom
+  image: harness/gitness:latest
+  ports:
+    - "3000:3000"
+  environment:
+    GITNESS_PRINCIPAL_ADMIN_EMAIL: admin@example.com
+    GITNESS_PRINCIPAL_ADMIN_USERNAME: admin
+    GITNESS_PRINCIPAL_ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+    GITNESS_URL_BASE: https://git.example.com
+  volumes:
+    - gitness_data:/data
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+config_contract:
+  app:
+    environment:
+      - name: ADMIN_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  gitness_data: {}

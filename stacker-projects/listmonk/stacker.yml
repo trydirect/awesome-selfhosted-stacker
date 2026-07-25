@@ -1,0 +1,82 @@
+name: listmonk
+version: "4.1.0"
+
+project:
+  identity: listmonk
+
+install:
+  inputs:
+    commonDomain: newsletter.example.com
+
+app:
+  type: custom
+  image: listmonk/listmonk:latest
+  ports:
+    - "9000:9000"
+  environment:
+    LISTMONK_app__address: "0.0.0.0:9000"
+    LISTMONK_app__admin_username: admin
+    LISTMONK_app__admin_password: "${ADMIN_PASSWORD}"
+    LISTMONK_db__host: postgres
+    LISTMONK_db__port: "5432"
+    LISTMONK_db__user: listmonk
+    LISTMONK_db__password: "${DB_PASSWORD}"
+    LISTMONK_db__database: listmonk
+    LISTMONK_db__ssl_mode: disable
+  depends_on:
+    - postgres
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: listmonk
+      POSTGRES_USER: listmonk
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - listmonk_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U listmonk
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "9000"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: ADMIN_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  listmonk_pgdata: {}

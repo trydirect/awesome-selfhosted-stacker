@@ -1,0 +1,37 @@
+name: it-tools
+version: "latest"
+
+project:
+  identity: it-tools
+
+install:
+  inputs:
+    commonDomain: tools.example.com
+
+app:
+  type: custom
+  image: corentinth/it-tools:latest
+  ports:
+    - "8083:80"
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8083"
+
+monitoring:
+  status_panel: true
+
+env_file: .env

@@ -1,0 +1,81 @@
+name: maybe-finance
+version: "latest"
+
+project:
+  identity: maybe-finance
+
+install:
+  inputs:
+    commonDomain: finance.example.com
+
+app:
+  type: custom
+  image: ghcr.io/maybe-finance/maybe:latest
+  ports:
+    - "3000:3000"
+  environment:
+    SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
+    DB_HOST: postgres
+    POSTGRES_DB: maybe
+    POSTGRES_USER: maybe
+    POSTGRES_PASSWORD: "${DB_PASSWORD}"
+  volumes:
+    - maybe_storage:/rails/storage
+  depends_on:
+    - postgres
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: maybe
+      POSTGRES_USER: maybe
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - maybe_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U maybe
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+config_contract:
+  app:
+    environment:
+      - name: SECRET_KEY_BASE
+        required: true
+        secret: true
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  maybe_storage: {}
+  maybe_pgdata: {}

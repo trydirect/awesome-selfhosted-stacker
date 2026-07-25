@@ -1,0 +1,46 @@
+name: komga
+version: "1.12.0"
+
+project:
+  identity: komga
+
+install:
+  inputs:
+    commonDomain: comics.example.com
+
+app:
+  type: custom
+  image: gotson/komga:latest
+  ports:
+    - "25600:25600"
+  environment:
+    KOMGA_DATABASE_URL: jdbc:h2:file:/config/database
+  volumes:
+    - komga_config:/config
+    - komga_data:/data
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "25600"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  komga_config: {}
+  komga_data: {}
