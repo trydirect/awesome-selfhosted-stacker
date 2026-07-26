@@ -463,7 +463,7 @@ server target. Start here for production.
 | FileBrowser         | File manager     | 8080  | |
 | Floci               | File sharing     | 8080  | needs docker.sock bind mount |
 | Ganymede           | Video archive    | 4000  | |
-| Gitea              | Git hosting      | 3000  | SSH port 2222:22 needs manual compose fix |
+| Gitea              | Git hosting      | 3000  | |
 | Gitness            | Git hosting      | 3000  | needs GITNESS_PRINCIPAL_ADMIN_EMAIL |
 | Ghost              | Blogging         | 2368  | |
 | Glances            | System monitor   | 61208 | |
