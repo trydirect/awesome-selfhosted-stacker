@@ -72,6 +72,7 @@ config_contract:
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
+  post_deploy: ./scripts/fix-volume-permissions.sh
 
 monitoring:
   status_panel: true
