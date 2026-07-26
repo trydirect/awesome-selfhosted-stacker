@@ -1,0 +1,46 @@
+name: grist
+version: "latest"
+
+project:
+  identity: grist
+
+install:
+  inputs:
+    commonDomain: spreadsheet.example.com
+
+app:
+  type: custom
+  image: gristlabs/grist:latest
+  ports:
+    - "8484:8484"
+  environment:
+    APP_HOME_URL: "${APP_HOME_URL:-http://localhost:8484}"
+    GRIST_DEFAULT_EMAIL: admin@example.com
+    GRIST_SANDBOX_FLAVOR: fuse
+  volumes:
+    - grist_data:/persist
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8484"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  grist_data: {}

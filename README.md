@@ -1,12 +1,12 @@
 # awesome-selfhosted-stacker
 
-> **65+ self-hostable apps, each deployable with a single `stacker.yml`.**
+> **135+ self-hostable apps, each deployable with a single `stacker.yml`.**
 > Deploy to your laptop, your own server, or the cloud with one command —
 > database setup, health checks, secrets, and remote monitoring included.
 
 <p>
-  <img alt="Projects" src="https://img.shields.io/badge/projects-65%2B-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-47-brightgreen">
+  <img alt="Projects" src="https://img.shields.io/badge/projects-135%2B-blue">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-63-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -412,30 +412,43 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (47)
+### Tested and verified (63)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
 
 | Project             | Type             | Port  | Image Fix / Notes |
 |---------------------|------------------|-------|--------------------|
+| CyberChef           | Data tools       | 8000  | container listens on 8080 |
+| Dashy               | Dashboard        | 8082  | container listens on 8080, not 80 |
 | d8a                 | Analytics        | 3000  | |
 | Daily Stars Explorer| Astronomy        | 8080  | |
 | Discourse           | Forum            | 80    | needs pgvector/pgvector instead of plain postgres |
+| Docmost             | Wiki             | 3000  | needs Redis service |
 | Druid               | Analytics        | 8888  | pinned apache/druid:31.0.0; removed broken druid_extensions_loadList env var |
+| FileBrowser         | File manager     | 8080  | |
 | Floci               | File sharing     | 8080  | needs docker.sock bind mount |
 | Ganymede           | Video archive    | 4000  | |
+| Gitness            | Git hosting      | 3000  | needs GITNESS_PRINCIPAL_ADMIN_EMAIL |
 | Ghost              | Blogging         | 2368  | |
+| Glances            | System monitor   | 61208 | |
+| HedgeDoc           | Markdown editor  | 3000  | |
+| IT-Tools           | Developer tools  | 8083  | container listens on 80, not 8080 |
 | Jellyfin           | Media server     | 8096  | |
 | Jitsi Meet         | Video conf       | 80/443| uses :unstable tags; nginx permission bug |
+| Komga              | Comics/manga     | 25600 | |
 | Lemmy              | Link aggregator  | 1234  | pinned dessalines/lemmy:0.19.11 |
+| Linkwarden         | Bookmarks        | 3000  | |
+| Listmonk           | Newsletter       | 9000  | needs --install flag on first run |
 | Mastodon           | Social network   | 3000  | |
+| Maybe Finance      | Personal finance | 3000  | |
 | Metabase           | BI               | 3000  | |
 | Nextcloud          | File sync        | 8080  | |
 | Open-WebUI         | AI chat          | 3000  | |
 | Outline            | Knowledge base   | 3000  | |
 | Paperless-ngx      | Document mgmt    | 8000  | |
 | Pi-hole            | DNS ad-block     | 8080  | |
+| Pingvin Share      | File sharing     | 3000  | |
 | Plausible          | Analytics        | 8000  | |
 | PostHog            | Product analytics| 8000  | |
 | Postiz App         | Social scheduler | 4007  | 6 containers: app + postgres + redis + temporal + ES |
@@ -445,16 +458,19 @@ server target. Start here for production.
 | RustFS            | File storage     | 3001  | |
 | Rybbit            | Analytics        | 8080  | Clickhouse config bind mount |
 | S4Core            | File sharing     | 8080  | |
+| Semaphore         | Ansible UI       | 3000  | fixed DB_DIALECT typo |
 | Statistics for Strava | Fitness      | 8080  | waits for Strava API credentials |
 | Strapi            | CMS              | 1337  | uses naskio/strapi instead of strapi |
-| Supabase          | Backend platform | 8000  | 10 containers: kong + postgres + studio + auth + rest + realtime + storage + functions + imgproxy + meta |
+| Supabase          | Backend platform | 8000  | 10 containers |
 | Superset          | BI               | 8088  | needs manual `superset fab create-admin` + `db upgrade` + `init` |
 | Synapse           | Matrix chat      | 8008  | |
+| Tandoor           | Recipes          | 8080  | fixed port mapping 8080->80 (nginx) |
+| Trilium           | Notes            | 8081  | |
 | Umami             | Analytics        | 3000  | |
 | UptimeKuma        | Monitoring       | 3001  | |
 | Vaultwarden       | Password mgr     | 8080  | |
 | WordPress         | CMS              | 8080  | uses image: wordpress (no tag) + mysql:8.0 |
-| Zitadel           | IAM/SSO          | 8080  | uses LOGINV2_REQUIRED=false (legacy login); Traefik labels stripped by stacker |
+| Zitadel           | IAM/SSO          | 8080  | uses LOGINV2_REQUIRED=false (legacy login) |
 
 ### Pre-existing (configured, not re-deployed)
 
@@ -608,7 +624,7 @@ official image is the whole point.
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-07-18 — 115+ projects configured, 47 tested and verified on
+Last updated: 2026-07-25 — 135+ projects configured, 63 tested and verified on
 Ubuntu 26.04.
 
 ---
