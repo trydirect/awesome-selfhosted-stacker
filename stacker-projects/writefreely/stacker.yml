@@ -1,0 +1,80 @@
+name: writefreely
+version: "0.15.0"
+
+project:
+  identity: writefreely
+
+install:
+  inputs:
+    commonDomain: blog.example.com
+
+app:
+  type: custom
+  dockerfile: Dockerfile
+  ports:
+    - "8080:8080"
+  environment:
+    WF_HOST: blog.example.com
+    WF_DB_TYPE: mysql
+    WF_DB_HOST: mysql
+    WF_DB_NAME: writefreely
+    WF_DB_USER: writefreely
+    WF_DB_PASSWORD: "${DB_PASSWORD}"
+  volumes:
+    - writefreely_data:/data
+  depends_on:
+    - mysql
+
+services:
+  - name: mysql
+    image: mysql:8
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      MYSQL_DATABASE: writefreely
+      MYSQL_USER: writefreely
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - writefreely_mysql:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h localhost
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+config_contract:
+  app:
+    environment:
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  writefreely_data: {}
+  writefreely_mysql: {}
