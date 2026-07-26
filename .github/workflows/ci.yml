@@ -1,0 +1,220 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  structure:
+    name: Structure checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files
+        run: |
+          errors=0
+          for dir in stacker-projects/*/; do
+            name=$(basename "$dir")
+            [ "$name" = "test" ] && continue
+            [ "$name" = ".claude" ] && continue
+
+            missing=""
+            [ ! -f "$dir/stacker.yml" ] && missing="$missing stacker.yml"
+            [ ! -f "$dir/.env.example" ] && missing="$missing .env.example"
+            [ ! -f "$dir/.gitignore" ] && missing="$missing .gitignore"
+
+            if [ -n "$missing" ]; then
+              echo "❌ $name:$missing"
+              errors=$((errors + 1))
+            fi
+          done
+          if [ "$errors" -gt 0 ]; then
+            echo ""
+            echo "Found $errors projects with missing files"
+            exit 1
+          fi
+          echo "✅ All projects have required files"
+
+      - name: Check generate-secrets.sh is executable
+        run: |
+          errors=0
+          for script in stacker-projects/*/scripts/generate-secrets.sh; do
+            [ ! -f "$script" ] && continue
+            if [ ! -x "$script" ]; then
+              echo "❌ Not executable: $script"
+              errors=$((errors + 1))
+            fi
+          done
+          if [ "$errors" -gt 0 ]; then
+            echo ""
+            echo "Run: chmod +x stacker-projects/*/scripts/generate-secrets.sh"
+            exit 1
+          fi
+          echo "✅ All generate-secrets.sh scripts are executable"
+
+      - name: Check .env is gitignored
+        run: |
+          errors=0
+          for dir in stacker-projects/*/; do
+            name=$(basename "$dir")
+            [ "$name" = "test" ] && continue
+            [ ! -f "$dir/.gitignore" ] && continue
+            if ! grep -q "^\.env$" "$dir/.gitignore"; then
+              echo "❌ $name/.gitignore missing .env entry"
+              errors=$((errors + 1))
+            fi
+          done
+          if [ "$errors" -gt 0 ]; then
+            echo ""
+            echo "Found $errors .gitignore files missing .env"
+            exit 1
+          fi
+          echo "✅ All .gitignore files protect .env"
+
+  validate:
+    name: Validate stacker configs
+    runs-on: ubuntu-latest
+    needs: structure
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Stacker
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/trydirect/stacker/main/install.sh | bash
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Generate .env files
+        run: |
+          for dir in stacker-projects/*/; do
+            name=$(basename "$dir")
+            [ "$name" = "test" ] && continue
+            [ ! -f "$dir/scripts/generate-secrets.sh" ] && continue
+            cd "$dir"
+            bash scripts/generate-secrets.sh || true
+            cd "$GITHUB_WORKSPACE"
+          done
+
+      - name: Validate all stacker.yml
+        run: |
+          errors=0
+          total=0
+          for dir in stacker-projects/*/; do
+            name=$(basename "$dir")
+            [ "$name" = "test" ] && continue
+            [ ! -f "$dir/stacker.yml" ] && continue
+
+            total=$((total + 1))
+            cd "$dir"
+            if stacker config validate 2>&1; then
+              echo "✅ $name"
+            else
+              echo "❌ $name"
+              errors=$((errors + 1))
+            fi
+            cd "$GITHUB_WORKSPACE"
+          done
+          echo ""
+          echo "Validated $total projects: $errors failures"
+          if [ "$errors" -gt 0 ]; then
+            exit 1
+          fi
+
+      - name: Dry run deploy (sample projects)
+        run: |
+          # Test a representative sample (one from each category)
+          sample_projects=(
+            umami
+            n8n
+            linkding
+            ghost
+            gotify
+            gitea
+            stirling-pdf
+            grafana
+            vaultwarden
+            meilisearch
+          )
+          errors=0
+          for name in "${sample_projects[@]}"; do
+            dir="stacker-projects/$name"
+            [ ! -d "$dir" ] && continue
+            cd "$dir"
+            if stacker deploy --dry-run 2>&1; then
+              echo "✅ $name dry-run OK"
+            else
+              echo "❌ $name dry-run failed"
+              errors=$((errors + 1))
+            fi
+            cd "$GITHUB_WORKSPACE"
+          done
+          if [ "$errors" -gt 0 ]; then
+            echo ""
+            echo "$errors dry-run failures"
+            exit 1
+          fi
+
+  changes:
+    name: Detect changed projects
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    outputs:
+      projects: ${{ steps.detect.outputs.projects }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed projects
+        id: detect
+        run: |
+          changed=$(git diff --name-only origin/main...HEAD -- 'stacker-projects/*' | \
+            cut -d'/' -f2 | sort -u | grep -v test | grep -v .claude || true)
+          if [ -n "$changed" ]; then
+            echo "projects<<EOF" >> $GITHUB_OUTPUT
+            echo "$changed" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "Changed projects:"
+            echo "$changed"
+          else
+            echo "projects=" >> $GITHUB_OUTPUT
+            echo "No project changes detected"
+          fi
+
+  validate-changed:
+    name: Validate changed projects
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.projects != ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Stacker
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/trydirect/stacker/main/install.sh | bash
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Validate changed projects
+        run: |
+          echo "${{ needs.changes.outputs.projects }}" | while read -r name; do
+            [ -z "$name" ] && continue
+            dir="stacker-projects/$name"
+            [ ! -d "$dir" ] && continue
+
+            echo "=== Validating $name ==="
+            cd "$dir"
+
+            # Generate .env if needed
+            [ -f scripts/generate-secrets.sh ] && bash scripts/generate-secrets.sh || true
+
+            # Validate
+            stacker config validate 2>&1
+
+            # Dry run
+            stacker deploy --dry-run 2>&1
+
+            cd "$GITHUB_WORKSPACE"
+            echo "✅ $name"
+          done

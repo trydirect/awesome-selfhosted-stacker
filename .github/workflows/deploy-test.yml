@@ -1,0 +1,75 @@
+name: Deploy Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Project name to test (e.g., umami)'
+        required: true
+      target:
+        description: 'Deploy target'
+        required: true
+        default: 'server'
+        type: choice
+        options:
+          - local
+          - server
+
+jobs:
+  test-deploy:
+    name: Test deploy ${{ inputs.project }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Stacker
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/trydirect/stacker/main/install.sh | bash
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose-plugin
+
+      - name: Generate secrets
+        working-directory: stacker-projects/${{ inputs.project }}
+        run: |
+          [ -f scripts/generate-secrets.sh ] && bash scripts/generate-secrets.sh
+
+      - name: Validate config
+        working-directory: stacker-projects/${{ inputs.project }}
+        run: stacker config validate
+
+      - name: Dry run
+        working-directory: stacker-projects/${{ inputs.project }}
+        run: stacker deploy --dry-run
+
+      - name: Deploy locally
+        if: inputs.target == 'local'
+        working-directory: stacker-projects/${{ inputs.project }}
+        run: |
+          stacker deploy --target local
+          sleep 10
+
+          # Get the port from stacker.yml
+          port=$(grep -A1 "ports:" stacker.yml | grep -oP '\d+' | head -1)
+          echo "Testing port $port..."
+
+          # Health check
+          status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$port || echo "000")
+          echo "HTTP status: $status"
+
+          if [ "$status" = "200" ] || [ "$status" = "302" ]; then
+            echo "✅ Deploy successful"
+          else
+            echo "❌ Deploy failed (HTTP $status)"
+            docker compose logs --tail 30
+            exit 1
+          fi
+
+      - name: Cleanup
+        if: always()
+        working-directory: stacker-projects/${{ inputs.project }}
+        run: |
+          docker compose down -v 2>/dev/null || true
