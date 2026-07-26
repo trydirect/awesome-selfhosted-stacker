@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-135%2B-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-63-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-69-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -17,14 +17,29 @@ directory, generate secrets, and `stacker deploy`. Same layout, same commands,
 every app — from analytics and CMS to chat, password managers, and AI tools.
 
 ```bash
-cd umami                          # pick any of 65+ projects
+cd umami                          # pick any project
 ./scripts/generate-secrets.sh     # generate .env from .env.example
 stacker deploy                    # → running locally in minutes
 ```
 
+### Quick deploy to cloud
+
+```bash
+export HETZNER_API_TOKEN=your_token
+cd umami
+stacker deploy --target cloud --force-rebuild
+```
+
+<p>
+  <a href="https://github.com/trydirect/stacker"><img alt="Install Stacker" src="https://img.shields.io/badge/install-Stacker-8A2BE2?style=for-the-badge"></a>
+  <a href="https://cloud.hetzner.com"><img alt="Hetzner Cloud" src="https://img.shields.io/badge/deploy%20to-Hetzner-d50c2d?style=for-the-badge"></a>
+  <a href="https://github.com/trydirect/stacker#quick-start"><img alt="Quick Start" src="https://img.shields.io/badge/quick-start-2ea44f?style=for-the-badge"></a>
+</p>
+
 ## Contents
 
 - [Quick Start](#quick-start)
+- [Deploy in 30 Seconds](#deploy-in-30-seconds)
 - [Deployment Targets](#deployment-targets)
 - [PIPE — Connect Apps Together](#pipe--connect-apps-together)
 - [Remote Monitoring Without SSH](#remote-monitoring-without-ssh)
@@ -53,6 +68,25 @@ If the CLI is missing, see the installation guide:
 https://github.com/trydirect/stacker
 
 **Prerequisites (local):** Docker, Docker Compose, and the Stacker CLI.
+
+---
+
+## Deploy in 30 Seconds
+
+```bash
+# 1. Pick a project
+cd plausible
+
+# 2. Generate secrets
+./scripts/generate-secrets.sh
+
+# 3. Deploy to cloud
+stacker deploy --target cloud --force-rebuild
+```
+
+![Stacker deploy](gifs/stacker-plausible.gif)
+
+![Stacker status](gifs/stacker-status.gif)
 
 ---
 
@@ -412,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (63)
+### Tested and verified (69)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -429,10 +463,12 @@ server target. Start here for production.
 | FileBrowser         | File manager     | 8080  | |
 | Floci               | File sharing     | 8080  | needs docker.sock bind mount |
 | Ganymede           | Video archive    | 4000  | |
+| Gitea              | Git hosting      | 3000  | SSH port 2222:22 needs manual compose fix |
 | Gitness            | Git hosting      | 3000  | needs GITNESS_PRINCIPAL_ADMIN_EMAIL |
 | Ghost              | Blogging         | 2368  | |
 | Glances            | System monitor   | 61208 | |
 | HedgeDoc           | Markdown editor  | 3000  | |
+| Home Assistant     | Smart home       | 8123  | slow startup (~50s) |
 | IT-Tools           | Developer tools  | 8083  | container listens on 80, not 8080 |
 | Jellyfin           | Media server     | 8096  | |
 | Jitsi Meet         | Video conf       | 80/443| uses :unstable tags; nginx permission bug |
