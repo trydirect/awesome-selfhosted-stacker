@@ -24,8 +24,10 @@ jobs:
 
       - name: Install Stacker
         run: |
-          curl -fsSL https://raw.githubusercontent.com/trydirect/stacker/main/install.sh | bash
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          VERSION="0.3.1"
+          curl -fsSL "https://github.com/trydirect/stacker/releases/download/v${VERSION}/stacker-v${VERSION}-x86_64-linux.tar.gz" \
+            | tar xz -C /usr/local/bin stacker
+          stacker --version
 
       - name: Install Docker Compose
         run: |
