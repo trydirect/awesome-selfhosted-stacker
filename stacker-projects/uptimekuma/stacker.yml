@@ -46,7 +46,7 @@ deploy:
     public_ports:
     - '3001'
   server:
-    host: 46.224.127.228
+    host: ${DEPLOY_HOST}
     user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22

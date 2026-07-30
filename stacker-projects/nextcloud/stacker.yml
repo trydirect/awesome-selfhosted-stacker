@@ -10,7 +10,7 @@ app:
   image: nextcloud:latest
   build: null
   ports:
-  - 8080:80
+  - 8081:80
   volumes:
   - nextcloud_data:/var/www/html
   environment:
@@ -77,9 +77,9 @@ deploy:
     key: null
     server: null
     public_ports:
-    - '8080'
+    - '8081'
   server:
-    host: 46.224.127.228
+    host: ${DEPLOY_HOST}
     user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22

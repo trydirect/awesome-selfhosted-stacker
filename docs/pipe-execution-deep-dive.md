@@ -41,7 +41,7 @@ With the pipe created, we tried `stacker pipe trigger`. It hung for 30 seconds, 
 
 ### The agent status panel
 
-On the target server (Hetzner, `46.224.127.228`), we had the `statuspanel` container running — the web UI for Stacker's deployment dashboard. But the agent that actually executes commands? It was running in the wrong mode.
+On the target server (Hetzner, `${DEPLOY_HOST}`), we had the `statuspanel` container running — the web UI for Stacker's deployment dashboard. But the agent that actually executes commands? It was running in the wrong mode.
 
 The Dockerfile's default entrypoint starts a web server:
 
@@ -157,16 +157,16 @@ Here's the complete flow that actually works today:
    → Creates pipe template + instance in Stacker DB
 
 2. Activate pipe (CLI)
-   stacker pipe activate --server 46.224.127.228 --pipe <PIPE_ID>
+   stacker pipe activate --server ${DEPLOY_HOST} --pipe <PIPE_ID>
    → Enqueues activation command to agent
 
 3. Scan endpoints (CLI)
-   stacker pipe scan directus --server 46.224.127.228
+   stacker pipe scan directus --server ${DEPLOY_HOST}
    → Agent runs probe on Directus container
    → Returns available endpoints
 
 4. Trigger execution (CLI)
-   stacker pipe trigger directus --server 46.224.127.228 --pipe "directus-chatwoot"
+   stacker pipe trigger directus --server ${DEPLOY_HOST} --pipe "directus-chatwoot"
    → Agent receives command via long-poll
    → Executes curl inside Directus container
    → Pushes data to Chatwoot

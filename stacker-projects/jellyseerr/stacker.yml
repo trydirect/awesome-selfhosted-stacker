@@ -15,7 +15,7 @@ env_file: .env
 deploy:
   target: server
   server:
-    host: 46.224.127.228
+    host: ${DEPLOY_HOST}
     user: root
-    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22
