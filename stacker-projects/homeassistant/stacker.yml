@@ -19,4 +19,11 @@ proxy:
   type: none
   auto_detect: false
 
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+
 env_file: .env
