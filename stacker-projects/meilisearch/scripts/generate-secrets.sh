@@ -10,7 +10,7 @@ need() {
   [ -z "$val" ]
 }
 if need "MEILI_MASTER_KEY"; then
-  sed -i '' "s|^MEILI_MASTER_KEY=.*|MEILI_MASTER_KEY=$(openssl rand -hex 16)|" .env
+  sed -i.bak "s|^MEILI_MASTER_KEY=.*|MEILI_MASTER_KEY=$(openssl rand -hex 16)|" .env && rm -f .env.bak
   echo "  Generated MEILI_MASTER_KEY"
 fi
 echo "Secrets ready."
