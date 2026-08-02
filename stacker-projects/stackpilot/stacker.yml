@@ -99,13 +99,11 @@ volumes:
   stackpilot_n8n_data: {}
 
 deploy:
-  target: local
-  cloud:
-    provider: hetzner
-    region: fsn1
-    size: cpx32
-    public_ports:
-      - "8080"
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
 
 proxy:
   type: none
