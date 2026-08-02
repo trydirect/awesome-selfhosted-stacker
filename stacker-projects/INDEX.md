@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**135 projects** · **63 tested & verified** · Updated 2026-07-25
+**135 projects** · **73 tested & verified** · Updated 2026-08-01
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -108,7 +108,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | insforge | (node) | 7130 | — | |
 | it-tools | corentinth/it-tools | 8083 | — | ✅ |
 | network-tools | trydirect/network-tools | — | — | |
-| nocodb | nocodb/nocodb | 8080 | postgres | |
+| nocodb | nocodb/nocodb | 8080 | postgres | ✅ |
 | semaphore | semaphoreui/semaphore | 3000 | postgres | ✅ |
 | supabase | kong/kong:3.9.1 | 8000 | postgres | ✅ |
 | traefik | traefik:v3.0 | 80 | — | |
@@ -154,14 +154,14 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | immich | ghcr.io/immich-app/immich-server | 2283 | postgres, redis | |
 | jellyfin | jellyfin/jellyfin | 8096 | — | ✅ |
 | jellyseerr | fallenbagel/jellyseerr | 5055 | — | |
-| kavita | lscr.io/linuxserver/kavita | 5000 | — | |
+| kavita | lscr.io/linuxserver/kavita | 5000 | — | ✅ |
 | komga | gotson/komga | 25600 | — | ✅ |
-| metube | alexta69/metube | 8081 | — | |
-| navidrome | deluan/navidrome | 4533 | — | |
+| metube | alexta69/metube | 8081 | — | ✅ |
+| navidrome | deluan/navidrome | 4533 | — | ✅ |
 | ombi | lscr.io/linuxserver/ombi | 3579 | — | |
 | romm | rommapp/romm | 8080 | mariadb | ✅ |
 | swarm-ui | (Dockerfile) | 7801 | — | |
-| tautulli | lscr.io/linuxserver/tautulli | 8181 | — | |
+| tautulli | lscr.io/linuxserver/tautulli | 8181 | — | ✅ |
 
 ## Monitoring (9)
 
@@ -170,7 +170,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | crowdsec | crowdsecurity/crowdsec | — | — | |
 | glances | nicolargo/glances:latest-full | 61208 | — | ✅ |
 | goaccess | nginx:1.27-alpine | 8080 | — | |
-| grafana | grafana/grafana | 3000 | — | |
+| grafana | grafana/grafana | 3000 | — | ✅ |
 | pihole | pihole/pihole | 8080 | — | ✅ |
 | speedtest-tracker | lscr.io/linuxserver/speedtest-tracker | 8080 | — | |
 | stackdog | trydirect/stackdog | 5000 | — | |
@@ -189,8 +189,8 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
 | bitwarden | vaultwarden/server | 80 | postgres | |
-| hanko | ghcr.io/teamhanko/hanko | 8000 | postgres | |
-| infisical | infisical/infisical | 8080 | postgres | |
+| hanko | ghcr.io/teamhanko/hanko | 8000 | postgres | ⚠️ |
+| infisical | infisical/infisical | 8080 | postgres | ✅ |
 | keycloak | quay.io/keycloak/keycloak | 8080 | postgres | |
 | onetimesecret | onetimesecret/onetimesecret | 3000 | redis | |
 | vaultwarden | vaultwarden/server | 8080 | — | ✅ |
@@ -200,7 +200,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
-| grocy | lscr.io/linuxserver/grocy | 9283 | — | |
+| grocy | lscr.io/linuxserver/grocy | 9283 | — | ✅ |
 | mealie | ghcr.io/mealie-recipes/mealie | 9925 | — | |
 | tandoor | vabene1111/recipes | 8080 | postgres | ✅ |
 
@@ -208,7 +208,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
-| meilisearch | getmeili/meilisearch | 7700 | — | |
+| meilisearch | getmeili/meilisearch | 7700 | — | ✅ |
 
 ## Self-hosting (2)
 

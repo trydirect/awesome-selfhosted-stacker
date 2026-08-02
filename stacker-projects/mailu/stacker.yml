@@ -1,0 +1,14 @@
+name: mailu
+deploy:
+  target: cloud
+  deployment_hash: deployment_9792c0f8-a242-4771-8b15-0061788a77f1
+proxy:
+  type: none
+  auto_detect: false
+project:
+  identity: mailu
+app:
+  type: static
+  path: .
+monitoring:
+  status_panel: false
