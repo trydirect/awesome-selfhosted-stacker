@@ -10,11 +10,11 @@ need() {
   [ -z "$val" ]
 }
 if need "DB_PASSWORD"; then
-  sed -i '' "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" .env
+  sed -i.bak "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" .env && rm -f .env.bak
   echo "  Generated DB_PASSWORD"
 fi
 if need "SECRETS_DEFAULT"; then
-  sed -i '' "s|^SECRETS_DEFAULT=.*|SECRETS_DEFAULT=$(openssl rand -hex 32)|" .env
+  sed -i.bak "s|^SECRETS_DEFAULT=.*|SECRETS_DEFAULT=$(openssl rand -hex 32)|" .env && rm -f .env.bak
   echo "  Generated SECRETS_DEFAULT"
 fi
 echo "Secrets ready."
