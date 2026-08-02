@@ -83,6 +83,8 @@ services:
 
   - name: stackpilot-n8n
     image: n8nio/n8n:latest
+    ports:
+      - "5678:5678"
     environment:
       N8N_BASIC_AUTH_ACTIVE: "true"
       N8N_BASIC_AUTH_USER: admin
@@ -104,12 +106,24 @@ deploy:
     host: ${DEPLOY_HOST}
     user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx32
+    public_ports:
+      - "80"
+      - "443"
+      - "8080"
+      - "5678"
 
 proxy:
-  type: none
-  auto_detect: false
+  type: nginx-proxy-manager
+  auto_detect: true
 
 monitoring:
   status_panel: true
+  healthcheck:
+    endpoint: /health
+    interval: 30s
 
 env_file: .env

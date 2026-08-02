@@ -120,7 +120,9 @@ async def ollama_pull_model(model: str):
 
 @router.get("/dashboard", response_model=None)
 async def dashboard():
-    return HTMLResponse(content="Dashboard loading...")
+    from pathlib import Path
+    html_path = Path(__file__).parent.parent / "templates" / "dashboard.html"
+    return HTMLResponse(content=html_path.read_text())
 
 
 @router.post("/login")
