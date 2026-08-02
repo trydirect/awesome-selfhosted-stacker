@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    database_url: str = "postgresql+asyncpg://stackpilot:stackpilot@localhost:5432/stackpilot"
+    database_url: str = "postgresql://stackpilot:stackpilot@localhost:5432/stackpilot"
     redis_url: str = "redis://localhost:6379"
     ollama_base_url: str = "http://localhost:11434"
     n8n_webhook_url: str = ""

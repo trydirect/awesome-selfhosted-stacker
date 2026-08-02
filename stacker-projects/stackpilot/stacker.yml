@@ -39,13 +39,13 @@ app:
   ports:
     - "8080:8000"
   environment:
-    DATABASE_URL: "postgresql+asyncpg://stackpilot:${DB_PASSWORD}@stackpilot-db:5432/stackpilot"
+    DATABASE_URL: "postgresql://stackpilot:${DB_PASSWORD}@stackpilot-db:5432/stackpilot"
     REDIS_URL: "redis://stackpilot-redis:6379"
     OLLAMA_BASE_URL: "http://stackpilot-ollama:11434"
     N8N_WEBHOOK_URL: "http://stackpilot-n8n:5678/webhook/stackpilot"
     SECRET_KEY: "${SECRET_KEY}"
-    OLLAMA_MODEL: "${OLLAMA_MODEL:-llama3.1}"
-    OLLAMA_EMBED_MODEL: "${OLLAMA_EMBED_MODEL:-nomic-embed-text}"
+    OLLAMA_MODEL: "${OLLAMA_MODEL}"
+    OLLAMA_EMBED_MODEL: "${OLLAMA_EMBED_MODEL}"
     ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
     ADMIN_USER: "admin"
   volumes:
