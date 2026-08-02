@@ -5,7 +5,6 @@ import re
 from typing import Any
 
 import httpx
-from pgvector.asyncpg import Vector, register_vector
 
 from app.config import settings
 from app.database import get_db, get_redis
@@ -57,7 +56,6 @@ async def add_document(title: str, content: str, source: str = "", metadata: dic
     doc_id = -1
     meta_json = json.dumps(metadata or {})
     async with db.acquire() as conn:
-        await register_vector(conn)
         for i, (chunk, emb) in enumerate(zip(chunks, embeddings)):
             row = await conn.fetchrow(
                 """INSERT INTO documents (source, title, content, chunk_index, metadata)
@@ -66,10 +64,11 @@ async def add_document(title: str, content: str, source: str = "", metadata: dic
             )
             if doc_id == -1:
                 doc_id = row["id"]
+            emb_literal = "[" + ",".join(str(x) for x in emb) + "]"
             await conn.execute(
-                """INSERT INTO document_embeddings (document_id, embedding)
-                   VALUES ($1, $2)""",
-                row["id"], Vector(emb),
+                f"""INSERT INTO document_embeddings (document_id, embedding)
+                    VALUES ($1, '{emb_literal}'::vector)""",
+                row["id"],
             )
     return doc_id
 
@@ -83,16 +82,15 @@ async def search_similar(query: str, limit: int = 5) -> list[dict[str, Any]]:
     if cached:
         import json
         return json.loads(cached)
+    emb_literal = "[" + ",".join(str(x) for x in query_emb) + "]"
     async with db.acquire() as conn:
-        await register_vector(conn)
         rows = await conn.fetch(
-            """SELECT d.id, d.title, d.source, d.content, d.metadata,
-                      1 - (de.embedding <=> $1::vector) AS score
-               FROM document_embeddings de
-               JOIN documents d ON d.id = de.document_id
-               ORDER BY de.embedding <=> $1::vector
-               LIMIT $2""",
-            Vector(query_emb), limit,
+            f"""SELECT d.id, d.title, d.source, d.content, d.metadata,
+                       1 - (de.embedding <=> '{emb_literal}'::vector) AS score
+                FROM document_embeddings de
+                JOIN documents d ON d.id = de.document_id
+                ORDER BY de.embedding <=> '{emb_literal}'::vector
+                LIMIT {limit}""",
         )
     results = [dict(r) for r in rows]
     import json
