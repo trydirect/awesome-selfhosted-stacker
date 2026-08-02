@@ -29,6 +29,8 @@ async def chat(req: ChatRequest):
     assistant_msg = {"role": "assistant", "content": result["reply"], "timestamp": datetime.utcnow().isoformat()}
     history.append(user_msg)
     history.append(assistant_msg)
+    import json as _json
+    messages_json = _json.dumps(history)
     async with db.acquire() as conn:
         existing = await conn.fetchrow(
             "SELECT id FROM conversations WHERE session_id = $1 ORDER BY id DESC LIMIT 1",
@@ -36,15 +38,15 @@ async def chat(req: ChatRequest):
         )
         if existing:
             await conn.execute(
-                "UPDATE conversations SET messages = $1, updated_at = now() WHERE id = $2",
-                history, existing["id"],
+                "UPDATE conversations SET messages = $1::jsonb, updated_at = now() WHERE id = $2",
+                messages_json, existing["id"],
             )
             conv_id = existing["id"]
         else:
             row = await conn.fetchrow(
                 """INSERT INTO conversations (session_id, visitor_id, website, messages)
-                   VALUES ($1, $2, $3, $4) RETURNING id""",
-                session_id, req.visitor_id, req.website, history,
+                   VALUES ($1, $2, $3, $4::jsonb) RETURNING id""",
+                session_id, req.visitor_id, req.website, messages_json,
             )
             conv_id = row["id"]
     if result["confidence"] < 0.3:

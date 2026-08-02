@@ -5,7 +5,7 @@ import re
 from typing import Any
 
 import httpx
-from pgvector.asyncpg import Vector
+from pgvector.asyncpg import Vector, register_vector
 
 from app.config import settings
 from app.database import get_db, get_redis
@@ -48,18 +48,21 @@ async def embed_batch(texts: list[str]) -> list[list[float]]:
 
 
 async def add_document(title: str, content: str, source: str = "", metadata: dict[str, Any] | None = None) -> int:
+    import json
     db = await get_db()
     chunks = chunk_text(content)
     if not chunks:
         return -1
     embeddings = await embed_batch(chunks)
     doc_id = -1
+    meta_json = json.dumps(metadata or {})
     async with db.acquire() as conn:
+        await register_vector(conn)
         for i, (chunk, emb) in enumerate(zip(chunks, embeddings)):
             row = await conn.fetchrow(
                 """INSERT INTO documents (source, title, content, chunk_index, metadata)
-                   VALUES ($1, $2, $3, $4, $5) RETURNING id""",
-                source, title, chunk, i, metadata or {},
+                   VALUES ($1, $2, $3, $4, $5::jsonb) RETURNING id""",
+                source, title, chunk, i, meta_json,
             )
             if doc_id == -1:
                 doc_id = row["id"]
@@ -81,6 +84,7 @@ async def search_similar(query: str, limit: int = 5) -> list[dict[str, Any]]:
         import json
         return json.loads(cached)
     async with db.acquire() as conn:
+        await register_vector(conn)
         rows = await conn.fetch(
             """SELECT d.id, d.title, d.source, d.content, d.metadata,
                       1 - (de.embedding <=> $1::vector) AS score
@@ -129,6 +133,8 @@ async def count_documents() -> int:
 
 
 async def crawl_website(url: str, max_pages: int = 50, website_id: int | None = None) -> dict[str, Any]:
+    import logging
+    logger = logging.getLogger("stackpilot.crawl")
     visited: set[str] = set()
     queue = [url]
     pages_crawled = 0
@@ -144,20 +150,27 @@ async def crawl_website(url: str, max_pages: int = 50, website_id: int | None = 
             try:
                 resp = await client.get(current, headers={"User-Agent": "StackPilot/1.0"})
                 if "text/html" not in resp.headers.get("content-type", ""):
+                    logger.info("Skipping non-HTML: %s", current)
                     continue
                 pages_crawled += 1
                 html = resp.text
                 text = _extract_text(html)
                 title = _extract_title(html)
-                if text.strip():
-                    await add_document(title=title, content=text, source=current)
-                    docs_added += 1
+                logger.info("Crawled %s: title=%r, text_len=%d", current, title, len(text))
+                if len(text.strip()) >= 50:
+                    doc_id = await add_document(title=title, content=text, source=current)
+                    if doc_id > 0:
+                        docs_added += 1
+                        logger.info("Added doc %d from %s", doc_id, current)
+                else:
+                    logger.warning("Text too short (%d chars) from %s", len(text), current)
                 links = _extract_links(html, current)
                 for link in links:
                     parsed = urlparse(link)
                     if parsed.netloc == base_domain and link not in visited:
                         queue.append(link)
-            except Exception:
+            except Exception as e:
+                logger.error("Failed to crawl %s: %s", current, e)
                 continue
     return {"pages_crawled": pages_crawled, "documents_added": docs_added, "urls_visited": len(visited)}
 
