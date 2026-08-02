@@ -1,3 +1,5 @@
+import asyncio
+
 import asyncpg
 import redis.asyncio as aioredis
 from pgvector.asyncpg import register_vector
@@ -10,13 +12,18 @@ _redis: aioredis.Redis | None = None
 
 async def init_db() -> asyncpg.Pool:
     global _pool
-    _pool = await asyncpg.create_pool(settings.database_url, min_size=2, max_size=10)
+    for attempt in range(30):
+        try:
+            _pool = await asyncpg.create_pool(settings.database_url, min_size=2, max_size=10)
+            break
+        except Exception:
+            if attempt == 29:
+                raise
+            await asyncio.sleep(2)
     async with _pool.acquire() as conn:
+        await conn.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+        await conn.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
         await register_vector(conn)
-        await conn.execute("""
-            CREATE EXTENSION IF NOT EXISTS vector;
-            CREATE EXTENSION IF NOT EXISTS pg_trgm;
-        """)
         await conn.execute("""
             CREATE TABLE IF NOT EXISTS documents (
                 id          SERIAL PRIMARY KEY,
