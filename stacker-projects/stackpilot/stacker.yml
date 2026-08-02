@@ -1,0 +1,117 @@
+name: stackpilot
+version: "1.0.0"
+
+project:
+  identity: stackpilot
+
+install:
+  inputs:
+    commonDomain: ""
+
+config_contract:
+  app:
+    environment:
+      - name: SECRET_KEY
+        required: true
+        secret: true
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: ADMIN_PASSWORD
+        required: true
+        secret: true
+      - name: N8N_PASSWORD
+        required: true
+        secret: true
+      - name: OLLAMA_MODEL
+        required: false
+        secret: false
+      - name: OLLAMA_EMBED_MODEL
+        required: false
+        secret: false
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+app:
+  type: custom
+  dockerfile: Dockerfile
+  ports:
+    - "8080:8000"
+  environment:
+    DATABASE_URL: "postgresql+asyncpg://stackpilot:${DB_PASSWORD}@stackpilot-db:5432/stackpilot"
+    REDIS_URL: "redis://stackpilot-redis:6379"
+    OLLAMA_BASE_URL: "http://stackpilot-ollama:11434"
+    N8N_WEBHOOK_URL: "http://stackpilot-n8n:5678/webhook/stackpilot"
+    SECRET_KEY: "${SECRET_KEY}"
+    OLLAMA_MODEL: "${OLLAMA_MODEL:-llama3.1}"
+    OLLAMA_EMBED_MODEL: "${OLLAMA_EMBED_MODEL:-nomic-embed-text}"
+    ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+    ADMIN_USER: "admin"
+  volumes:
+    - stackpilot_data:/app/data
+
+services:
+  - name: stackpilot-db
+    image: pgvector/pgvector:0.8.0-pg16
+    environment:
+      POSTGRES_DB: stackpilot
+      POSTGRES_USER: stackpilot
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - stackpilot_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d stackpilot -U stackpilot
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: stackpilot-redis
+    image: redis:7-alpine
+    healthcheck:
+      test: CMD redis-cli ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: stackpilot-ollama
+    image: ollama/ollama:latest
+    volumes:
+      - stackpilot_ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+
+  - name: stackpilot-n8n
+    image: n8nio/n8n:latest
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: admin
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD}
+      N8N_WEBHOOK_URL: "http://stackpilot-n8n:5678/"
+      GENERIC_TIMEZONE: "UTC"
+    volumes:
+      - stackpilot_n8n_data:/home/node/.n8n
+
+volumes:
+  stackpilot_data: {}
+  stackpilot_pgdata: {}
+  stackpilot_ollama: {}
+  stackpilot_n8n_data: {}
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx32
+    public_ports:
+      - "8080"
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+
+env_file: .env

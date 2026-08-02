@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StackPilot Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#1e293b}
+.login{max-width:360px;margin:120px auto;padding:40px;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+.login h1{font-size:24px;margin-bottom:8px;color:#2563eb}
+.login p{color:#64748b;margin-bottom:24px;font-size:14px}
+.login input{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;margin-bottom:16px;outline:none}
+.login button{width:100%;padding:12px;background:#2563eb;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer}
+.login button:hover{background:#1d4ed8}
+.login .error{color:#ef4444;font-size:13px;margin-bottom:12px;display:none}
+nav{background:white;border-bottom:1px solid #e2e8f0;padding:0 24px;display:flex;align-items:center;height:56px;gap:32px}
+nav h1{font-size:18px;color:#2563eb}
+nav a{color:#64748b;text-decoration:none;font-size:14px;padding:16px 0;border-bottom:2px solid transparent}
+nav a.active{color:#2563eb;border-bottom-color:#2563eb}
+nav .spacer{flex:1}
+nav button{background:none;border:none;color:#64748b;cursor:pointer;font-size:14px}
+.container{max-width:1100px;margin:32px auto;padding:0 24px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:32px}
+.stat{background:white;padding:20px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.stat .label{font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px}
+.stat .value{font-size:28px;font-weight:700;margin-top:4px}
+.card{background:white;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.06);overflow:hidden;margin-bottom:24px}
+.card-header{padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center}
+.card-header h2{font-size:16px}
+.card-body{padding:20px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid #f1f5f9;font-size:14px}
+th{color:#64748b;font-weight:500;font-size:13px}
+td{color:#1e293b}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:500}
+.badge-green{background:#dcfce7;color:#166534}
+.badge-yellow{background:#fef9c3;color:#854d0e}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-gray{background:#f1f5f9;color:#64748b}
+button.btn{padding:8px 16px;border-radius:6px;border:none;font-size:13px;cursor:pointer;font-weight:500}
+.btn-primary{background:#2563eb;color:white}
+.btn-primary:hover{background:#1d4ed8}
+.btn-danger{background:#ef4444;color:white}
+.btn-danger:hover{background:#dc2626}
+.btn-sm{padding:4px 10px;font-size:12px}
+input[type="text"],textarea{padding:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;width:100%;outline:none;font-family:inherit}
+textarea{min-height:100px;resize:vertical}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;color:#64748b;margin-bottom:6px}
+.empty{text-align:center;padding:40px;color:#94a3b8}
+.page{display:none}
+.page.active{display:block}
+.flex{display:flex;gap:8px;align-items:center}
+.mt-16{margin-top:16px}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;z-index:1000}
+.modal{background:white;border-radius:12px;padding:24px;width:480px;max-width:90vw;max-height:80vh;overflow-y:auto}
+.modal h3{margin-bottom:16px}
+.pre{background:#f1f5f9;padding:12px;border-radius:6px;font-family:monospace;font-size:13px;overflow-x:auto;white-space:pre-wrap}
+</style>
+</head>
+<body>
+
+<div id="login-view" class="login">
+<h1>StackPilot</h1>
+<p>Self-Hosted AI Support Assistant</p>
+<div class="error" id="login-error">Invalid password</div>
+<input type="password" id="login-password" placeholder="Admin password" />
+<button onclick="doLogin()">Sign In</button>
+</div>
+
+<div id="app-view" style="display:none">
+<nav>
+<h1>StackPilot</h1>
+<a href="#" class="active" onclick="showPage('overview')">Overview</a>
+<a href="#" onclick="showPage('knowledge')">Knowledge Base</a>
+<a href="#" onclick="showPage('conversations')">Conversations</a>
+<a href="#" onclick="showPage('websites')">Websites</a>
+<a href="#" onclick="showPage('ollama')">Ollama</a>
+<div class="spacer"></div>
+<button onclick="doLogout()">Sign Out</button>
+</nav>
+
+<div class="container">
+
+<div id="page-overview" class="page active">
+<div class="stats" id="stats-grid">
+<div class="stat"><div class="label">Documents</div><div class="value" id="s-docs">-</div></div>
+<div class="stat"><div class="label">Conversations</div><div class="value" id="s-convs">-</div></div>
+<div class="stat"><div class="label">Websites</div><div class="value" id="s-sites">-</div></div>
+<div class="stat"><div class="label">Resolved</div><div class="value" id="s-resolved">-</div></div>
+<div class="stat"><div class="label">Avg Messages</div><div class="value" id="s-avg">-</div></div>
+</div>
+<div class="card">
+<div class="card-header"><h2>Quick Start</h2></div>
+<div class="card-body">
+<p style="color:#64748b;font-size:14px;margin-bottom:12px">Add this snippet to your website to enable the AI support chat widget:</p>
+<div class="pre">&lt;script src="YOUR_STACKPILOT_URL/api/widget/widget.js"&gt;&lt;/script&gt;</div>
+<p style="color:#64748b;font-size:14px;margin-top:16px">Then crawl your website from the <b>Websites</b> tab to build the knowledge base.</p>
+</div>
+</div>
+</div>
+
+<div id="page-knowledge" class="page">
+<div class="card">
+<div class="card-header">
+<h2>Knowledge Base</h2>
+<button class="btn btn-primary" onclick="showAddDoc()">+ Add Document</button>
+</div>
+<div class="card-body">
+<table><thead><tr><th>ID</th><th>Title</th><th>Source</th><th>Preview</th><th>Actions</th></tr></thead>
+<tbody id="docs-table"></tbody></table>
+<div class="empty" id="docs-empty" style="display:none">No documents yet. Add content or crawl a website.</div>
+</div>
+</div>
+</div>
+
+<div id="page-conversations" class="page">
+<div class="card">
+<div class="card-header"><h2>Conversations</h2></div>
+<div class="card-body">
+<table><thead><tr><th>ID</th><th>Session</th><th>Website</th><th>Messages</th><th>Status</th><th>Feedback</th></tr></thead>
+<tbody id="convs-table"></tbody></table>
+<div class="empty" id="convs-empty" style="display:none">No conversations yet.</div>
+</div>
+</div>
+</div>
+
+<div id="page-websites" class="page">
+<div class="card">
+<div class="card-header">
+<h2>Websites</h2>
+<button class="btn btn-primary" onclick="showCrawl()">+ Crawl Website</button>
+</div>
+<div class="card-body">
+<table><thead><tr><th>ID</th><th>Domain</th><th>Name</th><th>Actions</th></tr></thead>
+<tbody id="sites-table"></tbody></table>
+<div class="empty" id="sites-empty" style="display:none">No websites added yet.</div>
+</div>
+</div>
+</div>
+
+<div id="page-ollama" class="page">
+<div class="card">
+<div class="card-header"><h2>Ollama Models</h2></div>
+<div class="card-body">
+<div id="ollama-status" style="margin-bottom:16px"></div>
+<div id="ollama-models"></div>
+<div class="form-group mt-16">
+<label>Pull a new model</label>
+<div class="flex">
+<input type="text" id="pull-model-name" placeholder="e.g. llama3.1, mistral, nomic-embed-text" />
+<button class="btn btn-primary" onclick="pullModel()">Pull</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+<div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+const API = '';
+
+async function api(path, opts = {}) {
+  const r = await fetch(API + path, {
+    headers: {'Content-Type': 'application/json'},
+    ...opts
+  });
+  return r.json();
+}
+
+async function doLogin() {
+  const pw = document.getElementById('login-password').value;
+  try {
+    const r = await fetch(API + '/api/admin/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({password: pw})
+    });
+    const d = await r.json();
+    if (d.ok) { showApp(); }
+    else { document.getElementById('login-error').style.display = 'block'; }
+  } catch(e) { document.getElementById('login-error').style.display = 'block'; }
+}
+
+async function doLogout() {
+  await fetch(API + '/api/admin/logout', {method: 'POST'});
+  document.getElementById('app-view').style.display = 'none';
+  document.getElementById('login-view').style.display = 'block';
+}
+
+function showApp() {
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('app-view').style.display = 'block';
+  loadStats(); loadDocs(); loadConvs(); loadSites(); loadOllama();
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+async function loadStats() {
+  const d = await api('/api/admin/stats');
+  document.getElementById('s-docs').textContent = d.total_documents;
+  document.getElementById('s-convs').textContent = d.total_conversations;
+  document.getElementById('s-sites').textContent = d.total_websites;
+  document.getElementById('s-resolved').textContent = d.resolved_conversations;
+  document.getElementById('s-avg').textContent = d.avg_messages_per_conversation;
+}
+
+async function loadDocs() {
+  const d = await api('/api/admin/documents');
+  const tbody = document.getElementById('docs-table');
+  const empty = document.getElementById('docs-empty');
+  if (!d.documents.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = d.documents.map(doc => `<tr>
+    <td>${doc.id}</td><td>${doc.title || '-'}</td><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis">${doc.source || '-'}</td>
+    <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis">${doc.preview || ''}</td>
+    <td><button class="btn btn-danger btn-sm" onclick="deleteDoc(${doc.id})">Delete</button></td>
+  </tr>`).join('');
+}
+
+async function loadConvs() {
+  const d = await api('/api/admin/conversations');
+  const tbody = document.getElementById('convs-table');
+  const empty = document.getElementById('convs-empty');
+  if (!d.conversations.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = d.conversations.map(c => {
+    const msgs = Array.isArray(c.messages) ? c.messages : [];
+    const status = c.resolved ? '<span class="badge badge-green">Resolved</span>' : '<span class="badge badge-yellow">Open</span>';
+    const fb = c.feedback === 'good' ? '<span class="badge badge-green">Good</span>' : c.feedback === 'bad' ? '<span class="badge badge-yellow">Bad</span>' : '<span class="badge badge-gray">-</span>';
+    return `<tr>
+      <td>${c.id}</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis">${c.session_id}</td>
+      <td>${c.website || '-'}</td><td>${msgs.length}</td><td>${status}</td><td>${fb}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function loadSites() {
+  const d = await api('/api/admin/websites');
+  const tbody = document.getElementById('sites-table');
+  const empty = document.getElementById('sites-empty');
+  if (!d.websites.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = d.websites.map(s => `<tr>
+    <td>${s.id}</td><td>${s.domain}</td><td>${s.name || '-'}</td>
+    <td><button class="btn btn-danger btn-sm" onclick="deleteSite(${s.id})">Delete</button></td>
+  </tr>`).join('');
+}
+
+async function loadOllama() {
+  const d = await api('/api/admin/ollama/status');
+  const status = document.getElementById('ollama-status');
+  const models = document.getElementById('ollama-models');
+  status.innerHTML = d.healthy
+    ? '<span class="badge badge-green">Connected</span>'
+    : '<span class="badge badge-yellow">Disconnected</span>';
+  models.innerHTML = d.models.length
+    ? '<p style="font-size:14px;color:#64748b;margin-bottom:8px">Installed models:</p>' +
+      d.models.map(m => `<div class="pre" style="margin-bottom:4px">${m}</div>`).join('')
+    : '<p style="color:#94a3b8">No models installed. Pull one below.</p>';
+}
+
+function showAddDoc() {
+  document.getElementById('modal-content').innerHTML = `
+    <h3>Add Document</h3>
+    <div class="form-group"><label>Title</label><input type="text" id="doc-title" /></div>
+    <div class="form-group"><label>Source URL (optional)</label><input type="text" id="doc-source" /></div>
+    <div class="form-group"><label>Content</label><textarea id="doc-content" rows="6"></textarea></div>
+    <div class="flex" style="justify-content:flex-end"><button class="btn btn-primary" onclick="submitDoc()">Add</button></div>
+  `;
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+async function submitDoc() {
+  await api('/api/admin/documents', {
+    method: 'POST',
+    body: JSON.stringify({
+      title: document.getElementById('doc-title').value,
+      source: document.getElementById('doc-source').value,
+      content: document.getElementById('doc-content').value
+    })
+  });
+  closeModal(); loadDocs(); loadStats();
+}
+
+function showCrawl() {
+  document.getElementById('modal-content').innerHTML = `
+    <h3>Crawl Website</h3>
+    <div class="form-group"><label>Website URL</label><input type="text" id="crawl-url" placeholder="https://example.com" /></div>
+    <div class="form-group"><label>Max Pages</label><input type="text" id="crawl-max" value="50" /></div>
+    <p style="font-size:13px;color:#94a3b8;margin-bottom:16px">This will crawl the website and add content to the knowledge base. It may take a few minutes.</p>
+    <div class="flex" style="justify-content:flex-end"><button class="btn btn-primary" onclick="submitCrawl()">Start Crawl</button></div>
+  `;
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+async function submitCrawl() {
+  const url = document.getElementById('crawl-url').value;
+  const maxPages = parseInt(document.getElementById('crawl-max').value) || 50;
+  closeModal();
+  document.getElementById('modal-content').innerHTML = '<h3>Crawling...</h3><p style="color:#64748b">This may take a while. Please wait.</p>';
+  document.getElementById('modal-overlay').style.display = 'flex';
+  try {
+    const d = await api('/api/admin/websites/crawl', {
+      method: 'POST',
+      body: JSON.stringify({url, max_pages: maxPages})
+    });
+    closeModal();
+    alert(`Crawl complete! Pages: ${d.pages_crawled}, Documents added: ${d.documents_added}`);
+    loadDocs(); loadStats();
+  } catch(e) {
+    closeModal();
+    alert('Crawl failed: ' + e.message);
+  }
+}
+
+async function deleteDoc(id) {
+  if (!confirm('Delete this document?')) return;
+  await api('/api/admin/documents/' + id, {method: 'DELETE'});
+  loadDocs(); loadStats();
+}
+
+async function deleteSite(id) {
+  if (!confirm('Delete this website?')) return;
+  await api('/api/admin/websites/' + id, {method: 'DELETE'});
+  loadSites();
+}
+
+async function pullModel() {
+  const name = document.getElementById('pull-model-name').value;
+  if (!name) return;
+  alert('Pulling model ' + name + '. This may take several minutes...');
+  await api('/api/admin/ollama/pull?model=' + encodeURIComponent(name), {method: 'POST'});
+  loadOllama();
+}
+
+function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+(async () => {
+  try { const d = await api('/api/admin/stats'); if (d.total_documents !== undefined) showApp(); } catch(e) {}
+})();
+</script>
+</body>
+</html>
