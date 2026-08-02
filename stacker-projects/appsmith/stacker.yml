@@ -1,0 +1,40 @@
+name: appsmith
+version: "1.9.0"
+
+project:
+  identity: appsmith
+
+install:
+  inputs:
+    commonDomain: appsmith.example.com
+
+app:
+  type: custom
+  image: appsmith/appsmith-ce:latest
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - appsmith_data:/appsmith-stacks
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "80"
+      - "443"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  appsmith_data: {}

@@ -22,3 +22,10 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
 
 env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test

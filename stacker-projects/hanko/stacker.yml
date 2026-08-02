@@ -4,7 +4,7 @@ app:
   type: custom
   image: ghcr.io/teamhanko/hanko:latest
   ports:
-    - "8000:8000"
+    - "8002:8000"
   environment:
     HANKO_DATABASE_HOST: hanko-db
     HANKO_DATABASE_PORT: "5432"
@@ -14,7 +14,7 @@ app:
     HANKO_SECRETS_DEFAULT: ${SECRETS_DEFAULT}
     HANKO_SERVER_PUBLIC_PORT: "8000"
     HANKO_URL: http://localhost:8000
-  command: serve --public
+  command: serve public
 
 services:
   - name: hanko-db
@@ -42,3 +42,10 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
 
 env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
