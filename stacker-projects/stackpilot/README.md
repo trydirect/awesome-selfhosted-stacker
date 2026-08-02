@@ -50,8 +50,14 @@
 ## Prerequisites
 
 - A server with Docker and Docker Compose installed
-- At least 4GB RAM (8GB+ recommended for running LLMs)
+- At least 2GB RAM + 2GB swap (8GB+ recommended for running larger LLMs)
 - (Optional) A domain pointed at your server for SSL
+
+**Quick server setup** (installs Docker, creates swap):
+
+```bash
+./scripts/setup-server.sh YOUR_SERVER_IP
+```
 
 ---
 
