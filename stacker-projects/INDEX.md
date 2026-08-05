@@ -1,10 +1,18 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**135 projects** · **73 tested & verified** · Updated 2026-08-01
+**138 projects** · **73 tested & verified** · Updated 2026-08-04
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
 ---
+
+## AI & LLM (3)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| ai-knowledge-base | langgenius/dify-api, qdrant/qdrant | 8080 | postgres, qdrant | |
+| ai-automation-workflows | flowiseai/flowise, n8nio/n8n | 3000 | postgres | |
+| private-sovereign-ai | ghcr.io/open-webui/open-webui | 3000 | — | |
 
 ## Analytics (20)
 

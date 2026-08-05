@@ -1,0 +1,95 @@
+name: private-sovereign-ai
+version: "1.0.0"
+
+project:
+  identity: private-sovereign-ai
+
+install:
+  inputs:
+    commonDomain: ""
+
+config_contract:
+  app:
+    environment:
+      - name: WEBUI_SECRET_KEY
+        required: true
+        secret: true
+      - name: OLLAMA_BASE_URL
+        required: true
+        secret: false
+      - name: INITIAL_ADMIN_PASSWORD
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+app:
+  type: custom
+  image: ghcr.io/open-webui/open-webui:main
+  ports:
+    - "3002:8080"
+  environment:
+    OLLAMA_BASE_URL: "http://sovereign-ai-ollama:11434"
+    WEBUI_SECRET_KEY: "${WEBUI_SECRET_KEY}"
+    SCARF_NO_ANALYTICS: "true"
+    DO_NOT_TRACK: "true"
+    ANONYMIZED_TELEMETRY: "false"
+    ENABLE_SIGNUP: "false"
+    DEFAULT_USER_ROLE: "user"
+    ENABLE_COMMUNITY_SHARING: "false"
+    WEBUI_AUTH: "true"
+    ENABLE_RAG_WEB_SEARCH: "false"
+    RAG_EMBEDDING_ENGINE: "ollama"
+    RAG_EMBEDDING_MODEL: "nomic-embed-text"
+    RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE: "true"
+  volumes:
+    - sovereign_ai_webui:/app/backend/data
+
+services:
+  - name: sovereign-ai-ollama
+    image: ollama/ollama:latest
+    ports:
+      - "11436:11434"
+    environment: {}
+    volumes:
+      - sovereign_ai_ollama:/root/.ollama
+
+  - name: sovereign-ai-pipelines
+    image: ghcr.io/open-webui/pipelines:main
+    ports:
+      - "9099:9099"
+    environment:
+      PIPELINES_URLS: ""
+    volumes:
+      - sovereign_ai_pipelines:/app/pipelines
+
+volumes:
+  sovereign_ai_webui: {}
+  sovereign_ai_ollama: {}
+  sovereign_ai_pipelines: {}
+
+deploy:
+  target: cloud
+  cloud:
+    provider: hetzner
+    region: hel1
+    size: cpx32
+    key: htz-0
+    public_ports:
+      - "22"
+      - "80"
+      - "443"
+      - "3002"
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+  healthcheck:
+    endpoint: /health
+    interval: 30s
+
+env_file: .env
