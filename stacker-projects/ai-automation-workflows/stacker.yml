@@ -1,0 +1,137 @@
+name: ai-workflows-v2
+version: "1.0.0"
+
+project:
+  identity: ai-workflows-v2
+
+install:
+  inputs:
+    commonDomain: ""
+
+config_contract:
+  app:
+    environment:
+      - name: FLOWISE_USERNAME
+        required: true
+        secret: false
+      - name: FLOWISE_PASSWORD
+        required: true
+        secret: true
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: APIKEY_SECRET
+        required: true
+        secret: true
+      - name: SECRET_KEY
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+app:
+  type: custom
+  image: flowiseai/flowise:latest
+  ports:
+    - "3001:3000"
+  environment:
+    PORT: "3000"
+    FLOWISE_USERNAME: "${FLOWISE_USERNAME}"
+    FLOWISE_PASSWORD: "${FLOWISE_PASSWORD}"
+    DATABASE_TYPE: postgres
+    DATABASE_HOST: ai-workflows-db
+    DATABASE_PORT: "5432"
+    DATABASE_NAME: flowise
+    DATABASE_USER: flowise
+    DATABASE_PASSWORD: "${DB_PASSWORD}"
+    APIKEY_SECRET: "${APIKEY_SECRET}"
+    SECRETKEY_SECRET: "${SECRET_KEY}"
+    LOG_LEVEL: info
+    TOOL_FUNCTION_BUILTIN_DEP: "crypto,os"
+    TOOL_FUNCTION_EXTERNAL_DEP: ""
+  volumes:
+    - ai_workflows_data:/root/.flowise
+
+services:
+  - name: ai-workflows-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: flowise
+      POSTGRES_USER: flowise
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ai_workflows_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d flowise -U flowise
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: ai-workflows-redis
+    image: redis:7-alpine
+    healthcheck:
+      test: CMD redis-cli ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: ai-workflows-ollama
+    image: ollama/ollama:latest
+    ports:
+      - "11435:11434"
+    volumes:
+      - ai_workflows_ollama:/root/.ollama
+
+  - name: ai-workflows-n8n
+    image: n8nio/n8n:latest
+    ports:
+      - "5679:5678"
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: admin
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD}
+      GENERIC_TIMEZONE: "UTC"
+    volumes:
+      - ai_workflows_n8n:/home/node/.n8n
+
+  - name: ai-workflows-qdrant
+    image: qdrant/qdrant:v1.13.2
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ai_workflows_qdrant:/qdrant/storage
+
+volumes:
+  ai_workflows_data: {}
+  ai_workflows_pgdata: {}
+  ai_workflows_ollama: {}
+  ai_workflows_n8n: {}
+  ai_workflows_qdrant: {}
+
+deploy:
+  target: cloud
+  cloud:
+    provider: hetzner
+    region: hel1
+    size: cpx32
+    key: htz-0
+    public_ports:
+      - "22"
+      - "80"
+      - "443"
+      - "3001"
+      - "5679"
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+  healthcheck:
+    endpoint: /api/v1/health
+    interval: 30s
+
+env_file: .env

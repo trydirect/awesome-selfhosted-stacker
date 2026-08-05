@@ -1,0 +1,197 @@
+name: ai-knowledge-base
+version: "1.0.0"
+
+project:
+  identity: ai-knowledge-base
+
+install:
+  inputs:
+    commonDomain: ""
+
+config_contract:
+  app:
+    environment:
+      - name: SECRET_KEY
+        required: true
+        secret: true
+      - name: DB_PASSWORD
+        required: true
+        secret: true
+      - name: POSTGRES_PASSWORD
+        required: true
+        secret: true
+      - name: QDRANT_API_KEY
+        required: false
+        secret: true
+      - name: INIT_PASSWORD
+        required: true
+        secret: true
+      - name: APP_SECRET_KEY
+        required: true
+        secret: true
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+app:
+  type: custom
+  image: langgenius/dify-api:0.15.3
+  ports:
+    - "8080:3000"
+  environment:
+    MODE: api
+    LOG_LEVEL: INFO
+    SECRET_KEY: "${SECRET_KEY}"
+    CONSOLE_WEB_URL: "http://localhost:8080"
+    APP_WEB_URL: "http://localhost:8080"
+    FILES_URL: "http://localhost:8080"
+    DB_USERNAME: dify
+    DB_PASSWORD: "${DB_PASSWORD}"
+    DB_HOST: ai-knowledge-base-db
+    DB_PORT: "5432"
+    DB_DATABASE: dify
+    REDIS_HOST: ai-knowledge-base-redis
+    REDIS_PORT: "6379"
+    REDIS_PASSWORD: ""
+    VECTOR_STORE: qdrant
+    QDRANT_URL: "http://ai-knowledge-base-qdrant:6333"
+    QDRANT_API_KEY: "${QDRANT_API_KEY}"
+    STORAGE_TYPE: local
+    STORAGE_LOCAL_PATH: /app/api/storage
+    EMBEDDING_PROVIDER: openai
+    EMBEDDING_MODEL: text-embedding-3-small
+    EMBEDDING_OPENAI_BASE_URL: "http://ai-knowledge-base-ollama:11434/v1"
+    EMBEDDING_OPENAI_API_KEY: "ollama"
+    WORKER_WEB_SERVER_HOST: "0.0.0.0"
+    WORKER_WEB_SERVER_PORT: "5001"
+  volumes:
+    - ai_kb_api_data:/app/api/storage
+
+services:
+  - name: ai-knowledge-base-web
+    image: langgenius/dify-web:0.15.3
+    ports:
+      - "3000:3000"
+    environment:
+      CONSOLE_API_URL: "http://ai-knowledge-base:5001"
+      APP_API_URL: "http://ai-knowledge-base:5001"
+      SENTRY_DSN: ""
+
+  - name: ai-knowledge-base-worker
+    image: langgenius/dify-api:0.15.3
+    command: celery -A app.celery worker -l INFO -Q dataset,generation,mail
+    environment:
+      MODE: worker
+      LOG_LEVEL: INFO
+      SECRET_KEY: "${SECRET_KEY}"
+      DB_USERNAME: dify
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_HOST: ai-knowledge-base-db
+      DB_PORT: "5432"
+      DB_DATABASE: dify
+      REDIS_HOST: ai-knowledge-base-redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      VECTOR_STORE: qdrant
+      QDRANT_URL: "http://ai-knowledge-base-qdrant:6333"
+      QDRANT_API_KEY: "${QDRANT_API_KEY}"
+      STORAGE_TYPE: local
+      STORAGE_LOCAL_PATH: /app/api/storage
+      EMBEDDING_PROVIDER: openai
+      EMBEDDING_MODEL: text-embedding-3-small
+      EMBEDDING_OPENAI_BASE_URL: "http://ai-knowledge-base-ollama:11434/v1"
+      EMBEDDING_OPENAI_API_KEY: "ollama"
+    volumes:
+      - ai_kb_worker_data:/app/api/storage
+
+  - name: ai-knowledge-base-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: dify
+      POSTGRES_USER: dify
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ai_kb_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: CMD-SHELL pg_isready -d dify -U dify
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: ai-knowledge-base-redis
+    image: redis:7-alpine
+    command: redis-server --requirepass ""
+    healthcheck:
+      test: CMD redis-cli ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  - name: ai-knowledge-base-qdrant
+    image: qdrant/qdrant:v1.13.2
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    environment:
+      QDRANT__SERVICE__API_KEY: "${QDRANT_API_KEY}"
+    volumes:
+      - ai_kb_qdrant_data:/qdrant/storage
+
+  - name: ai-knowledge-base-ollama
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ai_kb_ollama:/root/.ollama
+
+  - name: ai-knowledge-base-sandbox
+    image: langgenius/dify-sandbox:0.2.10
+    environment:
+      API_KEY: "${SECRET_KEY}"
+      GIN_MODE: release
+      WORKER_TIMEOUT: "15"
+      ENABLE_NETWORK: "true"
+      HTTP_PROXY: ""
+      HTTPS_PROXY: ""
+      SANDBOX_PORT: "8194"
+
+  - name: ai-knowledge-base-nginx
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ai_kb_nginx:/etc/nginx/conf.d
+
+volumes:
+  ai_kb_api_data: {}
+  ai_kb_worker_data: {}
+  ai_kb_pgdata: {}
+  ai_kb_qdrant_data: {}
+  ai_kb_ollama: {}
+  ai_kb_nginx: {}
+
+deploy:
+  target: cloud
+  cloud:
+    provider: hetzner
+    region: hel1
+    size: cpx32
+    key: htz-0
+    public_ports:
+      - "22"
+      - "80"
+      - "443"
+      - "8080"
+      - "3000"
+
+proxy:
+  type: none
+  auto_detect: false
+
+monitoring:
+  status_panel: true
+  healthcheck:
+    endpoint: /health
+    interval: 30s
+
+env_file: .env
