@@ -42,9 +42,9 @@ app:
     MODE: api
     LOG_LEVEL: INFO
     SECRET_KEY: "${SECRET_KEY}"
-    CONSOLE_WEB_URL: "http://localhost:8080"
-    APP_WEB_URL: "http://localhost:8080"
-    FILES_URL: "http://localhost:8080"
+    CONSOLE_WEB_URL: "https://${commonDomain}"
+    APP_WEB_URL: "https://${commonDomain}"
+    FILES_URL: "https://${commonDomain}"
     DB_USERNAME: dify
     DB_PASSWORD: "${DB_PASSWORD}"
     DB_HOST: ai-knowledge-base-db
@@ -177,6 +177,11 @@ deploy:
 proxy:
   type: nginx-proxy-manager
   auto_detect: true
+  domains:
+    # User-facing Dify UI (web container). NPM auto-issues Let's Encrypt cert.
+    - domain: "${commonDomain}"
+      ssl: auto
+      upstream: "ai-knowledge-base-web:3000"
 
 monitoring:
   status_panel: true
