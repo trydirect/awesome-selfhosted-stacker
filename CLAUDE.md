@@ -19,17 +19,17 @@ Pipeline: `stacker.yml` → CLI → Stacker API → MQ → Install Service
 ## Read these first, in order
 
 1. **`SKILL.md`** (repo root) — the primary knowledge base for this repo.
-   It documents the Stacker deploy pipeline in depth: `public_ports`,
-   `dockerhub_tag`, cloud deploy requirements, database initialisation,
-   the "secure project" pattern, `install.inputs` template variables,
+   Documents the Stacker deploy pipeline in depth: `public_ports`,
+   `dockerhub_tag`, cloud deploy requirements, database initialisation, the
+   "secure project" pattern, `install.inputs` template variables,
    `command`/`healthcheck` support, known project-specific issues, the
    config bundle/bind-mount pipeline, port conflict validation, a
    deployment verification checklist, common failure patterns, the Rust
-   config pipeline source map, testing, the full deploy command
-   reference, hooks execution/safety, Vault-backed vs `.env` secrets, and
-   the status panel agent. **Always consult `SKILL.md` before debugging a
-   deploy failure or explaining stacker behavior** — most edge cases are
-   already documented there with root cause and fix.
+   config pipeline source map, testing, the full deploy command reference,
+   hooks execution/safety, Vault-backed vs `.env` secrets, and the status
+   panel agent. **Always consult `SKILL.md` before debugging a deploy
+   failure or explaining stacker behavior** — most edge cases are already
+   documented there with root cause and fix.
 2. **`README.md`** (repo root) — quick start, deploy targets (local/server/
    cloud), PIPE (connecting apps together), remote monitoring, secret
    management, common commands, customization, security checklist,
@@ -53,6 +53,7 @@ stacker.yml                  # example/template stacker.yml at repo root
 SKILL.md                     # Stacker pipeline knowledge base (read first)
 README.md                    # user-facing docs, catalog, quick start
 copilot-instructions.md      # QA agent brief for testing stacker itself
+CLAUDE.md                    # Claude-specific pointer to this file
 HOWTO.md / BUGS.md           # aggregated test results (generated)
 .env / .env.example          # credentials & host config (gitignored, never commit)
 scripts/
@@ -94,3 +95,14 @@ cd stacker-projects/<name>
 stacker deploy                         # deploy locally
 stacker deploy --target cloud --force-rebuild   # deploy to Hetzner cloud
 ```
+
+## Hero stacks (demo deployments)
+
+| Stack | Subdomain | Server IP | Status |
+|-------|-----------|-----------|--------|
+| stackpilot | stackpilot.try.direct | 46.224.127.228 | Active |
+| ai-knowledge-base | ai-knowledge-base.try.direct | Hetzner hel1 | Active |
+| ai-automation-workflows | ai-automation-workflows.try.direct | Hetzner hel1 | Active |
+| private-sovereign-ai | private-sovereign-ai.try.direct | Hetzner hel1 | Active |
+
+All hero stacks use `proxy: type: nginx-proxy-manager` with SSL auto-detected.

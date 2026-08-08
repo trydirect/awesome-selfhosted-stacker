@@ -6,7 +6,7 @@ project:
 
 install:
   inputs:
-    commonDomain: ""
+    commonDomain: ai-knowledge-base.try.direct
 
 config_contract:
   app:
@@ -155,20 +155,12 @@ services:
       HTTPS_PROXY: ""
       SANDBOX_PORT: "8194"
 
-  - name: ai-knowledge-base-nginx
-    image: nginx:1.27-alpine
-    ports:
-      - "80:80"
-    volumes:
-      - ai_kb_nginx:/etc/nginx/conf.d
-
 volumes:
   ai_kb_api_data: {}
   ai_kb_worker_data: {}
   ai_kb_pgdata: {}
   ai_kb_qdrant_data: {}
   ai_kb_ollama: {}
-  ai_kb_nginx: {}
 
 deploy:
   target: cloud
@@ -181,12 +173,10 @@ deploy:
       - "22"
       - "80"
       - "443"
-      - "8080"
-      - "3000"
 
 proxy:
-  type: none
-  auto_detect: false
+  type: nginx-proxy-manager
+  auto_detect: true
 
 monitoring:
   status_panel: true
