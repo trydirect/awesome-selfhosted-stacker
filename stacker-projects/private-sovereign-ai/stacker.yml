@@ -14,9 +14,6 @@ config_contract:
       - name: WEBUI_SECRET_KEY
         required: true
         secret: true
-      - name: OLLAMA_BASE_URL
-        required: true
-        secret: false
       - name: INITIAL_ADMIN_PASSWORD
         required: true
         secret: true
@@ -27,11 +24,12 @@ hooks:
 app:
   type: custom
   image: ghcr.io/open-webui/open-webui:main
-  ports:
-    - "3002:8080"
+  # No host port publish — traffic reaches this container only via
+  # the NPM reverse proxy on 443. Internal docker port stays 8080.
   environment:
     OLLAMA_BASE_URL: "http://sovereign-ai-ollama:11434"
     WEBUI_SECRET_KEY: "${WEBUI_SECRET_KEY}"
+    WEBUI_URL: "https://${commonDomain}"
     SCARF_NO_ANALYTICS: "true"
     DO_NOT_TRACK: "true"
     ANONYMIZED_TELEMETRY: "false"
@@ -45,24 +43,39 @@ app:
     RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE: "true"
   volumes:
     - sovereign_ai_webui:/app/backend/data
+  healthcheck:
+    test: "CMD-SHELL curl -fsS http://localhost:8080/health || exit 1"
+    interval: 30s
+    timeout: 5s
+    retries: 5
 
 services:
+  # Ollama — the local LLM runtime. Internal-only, reached from Open WebUI
+  # via the docker DNS alias sovereign-ai-ollama:11434.
   - name: sovereign-ai-ollama
     image: ollama/ollama:latest
-    ports:
-      - "11436:11434"
     environment: {}
     volumes:
       - sovereign_ai_ollama:/root/.ollama
+    healthcheck:
+      test: "CMD-SHELL ollama list >/dev/null 2>&1 || exit 1"
+      interval: 30s
+      timeout: 5s
+      retries: 10
 
+  # Pipelines — Open WebUI plugin runtime. Internal-only; Open WebUI
+  # auto-discovers it on the docker network.
   - name: sovereign-ai-pipelines
     image: ghcr.io/open-webui/pipelines:main
-    ports:
-      - "9099:9099"
     environment:
       PIPELINES_URLS: ""
     volumes:
       - sovereign_ai_pipelines:/app/pipelines
+    healthcheck:
+      test: "CMD-SHELL curl -fsS http://localhost:9099/ || exit 1"
+      interval: 30s
+      timeout: 5s
+      retries: 5
 
 volumes:
   sovereign_ai_webui: {}
@@ -76,15 +89,23 @@ deploy:
     region: hel1
     size: cpx32
     key: htz-0
+    # Only SSH + HTTP + HTTPS public. Open WebUI, Ollama, and Pipelines
+    # are reached only via the NPM reverse proxy over HTTPS.
     public_ports:
       - "22"
       - "80"
       - "443"
-      - "3002"
 
+# NPM auto-provisions the reverse proxy and issues a Let's Encrypt cert
+# when this stack deploys. DNS for commonDomain must resolve to the server
+# IP before deploy so LE HTTP-01 challenge succeeds.
 proxy:
   type: nginx-proxy-manager
   auto_detect: true
+  domains:
+    - domain: "${commonDomain}"
+      ssl: auto
+      upstream: "app:8080"
 
 monitoring:
   status_panel: true
