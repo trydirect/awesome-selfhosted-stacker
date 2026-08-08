@@ -6,7 +6,7 @@ project:
 
 install:
   inputs:
-    commonDomain: ""
+    commonDomain: stackpilot.try.direct
 
 config_contract:
   app:

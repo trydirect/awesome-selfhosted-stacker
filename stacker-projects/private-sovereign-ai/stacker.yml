@@ -6,7 +6,7 @@ project:
 
 install:
   inputs:
-    commonDomain: ""
+    commonDomain: private-sovereign-ai.try.direct
 
 config_contract:
   app:
@@ -83,8 +83,8 @@ deploy:
       - "3002"
 
 proxy:
-  type: none
-  auto_detect: false
+  type: nginx-proxy-manager
+  auto_detect: true
 
 monitoring:
   status_panel: true
