@@ -1,0 +1,37 @@
+name: photoprism
+version: "240721-a0e3e14"
+
+app:
+  type: custom
+  image: photoprism/photoprism:latest
+  ports:
+    - "2342:2342"
+  environment:
+    PHOTOPRISM_AUTH_MODE: password
+    PHOTOPRISM_ADMIN_USER: admin
+    PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_ADMIN_PASSWORD}
+    PHOTOPRISM_DATABASE_DRIVER: sqlite
+    PHOTOPRISM_DATABASE_CONCENTRATION: ""
+    PHOTOPRISM_DATABASE_SERVER: ""
+    PHOTOPRISM_DATABASE_NAME: photoprism
+    PHOTOPRISM_DATABASE_USER: photoprism
+    PHOTOPRISM_DATABASE_PASSWORD: ""
+    PHOTOPRISM_SITE_TITLE: PhotoPrism
+    PHOTOPRISM_SITE_URL: https://${DOMAIN}
+    PHOTOPRISM_ORIGINALS_LIMIT: 0
+    PHOTOPRISM_IMPORT_PATH: /photoprism/originals
+  volumes:
+    - "photoprism-storage:/photoprism/storage"
+    - "photoprism-originals:/photoprism/originals"
+    - "photoprism-import:/photoprism/import"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: photoprism.try.direct
+      description: "Domain name for the application"
+    - name: photoprism-admin-password
+      type: secret
+      default: ""
+      description: "PhotoPrism admin password"

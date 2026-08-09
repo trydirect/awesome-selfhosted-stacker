@@ -1,17 +1,18 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**138 projects** · **73 tested & verified** · Updated 2026-08-04
+**158 projects** · **73 tested & verified** · Updated 2026-08-04
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
 ---
 
-## AI & LLM (3)
+## AI & LLM (4)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
 | ai-knowledge-base | langgenius/dify-api, qdrant/qdrant | 8080 | postgres, qdrant | |
 | ai-automation-workflows | flowiseai/flowise, n8nio/n8n | 3000 | postgres | |
+| ollama-local | ollama/ollama | 11434 | — | |
 | private-sovereign-ai | ghcr.io/open-webui/open-webui | 3000 | — | |
 
 ## Analytics (20)
@@ -86,12 +87,19 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | discourse | discourse/discourse | 80 | postgres, redis | ✅ |
 | gotify | gotify/server | 8080 | — | |
 | jitsi | jitsi/web:unstable | 80 | — | ✅ |
+| librechat | ghcr.io/danny-avila/librechat | 3080 | mongo | |
 | mattermost | mattermost/mattermost-enterprise-edition | 8065 | postgres | |
 | rocket-chat | rocket.chat | 3000 | mongo | ✅ |
 | screego | ghcr.io/screego/server | 5050 | — | |
 | synapse | matrixdotorg/synapse | 8008 | postgres | ✅ |
 | listmonk | listmonk/listmonk | 9000 | postgres | ✅ |
 | zulip | zulip/docker-zulip | 80 | postgres | |
+
+## Design (1)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| penpot | penpotapp/penpot-frontend | 9001 | postgres, redis | |
 
 ## Dashboard (5)
 
@@ -103,11 +111,12 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | homer | b4bz/homer | 8080 | — | |
 | organizr | organizr/organizr | 9983 | — | |
 
-## Developer & DevOps Tools (15)
+## Developer & DevOps Tools (16)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
 | caddy | caddy | 80 | — | |
+| code-server | lscr.io/linuxserver/code-server | 8443 | — | |
 | cyberchef | ghcr.io/gchq/cyberchef | 8000 | — | ✅ |
 | floci | floci/floci | 4566 | — | |
 | gitness | harness/gitness | 3000 | — | ✅ |
@@ -123,7 +132,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | wireguard | lscr.io/linuxserver/wireguard | 51820 | — | |
 | woodpecker-ci | woodpeckerci/woodpecker-server | 8000 | — | |
 
-## Document Management (8)
+## Document Management (10)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -131,9 +140,11 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | docmost | docmost/docmost | 3000 | postgres, redis | ✅ |
 | mail-archiver | s1t5/mailarchiver | 5000 | postgres | |
 | openarchiver | logiclabshq/open-archiver | 3000 | postgres, valkey, meilisearch | |
+| onlyoffice | onlyoffice/documentserver | 80 | — | |
 | paperless-ngx | ghcr.io/paperless-ngx/paperless-ngx | 8000 | postgres, redis | ✅ |
 | stirling-pdf | frooodle/s-pdf | 8080 | — | |
 | outline | outlinewiki/outline | 3000 | postgres, redis | ✅ |
+| wikijs | ghcr.io/requarks/wiki | 3000 | postgres | |
 | kopia | kopia/kopia | 51515 | — | |
 
 ## File Management (10)
@@ -149,7 +160,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | s4core | s4core/s4core | 9000 | — | ✅ |
 | syncthing | lscr.io/linuxserver/syncthing | 8384 | — | |
 
-## Media (17)
+## Media (18)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -167,6 +178,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | metube | alexta69/metube | 8081 | — | ✅ |
 | navidrome | deluan/navidrome | 4533 | — | ✅ |
 | ombi | lscr.io/linuxserver/ombi | 3579 | — | |
+| peertube | chocobozzz/peertube | 9000 | postgres, redis | |
 | romm | rommapp/romm | 8080 | mariadb | ✅ |
 | swarm-ui | (Dockerfile) | 7801 | — | |
 | tautulli | lscr.io/linuxserver/tautulli | 8181 | — | ✅ |
@@ -184,6 +196,13 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | stackdog | trydirect/stackdog | 5000 | — | |
 | uptimekuma | louislam/uptime-kuma:2 | 3001 | — | ✅ |
 
+## Money & Budgeting (2)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| btcpay-server | btcpayserver/btcpayserver | 23000 | postgres | |
+| firefly-iii | fireflyiii/core | 8080 | postgres | |
+
 ## Note-taking (3)
 
 | Project | Image | Port | DB | Tested |
@@ -192,17 +211,51 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | memos | ghcr.io/usememos/memos | 5230 | — | |
 | trilium | zadam/trilium | 8081 | — | ✅ |
 
-## Password Management (6)
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| hedgedoc | quay.io/hedgedoc/hedgedoc | 3000 | postgres | ✅ |
+| memos | ghcr.io/usememos/memos | 5230 | — | |
+| trilium | zadam/trilium | 8081 | — | ✅ |
+
+## Password Management (7)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
 | bitwarden | vaultwarden/server | 80 | postgres | |
+| cryptpad | cryptpad/cryptpad | 3000 | — | |
 | hanko | ghcr.io/teamhanko/hanko | 8000 | postgres | ⚠️ |
 | infisical | infisical/infisical | 8080 | postgres | ✅ |
 | keycloak | quay.io/keycloak/keycloak | 8080 | postgres | |
 | onetimesecret | onetimesecret/onetimesecret | 3000 | redis | |
+| passbolt | passbolt/passbolt_api | 443 | mariadb | |
 | vaultwarden | vaultwarden/server | 8080 | — | ✅ |
 | zitadel | ghcr.io/zitadel/zitadel | 8080 | postgres, redis | ✅ |
+
+## Project Management (2)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| huly | ghcr.io/hcengineering/platform | 8080 | postgres, redis | |
+| openproject | openproject/community | 8080 | postgres | |
+
+## Maps & GPS (1)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| dawarich | freika/dawarich | 3000 | postgres, redis | |
+
+## Office Suites (2)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| etherpad | etherpad/etherpad | 9001 | — | |
+| onlyoffice | onlyoffice/documentserver | 80 | — | |
+
+## Photo Management (1)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| photoprism | photoprism/photoprism | 2342 | — | |
 
 ## Recipe & Lifestyle (3)
 
@@ -212,11 +265,12 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | mealie | ghcr.io/mealie-recipes/mealie | 9925 | — | |
 | tandoor | vabene1111/recipes | 8080 | postgres | ✅ |
 
-## Search (1)
+## Search (2)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
 | meilisearch | getmeili/meilisearch | 7700 | — | ✅ |
+| searxng | searxng/searxng | 8080 | — | |
 
 ## Self-hosting (2)
 
@@ -234,6 +288,30 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | mastodon | ghcr.io/mastodon/mastodon | 3000 | postgres, redis | ✅ |
 | postiz-app | ghcr.io/gitroomhq/postiz-app | 4007 | postgres, redis, elasticsearch | ✅ |
 | socioboard | sintelli/socioboard-web | 80 | mysql, mongo | |
+
+## Surveys (1)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| limesurvey | misterunknown/limesurvey | 80 | mariadb | |
+
+## Email - Webmail (1)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| roundcube | roundcube/roundcubemail | 80 | — | |
+
+## Ticketing (1)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| zammad | zammad/zammad | 80 | postgres, redis | |
+
+## Video Streaming (1)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| peertube | chocobozzz/peertube | 9000 | postgres, redis | |
 
 ---
 

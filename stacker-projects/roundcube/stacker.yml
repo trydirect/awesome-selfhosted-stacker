@@ -1,0 +1,40 @@
+name: roundcube
+version: "1.6.9"
+
+app:
+  type: custom
+  image: roundcube/roundcubemail:latest
+  ports:
+    - "80:80"
+  environment:
+    ROUNDCUBEMAIL_DEFAULT_HOST: ${ROUNDCUBE_IMAP_HOST}
+    ROUNDCUBEMAIL_DEFAULT_PORT: "993"
+    ROUNDCUBEMAIL_SMTP_SERVER: ${ROUNDCUBE_SMTP_HOST}
+    ROUNDCUBEMAIL_SMTP_PORT: "587"
+    ROUNDCUBEMAIL_SKIN: elastic
+    ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE: 25M
+    ROUNDCUBEMAIL_DB_TYPE: sqlite
+    ROUNDCUBEMAIL_DB_DSN: "sqlite:/var/roundcube/db/roundcube.sqlite?mode=0646"
+    ROUNDCUBEMAIL_SECRET_KEY: ${ROUNDCUBE_SECRET_KEY}
+  volumes:
+    - "roundcube-db:/var/roundcube/db"
+    - "roundcube-data:/var/roundcube/data"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: mail.try.direct
+      description: "Domain name for the application"
+    - name: roundcube-imap-host
+      type: string
+      default: ""
+      description: "IMAP server hostname"
+    - name: roundcube-smtp-host
+      type: string
+      default: ""
+      description: "SMTP server hostname"
+    - name: roundcube-secret-key
+      type: secret
+      default: ""
+      description: "Roundcube secret key"

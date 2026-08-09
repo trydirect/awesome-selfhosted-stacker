@@ -1,0 +1,30 @@
+name: onlyoffice
+version: "8.1.0"
+
+app:
+  type: custom
+  image: onlyoffice/documentserver:latest
+  ports:
+    - "80:80"
+  environment:
+    JWT_SECRET: ${ONLYOFFICE_JWT_SECRET}
+    JWT_HEADER: Authorization
+    JWT_HEADER_SCHEMA: Bearer
+    JWT_ENABLED: "false"
+    ONLYOFFICE_EXAMPLE: "false"
+    ONLYOFFICE_SAMPLE: "false"
+    WOPI_ENABLED: "false"
+  volumes:
+    - "onlyoffice-data:/var/www/onlyoffice/Data"
+    - "onlyoffice-logs:/var/log/onlyoffice"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: docs.try.direct
+      description: "Domain name for the application"
+    - name: onlyoffice-jwt-secret
+      type: secret
+      default: ""
+      description: "OnlyOffice JWT secret"
