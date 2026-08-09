@@ -1,0 +1,64 @@
+name: peertube
+version: "6.0.3"
+
+app:
+  type: custom
+  image: chocobozzz/peertube:production
+  ports:
+    - "9000:9000"
+  environment:
+    NODE_ENV: production
+    PEERTUBE_DB_HOST: postgres
+    PEERTUBE_DB_PORT: "5432"
+    PEERTUBE_DB_NAME: peertube
+    PEERTUBE_DB_USER: peertube
+    PEERTUBE_DB_PASSWORD: ${PEERTUBE_DATABASE_PASSWORD}
+    PEERTUBE_REDIS_HOST: redis
+    PEERTUBE_REDIS_PORT: "6379"
+    PEERTUBE_REDIS_PASSWORD: ${PEERTUBE_REDIS_PASSWORD}
+    PEERTUBE_SMTP_HOSTNAME: mailcatcher
+    PEERTUBE_SMTP_PORT: "1025"
+    PEERTUBE_SMTP_FROM: no-reply@${DOMAIN}
+    PEERTUBE_WEBSERVER_PORT: "9000"
+    PEERTUBE_WEBSERVER_HOSTNAME: ${DOMAIN}
+    PEERTUBE_TRAFFIC_VIDEO_LIMIT: -1
+    PEERTUBE_UPLOAD_LIMIT: 10737418240
+  volumes:
+    - "peertube-data:/data"
+    - "peertube-config:/config"
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: peertube
+      POSTGRES_USER: peertube
+      POSTGRES_PASSWORD: ${PEERTUBE_DATABASE_PASSWORD}
+    volumes:
+      - "peertube-postgres:/var/lib/postgresql/data"
+
+  - name: redis
+    image: redis:7-alpine
+    command: redis-server --requirepass ${PEERTUBE_REDIS_PASSWORD}
+    volumes:
+      - "peertube-redis:/data"
+
+  - name: mailcatcher
+    image: sj26/mailcatcher:latest
+    ports:
+      - "1080:1080"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: peertube.try.direct
+      description: "Domain name for the application"
+    - name: peertube-database-password
+      type: secret
+      default: ""
+      description: "PostgreSQL password for PeerTube"
+    - name: peertube-redis-password
+      type: secret
+      default: ""
+      description: "Redis password for PeerTube"

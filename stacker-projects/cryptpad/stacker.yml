@@ -1,0 +1,24 @@
+name: cryptpad
+version: "5.7.0"
+
+app:
+  type: custom
+  image: cryptpad/cryptpad:latest
+  ports:
+    - "3000:3000"
+    - "3001:3001"
+  environment:
+    CPAD_MAIN_DOMAIN: https://${DOMAIN}
+    CPAD_CONF: /cryptpad/config/config.js
+  volumes:
+    - "cryptpad-config:/cryptpad/config"
+    - "cryptpad-data:/cryptpad/blob"
+    - "cryptpad-customize:/cryptpad/customize"
+    - "cryptpad-sessions:/cryptpad/sessions"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: cryptpad.try.direct
+      description: "Domain name for the application"

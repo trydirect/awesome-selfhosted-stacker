@@ -474,6 +474,42 @@ The fix is in `extract_host_port_from_string` (`deploy.rs:1626`): the protocol
 suffix (e.g., `/tcp`, `/udp`) is now included in the extracted host port,
 preventing false conflicts when the same host port is used for both protocols.
 
+### NPM proxy-manager preflight false positive
+
+**Bug:** `nginx-proxy-manager` role starts the container, then the preflight
+check runs — NPM's own ports (80, 443, 81) show as occupied, failing with
+`rc: 42`. This is a self-conflict: the role started the container, then the
+preflight sees its ports and blocks.
+
+**Workaround:** Deploy with `proxy: none`, then configure NPM manually:
+
+```yaml
+proxy:
+  type: none
+```
+
+```bash
+# After deploy, configure NPM via API
+curl -sk -X POST http://<server>:81/api/tokens \
+  -H 'Content-Type: application/json' \
+  -d '{"identity":"admin@example.com","secret":"changeme"}'
+```
+
+### NPM proxy-manager missing volumes
+
+**Bug:** The platform-managed proxy-manager service in generated compose is
+missing `/etc/letsencrypt` and data volume mounts, causing restart loops.
+
+**Fix:** Patch the generated compose on the server after deploy:
+
+```bash
+# Pull correct image and add volumes
+ssh root@<server> "cd /home/trydirect/project && \
+  sed -i 's|image: jc21/nginx-proxy-manager:latest|image: trydirect/nginx-proxy-manager:stable|' docker-compose.yml && \
+  sed -i '/my.stacker.service: nginx_proxy_manager/a\\    volumes:\\n      - /home/trydirect/nginx_proxy_manager/data:/data\\n      - /etc/letsencrypt:/etc/letsencrypt' docker-compose.yml && \
+  docker compose up -d proxy-manager"
+```
+
 ---
 
 ## 11. Deployment Verification Checklist
