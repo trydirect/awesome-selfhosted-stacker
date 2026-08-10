@@ -32,6 +32,7 @@ config_contract:
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
+  post_deploy: ./scripts/post-install.sh
 
 app:
   type: custom
@@ -73,8 +74,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      CONSOLE_API_URL: "http://ai-knowledge-base:5001"
-      APP_API_URL: "http://ai-knowledge-base:5001"
+      CONSOLE_API_URL: "https://${commonDomain}"
+      APP_API_URL: "https://${commonDomain}"
       SENTRY_DSN: ""
 
   - name: ai-knowledge-base-worker
