@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**158 projects** · **73 tested & verified** · Updated 2026-08-04
+**160 projects** · **73 tested & verified** · Updated 2026-08-10
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -272,11 +272,13 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | meilisearch | getmeili/meilisearch | 7700 | — | ✅ |
 | searxng | searxng/searxng | 8080 | — | |
 
-## Self-hosting (2)
+## Self-hosting (4)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
+| arcane | ghcr.io/getarcaneapp/manager | 3552 | — | |
 | coolify | coollabsio/coolify | 8000 | postgres, redis | |
+| dockhand | fnsys/dockhand | 3000 | — | |
 | portainer | portainer/portainer-ce | 9000 | — | |
 
 ## Social (7)
