@@ -19,7 +19,7 @@ app:
     - /var/run/docker.sock:/var/run/docker.sock
     - dockhand-data:/app/data
   healthcheck:
-    test: ["CMD", "curl", "-fsS", "http://localhost:3000/"]
+    test: "CMD curl -fsS http://localhost:3000/"
     interval: 30s
     timeout: 5s
     retries: 3
@@ -43,7 +43,7 @@ proxy:
   type: nginx-proxy-manager
   auto_detect: true
   domains:
-    - domain: "${commonDomain}"
+    - domain: "dockhand.try.direct"
       ssl: auto
       upstream: "app:3000"
 
