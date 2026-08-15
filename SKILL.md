@@ -574,6 +574,15 @@ New servers provisioned with `--force-new` don't have a local backup SSH key if
 the deploy command timed out before the key was saved. Use Vault-backed keys
 or check `~/.config/stacker/ssh/` for the key file.
 
+### Cloud deploy: server created but IP never assigned (2026-08-14)
+
+```bash
+# Verify server type is available in region
+curl -s "https://api.hetzner.cloud/v1/server_types" -H "Authorization: Bearer $HTZ_TOKEN" | jq '.server_types[] | select(.name=="cpx21") | .locations'
+```
+
+**Status:** Logged in `BUGS.md`. Needs fix in Stacker Install Service.
+
 ---
 
 ## 13. Config Pipeline (Rust Source Map)
@@ -636,14 +645,49 @@ cargo sqlx prepare
 # Standard cloud deploy (new server)
 stacker deploy --target cloud --key=htz-0 --force-new
 
-# Redeploy with updated compose
-stacker deploy --target cloud --key=htz-0 --force-new --force-rebuild
-
-# Redeploy to existing server
+# Redeploy with updated compose (existing server)
 stacker deploy --target cloud --key=htz-0 --force-rebuild
+
+# Redeploy to existing server (reuse locked server)
+stacker deploy --target cloud --key=htz-0
 
 # With environment selection (coolify-style)
 stacker deploy --target cloud --key=htz-0 --force-new --environment production
+```
+
+### ⚠️ `--force-rebuild` on fresh cloud deploys
+
+**Do NOT use `--force-rebuild` with `--force-new` on a fresh cloud deploy.**
+This combination causes SSH key installation to fail — the key is saved locally
+but never installed on the server. Use `--force-new` alone for new servers, and
+`--force-rebuild` only for redeploying to existing servers.
+
+### Dual-target stacker.yml pattern
+
+Keep both `server` and `cloud` sections in `stacker.yml`. The `--target` flag
+selects which one to use:
+
+```yaml
+deploy:
+  target: server          # default target (can be overridden by --target)
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "5000"
+```
+
+```bash
+# Deploy to existing server (uses deploy.server)
+stacker deploy --target server
+
+# Deploy to fresh cloud (uses deploy.cloud)
+stacker deploy --target cloud --key htz-0 --force-new
 ```
 
 ---
