@@ -1,6 +1,6 @@
 # AI Automation Workflows
 
-[![Deploy to TryDirect](https://try.direct/badge/deploy.svg)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-automation-workflows&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-automation-workflows&ref=main)
 
 **Self-hosted AI workflow automation** — Flowise + n8n + Ollama + Qdrant.
 
