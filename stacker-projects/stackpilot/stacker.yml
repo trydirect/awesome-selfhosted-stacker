@@ -103,9 +103,9 @@ volumes:
 deploy:
   target: server
   server:
-    host: 62.238.110.174
+    host: 46.224.139.90
     user: root
-    ssh_key: ~/.config/stacker/ssh/server-391_ed25519
+    ssh_key: ~/.config/stacker/ssh/server-436_ed25519
   cloud:
     provider: hetzner
     region: fsn1
