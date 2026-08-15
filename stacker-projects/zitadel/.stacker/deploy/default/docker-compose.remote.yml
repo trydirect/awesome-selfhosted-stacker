@@ -23,6 +23,7 @@ services:
     restart: unless-stopped
     networks:
     - app-network
+    - default_network
     labels:
       my.stacker.dns: app
       my.stacker.scope: project
@@ -43,6 +44,7 @@ services:
     restart: unless-stopped
     networks:
     - app-network
+    - default_network
     labels:
       my.stacker.dns: postgres
       my.stacker.scope: project
@@ -53,6 +55,7 @@ services:
     restart: unless-stopped
     networks:
     - app-network
+    - default_network
     labels:
       my.stacker.dns: redis
       my.stacker.scope: project
@@ -60,5 +63,7 @@ services:
 networks:
   app-network:
     driver: bridge
+  default_network:
+    external: true
 volumes:
   postgres-data: null
