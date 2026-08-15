@@ -1,6 +1,6 @@
 # StackPilot
 
-[![Deploy to TryDirect](https://try.direct/badge/deploy.svg)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/stackpilot&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/stackpilot&ref=main)
 
 **Self-hosted AI website support assistant** — a fully functional RAG-based chat widget that learns from your data, deployable with a single command.
 

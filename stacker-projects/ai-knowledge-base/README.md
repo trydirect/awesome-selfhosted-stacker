@@ -1,6 +1,6 @@
 # AI Knowledge Base
 
-[![Deploy to TryDirect](https://try.direct/badge/deploy.svg)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-knowledge-base&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-knowledge-base&ref=main)
 
 **Self-hosted AI knowledge base** — Dify + PostgreSQL + Redis + Weaviate + Sandbox.
 
