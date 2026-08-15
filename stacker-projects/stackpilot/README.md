@@ -2,6 +2,8 @@
 
 **Self-hosted AI website support assistant** — a fully functional RAG-based chat widget that learns from your data, deployable with a single command.
 
+[![Quick Deploy](https://img.shields.io/badge/Quick%20Deploy-StackPilot-blue)](https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/stackpilot)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     WEBSITE (any site)                      │
@@ -17,6 +19,15 @@
 │Postgres│ │ Redis  │ │Ollama  │ │    n8n     │
 │+pgvec  │ │        │ │        │ │            │
 └────────┘ └────────┘ └────────┘ └────────────┘
+```
+
+---
+
+## Quick Deploy
+
+```bash
+stacker install stackpilot
+stacker deploy --target cloud --key htz-0
 ```
 
 ---
