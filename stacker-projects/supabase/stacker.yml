@@ -17,7 +17,7 @@ app:
     KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
     KONG_DNS_ORDER: LAST,A,CNAME
     KONG_DNS_NOT_FOUND_TTL: "1"
-    KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function
+    KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function,correlation-id
     KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
     KONG_NGINX_PROXY_PROXY_BUFFERS: "64 160k"
     KONG_PROXY_ACCESS_LOG: /dev/stdout combined
@@ -122,6 +122,7 @@ services:
       SEED_SELF_HOST: "true"
       RUN_JANITOR: "true"
       DISABLE_HEALTHCHECK_LOGGING: "true"
+      METRICS_JWT_SECRET: "${JWT_SECRET}"
 
   - name: storage
     image: supabase/storage-api:v1.60.4
@@ -130,6 +131,7 @@ services:
       SERVICE_KEY: "${SERVICE_ROLE_KEY}"
       POSTGREST_URL: http://rest:3000
       JWT_SECRET: "${JWT_SECRET}"
+      PGRST_JWT_SECRET: "${JWT_SECRET}"
       DATABASE_URL: "postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}"
       STORAGE_PUBLIC_URL: "${SUPABASE_PUBLIC_URL}"
       FILE_SIZE_LIMIT: "52428800"
@@ -168,13 +170,19 @@ services:
       SUPABASE_ANON_KEY: "${ANON_KEY}"
       SUPABASE_SERVICE_ROLE_KEY: "${SERVICE_ROLE_KEY}"
       VERIFY_JWT: "${FUNCTIONS_VERIFY_JWT}"
+    volumes:
+      - ./volumes/functions:/home/deno/functions:ro
 
 proxy:
   type: none
   auto_detect: false
 
 deploy:
-  target: local
+  target: server
+  server:
+    host: 88.198.151.116
+    user: root
+    ssh_key: ~/.config/stacker/ssh/server-443_ed25519
   cloud:
     provider: hetzner
     region: fsn1
