@@ -21,3 +21,16 @@ monitoring:
   status_panel: true
 
 env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: 178.105.135.200
+    user: root
+    ssh_key: ~/.config/stacker/ssh/server-438_ed25519
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
