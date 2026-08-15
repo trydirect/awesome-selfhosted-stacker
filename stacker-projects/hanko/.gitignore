@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.production
+config.yaml
 
 # Stacker generated files
 .stacker/
