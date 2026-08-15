@@ -17,4 +17,28 @@ if need "SECRETS_DEFAULT"; then
   sed -i.bak "s|^SECRETS_DEFAULT=.*|SECRETS_DEFAULT=$(openssl rand -hex 32)|" .env && rm -f .env.bak
   echo "  Generated SECRETS_DEFAULT"
 fi
+
+# Generate config.yaml with actual secrets
+DB_PASSWORD=$(grep "^DB_PASSWORD=" .env | cut -d= -f2-)
+SECRETS_DEFAULT=$(grep "^SECRETS_DEFAULT=" .env | cut -d= -f2-)
+
+cat > config.yaml << EOF
+server:
+  port: 8000
+  public_port: 8000
+  env: production
+  webauthn:
+    relying_party:
+      id: localhost
+database:
+  host: hanko-db
+  port: 5432
+  user: hanko
+  password: ${DB_PASSWORD}
+  database: hanko
+  dialect: postgres
+secrets:
+  default: ${SECRETS_DEFAULT}
+EOF
+
 echo "Secrets ready."
