@@ -5,7 +5,7 @@ services:
       - "8000:8000"
       - "8443:8443"
     environment:
-      ANON_KEY: "d30d3c35d517364589379aa99a363322595ce3d105d1b50dc2c139ca06f53066"
+      ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
       DASHBOARD_PASSWORD: "f9beb1dd0eaac090a95588eaa149cae5"
       DASHBOARD_USERNAME: "supabase"
       JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
@@ -17,10 +17,10 @@ services:
       KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: "160k"
       KONG_PLUGINS: "request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function,correlation-id"
       KONG_PROXY_ACCESS_LOG: "/dev/stdout combined"
-      SERVICE_ROLE_KEY: "e3ea1232df19b0ae58d13fc61df38742b538f00c4b1bb53a0f5ec9f2af480f7b"
-      SUPABASE_ANON_KEY: "d30d3c35d517364589379aa99a363322595ce3d105d1b50dc2c139ca06f53066"
+      SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
+      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
-      SUPABASE_SERVICE_KEY: "e3ea1232df19b0ae58d13fc61df38742b538f00c4b1bb53a0f5ec9f2af480f7b"
+      SUPABASE_SERVICE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
     volumes:
       - "./kong.yml:/usr/local/kong/kong.yml"
     restart: unless-stopped
@@ -69,9 +69,9 @@ services:
       POSTGRES_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
       POSTGRES_PORT: "5432"
       STUDIO_PG_META_URL: "http://meta:8080"
-      SUPABASE_ANON_KEY: "d30d3c35d517364589379aa99a363322595ce3d105d1b50dc2c139ca06f53066"
+      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
-      SUPABASE_SERVICE_KEY: "e3ea1232df19b0ae58d13fc61df38742b538f00c4b1bb53a0f5ec9f2af480f7b"
+      SUPABASE_SERVICE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
       SUPABASE_URL: "http://kong:8000"
     volumes:
       - "studio_snippets:/app/snippets"
@@ -162,7 +162,7 @@ services:
   storage:
     image: supabase/storage-api:v1.60.4
     environment:
-      ANON_KEY: "d30d3c35d517364589379aa99a363322595ce3d105d1b50dc2c139ca06f53066"
+      ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
       DATABASE_URL: "postgres://supabase_storage_admin:913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c@db:5432/postgres"
       ENABLE_IMAGE_TRANSFORMATION: "true"
       FILE_SIZE_LIMIT: "52428800"
@@ -172,7 +172,7 @@ services:
       PGRST_JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
       POSTGREST_URL: "http://rest:3000"
       REGION: "stub"
-      SERVICE_KEY: "e3ea1232df19b0ae58d13fc61df38742b538f00c4b1bb53a0f5ec9f2af480f7b"
+      SERVICE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
       STORAGE_BACKEND: "file"
       STORAGE_PUBLIC_URL: "http://localhost:8000"
     volumes:
@@ -221,14 +221,13 @@ services:
     image: supabase/edge-runtime:v1.74.0
     environment:
       JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
-      SUPABASE_ANON_KEY: "d30d3c35d517364589379aa99a363322595ce3d105d1b50dc2c139ca06f53066"
+      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
-      SUPABASE_SERVICE_ROLE_KEY: "e3ea1232df19b0ae58d13fc61df38742b538f00c4b1bb53a0f5ec9f2af480f7b"
+      SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
       SUPABASE_URL: "http://kong:8000"
       VERIFY_JWT: "false"
-    command: "start --main-entrypoint /home/deno/functions/main/index.ts"
     volumes:
-      - "./volumes/functions:/home/deno/functions"
+      - "./volumes/functions:/home/deno/functions:ro"
     restart: unless-stopped
     networks:
       - app-network

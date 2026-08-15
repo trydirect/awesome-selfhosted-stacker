@@ -41,10 +41,10 @@ services:
 consumers:
   - username: anon
     keyauth_credentials:
-      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.zLq3U1lQmGXqFgQfQK9qLqRvGJmzG6XsQhFvRv6VJ8c
+      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM
   - username: service_role
     keyauth_credentials:
-      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.zP9G6jYjGkZqJmKXqLqRvGJmzG6XsQhFvRv6VJ8c
+      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y
 
 plugins:
   - name: correlation-id
