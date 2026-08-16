@@ -1,0 +1,93 @@
+name: standard-notes
+
+project:
+  identity: standard-notes
+
+install:
+  inputs:
+    commonDomain: notes.example.com
+
+app:
+  type: custom
+  image: standardnotes/server:latest
+  ports:
+    - "3000:3000"
+    - "3001:3001"
+    - "3002:3002"
+  environment:
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_DATABASE: standardnotes
+    DB_USERNAME: standardnotes
+    DB_PASSWORD: "${DB_PASSWORD}"
+    JWT_SECRET: "${JWT_SECRET}"
+    ENCRYPTION_SERVER_KEY: "${ENCRYPTION_KEY}"
+    REDIS_URL: "redis://redis:6379"
+  volumes:
+    - standardnotes_data:/var/lib/postgresql/data
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: standardnotes
+      POSTGRES_USER: standardnotes
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U standardnotes"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: cache
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6380:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  standardnotes_data: {}
+  postgres_data: {}

@@ -1,0 +1,65 @@
+name: miniflux
+
+project:
+  identity: miniflux
+
+install:
+  inputs:
+    commonDomain: rss.example.com
+
+app:
+  type: custom
+  image: miniflux/miniflux:latest
+  ports:
+    - "8080:8080"
+  environment:
+    DATABASE_URL: "postgres://miniflux:${DB_PASSWORD}@postgres:5432/miniflux?sslmode=disable"
+    RUN_MIGRATIONS: "1"
+    CREATE_ADMIN: "1"
+    ADMIN_USERNAME: admin
+    ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: miniflux
+      POSTGRES_USER: miniflux
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U miniflux"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  postgres_data: {}

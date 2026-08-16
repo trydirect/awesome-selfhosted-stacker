@@ -1,0 +1,103 @@
+name: appwrite
+
+project:
+  identity: appwrite
+
+install:
+  inputs:
+    commonDomain: api.example.com
+
+app:
+  type: custom
+  image: appwrite/appwrite:latest
+  ports:
+    - "80:80"
+    - "443:443"
+  environment:
+    _APP_OPENSSL_KEY_V1: "${APPWRITE_KEY}"
+    _APP_DOMAIN: localhost
+    _APP_DOMAIN_TARGET: localhost
+    _APP_REDIS_HOST: redis
+    _APP_REDIS_PORT: 6379
+    _APP_DB_HOST: mariadb
+    _APP_DB_PORT: 3306
+    _APP_DB_SCHEMA: appwrite
+    _APP_DB_USER: appwrite
+    _APP_DB_PASS: "${DB_PASSWORD}"
+  volumes:
+    - appwrite_data:/storage
+    - appwrite_config:/storage/config
+    - appwrite_functions:/storage/functions
+    - appwrite_uploads:/storage/uploads
+
+services:
+  - name: mariadb
+    image: mariadb:11
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_DATABASE: appwrite
+      MYSQL_USER: appwrite
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: "CMD mysqladmin ping -h localhost"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: influxdb
+    image: influxdb:1.8
+    ports:
+      - "127.0.0.1:8086:8086"
+    environment:
+      INFLUXDB_DB: appwrite
+      INFLUXDB_ADMIN_ENABLED: "true"
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "80"
+      - "443"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  appwrite_data: {}
+  appwrite_config: {}
+  appwrite_functions: {}
+  appwrite_uploads: {}
+  mariadb_data: {}
+  influxdb_data: {}

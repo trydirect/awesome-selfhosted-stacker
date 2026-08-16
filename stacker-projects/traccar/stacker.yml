@@ -1,0 +1,69 @@
+name: traccar
+
+project:
+  identity: traccar
+
+install:
+  inputs:
+    commonDomain: gps.example.com
+
+app:
+  type: custom
+  image: traccar/traccar:latest
+  ports:
+    - "8082:8082"
+    - "5000-5150:5000-5150"
+  environment:
+    DATABASE_URL: "jdbc:postgresql://postgres:5432/traccar"
+    DATABASE_USER: traccar
+    DATABASE_PASSWORD: "${DB_PASSWORD}"
+  volumes:
+    - traccar_data:/opt/traccar/logs
+    - traccar_conf:/opt/traccar/conf
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: traccar
+      POSTGRES_USER: traccar
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U traccar"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8082"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  traccar_data: {}
+  traccar_conf: {}
+  postgres_data: {}

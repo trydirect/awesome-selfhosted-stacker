@@ -1,0 +1,72 @@
+name: ampache
+
+project:
+  identity: ampache
+
+install:
+  inputs:
+    commonDomain: ampache.example.com
+
+app:
+  type: custom
+  image: ampache/ampache:latest
+  ports:
+    - "8080:80"
+  environment:
+    DB_HOST: mysql
+    DB_NAME: ampache
+    DB_USER: ampache
+    DB_PASSWORD: "${DB_PASSWORD}"
+  volumes:
+    - ampache_config:/var/www/html/config
+    - ampache_music:/media/music
+    - ampache_data:/var/www/html/data
+
+services:
+  - name: mysql
+    image: mysql:8
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      MYSQL_DATABASE: ampache
+      MYSQL_USER: ampache
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: "CMD mysqladmin ping -h localhost"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  ampache_config: {}
+  ampache_music: {}
+  ampache_data: {}
+  mysql_data: {}

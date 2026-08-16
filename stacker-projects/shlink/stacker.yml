@@ -1,0 +1,69 @@
+name: shlink
+
+project:
+  identity: shlink
+
+install:
+  inputs:
+    commonDomain: links.example.com
+
+app:
+  type: custom
+  image: shlinkio/shlink:latest
+  ports:
+    - "8080:8080"
+  environment:
+    DB_DRIVER: postgres
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_NAME: shlink
+    DB_USER: shlink
+    DB_PASSWORD: "${DB_PASSWORD}"
+    DEFAULT_DOMAIN: localhost:8080
+    IS_HTTPS_ENABLED: "false"
+    GEOLITE_LICENSE_KEY: "${GEOLITE_LICENSE_KEY:-}"
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: shlink
+      POSTGRES_USER: shlink
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U shlink"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  postgres_data: {}
