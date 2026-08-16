@@ -4,7 +4,7 @@ services:
     ports:
       - "4566:4566"
     environment:
-      FLOCI_BASE_URL: "http://floci:4566"
+      FLOCI_BASE_URL: "http://46.225.141.37:4566"
       FLOCI_HOSTNAME: "floci"
       FLOCI_SERVICES_DOCKER_NETWORK: "floci_default"
       FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ENABLED: "true"
@@ -25,6 +25,24 @@ services:
       my.stacker.dns: "app"
       my.stacker.scope: "project"
       my.stacker.service: "floci"
+
+  floci-ui:
+    image: floci/floci-ui:latest
+    ports:
+      - "4500:4500"
+    environment:
+      AWS_ACCESS_KEY_ID: "test"
+      AWS_REGION: "us-east-1"
+      AWS_SECRET_ACCESS_KEY: "test"
+      FLOCI_ENDPOINT: "http://46.225.141.37:4566"
+      PORT: "4500"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "floci-ui"
+      my.stacker.scope: "project"
+      my.stacker.service: "floci-ui"
 
 networks:
   app-network:
