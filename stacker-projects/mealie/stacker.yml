@@ -8,7 +8,7 @@ app:
   environment:
     ALLOW_SIGNUP: "true"
     DB_ENGINE: sqlite
-    BASE_URL: http://localhost:9925
+    BASE_URL: http://${DEPLOY_HOST}:9925
   volumes:
     - mealie_data:/app/data
 
@@ -23,3 +23,16 @@ monitoring:
   status_panel: true
 
 env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: 178.105.43.154
+    user: root
+    ssh_key: ~/.config/stacker/ssh/server-449_ed25519
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "9925"
