@@ -19,12 +19,19 @@ app:
     DOMAIN: http://localhost:8080
   command: null
   healthcheck: null
-services: []
+services:
+  - name: proxy-manager
+    image: jc21/nginx-proxy-manager:latest
+    ports:
+      - "80:80"
+      - "443:443"
+      - "81:81"
+    volumes:
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
 proxy:
   type: none
   auto_detect: false
-  domains: []
-  config: null
 deploy:
   target: server
   environment: null
@@ -74,3 +81,7 @@ env_file: .env
 env: {}
 config_contract:
   services: {}
+volumes:
+  vaultwarden_data: {}
+  npm_data: {}
+  npm_letsencrypt: {}
