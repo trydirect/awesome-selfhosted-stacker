@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (69)
+### Tested and verified (89)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -461,7 +461,7 @@ server target. Start here for production.
 | Docmost             | Wiki             | 3000  | needs Redis service |
 | Druid               | Analytics        | 8888  | pinned apache/druid:31.0.0; removed broken druid_extensions_loadList env var |
 | FileBrowser         | File manager     | 8080  | |
-| Floci               | File sharing     | 8080  | needs docker.sock bind mount |
+| Floci               | Local cloud      | 4500  | TLS disabled; FLOCI_BASE_URL must match external IP |
 | Ganymede           | Video archive    | 4000  | |
 | Gitea              | Git hosting      | 3000  | |
 | Gitness            | Git hosting      | 3000  | needs GITNESS_PRINCIPAL_ADMIN_EMAIL |
@@ -474,12 +474,19 @@ server target. Start here for production.
 | Jitsi Meet         | Video conf       | 80/443| uses :unstable tags; nginx permission bug |
 | Komga              | Comics/manga     | 25600 | |
 | Lemmy              | Link aggregator  | 1234  | pinned dessalines/lemmy:0.19.11 |
+| Linkding           | Bookmarks        | 9090  | |
 | Linkwarden         | Bookmarks        | 3000  | |
 | Listmonk           | Newsletter       | 9000  | needs --install flag on first run |
 | Mastodon           | Social network   | 3000  | |
 | Maybe Finance      | Personal finance | 3000  | |
+| Mealie             | Recipes          | 9925  | SQLite by default |
+| Meilisearch        | Search           | 7700  | |
+| Memos              | Notes            | 5230  | |
 | Metabase           | BI               | 3000  | |
+| Immich             | Photos           | 2283  | Google Photos alternative |
 | Nextcloud          | File sync        | 8080  | |
+| Gotify             | Notifications    | 8080  | |
+| Homer              | Dashboard        | 8080  | Static dashboard, no DB |
 | Open-WebUI         | AI chat          | 3000  | |
 | Outline            | Knowledge base   | 3000  | |
 | Paperless-ngx      | Document mgmt    | 8000  | |
@@ -497,16 +504,18 @@ server target. Start here for production.
 | Semaphore         | Ansible UI       | 3000  | fixed DB_DIALECT typo |
 | Statistics for Strava | Fitness      | 8080  | waits for Strava API credentials |
 | Strapi            | CMS              | 1337  | uses naskio/strapi instead of strapi |
-| Supabase          | Backend platform | 8000  | 10 containers |
+| Supabase          | Backend platform | 8000  | 10 containers; needs role passwords set via supabase_admin |
+| Supabase-PostHog  | Analytics + Backend | 8000 | Supabase + PostHog combined |
 | Superset          | BI               | 8088  | needs manual `superset fab create-admin` + `db upgrade` + `init` |
 | Synapse           | Matrix chat      | 8008  | |
+| Syncthing         | File sync        | 8384  | P2P file synchronization |
 | Tandoor           | Recipes          | 8080  | fixed port mapping 8080->80 (nginx) |
 | Trilium           | Notes            | 8081  | |
 | Umami             | Analytics        | 3000  | |
 | UptimeKuma        | Monitoring       | 3001  | |
-| Vaultwarden       | Password mgr     | 8080  | |
+| Vaultwarden       | Password mgr     | 8080  | with Nginx Proxy Manager |
 | WordPress         | CMS              | 8080  | uses image: wordpress (no tag) + mysql:8.0 |
-| Zitadel           | IAM/SSO          | 8080  | uses LOGINV2_REQUIRED=false (legacy login) |
+| Zitadel           | IAM/SSO          | 8080  | ExternalDomain must match server IP |
 
 ### Pre-existing (configured, not re-deployed)
 
