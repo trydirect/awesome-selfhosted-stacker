@@ -1,0 +1,73 @@
+name: lychee
+
+project:
+  identity: lychee
+
+install:
+  inputs:
+    commonDomain: photos.example.com
+
+app:
+  type: custom
+  image: lycheeorg/lychee:latest
+  ports:
+    - "8080:80"
+  environment:
+    DB_CONNECTION: pgsql
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_DATABASE: lychee
+    DB_USERNAME: lychee
+    DB_PASSWORD: "${DB_PASSWORD}"
+    APP_KEY: "${APP_KEY}"
+    STARTUP_DELAY: 30
+  volumes:
+    - lychee_data:/conf
+    - lychee_images:/uploads
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: lychee
+      POSTGRES_USER: lychee
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U lychee"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  lychee_data: {}
+  lychee_images: {}
+  postgres_data: {}

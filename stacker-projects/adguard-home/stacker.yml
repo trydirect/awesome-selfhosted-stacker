@@ -1,0 +1,49 @@
+name: adguard-home
+
+project:
+  identity: adguard-home
+
+install:
+  inputs:
+    commonDomain: dns.example.com
+
+app:
+  type: custom
+  image: adguard/adguardhome:latest
+  ports:
+    - "3000:3000"
+    - "8080:80"
+    - "53:53/tcp"
+    - "53:53/udp"
+  volumes:
+    - adguard_work:/opt/adguardhome/work
+    - adguard_conf:/opt/adguardhome/conf
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+      - "8080"
+      - "53/tcp"
+      - "53/udp"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  adguard_work: {}
+  adguard_conf: {}
