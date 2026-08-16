@@ -1,0 +1,41 @@
+name: olivetin
+
+project:
+  identity: olivetin
+
+install:
+  inputs:
+    commonDomain: olivetin.example.com
+
+app:
+  type: custom
+  image: jamesread/olivetin:latest
+  ports:
+    - "1337:1337"
+  volumes:
+    - olivetin_config:/config
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "1337"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  olivetin_config: {}

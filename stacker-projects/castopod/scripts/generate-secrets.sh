@@ -14,4 +14,12 @@ if need "DB_PASSWORD"; then
   sed -i '' "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" .env
   echo "  Generated DB_PASSWORD"
 fi
+if need "DB_ROOT_PASSWORD"; then
+  sed -i '' "s|^DB_ROOT_PASSWORD=.*|DB_ROOT_PASSWORD=$(openssl rand -hex 16)|" .env
+  echo "  Generated DB_ROOT_PASSWORD"
+fi
+if need "ANALYTICS_SALT"; then
+  sed -i '' "s|^ANALYTICS_SALT=.*|ANALYTICS_SALT=$(openssl rand -hex 16)|" .env
+  echo "  Generated ANALYTICS_SALT"
+fi
 echo "Secrets ready."

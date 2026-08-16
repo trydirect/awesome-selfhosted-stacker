@@ -14,4 +14,8 @@ if need "DB_PASSWORD"; then
   sed -i '' "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" .env
   echo "  Generated DB_PASSWORD"
 fi
+if need "APP_KEY"; then
+  sed -i '' "s|^APP_KEY=.*|APP_KEY=$(openssl rand -hex 32)|" .env
+  echo "  Generated APP_KEY"
+fi
 echo "Secrets ready."

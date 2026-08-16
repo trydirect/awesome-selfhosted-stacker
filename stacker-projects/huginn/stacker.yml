@@ -1,26 +1,33 @@
-name: metabase
+name: huginn
 
 project:
-  identity: metabase
+  identity: huginn
 
 install:
   inputs:
-    commonDomain: metabase.example.com
+    commonDomain: huginn.example.com
 
 app:
   type: custom
-  image: metabase/metabase:latest
+  image: ghcr.io/huginn/huginn:latest
   ports:
     - "3000:3000"
   environment:
-    MB_DB_TYPE: postgres
-    MB_DB_DBNAME: metabase
-    MB_DB_PORT: 5432
-    MB_DB_USER: metabase
-    MB_DB_PASS: "${DB_PASSWORD}"
-    MB_DB_HOST: postgres
+    DATABASE_ADAPTER: postgresql
+    DATABASE_HOST: postgres
+    DATABASE_PORT: 5432
+    DATABASE_NAME: huginn
+    DATABASE_USERNAME: huginn
+    DATABASE_PASSWORD: "${DB_PASSWORD}"
+    HUGINN_DATABASE_NAME: huginn
+    HUGINN_DATABASE_USERNAME: huginn
+    HUGINN_DATABASE_PASSWORD: "${DB_PASSWORD}"
+    HUGINN_DATABASE_HOST: postgres
+    APP_SECRET_TOKEN: "${SECRET_KEY}"
+  command: >-
+    sh -c "bundle exec rake db:migrate db:seed && bundle exec rails server -b 0.0.0.0 -p 3000"
   volumes:
-    - metabase_data:/metabase-data
+    - huginn_data:/data
 
 services:
   - name: postgres
@@ -28,13 +35,13 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     environment:
-      POSTGRES_DB: metabase
-      POSTGRES_USER: metabase
+      POSTGRES_DB: huginn
+      POSTGRES_USER: huginn
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: "CMD-SHELL pg_isready -U metabase"
+      test: "CMD-SHELL pg_isready -U huginn"
       interval: 10s
       timeout: 5s
       retries: 5
@@ -65,5 +72,5 @@ monitoring:
 env_file: .env
 
 volumes:
-  metabase_data: {}
+  huginn_data: {}
   postgres_data: {}

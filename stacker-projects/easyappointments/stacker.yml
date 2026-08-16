@@ -1,0 +1,68 @@
+name: easyappointments
+
+project:
+  identity: easyappointments
+
+install:
+  inputs:
+    commonDomain: appointments.example.com
+
+app:
+  type: custom
+  image: alextselegidis/easyappointments:latest
+  ports:
+    - "8080:80"
+  environment:
+    DB_HOST: mysql
+    DB_NAME: easyappointments
+    DB_USERNAME: easyappointments
+    DB_PASSWORD: "${DB_PASSWORD}"
+  volumes:
+    - easyappointments_data:/var/www/html/storage
+
+services:
+  - name: mysql
+    image: mysql:8
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      MYSQL_DATABASE: easyappointments
+      MYSQL_USER: easyappointments
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: "CMD mysqladmin ping -h localhost"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  easyappointments_data: {}
+  mysql_data: {}

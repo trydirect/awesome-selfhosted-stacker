@@ -1,26 +1,23 @@
-name: metabase
+name: readeck
 
 project:
-  identity: metabase
+  identity: readeck
 
 install:
   inputs:
-    commonDomain: metabase.example.com
+    commonDomain: readeck.example.com
 
 app:
   type: custom
-  image: metabase/metabase:latest
+  image: codeberg.org/readeck/readeck:latest
   ports:
-    - "3000:3000"
+    - "8000:8000"
   environment:
-    MB_DB_TYPE: postgres
-    MB_DB_DBNAME: metabase
-    MB_DB_PORT: 5432
-    MB_DB_USER: metabase
-    MB_DB_PASS: "${DB_PASSWORD}"
-    MB_DB_HOST: postgres
+    READECK_DATABASE_DRIVER: postgres
+    READECK_DATABASE_SOURCE: "postgres://readeck:${DB_PASSWORD}@postgres:5432/readeck?sslmode=disable"
+    READECK_SECRET_KEY: "${SECRET_KEY}"
   volumes:
-    - metabase_data:/metabase-data
+    - readeck_data:/data
 
 services:
   - name: postgres
@@ -28,13 +25,13 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     environment:
-      POSTGRES_DB: metabase
-      POSTGRES_USER: metabase
+      POSTGRES_DB: readeck
+      POSTGRES_USER: readeck
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: "CMD-SHELL pg_isready -U metabase"
+      test: "CMD-SHELL pg_isready -U readeck"
       interval: 10s
       timeout: 5s
       retries: 5
@@ -54,7 +51,7 @@ deploy:
     region: fsn1
     size: cpx22
     public_ports:
-      - "3000"
+      - "8000"
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -65,5 +62,5 @@ monitoring:
 env_file: .env
 
 volumes:
-  metabase_data: {}
+  readeck_data: {}
   postgres_data: {}

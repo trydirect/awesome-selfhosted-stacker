@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**160 projects** · **73 tested & verified** · Updated 2026-08-10
+**184 projects** · **73 tested & verified** · Updated 2026-08-16
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -15,7 +15,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | ollama-local | ollama/ollama | 11434 | — | |
 | private-sovereign-ai | ghcr.io/open-webui/open-webui | 3000 | — | |
 
-## Analytics (20)
+## Analytics (21)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -39,23 +39,28 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | supabase-posthog | kong/kong:3.9.1 | 8000 | postgres | |
 | superset | apache/superset | 8088 | postgres, redis | ✅ |
 | umami | ghcr.io/umami-software/umami | 3000 | postgres | ✅ |
+| shaper | taleshape/shaper | 8080 | — | |
 
-## Automation (11)
+## Automation (16)
 
-| Project | Image | Port | DB | Tested |
-|---------|-------|------|----|:------:|
-| activepieces | ghcr.io/activepieces/activepieces | 8080 | postgres, redis | |
-| automatisch | automatisch/automatisch | 3000 | postgres | |
-| calcom | calcom/cal.com | 3000 | postgres | |
-| changedetection | ghcr.io/dgtlmoon/changedetection.io | 5000 | — | |
-| dify | (static) | — | — | |
-| homeassistant | lscr.io/linuxserver/homeassistant | 8123 | — | |
-| n8n | n8nio/n8n | 5678 | postgres | |
-| rallly | lukevella/rallly | 3000 | postgres | |
-| typebot | baptistearno/typebot-builder | 3001 | postgres | |
-| vikunja | (Dockerfile) | 3456 | postgres | ⚠️ |
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| activepieces | ghcr.io/activepieces/activepieces | 8080 | postgres, redis | | |
+| automatisch | automatisch/automatisch | 3000 | postgres | | |
+| calcom | calcom/cal.com | 3000 | postgres | | |
+| changedetection | ghcr.io/dgtlmoon/changedetection.io | 5000 | — | | |
+| dify | (static) | — | — | | |
+| homeassistant | lscr.io/linuxserver/homeassistant | 8123 | — | | |
+| n8n | n8nio/n8n | 5678 | postgres | | |
+| rallly | lukevella/rallly | 3000 | postgres | | |
+| typebot | baptistearno/typebot-builder | 3001 | postgres | | |
+| vikunja | (Dockerfile) | 3456 | postgres | ⚠️ | |
+| apache-airflow | apache/airflow | 8080 | postgres | | DB migrate |
+| dagu | ghcr.io/dagucloud/dagu | 8080 | — | | |
+| dittofeed | dittofeed/dittofeed | 3000 | postgres, clickhouse, kafka | | Auto-migrate |
+| huginn | ghcr.io/huginn/huginn | 3000 | postgres | | DB migrate+seed |
 
-## Bookmarks & Link Sharing (5)
+## Bookmarks & Link Sharing (7)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -64,6 +69,8 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | linkding | sissbruecker/linkding | 9090 | — | |
 | linkwarden | ghcr.io/linkwarden/linkwarden | 3000 | postgres | ✅ |
 | wallabag | wallabag/wallabag | 80 | postgres, redis | |
+| karakeep | ghcr.io/karakeep-app/karakeep | 3000 | postgres, meilisearch | | Auto-migrate |
+| readeck | codeberg.org/readeck/readeck | 8000 | postgres | | Auto-migrate |
 
 ## CMS & Blogging (8)
 
@@ -78,7 +85,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | wordpress-matomo | wordpress | 8080 | mysql, mariadb | |
 | writefreely | writeas/writefreely | 8080 | mysql | ⚠️ |
 
-## Communication (11)
+## Communication (13)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -94,6 +101,8 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | synapse | matrixdotorg/synapse | 8008 | postgres | ✅ |
 | listmonk | listmonk/listmonk | 9000 | postgres | ✅ |
 | zulip | zulip/docker-zulip | 80 | postgres | |
+| element | vectorim/element-web | 8080 | — | |
+| ntfy | binwiederhier/ntfy | 8080 | — | |
 
 ## Design (1)
 
@@ -111,7 +120,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | homer | b4bz/homer | 8080 | — | |
 | organizr | organizr/organizr | 9983 | — | |
 
-## Developer & DevOps Tools (16)
+## Developer & DevOps Tools (17)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -131,6 +140,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | traefik | traefik:v3.0 | 80 | — | |
 | wireguard | lscr.io/linuxserver/wireguard | 51820 | — | |
 | woodpecker-ci | woodpeckerci/woodpecker-server | 8000 | — | |
+| olivetin | jamesread/olivetin | 1337 | — | |
 
 ## Document Management (10)
 
@@ -160,7 +170,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | s4core | s4core/s4core | 9000 | — | ✅ |
 | syncthing | lscr.io/linuxserver/syncthing | 8384 | — | |
 
-## Media (18)
+## Media (19)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -182,8 +192,35 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | romm | rommapp/romm | 8080 | mariadb | ✅ |
 | swarm-ui | (Dockerfile) | 7801 | — | |
 | tautulli | lscr.io/linuxserver/tautulli | 8181 | — | ✅ |
+| castopod | castopod/app | 8000 | mysql | | Auto-create |
 
-## Monitoring (9)
+## Booking & Scheduling (2)
+
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| easyappointments | alextselegidis/easyappointments | 8080 | mysql | | Auto-create |
+| librebooking | ghcr.io/librebooking/librebooking | 8080 | mysql | | Auto-create |
+
+## Calendar & Contacts (1)
+
+| Project | Image | Port | DB | Tested |
+|---------|-------|------|----|:------:|
+| radicale | tomsquest/docker-radicale | 5232 | — | |
+
+## Email (2)
+
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| simplelogin | simplelogin/app | 8080 | postgres | | DB migrate |
+| stalwart-mail | stalwartlabs/mail-server | 8080 | — | | Built-in DB |
+
+## Events (1)
+
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| hi-events | ghcr.io/hidevops/hi-events | 8080 | postgres, redis | | DB migrate |
+
+## Monitoring (10)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -195,6 +232,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | speedtest-tracker | lscr.io/linuxserver/speedtest-tracker | 8080 | — | |
 | stackdog | trydirect/stackdog | 5000 | — | |
 | uptimekuma | louislam/uptime-kuma:2 | 3001 | — | ✅ |
+| healthchecks | healthchecks/healthchecks | 8000 | postgres | | Auto-migrate |
 
 ## Money & Budgeting (2)
 
@@ -204,12 +242,6 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | firefly-iii | fireflyiii/core | 8080 | postgres | |
 
 ## Note-taking (3)
-
-| Project | Image | Port | DB | Tested |
-|---------|-------|------|----|:------:|
-| hedgedoc | quay.io/hedgedoc/hedgedoc | 3000 | postgres | ✅ |
-| memos | ghcr.io/usememos/memos | 5230 | — | |
-| trilium | zadam/trilium | 8081 | — | ✅ |
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|

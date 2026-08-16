@@ -14,4 +14,12 @@ if need "DB_PASSWORD"; then
   sed -i '' "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" .env
   echo "  Generated DB_PASSWORD"
 fi
+if need "FERNET_KEY"; then
+  sed -i '' "s|^FERNET_KEY=.*|FERNET_KEY=$(openssl rand -hex 32)|" .env
+  echo "  Generated FERNET_KEY"
+fi
+if need "SECRET_KEY"; then
+  sed -i '' "s|^SECRET_KEY=.*|SECRET_KEY=$(openssl rand -hex 32)|" .env
+  echo "  Generated SECRET_KEY"
+fi
 echo "Secrets ready."

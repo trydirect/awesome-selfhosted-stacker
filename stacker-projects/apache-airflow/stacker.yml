@@ -1,26 +1,28 @@
-name: metabase
+name: apache-airflow
 
 project:
-  identity: metabase
+  identity: apache-airflow
 
 install:
   inputs:
-    commonDomain: metabase.example.com
+    commonDomain: airflow.example.com
 
 app:
   type: custom
-  image: metabase/metabase:latest
+  image: apache/airflow:latest
   ports:
-    - "3000:3000"
+    - "8080:8080"
   environment:
-    MB_DB_TYPE: postgres
-    MB_DB_DBNAME: metabase
-    MB_DB_PORT: 5432
-    MB_DB_USER: metabase
-    MB_DB_PASS: "${DB_PASSWORD}"
-    MB_DB_HOST: postgres
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:${DB_PASSWORD}@postgres:5432/airflow"
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__FERNET_KEY: "${FERNET_KEY}"
+    AIRFLOW__WEBSERVER__SECRET_KEY: "${SECRET_KEY}"
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+  command: >-
+    sh -c "airflow db migrate && airflow webserver"
   volumes:
-    - metabase_data:/metabase-data
+    - airflow_dags:/opt/airflow/dags
+    - airflow_logs:/opt/airflow/logs
 
 services:
   - name: postgres
@@ -28,13 +30,13 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     environment:
-      POSTGRES_DB: metabase
-      POSTGRES_USER: metabase
+      POSTGRES_DB: airflow
+      POSTGRES_USER: airflow
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: "CMD-SHELL pg_isready -U metabase"
+      test: "CMD-SHELL pg_isready -U airflow"
       interval: 10s
       timeout: 5s
       retries: 5
@@ -54,7 +56,7 @@ deploy:
     region: fsn1
     size: cpx22
     public_ports:
-      - "3000"
+      - "8080"
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -65,5 +67,6 @@ monitoring:
 env_file: .env
 
 volumes:
-  metabase_data: {}
+  airflow_dags: {}
+  airflow_logs: {}
   postgres_data: {}
