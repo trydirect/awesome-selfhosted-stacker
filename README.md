@@ -1,12 +1,12 @@
 # awesome-selfhosted-stacker
 
-> **135+ self-hostable apps, each deployable with a single `stacker.yml`.**
+> **204 self-hostable apps, each deployable with a single `stacker.yml`.**
 > Deploy to your laptop, your own server, or the cloud with one command —
 > database setup, health checks, secrets, and remote monitoring included.
 
 <p>
-  <img alt="Projects" src="https://img.shields.io/badge/projects-135%2B-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-69-brightgreen">
+  <img alt="Projects" src="https://img.shields.io/badge/projects-204-blue">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-79-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (89)
+### Tested and verified (79)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -603,7 +603,6 @@ server target. Start here for production.
 
 | Issue | Cause | Fix |
 |-------|-------|-----|
-| `remote_user` Ansible error | Intermittent server-side bug | Retry deploy or `docker compose up -d` manually |
 | Service labels stripped | Stacker doesn't pass `services[].labels` to compose | Use app.env vars or nginx proxy instead |
 | serde_yaml 0.9 quoting | Round-trip strips quotes, adds `null`/`[]` | No fix yet; PR pending |
 | Bind mount files not found | File paths resolve relative to compose location on remote | Use Dockerfile COPY instead of bind mounts |
@@ -669,7 +668,7 @@ official image is the whole point.
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-07-25 — 135+ projects configured, 63 tested and verified on
+Last updated: 2026-08-16 — 204 projects configured, 79 tested and verified on
 Ubuntu 26.04.
 
 ---
