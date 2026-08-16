@@ -51,9 +51,9 @@ deploy:
     public_ports:
     - '4566'
   server:
-    host: 178.105.135.200
+    host: 46.225.141.37
     user: root
-    ssh_key: ~/.config/stacker/ssh/server-441_ed25519
+    ssh_key: ~/.config/stacker/ssh/server-446_ed25519
     port: 22
   registry: null
   default_target: null
