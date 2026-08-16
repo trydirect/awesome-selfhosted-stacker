@@ -27,7 +27,11 @@ proxy:
   auto_detect: false
 
 deploy:
-  target: local
+  target: server
+  server:
+    host: 88.198.151.116
+    user: root
+    ssh_key: ~/.config/stacker/ssh/server-450_ed25519
   cloud:
     provider: hetzner
     region: fsn1
