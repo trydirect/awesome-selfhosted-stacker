@@ -1,0 +1,56 @@
+name: stalwart-mail
+
+project:
+  identity: stalwart-mail
+
+install:
+  inputs:
+    commonDomain: mail.example.com
+
+app:
+  type: custom
+  image: stalwartlabs/mail-server:latest
+  ports:
+    - "25:25"
+    - "143:143"
+    - "465:465"
+    - "587:587"
+    - "993:993"
+    - "8080:8080"
+  environment:
+    STALWART_ADMIN_SECRET: "${ADMIN_PASSWORD}"
+  volumes:
+    - stalwart_data:/opt/stalwart-mail
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "25"
+      - "143"
+      - "465"
+      - "587"
+      - "993"
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  stalwart_data: {}

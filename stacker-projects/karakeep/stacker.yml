@@ -1,0 +1,82 @@
+name: karakeep
+
+project:
+  identity: karakeep
+
+install:
+  inputs:
+    commonDomain: bookmarks.example.com
+
+app:
+  type: custom
+  image: ghcr.io/karakeep-app/karakeep:latest
+  ports:
+    - "3000:3000"
+  environment:
+    DATABASE_URL: "postgres://karakeep:${DB_PASSWORD}@postgres:5432/karakeep"
+    NEXTAUTH_SECRET: "${NEXTAUTH_SECRET}"
+    NEXTAUTH_URL: http://localhost:3000
+    MEILI_MASTER_KEY: "${MEILI_MASTER_KEY}"
+  volumes:
+    - karakeep_data:/data
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: karakeep
+      POSTGRES_USER: karakeep
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U karakeep"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: meilisearch
+    image: getmeili/meilisearch:latest
+    ports:
+      - "127.0.0.1:7700:7700"
+    environment:
+      MEILI_MASTER_KEY: "${MEILI_MASTER_KEY}"
+    volumes:
+      - meilisearch_data:/meili_data
+    healthcheck:
+      test: "CMD wget -q --spider http://localhost:7700/health"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  karakeep_data: {}
+  postgres_data: {}
+  meilisearch_data: {}

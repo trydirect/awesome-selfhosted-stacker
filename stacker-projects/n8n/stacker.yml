@@ -1,5 +1,12 @@
 name: n8n
 
+project:
+  identity: n8n
+
+install:
+  inputs:
+    commonDomain: n8n.example.com
+
 app:
   type: custom
   image: n8nio/n8n:latest
@@ -7,35 +14,35 @@ app:
     - "5678:5678"
   environment:
     DB_TYPE: postgresdb
-    DB_POSTGRESDB_HOST: n8n-db
-    DB_POSTGRESDB_PORT: "5432"
+    DB_POSTGRESDB_HOST: postgres
+    DB_POSTGRESDB_PORT: 5432
     DB_POSTGRESDB_DATABASE: n8n
     DB_POSTGRESDB_USER: n8n
-    DB_POSTGRESDB_PASSWORD: ${DB_PASSWORD}
+    DB_POSTGRESDB_PASSWORD: "${DB_PASSWORD}"
     N8N_BASIC_AUTH_ACTIVE: "true"
     N8N_BASIC_AUTH_USER: admin
-    N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD}
+    N8N_BASIC_AUTH_PASSWORD: "${ADMIN_PASSWORD}"
+    N8N_HOST: 0.0.0.0
+    WEBHOOK_URL: http://localhost:5678/
   volumes:
     - n8n_data:/home/node/.n8n
 
 services:
-  - name: n8n-db
+  - name: postgres
     image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_DB: n8n
       POSTGRES_USER: n8n
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
     volumes:
-      - n8n_db:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: CMD-SHELL pg_isready -d n8n -U n8n
+      test: "CMD-SHELL pg_isready -U n8n"
       interval: 10s
       timeout: 5s
-      retries: 10
-
-volumes:
-  n8n_data: {}
-  n8n_db: {}
+      retries: 5
 
 proxy:
   type: none
@@ -47,8 +54,21 @@ deploy:
     host: ${DEPLOY_HOST}
     user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "5678"
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+monitoring:
+  status_panel: true
+
 env_file: .env
+
+volumes:
+  n8n_data: {}
+  postgres_data: {}
