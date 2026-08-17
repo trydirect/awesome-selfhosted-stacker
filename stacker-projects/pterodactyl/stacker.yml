@@ -27,6 +27,8 @@ app:
     MAIL_DRIVER: smtp
     APP_ENV: production
     APP_DEBUG: "false"
+  command: >-
+    sh -c "php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=80"
   volumes:
     - pterodactyl_data:/var/www/html/storage
     - pterodactyl_env:/var/www/html/.env

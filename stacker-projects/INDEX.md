@@ -247,7 +247,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | stackdog | trydirect/stackdog | 5000 | — | ✅ | |
 | uptimekuma | louislam/uptime-kuma:2 | 3001 | — | ✅ | |
 | healthchecks | healthchecks/healthchecks | 8000 | postgres | | Auto-migrate |
-| cachet | cachethq/cachet | 8000 | postgres, redis | | |
+| cachet | cachethq/cachet | 8000 | postgres, redis | | DB migrate |
 
 ## Money & Budgeting (3)
 
@@ -380,7 +380,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | netbird | netbirdio/management | 33073 | postgres | | Auto-migrate |
-| firezone | firezone/firezone | 8080 | postgres | | |
+| firezone | firezone/firezone | 8080 | postgres | | DB migrate |
 | headscale | headscale/headscale | 8080 | — | | |
 
 ## Miscellaneous (1)
@@ -394,7 +394,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | crafty-controller | registry.gitlab.com/crafty-controller/crafty-4 | 8443 | — | | |
-| pterodactyl | ghcr.io/pterodactyl/panel | 80 | mysql, redis | | |
+| pterodactyl | ghcr.io/pterodactyl/panel | 80 | mysql, redis | | DB migrate+seed |
 
 ## CRM (1)
 
