@@ -15,15 +15,6 @@ stacker config setup server --ip <SERVER_IP> --user root --key ~/.ssh/id_ed25519
 stacker deploy --target server --force-rebuild
 ```
 
-## Workaround: remote_user Ansible error
-
-If the Stacker server pauses with `[WARNING]: Found variable using reserved name: remote_user`,
-the app container is created but not started. Start it manually:
-
-```bash
-ssh root@<SERVER_IP> "docker start project-app-1"
-```
-
 ## Verify
 
 ```bash
