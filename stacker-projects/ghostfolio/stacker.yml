@@ -1,0 +1,76 @@
+name: ghostfolio
+
+project:
+  identity: ghostfolio
+
+install:
+  inputs:
+    commonDomain: finance.example.com
+
+app:
+  type: custom
+  image: ghostfolio/ghostfolio:latest
+  ports:
+    - "3333:3333"
+  environment:
+    DATABASE_URL: "postgres://ghostfolio:${DB_PASSWORD}@postgres:5432/ghostfolio"
+    ACCESS_TOKEN_SALT: "${ACCESS_TOKEN_SALT}"
+    JWT_SECRET_KEY: "${JWT_SECRET_KEY}"
+  volumes:
+    - ghostfolio_data:/app/apps/api/data
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: ghostfolio
+      POSTGRES_USER: ghostfolio
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U ghostfolio"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3333"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  ghostfolio_data: {}
+  postgres_data: {}

@@ -1,0 +1,71 @@
+name: firezone
+
+project:
+  identity: firezone
+
+install:
+  inputs:
+    commonDomain: vpn.example.com
+
+app:
+  type: custom
+  image: firezone/firezone:latest
+  ports:
+    - "8080:8080"
+    - "51820:51820/udp"
+  environment:
+    EXTERNAL_URL: http://localhost:8080
+    DATABASE_URL: "postgres://firezone:${DB_PASSWORD}@postgres:5432/firezone"
+    SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
+    LIVE_VIEW_SIGNING_SALT: "${LIVE_VIEW_SIGNING_SALT}"
+    SECRET_KEY: "${SECRET_KEY}"
+    LOG_LEVEL: info
+  volumes:
+    - firezone_data:/var/firezone
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: firezone
+      POSTGRES_USER: firezone
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U firezone"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+      - "51820/udp"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  firezone_data: {}
+  postgres_data: {}

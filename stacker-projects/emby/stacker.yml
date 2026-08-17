@@ -1,0 +1,47 @@
+name: emby
+
+project:
+  identity: emby
+
+install:
+  inputs:
+    commonDomain: media.example.com
+
+app:
+  type: custom
+  image: emby/embyserver:latest
+  ports:
+    - "8096:8096"
+    - "8920:8920"
+  environment:
+    UID: "1000"
+    GID: "1000"
+  volumes:
+    - emby_config:/config
+    - emby_data:/media
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8096"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  emby_config: {}
+  emby_data: {}

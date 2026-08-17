@@ -1,0 +1,49 @@
+name: crafty-controller
+
+project:
+  identity: crafty-controller
+
+install:
+  inputs:
+    commonDomain: minecraft.example.com
+
+app:
+  type: custom
+  image: registry.gitlab.com/crafty-controller/crafty-4:latest
+  ports:
+    - "8443:8443"
+    - "25565:25565"
+  environment:
+    TZ: Etc/UTC
+  volumes:
+    - crafty_data:/crafty/app/config
+    - crafty_backups:/crafty/app/backups
+    - crafty_servers:/crafty/servers
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8443"
+      - "25565"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  crafty_data: {}
+  crafty_backups: {}
+  crafty_servers: {}

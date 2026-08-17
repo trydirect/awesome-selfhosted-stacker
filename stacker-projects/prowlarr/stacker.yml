@@ -1,0 +1,45 @@
+name: prowlarr
+
+project:
+  identity: prowlarr
+
+install:
+  inputs:
+    commonDomain: indexers.example.com
+
+app:
+  type: custom
+  image: linuxserver/prowlarr:latest
+  ports:
+    - "9696:9696"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: Etc/UTC
+  volumes:
+    - prowlarr_config:/config
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "9696"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  prowlarr_config: {}
