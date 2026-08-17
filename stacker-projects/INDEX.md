@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**224 projects** · **79 tested & verified** · Updated 2026-08-17
+**224 projects** · **83 tested & verified** · Updated 2026-08-17
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -48,7 +48,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | activepieces | ghcr.io/activepieces/activepieces | 8080 | postgres, redis | ✅ | |
 | automatisch | automatisch/automatisch | 3000 | postgres | | |
 | calcom | calcom/cal.com | 3000 | postgres | ✅ | |
-| changedetection | ghcr.io/dgtlmoon/changedetection.io | 5000 | — | | |
+| changedetection | ghcr.io/dgtlmoon/changedetection.io | 5000 | — | ✅ | |
 | dify | (static) | — | — | | |
 | homeassistant | lscr.io/linuxserver/homeassistant | 8123 | — | | |
 | n8n | n8nio/n8n | 5678 | postgres | ✅ | |
@@ -83,7 +83,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | strapi | naskio/strapi | 1337 | postgres | ✅ |
 | wordpress | wordpress | 8080 | mysql | ✅ |
 | wordpress-matomo | wordpress | 8080 | mysql, mariadb | |
-| writefreely | writeas/writefreely | 8080 | mysql | ⚠️ |
+| writefreely | writeas/writefreely | 8080 | mysql | ✅ |
 
 ## Communication (16)
 
