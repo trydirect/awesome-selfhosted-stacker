@@ -1,0 +1,44 @@
+name: headscale
+
+project:
+  identity: headscale
+
+install:
+  inputs:
+    commonDomain: vpn.example.com
+
+app:
+  type: custom
+  image: headscale/headscale:latest
+  ports:
+    - "8080:8080"
+    - "9090:9090"
+  command: serve
+  volumes:
+    - headscale_data:/var/lib/headscale
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+      - "9090"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  headscale_data: {}

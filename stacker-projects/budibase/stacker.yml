@@ -1,0 +1,97 @@
+name: budibase
+
+project:
+  identity: budibase
+
+install:
+  inputs:
+    commonDomain: apps.example.com
+
+app:
+  type: custom
+  image: budibase/budibase:latest
+  ports:
+    - "80:80"
+  environment:
+    INTERNAL_API_KEY: "${INTERNAL_API_KEY}"
+    JWT_SECRET: "${JWT_SECRET}"
+    COUCH_DB_URL: http://couchdb:5984
+    REDIS_URL: redis://redis:6379
+    MINIO_URL: http://minio:9000
+    MINIO_ACCESS_KEY: "${MINIO_ACCESS_KEY}"
+    MINIO_SECRET_KEY: "${MINIO_SECRET_KEY}"
+  volumes:
+    - budibase_data:/data
+
+services:
+  - name: couchdb
+    image: couchdb:3
+    ports:
+      - "127.0.0.1:5984:5984"
+    environment:
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: "${COUCHDB_PASSWORD}"
+    volumes:
+      - couchdb_data:/opt/couchdb/data
+    healthcheck:
+      test: "CMD curl -f http://localhost:5984/_up || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: minio
+    image: minio/minio:latest
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ACCESS_KEY}"
+      MINIO_ROOT_PASSWORD: "${MINIO_SECRET_KEY}"
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: "CMD curl -f http://localhost:9000/minio/health/live || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "80"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  budibase_data: {}
+  couchdb_data: {}
+  minio_data: {}

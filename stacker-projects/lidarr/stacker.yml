@@ -1,0 +1,49 @@
+name: lidarr
+
+project:
+  identity: lidarr
+
+install:
+  inputs:
+    commonDomain: music.example.com
+
+app:
+  type: custom
+  image: linuxserver/lidarr:latest
+  ports:
+    - "8686:8686"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: Etc/UTC
+  volumes:
+    - lidarr_config:/config
+    - lidarr_music:/music
+    - lidarr_downloads:/downloads
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8686"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  lidarr_config: {}
+  lidarr_music: {}
+  lidarr_downloads: {}

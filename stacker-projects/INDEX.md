@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**204 projects** · **79 tested & verified** · Updated 2026-08-16
+**224 projects** · **79 tested & verified** · Updated 2026-08-17
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -85,24 +85,27 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | wordpress-matomo | wordpress | 8080 | mysql, mariadb | |
 | writefreely | writeas/writefreely | 8080 | mysql | ⚠️ |
 
-## Communication (13)
+## Communication (16)
 
-| Project | Image | Port | DB | Tested |
-|---------|-------|------|----|:------:|
-| AstrBot | soulter/astrbot | 6185 | — | ✅ |
-| chatwoot | chatwoot/chatwoot | 3000 | postgres, redis | |
-| discourse | discourse/discourse | 80 | postgres, redis | ✅ |
-| gotify | gotify/server | 8080 | — | |
-| jitsi | jitsi/web:unstable | 80 | — | ✅ |
-| librechat | ghcr.io/danny-avila/librechat | 3080 | mongo | |
-| mattermost | mattermost/mattermost-enterprise-edition | 8065 | postgres | |
-| rocket-chat | rocket.chat | 3000 | mongo | ✅ |
-| screego | ghcr.io/screego/server | 5050 | — | |
-| synapse | matrixdotorg/synapse | 8008 | postgres | ✅ |
-| listmonk | listmonk/listmonk | 9000 | postgres | ✅ |
-| zulip | zulip/docker-zulip | 80 | postgres | |
-| element | vectorim/element-web | 8080 | — | |
-| ntfy | binwiederhier/ntfy | 8080 | — | |
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| AstrBot | soulter/astrbot | 6185 | — | ✅ | |
+| chatwoot | chatwoot/chatwoot | 3000 | postgres, redis | | |
+| discourse | discourse/discourse | 80 | postgres, redis | ✅ | |
+| gotify | gotify/server | 8080 | — | | |
+| jitsi | jitsi/web:unstable | 80 | — | ✅ | |
+| librechat | ghcr.io/danny-avila/librechat | 3080 | mongo | | |
+| mattermost | mattermost/mattermost-enterprise-edition | 8065 | postgres | | |
+| rocket-chat | rocket.chat | 3000 | mongo | ✅ | |
+| screego | ghcr.io/screego/server | 5050 | — | | |
+| synapse | matrixdotorg/synapse | 8008 | postgres | ✅ | |
+| listmonk | listmonk/listmonk | 9000 | postgres | ✅ | |
+| zulip | zulip/docker-zulip | 80 | postgres | | |
+| element | vectorim/element-web | 8080 | — | | |
+| ntfy | binwiederhier/ntfy | 8080 | — | | |
+| anycable | anycable/anycable-go | 8080 | — | | |
+| centrifugo | centrifugo/centrifugo | 8000 | — | | |
+| apprise | caronc/apprise | 8000 | — | | |
 
 ## Design (1)
 
@@ -120,7 +123,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | homer | b4bz/homer | 8080 | — | |
 | organizr | organizr/organizr | 9983 | — | |
 
-## Developer & DevOps Tools (18)
+## Developer & DevOps Tools (20)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -142,6 +145,8 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | woodpecker-ci | woodpeckerci/woodpecker-server | 8000 | — | | |
 | olivetin | jamesread/olivetin | 1337 | — | | |
 | appwrite | appwrite/appwrite | 80 | mariadb, redis | | Auto-migrate |
+| budibase | budibase/budibase | 80 | couchdb, redis | | |
+| prowlarr | linuxserver/prowlarr | 9696 | — | | |
 
 ## Document Management (10)
 
@@ -172,7 +177,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | syncthing | lscr.io/linuxserver/syncthing | 8384 | — | | |
 | zipline | ghcr.io/diced/zipline | 3000 | postgres | | Auto-migrate |
 
-## Media (21)
+## Media (25)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -197,6 +202,10 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | castopod | castopod/app | 8000 | mysql | | Auto-create |
 | funkwhale | funkwhale/all-in-one | 5000 | postgres, redis | | DB migrate |
 | ampache | ampache/ampache | 8080 | mysql | | Auto-create |
+| emby | emby/embyserver | 8096 | — | | |
+| sonarr | linuxserver/sonarr | 8989 | — | | |
+| radarr | linuxserver/radarr | 7878 | — | | |
+| lidarr | linuxserver/lidarr | 8686 | — | | |
 
 ## Booking & Scheduling (2)
 
@@ -205,11 +214,12 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | easyappointments | alextselegidis/easyappointments | 8080 | mysql | | Auto-create |
 | librebooking | ghcr.io/librebooking/librebooking | 8080 | mysql | | Auto-create |
 
-## Calendar & Contacts (1)
+## Calendar & Contacts (2)
 
-| Project | Image | Port | DB | Tested |
-|---------|-------|------|----|:------:|
-| radicale | tomsquest/docker-radicale | 5232 | — | |
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| radicale | tomsquest/docker-radicale | 5232 | — | | |
+| baikal | ckulka/baikal | 8080 | — | | |
 
 ## Email (2)
 
@@ -224,26 +234,28 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 |---------|-------|------|----|:------:|-------|
 | hi-events | ghcr.io/hidevops/hi-events | 8080 | postgres, redis | | DB migrate |
 
-## Monitoring (10)
+## Monitoring (11)
 
-| Project | Image | Port | DB | Tested |
-|---------|-------|------|----|:------:|
-| crowdsec | crowdsecurity/crowdsec | — | — | |
-| glances | nicolargo/glances:latest-full | 61208 | — | ✅ |
-| goaccess | nginx:1.27-alpine | 8080 | — | |
-| grafana | grafana/grafana | 3000 | — | ✅ |
-| pihole | pihole/pihole | 8080 | — | ✅ |
-| speedtest-tracker | lscr.io/linuxserver/speedtest-tracker | 8080 | — | |
-| stackdog | trydirect/stackdog | 5000 | — | ✅ |
-| uptimekuma | louislam/uptime-kuma:2 | 3001 | — | ✅ |
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| crowdsec | crowdsecurity/crowdsec | — | — | | |
+| glances | nicolargo/glances:latest-full | 61208 | — | ✅ | |
+| goaccess | nginx:1.27-alpine | 8080 | — | | |
+| grafana | grafana/grafana | 3000 | — | ✅ | |
+| pihole | pihole/pihole | 8080 | — | ✅ | |
+| speedtest-tracker | lscr.io/linuxserver/speedtest-tracker | 8080 | — | | |
+| stackdog | trydirect/stackdog | 5000 | — | ✅ | |
+| uptimekuma | louislam/uptime-kuma:2 | 3001 | — | ✅ | |
 | healthchecks | healthchecks/healthchecks | 8000 | postgres | | Auto-migrate |
+| cachet | cachethq/cachet | 8000 | postgres, redis | | |
 
-## Money & Budgeting (2)
+## Money & Budgeting (3)
 
-| Project | Image | Port | DB | Tested |
-|---------|-------|------|----|:------:|
-| btcpay-server | btcpayserver/btcpayserver | 23000 | postgres | |
-| firefly-iii | fireflyiii/core | 8080 | postgres | |
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| btcpay-server | btcpayserver/btcpayserver | 23000 | postgres | | |
+| firefly-iii | fireflyiii/core | 8080 | postgres | | |
+| ghostfolio | ghostfolio/ghostfolio | 3333 | postgres, redis | | |
 
 ## Note-taking (5)
 
@@ -307,12 +319,13 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | mealie | ghcr.io/mealie-recipes/mealie | 9925 | — | ✅ |
 | tandoor | vabene1111/recipes | 8080 | postgres | ✅ |
 
-## Search (2)
+## Search (3)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | meilisearch | getmeili/meilisearch | 7700 | — | ✅ | |
 | searxng | searxng/searxng | 8080 | — | | |
+| whoogle | benbusby/whoogle-search | 5000 | — | | |
 
 ## Feed Readers (1)
 
@@ -362,17 +375,38 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 |---------|-------|------|----|:------:|-------|
 | kimai | kimai/kimai2 | 8001 | mysql | | DB migrate+seed |
 
-## VPN (1)
+## VPN (3)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | netbird | netbirdio/management | 33073 | postgres | | Auto-migrate |
+| firezone | firezone/firezone | 8080 | postgres | | |
+| headscale | headscale/headscale | 8080 | — | | |
 
 ## Miscellaneous (1)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | moodist | ghcr.io/remvze/moodist | 8080 | — | | |
+
+## Games (2)
+
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| crafty-controller | registry.gitlab.com/crafty-controller/crafty-4 | 8443 | — | | |
+| pterodactyl | ghcr.io/pterodactyl/panel | 80 | mysql, redis | | |
+
+## CRM (1)
+
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| espocrm | espocrm/espocrm | 8080 | mysql | | |
+
+## Static Site Generators (1)
+
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| hugo | klakegg/hugo | 1313 | — | | |
 
 ## Self-hosting (4)
 

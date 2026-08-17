@@ -1,0 +1,49 @@
+name: centrifugo
+
+project:
+  identity: centrifugo
+
+install:
+  inputs:
+    commonDomain: ws.example.com
+
+app:
+  type: custom
+  image: centrifugo/centrifugo:latest
+  ports:
+    - "8000:8000"
+  environment:
+    CENTRIFUGO_API_KEY: "${API_KEY}"
+    CENTRIFUGO_ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+    CENTRIFUGO_ADMIN_SECRET: "${ADMIN_SECRET}"
+  command: centrifugo --api_insecure
+  volumes:
+    - centrifugo_data:/centrifugo
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  centrifugo_data: {}

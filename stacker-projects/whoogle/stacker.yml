@@ -1,0 +1,48 @@
+name: whoogle
+
+project:
+  identity: whoogle
+
+install:
+  inputs:
+    commonDomain: search.example.com
+
+app:
+  type: custom
+  image: benbusby/whoogle-search:latest
+  ports:
+    - "5000:5000"
+  environment:
+    WHOOGLE_DOTENV: 1
+    WHOOGLE_USER: admin
+    WHOOGLE_PASS: "${ADMIN_PASSWORD}"
+  volumes:
+    - whoogle_data:/config
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "5000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  whoogle_data: {}
