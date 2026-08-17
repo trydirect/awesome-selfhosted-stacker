@@ -1,11 +1,11 @@
 # awesome-selfhosted-stacker
 
-> **204 self-hostable apps, each deployable with a single `stacker.yml`.**
+> **224 self-hostable apps, each deployable with a single `stacker.yml`.**
 > Deploy to your laptop, your own server, or the cloud with one command —
 > database setup, health checks, secrets, and remote monitoring included.
 
 <p>
-  <img alt="Projects" src="https://img.shields.io/badge/projects-204-blue">
+  <img alt="Projects" src="https://img.shields.io/badge/projects-224-blue">
   <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-79-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
@@ -671,7 +671,7 @@ official image is the whole point.
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-08-16 — 204 projects configured, 79 tested and verified on
+Last updated: 2026-08-17 — 224 projects configured, 79 tested and verified on
 Ubuntu 26.04.
 
 ---
