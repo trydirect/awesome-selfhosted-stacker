@@ -10,8 +10,17 @@ need() {
   val=$(grep "^$1=" .env 2>/dev/null | cut -d= -f2- || true)
   [ -z "$val" ]
 }
+# Portable sed in-place helper (works on both macOS and Linux)
+set_secret() {
+  local key="$1" val="$2"
+  if [ "$(uname)" = "Darwin" ]; then
+    sed -i '' "s|^${key}=.*|${key}=${val}|" .env
+  else
+    sed -i "s|^${key}=.*|${key}=${val}|" .env
+  fi
+}
 if need "DB_PASSWORD"; then
-  sed -i '' "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" .env
+  set_secret "DB_PASSWORD" "$(openssl rand -hex 16)"
   echo "  Generated DB_PASSWORD"
 fi
 echo "Secrets ready."

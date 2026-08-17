@@ -37,6 +37,8 @@ hooks:
 app:
   type: "custom"
   image: "archivesspace/archivesspace:latest"
+  command: >-
+    sh -c "/archivesspace/scripts/setup-database.sh && exec /archivesspace/archivesspace.sh"
   ports:
     - "8080:8080"
   environment:
