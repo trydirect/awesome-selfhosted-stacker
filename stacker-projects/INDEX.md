@@ -47,7 +47,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 |---------|-------|------|----|:------:|-------|
 | activepieces | ghcr.io/activepieces/activepieces | 8080 | postgres, redis | ✅ | |
 | automatisch | automatisch/automatisch | 3000 | postgres | | |
-| calcom | calcom/cal.com | 3000 | postgres | | |
+| calcom | calcom/cal.com | 3000 | postgres | ✅ | |
 | changedetection | ghcr.io/dgtlmoon/changedetection.io | 5000 | — | | |
 | dify | (static) | — | — | | |
 | homeassistant | lscr.io/linuxserver/homeassistant | 8123 | — | | |
