@@ -446,17 +446,19 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (79)
+### Tested and verified (83)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
 
 | Project             | Type             | Port  | Image Fix / Notes |
 |---------------------|------------------|-------|--------------------|
+| Activepieces        | Automation       | 8080  | Zapier alternative |
 | CyberChef           | Data tools       | 8000  | container listens on 8080 |
 | Dashy               | Dashboard        | 8082  | container listens on 8080, not 80 |
 | d8a                 | Analytics        | 3000  | |
 | Daily Stars Explorer| Astronomy        | 8080  | |
+| Directus            | Headless CMS     | 8055  | REST + GraphQL API |
 | Discourse           | Forum            | 80    | needs pgvector/pgvector instead of plain postgres |
 | Docmost             | Wiki             | 3000  | needs Redis service |
 | Druid               | Analytics        | 8888  | pinned apache/druid:31.0.0; removed broken druid_extensions_loadList env var |
@@ -467,8 +469,12 @@ server target. Start here for production.
 | Gitness            | Git hosting      | 3000  | needs GITNESS_PRINCIPAL_ADMIN_EMAIL |
 | Ghost              | Blogging         | 2368  | |
 | Glances            | System monitor   | 61208 | |
+| Gotify             | Notifications    | 8080  | |
+| Grist              | Spreadsheet      | 8484  | relational spreadsheet with Python |
 | HedgeDoc           | Markdown editor  | 3000  | |
 | Home Assistant     | Smart home       | 8123  | slow startup (~50s) |
+| Homer              | Dashboard        | 8080  | Static dashboard, no DB |
+| Immich             | Photos           | 2283  | Google Photos alternative |
 | IT-Tools           | Developer tools  | 8083  | container listens on 80, not 8080 |
 | Jellyfin           | Media server     | 8096  | |
 | Jitsi Meet         | Video conf       | 80/443| uses :unstable tags; nginx permission bug |
@@ -483,15 +489,12 @@ server target. Start here for production.
 | Meilisearch        | Search           | 7700  | |
 | Memos              | Notes            | 5230  | |
 | Metabase           | BI               | 3000  | |
-| Immich             | Photos           | 2283  | Google Photos alternative |
 | Nextcloud          | File sync        | 8080  | |
-| Gotify             | Notifications    | 8080  | |
-| Homer              | Dashboard        | 8080  | Static dashboard, no DB |
 | Open-WebUI         | AI chat          | 3000  | |
 | Outline            | Knowledge base   | 3000  | |
 | Paperless-ngx      | Document mgmt    | 8000  | |
 | Pi-hole            | DNS ad-block     | 8080  | |
-| Pingvin Share      | File sharing     | 3000  | |
+| Pingvin Share      | File sharing     | 3000  | WeTransfer alternative |
 | Plausible          | Analytics        | 8000  | |
 | PostHog            | Product analytics| 8000  | |
 | Postiz App         | Social scheduler | 4007  | 6 containers: app + postgres + redis + temporal + ES |
