@@ -20,6 +20,8 @@ app:
     LIVE_VIEW_SIGNING_SALT: "${LIVE_VIEW_SIGNING_SALT}"
     SECRET_KEY: "${SECRET_KEY}"
     LOG_LEVEL: info
+  command: >-
+    sh -c "mix ecto.migrate && /app/bin/migrate && /app/bin/server"
   volumes:
     - firezone_data:/var/firezone
 

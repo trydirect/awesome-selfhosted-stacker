@@ -25,6 +25,8 @@ app:
     SESSION_DRIVER: redis
     REDIS_HOST: redis
     MAIL_DRIVER: smtp
+  command: >-
+    sh -c "php artisan key:generate && php artisan migrate --force && php artisan config:cache && php artisan serve --host=0.0.0.0 --port=8000"
   volumes:
     - cachet_data:/var/www/html/storage
 
