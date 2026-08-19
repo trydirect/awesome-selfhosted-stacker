@@ -40,7 +40,7 @@ app:
   command: >-
     sh -c "/archivesspace/scripts/setup-database.sh && exec /archivesspace/archivesspace.sh"
   ports:
-    - "8080:8080"
+    - "8081:8080"
   environment:
     APPCONFIG_DB_URL: "jdbc:mysql://db:3306/archivesspace?useUnicode=true&characterEncoding=UTF-8&user=as&password=${DB_PASSWORD}"
     APPCONFIG_SOLR_URL: "http://solr:8983/solr/archivesspace"
@@ -79,11 +79,15 @@ proxy:
   type: "none"
   auto_detect: false
 deploy:
-  target: "local"
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
-    provider: "hetzner"
-    region: "fsn1"
-    size: "cpx22"
+    provider: hetzner
+    region: fsn1
+    size: cpx22
     public_ports:
       - "8080"
 monitoring:
