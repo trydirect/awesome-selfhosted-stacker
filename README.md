@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (91)
+### Tested and verified (92)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -457,6 +457,7 @@ server target. Start here for production.
 | Appsmith            | Low-code         | 80    | Internal tool builder |
 | Aptabase            | Analytics        | 3000  | + postgres + clickhouse |
 | Bitmagnet           | BitTorrent       | 3333  | + postgres |
+| Bitwarden          | Password mgr     | 80    | vaultwarden + postgres |
 | CyberChef           | Data tools       | 8000  | container listens on 8080 |
 | Dashy               | Dashboard        | 8082  | container listens on 8080, not 80 |
 | d8a                 | Analytics        | 3000  | |
