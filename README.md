@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (90)
+### Tested and verified (91)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -493,6 +493,7 @@ server target. Start here for production.
 | Memos              | Notes            | 5230  | |
 | Metabase           | BI               | 3000  | |
 | Nextcloud          | File sync        | 8080  | |
+| Offen              | Analytics        | 3000  | single container, privacy-first |
 | Open-WebUI         | AI chat          | 3000  | |
 | Outline            | Knowledge base   | 3000  | |
 | Paperless-ngx      | Document mgmt    | 8000  | |
@@ -540,7 +541,6 @@ server target. Start here for production.
 | HitKeep       | Bookmarks    | Single container |
 | Linkding      | Bookmarks    | Single container |
 | Matomo        | Analytics    | App + MariaDB |
-| Offen         | Analytics    | Single container |
 | Wallabag      | Read-it-later| App + postgres + redis |
 | Automatisch   | Automation   | Workflow automation (Zapier alt) |
 | Audiobookshelf| Audiobooks   | Single container |
