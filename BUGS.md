@@ -119,3 +119,25 @@ User sees generic "IP not assigned" messages and has to run `stacker deployment 
 
 ---
 
+
+## [BUG] Infisical cloud deploy: firewall limit exceeded
+
+Stacker reports generic "server IP not yet assigned / paused" during `stacker deploy --target cloud`, but the real cause is Hetzner returning `resource_limit_exceeded` on firewall creation:
+
+```
+Deployment #753 finished with status 'paused'
+Error: firewall limit exceeded (resource_limit_exceeded, 81778aac82198b853f27b4d8fbcad6ec)
+```
+
+### Steps to reproduce
+1. `stacker deploy --target cloud --key htz-0 --force-new --watch` for a project with `public_ports`
+2. Watch the deployment pause during "Creating server infrastructure"
+
+### Expected
+Clear error about firewall/resource limits with actionable remediation.
+
+### Actual
+Generic "server IP not yet assigned" retry loop, then "paused". Only `stacker deployment events` reveals the firewall limit error.
+
+### Notes
+Same class as the previously documented `resource_limit_exceeded` network/placement errors. Hetzner per-project firewall quotas are being exhausted by repeated testing; user must delete old servers/firewalls or request a quota increase.
