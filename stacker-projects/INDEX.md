@@ -1,12 +1,12 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**224 projects** · **83 tested & verified** · Updated 2026-08-17
+**244 projects** · **83 tested & verified** · Updated 2026-08-19
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
 ---
 
-## AI & LLM (4)
+## AI & LLM (9)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -14,6 +14,11 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | ai-automation-workflows | flowiseai/flowise, n8nio/n8n | 3000 | postgres | ✅ |
 | ollama-local | ollama/ollama | 11434 | — | |
 | private-sovereign-ai | ghcr.io/open-webui/open-webui | 3000 | — | ✅ |
+| anythingllm | mintplexlabs/anythingllm | 3001 | — | |
+| langflow | langflowai/langflow | 7860 | postgres | |
+| localai | localai/localai | 8080 | — | |
+| khoj | ghcr.io/khoj-ai/khoj | 42110 | postgres | |
+| lobechat | lobehub/lobe-chat | 3210 | postgres | |
 
 ## Analytics (21)
 
@@ -41,7 +46,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | umami | ghcr.io/umami-software/umami | 3000 | postgres | ✅ |
 | shaper | taleshape/shaper | 8080 | — | |
 
-## Automation (16)
+## Automation (19)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -59,6 +64,16 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | dagu | ghcr.io/dagucloud/dagu | 8080 | — | | |
 | dittofeed | dittofeed/dittofeed | 3000 | postgres, clickhouse, kafka | | Auto-migrate |
 | huginn | ghcr.io/huginn/huginn | 3000 | postgres | | DB migrate+seed |
+| kestra | kestra/kestra | 8080 | postgres | | |
+| windmill | ghcr.io/windmill-labs/windmill | 8000 | postgres | | |
+| cronicle | cronicle/cronicle | 3012 | — | | |
+
+## Backup (2)
+
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| urbackup | uroni/urbackup-server | 55414 | — | | |
+| restic-rest-server | restic/rest-server | 8000 | — | | |
 
 ## Bookmarks & Link Sharing (7)
 
@@ -319,13 +334,33 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | mealie | ghcr.io/mealie-recipes/mealie | 9925 | — | ✅ |
 | tandoor | vabene1111/recipes | 8080 | postgres | ✅ |
 
-## Search (3)
+## Search (6)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | meilisearch | getmeili/meilisearch | 7700 | — | ✅ | |
 | searxng | searxng/searxng | 8080 | — | | |
 | whoogle | benbusby/whoogle-search | 5000 | — | | |
+| typesense | typesense/typesense:27.1 | 8108 | — | | |
+| opensearch | opensearchproject/opensearch | 9200 | — | | |
+| manticore | manticoresearch/manticore | 9306 | — | | |
+
+## Databases (4)
+
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| clickhouse | clickhouse/clickhouse-server | 8123 | — | | |
+| surrealdb | surrealdb/surrealdb | 8000 | — | | |
+| influxdb | influxdb:2.7 | 8086 | — | | |
+| mongodb | mongo:7 | 27017 | — | | |
+
+## Storage (3)
+
+| Project | Image | Port | DB | Tested | Notes |
+|---------|-------|------|----|:------:|-------|
+| seaweedfs | chrislusf/seaweedfs | 8888 | — | | |
+| seafile | seafileltd/seafile-mc | 8080 | mysql | | |
+| filestash | machines/filestash | 8334 | — | | |
 
 ## Feed Readers (1)
 
