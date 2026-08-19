@@ -1,0 +1,49 @@
+name: surrealdb
+
+project:
+  identity: surrealdb
+
+install:
+  inputs:
+    commonDomain: surrealdb.example.com
+
+app:
+  type: custom
+  image: surrealdb/surrealdb:latest
+  ports:
+    - "8000:8000"
+  environment:
+    SURREAL_USER: root
+    SURREAL_PASS: "${DB_PASSWORD}"
+    SURREAL_PATH: file:///data/surrealdb
+  command: start --log trace --user ${SURREAL_USER} --pass ${SURREAL_PASS} file:///data/surrealdb
+  volumes:
+    - surrealdb_data:/data
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  surrealdb_data: {}

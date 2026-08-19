@@ -1,0 +1,68 @@
+name: langflow
+
+project:
+  identity: langflow
+
+install:
+  inputs:
+    commonDomain: workflows.example.com
+
+app:
+  type: custom
+  image: langflowai/langflow:latest
+  ports:
+    - "7860:7860"
+  environment:
+    LANGFLOW_AUTO_LOGIN: "false"
+    LANGFLOW_SECRET_KEY: "${LANGFLOW_SECRET_KEY}"
+    LANGFLOW_SUPERUSER: admin
+    LANGFLOW_SUPERUSER_PASSWORD: "${ADMIN_PASSWORD}"
+    LANGFLOW_DATABASE_URL: "postgresql://langflow:${DB_PASSWORD}@postgres:5432/langflow"
+  volumes:
+    - langflow_data:/app/langflow
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: langflow
+      POSTGRES_USER: langflow
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U langflow"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "7860"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  langflow_data: {}
+  postgres_data: {}

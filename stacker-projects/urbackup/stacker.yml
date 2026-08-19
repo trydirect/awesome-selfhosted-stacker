@@ -1,0 +1,53 @@
+name: urbackup
+
+project:
+  identity: urbackup
+
+install:
+  inputs:
+    commonDomain: backup.example.com
+
+app:
+  type: custom
+  image: uroni/urbackup-server:latest
+  ports:
+    - "55414:55414"
+    - "35623:35623"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: UTC
+    URBACKUP_WEB_PASSWORD: "${URBACKUP_PASSWORD}"
+  volumes:
+    - urbackup_data:/var/urbackup
+    - urbackup_backups:/backups
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "55414"
+      - "35623"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  urbackup_data: {}
+  urbackup_backups: {}

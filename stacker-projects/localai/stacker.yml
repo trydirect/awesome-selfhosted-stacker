@@ -1,0 +1,48 @@
+name: localai
+
+project:
+  identity: localai
+
+install:
+  inputs:
+    commonDomain: ai.example.com
+
+app:
+  type: custom
+  image: localai/localai:latest
+  ports:
+    - "8080:8080"
+  environment:
+    MODELS_PATH: /models
+    THREADS: "4"
+    DEBUG: "false"
+  volumes:
+    - localai_models:/models
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  localai_models: {}

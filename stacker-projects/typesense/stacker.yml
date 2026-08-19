@@ -1,0 +1,49 @@
+name: typesense
+
+project:
+  identity: typesense
+
+install:
+  inputs:
+    commonDomain: search.example.com
+
+app:
+  type: custom
+  image: typesense/typesense:27.1
+  ports:
+    - "8108:8108"
+  environment:
+    TYPESENSE_DATA_DIR: /data
+    TYPESENSE_API_KEY: "${TYPESENSE_API_KEY}"
+    TYPESENSE_ENABLE_CORS: "true"
+  command: --data-dir /data --api-key=${TYPESENSE_API_KEY} --enable-cors
+  volumes:
+    - typesense_data:/data
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8108"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  typesense_data: {}

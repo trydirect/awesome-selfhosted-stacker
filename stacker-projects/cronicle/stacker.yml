@@ -1,0 +1,52 @@
+name: cronicle
+
+project:
+  identity: cronicle
+
+install:
+  inputs:
+    commonDomain: scheduler.example.com
+
+app:
+  type: custom
+  image: cronicle/cronicle:latest
+  ports:
+    - "3012:3012"
+  environment:
+    CRONICLE_base_app_url: http://localhost:3012
+    CRONICLE_foreground: "1"
+    CRONICLE_echo: "1"
+  volumes:
+    - cronicle_data:/opt/cronicle/data
+    - cronicle_logs:/opt/cronicle/logs
+    - cronicle_plugins:/opt/cronicle/plugins
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3012"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  cronicle_data: {}
+  cronicle_logs: {}
+  cronicle_plugins: {}

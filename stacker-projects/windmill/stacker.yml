@@ -1,0 +1,66 @@
+name: windmill
+
+project:
+  identity: windmill
+
+install:
+  inputs:
+    commonDomain: scripts.example.com
+
+app:
+  type: custom
+  image: ghcr.io/windmill-labs/windmill:latest
+  ports:
+    - "8000:8000"
+  environment:
+    DATABASE_URL: "postgres://windmill:${DB_PASSWORD}@postgres:5432/windmill?sslmode=disable"
+    BASE_URL: http://localhost:8000
+    MODE: standalone
+  volumes:
+    - windmill_logs:/tmp/windmill/logs
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: windmill
+      POSTGRES_USER: windmill
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U windmill"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  windmill_logs: {}
+  postgres_data: {}
