@@ -1,0 +1,38 @@
+# Use the checked-in Compose file as the deployment source for this scaffold.
+name: insforge
+version: '0.1.0'
+
+project:
+  identity: insforge
+
+app:
+  type: node
+  path: .
+  ports:
+    - '7130:7130'
+    - '7131:7131'
+  environment: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  compose_file: ./compose.yml
+
+ai:
+  enabled: false
+  provider: ollama
+  model: null
+  api_key: null
+  endpoint: null
+  timeout: 0
+  tasks: []
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+env: {}
