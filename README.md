@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (103)
+### Tested and verified (104)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -511,6 +511,7 @@ server target. Start here for production.
 | Pi-hole            | DNS ad-block     | 8080  | |
 | Pingvin Share      | File sharing     | 3000  | WeTransfer alternative |
 | Plausible          | Analytics        | 8000  | |
+| Portainer          | Docker mgmt      | 9000  | container management UI |
 | PostHog            | Product analytics| 8000  | |
 | Postiz App         | Social scheduler | 4007  | 6 containers: app + postgres + redis + temporal + ES |
 | Redash             | BI               | 5000  | |
@@ -578,7 +579,6 @@ server target. Start here for production.
 | Keycloak      | IAM/SSO      | OAuth2/OIDC/SAML identity |
 | Meilisearch   | Search       | Lightning-fast search engine |
 | MinIO         | Object store | S3-compatible storage |
-| Portainer     | Docker mgmt  | Container management UI |
 | Speedtest Tracker | Monitoring| Internet speed tracking |
 | Syncthing     | File sync    | P2P Dropbox alternative |
 | Traefik       | Reverse proxy| Auto-discovery proxy |
