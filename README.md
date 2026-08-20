@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (97)
+### Tested and verified (98)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -498,6 +498,7 @@ server target. Start here for production.
 | Metabase           | BI               | 3000  | |
 | Nextcloud          | File sync        | 8080  | |
 | Navidrome          | Music            | 4533  | music streaming server |
+| NocoDB             | Database         | 8080  | Airtable alternative + postgres |
 | Offen              | Analytics        | 3000  | single container, privacy-first |
 | Open-WebUI         | AI chat          | 3000  | |
 | Outline            | Knowledge base   | 3000  | |
@@ -575,7 +576,6 @@ server target. Start here for production.
 | Keycloak      | IAM/SSO      | OAuth2/OIDC/SAML identity |
 | Meilisearch   | Search       | Lightning-fast search engine |
 | MinIO         | Object store | S3-compatible storage |
-| NocoDB        | Database     | Airtable alternative |
 | Portainer     | Docker mgmt  | Container management UI |
 | Speedtest Tracker | Monitoring| Internet speed tracking |
 | Syncthing     | File sync    | P2P Dropbox alternative |
