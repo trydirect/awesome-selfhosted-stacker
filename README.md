@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (96)
+### Tested and verified (97)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -497,6 +497,7 @@ server target. Start here for production.
 | Memos              | Notes            | 5230  | |
 | Metabase           | BI               | 3000  | |
 | Nextcloud          | File sync        | 8080  | |
+| Navidrome          | Music            | 4533  | music streaming server |
 | Offen              | Analytics        | 3000  | single container, privacy-first |
 | Open-WebUI         | AI chat          | 3000  | |
 | Outline            | Knowledge base   | 3000  | |
@@ -554,7 +555,6 @@ server target. Start here for production.
 | Memos         | Notes        | Lightweight note-taking |
 | Mealie        | Recipes      | Recipe manager |
 | n8n           | Automation   | Workflow automation + postgres |
-| Navidrome     | Music        | Music streaming server |
 | One Time Secret | Secret sharing | Self-destructing secret links |
 | Rallly        | Scheduling   | Date polls + postgres |
 | Screego       | Screen sharing| WebRTC screen sharing |
