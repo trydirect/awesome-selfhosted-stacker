@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (94)
+### Tested and verified (95)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -483,6 +483,7 @@ server target. Start here for production.
 | IT-Tools           | Developer tools  | 8083  | container listens on 80, not 8080 |
 | Jellyfin           | Media server     | 8096  | |
 | Jitsi Meet         | Video conf       | 80/443| uses :unstable tags; nginx permission bug |
+| Kavita             | Reading          | 5000  | comics/manga reader |
 | Komga              | Comics/manga     | 25600 | |
 | Lemmy              | Link aggregator  | 1234  | pinned dessalines/lemmy:0.19.11 |
 | Linkding           | Bookmarks        | 9090  | |
@@ -571,7 +572,6 @@ server target. Start here for production.
 | Grocy         | Household    | Groceries, chores, batteries |
 | Home Assistant| Smart home   | Home automation platform |
 | Immich        | Photos       | Google Photos alternative |
-| Kavita        | Reading      | Books, manga, comics |
 | Keycloak      | IAM/SSO      | OAuth2/OIDC/SAML identity |
 | Meilisearch   | Search       | Lightning-fast search engine |
 | MinIO         | Object store | S3-compatible storage |
