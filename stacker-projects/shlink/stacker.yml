@@ -21,7 +21,7 @@ app:
     DB_PASSWORD: "${DB_PASSWORD}"
     DEFAULT_DOMAIN: localhost:8080
     IS_HTTPS_ENABLED: "false"
-    GEOLITE_LICENSE_KEY: "${GEOLITE_LICENSE_KEY:-}"
+    GEOLITE_LICENSE_KEY: "${GEOLITE_LICENSE_KEY}"
 
 services:
   - name: postgres
