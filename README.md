@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (95)
+### Tested and verified (96)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -493,6 +493,7 @@ server target. Start here for production.
 | Maybe Finance      | Personal finance | 3000  | |
 | Mealie             | Recipes          | 9925  | SQLite by default |
 | Meilisearch        | Search           | 7700  | |
+| MeTube             | Media download   | 8081  | YouTube downloader |
 | Memos              | Notes            | 5230  | |
 | Metabase           | BI               | 3000  | |
 | Nextcloud          | File sync        | 8080  | |
@@ -550,7 +551,6 @@ server target. Start here for production.
 | Homer         | Dashboard    | Static dashboard, no DB |
 | Kopia         | Backup       | Backup solution, no DB |
 | Mattermost    | Team chat    | Slack alternative + postgres |
-| MeTube        | Media download| YouTube downloader |
 | Memos         | Notes        | Lightweight note-taking |
 | Mealie        | Recipes      | Recipe manager |
 | n8n           | Automation   | Workflow automation + postgres |
