@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (93)
+### Tested and verified (94)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -523,6 +523,7 @@ server target. Start here for production.
 | Umami             | Analytics        | 3000  | |
 | UptimeKuma        | Monitoring       | 3001  | |
 | Vaultwarden       | Password mgr     | 8080  | with Nginx Proxy Manager |
+| Wallabag          | Read-it-later    | 80    | + postgres + redis |
 | WordPress         | CMS              | 8080  | uses image: wordpress (no tag) + mysql:8.0 |
 | Zitadel           | IAM/SSO          | 8080  | ExternalDomain must match server IP |
 
@@ -532,8 +533,6 @@ server target. Start here for production.
 |---------------|--------------|-------|
 | ArchiveBox    | Web archive  | |
 | AstrBot       | AI chatbot   | |
-| Bitmagnet     | BitTorrent   | |
-| Bitwarden     | Password mgr | |
 | ComfyUI       | AI image gen | Cloud: container runs but not reachable |
 | Coolify       | PaaS         | Cloud: local-exec provisioner error |
 | Countly Server| Analytics    | 4 containers running; nginx config needs manual SCP |
@@ -542,8 +541,6 @@ server target. Start here for production.
 | HitKeep       | Bookmarks    | Single container |
 | Linkding      | Bookmarks    | Single container |
 | Matomo        | Analytics    | App + MariaDB |
-| Wallabag      | Read-it-later| App + postgres + redis |
-| Automatisch   | Automation   | Workflow automation (Zapier alt) |
 | Audiobookshelf| Audiobooks   | Single container |
 | Cal.com       | Scheduling   | Calendly alternative + postgres |
 | Calibre-web   | E-books      | linuxserver/calibre-web |
