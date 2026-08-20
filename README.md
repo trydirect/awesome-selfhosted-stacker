@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (101)
+### Tested and verified (102)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -503,6 +503,7 @@ server target. Start here for production.
 | Navidrome          | Music            | 4533  | music streaming server |
 | NocoDB             | Database         | 8080  | Airtable alternative + postgres |
 | Offen              | Analytics        | 3000  | single container, privacy-first |
+| Ombi               | Media requests   | 3579  | Plex/Jellyfin requests |
 | Open-WebUI         | AI chat          | 3000  | |
 | Outline            | Knowledge base   | 3000  | |
 | Paperless-ngx      | Document mgmt    | 8000  | |
@@ -586,7 +587,6 @@ server target. Start here for production.
 | Hanko         | Auth         | Passkeys + REST API |
 | Infisical     | Secrets      | Secret management + REST API |
 | Jellyseerr    | Media requests| Media request management + REST API |
-| Ombi          | Media requests| Plex/Jellyfin requests + REST API |
 | Organizr      | Dashboard    | HTPC dashboard + REST API |
 | Tautulli      | Plex monitor | Plex analytics + REST API |
 
