@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (100)
+### Tested and verified (101)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -498,6 +498,7 @@ server target. Start here for production.
 | MeTube             | Media download   | 8081  | YouTube downloader |
 | Memos              | Notes            | 5230  | |
 | Metabase           | BI               | 3000  | |
+| Mattermost         | Team chat        | 8065  | Slack alternative + postgres |
 | Nextcloud          | File sync        | 8080  | |
 | Navidrome          | Music            | 4533  | music streaming server |
 | NocoDB             | Database         | 8080  | Airtable alternative + postgres |
@@ -554,7 +555,6 @@ server target. Start here for production.
 | Gotify        | Notifications| Push notification server |
 | Homer         | Dashboard    | Static dashboard, no DB |
 | Kopia         | Backup       | Backup solution, no DB |
-| Mattermost    | Team chat    | Slack alternative + postgres |
 | Memos         | Notes        | Lightweight note-taking |
 | Mealie        | Recipes      | Recipe manager |
 | n8n           | Automation   | Workflow automation + postgres |
