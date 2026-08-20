@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (92)
+### Tested and verified (93)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -474,6 +474,7 @@ server target. Start here for production.
 | Ghost              | Blogging         | 2368  | |
 | Glances            | System monitor   | 61208 | |
 | Gotify             | Notifications    | 8080  | |
+| GoatCounter        | Analytics        | 8080  | single container, no secrets |
 | Grist              | Spreadsheet      | 8484  | relational spreadsheet with Python |
 | HedgeDoc           | Markdown editor  | 3000  | |
 | Home Assistant     | Smart home       | 8123  | slow startup (~50s) |
@@ -538,7 +539,6 @@ server target. Start here for production.
 | Countly Server| Analytics    | 4 containers running; nginx config needs manual SCP |
 | Floci         | File sharing | |
 | GoAccess      | Analytics    | Config bind-mount files not copied to server |
-| GoatCounter   | Analytics    | Single-container, no secrets needed |
 | HitKeep       | Bookmarks    | Single container |
 | Linkding      | Bookmarks    | Single container |
 | Matomo        | Analytics    | App + MariaDB |
