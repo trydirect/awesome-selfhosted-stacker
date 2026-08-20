@@ -446,7 +446,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (98)
+### Tested and verified (99)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -475,6 +475,7 @@ server target. Start here for production.
 | Glances            | System monitor   | 61208 | |
 | Gotify             | Notifications    | 8080  | |
 | GoatCounter        | Analytics        | 8080  | single container, no secrets |
+| Grafana            | Monitoring       | 3000  | admin/admin default |
 | Grist              | Spreadsheet      | 8484  | relational spreadsheet with Python |
 | HedgeDoc           | Markdown editor  | 3000  | |
 | Home Assistant     | Smart home       | 8123  | slow startup (~50s) |
@@ -569,7 +570,6 @@ server target. Start here for production.
 | Duplicati     | Backup       | Encrypted backup to cloud/local |
 | Frigate       | Video NVR    | AI object detection |
 | FreshRSS      | RSS reader   | Self-hosted RSS |
-| Grafana       | Monitoring   | Observability dashboards |
 | Grocy         | Household    | Groceries, chores, batteries |
 | Home Assistant| Smart home   | Home automation platform |
 | Immich        | Photos       | Google Photos alternative |
