@@ -395,6 +395,8 @@ is `u32`.
 | **All projects** | `healthcheck.retries: "10"` (string) caused parse error | Must be unquoted integer: `retries: 10` |
 | **archivesspace** | Requires one-time `setup-database.sh` on first deploy | Add `app.command:` or run `docker exec ... /archivesspace/scripts/setup-database.sh` |
 | **All projects** | `generate-secrets.sh` sed delimiter bug — `-base64` output contains `/` which breaks sed's `/` delimiter, corrupting `.env` values | Use `|` delimiter: `sed -i "" "s|^KEY=.*|KEY=$(openssl rand -base64 32)|" .env` |
+| **shlink** | `${VAR:-default}` bash-style default syntax in `app.environment` is NOT supported — stacker's substitution only handles bare `${VAR_NAME}` and errors on the literal string including `:-` | Use plain `${VAR}` and define the key (even empty) in `.env`/`.env.example` |
+| **All local deploys** | `--target local` uses a hardcoded, unnamespaced Compose project name (`stacker`) — deploying project B can recreate/destroy project A's running local containers, and generic volume names (e.g. `postgres_data`) collide across projects, silently reusing stale DB data with the wrong credentials ([stacker#235](https://github.com/trydirect/stacker/issues/235)) | If a freshly-deployed service fails DB auth (`role "x" does not exist`) right after a *different* project was deployed locally, suspect volume collision first — check `docker volume ls \| grep stacker_`, `docker volume rm stacker_<name>`, redeploy |
 
 ---
 
@@ -583,6 +585,29 @@ curl -s "https://api.hetzner.cloud/v1/server_types" -H "Authorization: Bearer $H
 
 **Status:** Logged in `BUGS.md`. Needs fix in Stacker Install Service.
 
+### Cloud deploy paused: Hetzner firewall limit exceeded (recurring, 2026-08-19)
+
+Same symptom as above (generic "paused"/"IP not available"), different root
+cause — always check `stacker status` before assuming it's a new bug:
+
+```
+Error: firewall limit exceeded (resource_limit_exceeded, <id>)
+```
+
+The Hetzner test account has accumulated 500+ servers/firewalls from
+repeated `stacker deploy --target cloud` runs across this repo's 246
+projects and has hit an account-level firewall quota. `stacker servers`
+shows the full (long) list. This is an environment/account issue, not a
+per-project config bug — a project with a clean `stacker.yml` (verified via
+`--target local`) can still fail cloud deploy for this reason.
+
+**Do not delete servers/firewalls to fix this** — servers must never be
+deleted via API/CLI/any method (see global rule); this needs sanctioned
+cleanup or a quota increase, not agent action. When blocked, fall back to
+`--target server` (existing server) to still verify the deploy path, and
+note the block in the project's `BUGS.md` referencing this section instead
+of re-diagnosing from scratch.
+
 ---
 
 ## 13. Config Pipeline (Rust Source Map)
@@ -615,6 +640,69 @@ curl -s "https://api.hetzner.cloud/v1/server_types" -H "Authorization: Bearer $H
 | `src/routes/project/deploy.rs:1277` | `apply_deploy_bundle` — stores `config_files`/`config_bundle` in `project.metadata` |
 | `src/console/commands/cli/deploy.rs:3268` | `build_config_bundle` call site — passes `project_dir` or compose parent as `reference_base` |
 | `src/forms/firewall.rs:40` | `parse_public_port` — parses "8000" or "53/udp" |
+
+---
+
+## 13.5 Debugging/Verification Workflow — Prefer stacker CLI
+
+When verifying a deploy, exhaust `stacker` subcommands before falling back
+to `ssh`/`docker`/`curl`-only investigation — this also stress-tests the
+CLI itself, which is the point of this repo:
+
+```bash
+stacker status                          # deployment status + log tail
+stacker deployment events               # full event log (status can truncate)
+stacker agent status                    # container list for the active deployment
+stacker agent health                    # per-container CPU/mem + overall health
+stacker agent health --deployment <hash> # same, pinned to a specific deployment
+stacker logs --service <name> --tail 50  # per-service logs (NOT `stacker logs <name>` — service is a flag)
+stacker cloud firewall list --server-id <id>  # confirm auto-firewall actually opened the ports
+```
+
+**Known gap:** `stacker agent status` and `stacker agent health` each pick
+their own "active deployment" for a project when `--deployment` is
+omitted, and can disagree with each other if the project has more than one
+deployment (e.g. one to cloud, one to an existing server) — see
+[stacker#234](https://github.com/trydirect/stacker/issues/234). Always
+pass `--deployment <hash>` explicitly once you have more than one
+deployment for the same project; don't trust the auto-selected default.
+
+Only drop to `ssh`/`docker exec` when a stacker command's output is
+insufficient (e.g. `stacker status`/`stacker deployment events` truncate
+the real Ansible failure — see the port-conflict example in §12) — and
+note the gap in the project's `BUGS.md` as a potential missing stacker
+feature.
+
+If, after checking this file and `stacker --help`/`stacker <cmd> --help`,
+a needed capability genuinely doesn't exist, file a feature request or bug
+report at https://github.com/trydirect/stacker/issues (check existing
+issues first with `gh issue list --repo trydirect/stacker --search
+"<keywords>"` to avoid duplicates).
+
+**Don't trust "this is fixed" claims — re-reproduce, and re-check after
+every "just updated."** When told a stacker release/build now includes a
+fix for issue N, re-run the original repro steps against the current
+build before updating any docs/memory — and if the claim doesn't hold up,
+don't assume it's permanently wrong either; some fixes need an actual
+backend redeploy, not just a merge/CLI update, so re-test again next time
+you're told "just updated."
+
+Case study, 2026-08-19/20, build `0.3.1 (144d1a6)`:
+- stacker#219 (`stacker status` omitting `app` from Services) — fixed on
+  first check.
+- stacker#211 (remote compose referencing undefined network
+  `default_network` instead of the real `trydirect_network`) — claimed
+  fixed twice, still reproduced both times (confirmed via
+  `stacker agent deploy-app <app> --image <img> --force`, verified the
+  remote compose file itself was freshly rendered, not cached). Fixed on
+  the third check, after an explicit "stacker was just updated."
+- stacker#236 (NEW) — confirming #211 immediately surfaced a sibling bug
+  in the *same* render path: services with named volumes render fine
+  individually, but the top-level `volumes:` block is omitted entirely
+  (`service "postgres" refers to undefined volume postgres_data`). When a
+  shared renderer/codepath gets fixed for one resource type (networks),
+  check sibling resource types (volumes) for the same bug class — that's
+  exactly how this was found.
 
 ---
 

@@ -18,4 +18,8 @@ if need "SECRET_KEY"; then
   sed -i '' "s|^SECRET_KEY=.*|SECRET_KEY=$(openssl rand -hex 32)|" .env
   echo "  Generated SECRET_KEY"
 fi
+if need "ADMIN_PASSWORD"; then
+  sed -i '' "s|^ADMIN_PASSWORD=.*|ADMIN_PASSWORD=$(openssl rand -hex 16)|" .env
+  echo "  Generated ADMIN_PASSWORD"
+fi
 echo "Secrets ready."
