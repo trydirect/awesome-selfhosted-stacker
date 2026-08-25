@@ -1,0 +1,76 @@
+name: seafile
+
+project:
+  identity: seafile
+
+install:
+  inputs:
+    commonDomain: files.example.com
+
+app:
+  type: custom
+  image: seafileltd/seafile-mc:latest
+  ports:
+    - "8080:80"
+  environment:
+    SEAFILE_SERVER_HOSTNAME: ${SEAFILE_HOSTNAME}
+    SEAFILE_ADMIN_EMAIL: admin@example.com
+    SEAFILE_ADMIN_PASSWORD: "${SEAFILE_ADMIN_PASSWORD}"
+    SEAFILE_SERVER_LETSENCRYPT: "false"
+    SEAFILE_SERVER_PROTOCOL: http
+    DB_HOST: mysql
+    DB_PORT: "3306"
+    DB_ROOT_PASSWD: "${DB_ROOT_PASSWORD}"
+    DB_USER: seafile
+    DB_USER_PASSWD: "${DB_PASSWORD}"
+  volumes:
+    - seafile_data:/shared
+  depends_on:
+    - mysql
+
+services:
+  - name: mysql
+    image: mysql:8
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_DATABASE: ccnet_db
+      MYSQL_USER: seafile
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - seafile_mysql:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h localhost
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  seafile_data: {}
+  seafile_mysql: {}

@@ -1,0 +1,75 @@
+name: penpot
+version: "2.1"
+
+app:
+  type: custom
+  image: penpotapp/penpot-frontend:latest
+  ports:
+    - "9001:80"
+  environment:
+    PENPOT_FLAGS: enable-registration enable-login-with-password enable-login-with-oidc enable-login-with-google enable-login-with-github enable-login-with-gitlab
+
+services:
+  - name: penpot-backend
+    image: penpotapp/penpot-backend:latest
+    environment:
+      PENPOT_FLAGS: enable-registration enable-login-with-password enable-login-with-oidc enable-login-with-google enable-login-with-github enable-login-with-gitlab
+      PENPOT_DATABASE_URI: "postgresql://postgres:5432/penpot"
+      PENPOT_DATABASE_USERNAME: postgres
+      PENPOT_DATABASE_PASSWORD: ${PENPOT_DATABASE_PASSWORD}
+      PENPOT_REDIS_URI: "redis://redis:6379"
+      PENPOT_ASSETS_STORAGE_BACKEND: assets-fs
+      PENPOT_STORAGE_ASSETS_FS_DIRECTORY: /opt/data/assets
+      PENPOT_TELEMETRY_ENABLED: "false"
+      PENPOT_SMTP_DEFAULT_FROM: no-reply@penpot.local
+      PENPOT_SMTP_DEFAULT_REPLY_TO: no-reply@penpot.local
+      PENPOT_SMTP_HOST: mailcatcher
+      PENPOT_SMTP_PORT: "1025"
+      PENPOT_SMTP_TLS: "false"
+      PENPOT_SMTP_SSL: "false"
+    volumes:
+      - "penpot-assets:/opt/data/assets"
+    depends_on:
+      - postgres
+      - redis
+
+  - name: penpot-exporter
+    image: penpotapp/penpot-exporter:latest
+    environment:
+      PENPOT_REDIS_URI: "redis://redis:6379"
+      PENPOT_ASSETS_STORAGE_BACKEND: assets-fs
+      PENPOT_STORAGE_ASSETS_FS_DIRECTORY: /opt/data/assets
+    volumes:
+      - "penpot-assets:/opt/data/assets"
+    depends_on:
+      - redis
+
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: penpot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${PENPOT_DATABASE_PASSWORD}
+    volumes:
+      - "penpot-postgres:/var/lib/postgresql/data"
+
+  - name: redis
+    image: redis:7-alpine
+    volumes:
+      - "penpot-redis:/data"
+
+  - name: mailcatcher
+    image: sj26/mailcatcher:latest
+    ports:
+      - "1080:1080"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: penpot.try.direct
+      description: "Domain name for the application"
+    - name: penpot-database-password
+      type: secret
+      default: ""
+      description: "PostgreSQL password for Penpot"

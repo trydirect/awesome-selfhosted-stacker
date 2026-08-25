@@ -62,9 +62,9 @@ deploy:
     public_ports:
     - '3000'
   server:
-    host: ${DEPLOY_HOST}
+    host: 178.105.17.198
     user: root
-    ssh_key: ${BASE_PATH}/stacker-project-test
+    ssh_key: ~/.config/stacker/ssh/server-453_ed25519
     port: 22
   registry: null
   default_target: null

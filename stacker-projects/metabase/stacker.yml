@@ -1,96 +1,69 @@
 name: metabase
-version: 0.49.0
-organization: null
+
 project:
   identity: metabase
+
+install:
+  inputs:
+    commonDomain: metabase.example.com
+
 app:
   type: custom
-  path: .
-  dockerfile: null
   image: metabase/metabase:latest
-  build: null
   ports:
-  - 3000:3000
-  volumes: []
+    - "3000:3000"
   environment:
-    MB_DB_PASS: ${DB_PASSWORD}
-    MB_DB_DBNAME: metabase
-    MB_DB_PORT: '5432'
     MB_DB_TYPE: postgres
+    MB_DB_DBNAME: metabase
+    MB_DB_PORT: 5432
     MB_DB_USER: metabase
-    MB_JAVA_TIMEZONE: UTC
-    MB_DB_HOST: metabase_db
-  command: null
-  healthcheck: null
-services:
-- name: metabase_db
-  image: postgres:16-alpine
-  ports:
-  - 127.0.0.1:5432:5432
-  environment:
-    POSTGRES_PASSWORD: ${DB_PASSWORD}
-    POSTGRES_DB: metabase
-    POSTGRES_USER: metabase
+    MB_DB_PASS: "${DB_PASSWORD}"
+    MB_DB_HOST: postgres
   volumes:
-  - metabase_db:/var/lib/postgresql/data
-  depends_on: []
-  command: null
-  healthcheck:
-    test: CMD-SHELL pg_isready -U metabase -d metabase
-    interval: 10s
-    timeout: 5s
-    retries: 10
+    - metabase_data:/metabase-data
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: metabase
+      POSTGRES_USER: metabase
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U metabase"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 proxy:
   type: none
   auto_detect: false
-  domains: []
-  config: null
+
 deploy:
   target: server
-  environment: null
-  compose_file: null
-  deployment_hash: null
-  cloud:
-    provider: hetzner
-    orchestrator: remote
-    region: fsn1
-    size: cpx22
-    install_image: null
-    remote_payload_file: null
-    ssh_key: null
-    key: null
-    server: null
-    public_ports:
-    - '3000'
   server:
     host: ${DEPLOY_HOST}
     user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
-    port: 22
-  registry: null
-  default_target: null
-  targets: {}
-install:
-  inputs:
-    commonDomain: analytics.example.com
-environments: {}
-ai:
-  enabled: false
-  provider: openai
-  model: null
-  api_key: null
-  endpoint: null
-  timeout: 0
-  tasks: []
-monitoring:
-  status_panel: true
-  healthcheck: null
-  metrics: null
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
 hooks:
   pre_build: ./scripts/generate-secrets.sh
-  post_deploy: null
-  on_failure: null
+
+monitoring:
+  status_panel: true
+
 env_file: .env
-env: {}
-config_contract:
-  services: {}
+
+volumes:
+  metabase_data: {}
+  postgres_data: {}

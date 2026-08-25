@@ -1,0 +1,50 @@
+name: librechat
+version: "0.7.3"
+
+app:
+  type: custom
+  image: ghcr.io/danny-avila/librechat:latest
+  ports:
+    - "3080:3080"
+  environment:
+    MONGO_URI: "mongodb://mongo:27017/librechat"
+    CREDS_KEY: ${CREDS_KEY}
+    CREDS_IV: ${CREDS_IV}
+    JWT_SECRET: ${JWT_SECRET}
+    JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+    HOST_URL: http://0.0.0.0:3080
+    NODE_ENV: production
+    LOG_LEVEL: info
+  volumes:
+    - "librechat-images:/app/client/public/images"
+    - "librechat-logs:/app/api/logs"
+    - "librechat-cache:/app/api/node_modules/.cache"
+
+services:
+  - name: mongo
+    image: mongo:7
+    volumes:
+      - "librechat-mongo:/data/db"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: librechat.try.direct
+      description: "Domain name for the application"
+    - name: creds-key
+      type: secret
+      default: ""
+      description: "Credentials encryption key"
+    - name: creds-iv
+      type: secret
+      default: ""
+      description: "Credentials initialization vector"
+    - name: jwt-secret
+      type: secret
+      default: ""
+      description: "JWT secret"
+    - name: jwt-refresh-secret
+      type: secret
+      default: ""
+      description: "JWT refresh secret"

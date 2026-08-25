@@ -1,0 +1,56 @@
+name: passbolt
+version: "4.7.0"
+
+app:
+  type: custom
+  image: passbolt/passbolt_api:latest
+  ports:
+    - "443:443"
+  environment:
+    APP_FULL_BASE_URL: https://${DOMAIN}
+    DATASOURCES_DEFAULT_HOST: postgres
+    DATASOURCES_DEFAULT_PORT: "3306"
+    DATASOURCES_DEFAULT_USERNAME: passbolt
+    DATASOURCES_DEFAULT_PASSWORD: ${PASSBOLT_DATABASE_PASSWORD}
+    DATASOURCES_DEFAULT_DATABASE: passbolt
+    PASSBOLT_GPG_SERVER_KEY_PATH: /etc/passbolt/gpg/serverkey_private.asc
+    PASSBOLT_GPG_SERVER_KEY_FINGERPRINT: ${PASSBOLT_GPG_KEY_FINGERPRINT}
+    PASSBOLT_EMAIL_TRANSPORT_DEFAULT_HOST: mailcatcher
+    PASSBOLT_EMAIL_TRANSPORT_DEFAULT_PORT: "1025"
+    PASSBOLT_EMAIL_DEFAULT_FROM: no-reply@${DOMAIN}
+    PASSBOLT_EMAIL_DEFAULT_TRANSPORT: default
+    JAVA_OPTS: "-Xmx1g"
+  volumes:
+    - "passbolt-gpg:/etc/passbolt/gpg"
+    - "passbolt-images:/var/www/html/webroot/img"
+
+services:
+  - name: postgres
+    image: mariadb:11
+    environment:
+      MYSQL_DATABASE: passbolt
+      MYSQL_USER: passbolt
+      MYSQL_PASSWORD: ${PASSBOLT_DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${PASSBOLT_DATABASE_PASSWORD}
+    volumes:
+      - "passbolt-mysql:/var/lib/mysql"
+
+  - name: mailcatcher
+    image: sj26/mailcatcher:latest
+    ports:
+      - "1080:1080"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: passwords.try.direct
+      description: "Domain name for the application"
+    - name: passbolt-database-password
+      type: secret
+      default: ""
+      description: "MariaDB password for Passbolt"
+    - name: passbolt-gpg-key-fingerprint
+      type: secret
+      default: ""
+      description: "GPG key fingerprint"

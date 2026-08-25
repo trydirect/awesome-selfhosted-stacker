@@ -1,0 +1,90 @@
+name: zammad
+version: "6.3.0"
+
+app:
+  type: custom
+  image: zammad/zammad:latest
+  ports:
+    - "80:80"
+  environment:
+    POSTGRESQL_HOST: postgres
+    POSTGRESQL_PORT: "5432"
+    POSTGRESQL_DB: zammad
+    POSTGRESQL_USER: zammad
+    POSTGRESQL_PASS: ${ZAMMAD_DATABASE_PASSWORD}
+    RAILS_ENV: production
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+    MEMCACHED_SERVERS: memcached:11211
+    ZAMMAD_SESSION_HOST: redis
+    ZAMMAD_SESSION_PORT: "6379"
+    ZAMMAD_WEBSOCKET_HOST: zammad-websocket
+    ZAMMAD_WEBSOCKET_PORT: "6042"
+  volumes:
+    - "zammad-storage:/opt/zammad/storage"
+
+services:
+  - name: zammad-websocket
+    image: zammad/zammad:latest
+    command: zammad-websocket
+    environment:
+      POSTGRESQL_HOST: postgres
+      POSTGRESQL_PORT: "5432"
+      POSTGRESQL_DB: zammad
+      POSTGRESQL_USER: zammad
+      POSTGRESQL_PASS: ${ZAMMAD_DATABASE_PASSWORD}
+      RAILS_ENV: production
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      MEMCACHED_SERVERS: memcached:11211
+      ZAMMAD_SESSION_HOST: redis
+      ZAMMAD_SESSION_PORT: "6379"
+    depends_on:
+      - postgres
+      - redis
+
+  - name: zammad-worker
+    image: zammad/zammad:latest
+    command: zammad-worker
+    environment:
+      POSTGRESQL_HOST: postgres
+      POSTGRESQL_PORT: "5432"
+      POSTGRESQL_DB: zammad
+      POSTGRESQL_USER: zammad
+      POSTGRESQL_PASS: ${ZAMMAD_DATABASE_PASSWORD}
+      RAILS_ENV: production
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      MEMCACHED_SERVERS: memcached:11211
+    depends_on:
+      - postgres
+      - redis
+
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: zammad
+      POSTGRES_USER: zammad
+      POSTGRES_PASSWORD: ${ZAMMAD_DATABASE_PASSWORD}
+    volumes:
+      - "zammad-postgres:/var/lib/postgresql/data"
+
+  - name: redis
+    image: redis:7-alpine
+    volumes:
+      - "zammad-redis:/data"
+
+  - name: memcached
+    image: memcached:1.6-alpine
+    command: memcached -m 256M
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: support.try.direct
+      description: "Domain name for the application"
+    - name: zammad-database-password
+      type: secret
+      default: ""
+      description: "PostgreSQL password for Zammad"

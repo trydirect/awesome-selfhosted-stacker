@@ -1,0 +1,46 @@
+name: apprise
+
+project:
+  identity: apprise
+
+install:
+  inputs:
+    commonDomain: notify.example.com
+
+app:
+  type: custom
+  image: caronc/apprise:latest
+  ports:
+    - "8000:8000"
+  environment:
+    APPRISE_STATEFUL_MODE: enabled
+    APPRISE_WORKER_COUNT: 1
+  volumes:
+    - apprise_config:/config
+    - apprise_state:/state
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  apprise_config: {}
+  apprise_state: {}

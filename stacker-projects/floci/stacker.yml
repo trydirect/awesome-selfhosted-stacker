@@ -15,11 +15,11 @@ app:
   - /var/run/docker.sock:/var/run/docker.sock
   - ./data:/app/data
   environment:
-    FLOCI_TLS_ENABLED: 'true'
+    FLOCI_TLS_ENABLED: 'false'
     FLOCI_HOSTNAME: floci
     FLOCI_SERVICES_DOCKER_NETWORK: floci_default
     FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ENABLED: 'true'
-    FLOCI_BASE_URL: http://floci:4566
+    FLOCI_BASE_URL: http://${DEPLOY_HOST}:4566
     FLOCI_SERVICES_RDS_PROXY_BASE_PORT: '7001'
   command: null
   healthcheck:
@@ -27,7 +27,17 @@ app:
     interval: 10s
     timeout: 5s
     retries: 10
-services: []
+services:
+  - name: floci-ui
+    image: floci/floci-ui:latest
+    ports:
+      - "4500:4500"
+    environment:
+      FLOCI_ENDPOINT: http://${DEPLOY_HOST}:4566
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      PORT: "4500"
 proxy:
   type: none
   auto_detect: false
@@ -51,9 +61,9 @@ deploy:
     public_ports:
     - '4566'
   server:
-    host: ${DEPLOY_HOST}
+    host: 46.225.141.37
     user: root
-    ssh_key: ${BASE_PATH}/stacker-project-test
+    ssh_key: ~/.config/stacker/ssh/server-446_ed25519
     port: 22
   registry: null
   default_target: null
@@ -79,7 +89,7 @@ hooks:
   pre_build: null
   post_deploy: null
   on_failure: null
-env_file: null
+env_file: .env
 env: {}
 config_contract:
   services: {}

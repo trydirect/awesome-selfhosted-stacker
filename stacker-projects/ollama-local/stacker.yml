@@ -1,0 +1,23 @@
+name: ollama-local
+version: "latest"
+
+app:
+  type: custom
+  image: ollama/ollama:latest
+  ports:
+    - "11434:11434"
+  environment:
+    OLLAMA_HOST: "0.0.0.0:11434"
+    OLLAMA_ORIGINS: "*"
+    OLLAMA_NUM_PARALLEL: "2"
+    OLLAMA_MAX_LOADED_MODELS: "2"
+    OLLAMA_KEEP_ALIVE: "5m"
+  volumes:
+    - "ollama-data:/root/.ollama"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: ollama.try.direct
+      description: "Domain name for the application"

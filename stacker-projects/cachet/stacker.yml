@@ -1,0 +1,87 @@
+name: cachet
+
+project:
+  identity: cachet
+
+install:
+  inputs:
+    commonDomain: status.example.com
+
+app:
+  type: custom
+  image: cachethq/cachet:latest
+  ports:
+    - "8000:8000"
+  environment:
+    APP_KEY: "${APP_KEY}"
+    APP_URL: http://localhost:8000
+    DB_DRIVER: pgsql
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_DATABASE: cachet
+    DB_USERNAME: cachet
+    DB_PASSWORD: "${DB_PASSWORD}"
+    CACHE_DRIVER: redis
+    SESSION_DRIVER: redis
+    REDIS_HOST: redis
+    MAIL_DRIVER: smtp
+  command: >-
+    sh -c "php artisan key:generate && php artisan migrate --force && php artisan config:cache && php artisan serve --host=0.0.0.0 --port=8000"
+  volumes:
+    - cachet_data:/var/www/html/storage
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: cachet
+      POSTGRES_USER: cachet
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U cachet"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  cachet_data: {}
+  postgres_data: {}

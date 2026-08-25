@@ -1,0 +1,54 @@
+name: anycable
+
+project:
+  identity: anycable
+
+install:
+  inputs:
+    commonDomain: ws.example.com
+
+app:
+  type: custom
+  image: anycable/anycable-go:latest
+  ports:
+    - "8080:8080"
+    - "50051:50051"
+  environment:
+    ANYCABLE_HOST: 0.0.0.0
+    ANYCABLE_PORT: 8080
+    ANYCABLE_GRPC_PORT: 50051
+    ANYCABLE_REDIS_URL: redis://redis:6379
+  command: --port=8080 --grpc_port=50051
+
+services:
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+monitoring:
+  status_panel: true
+
+env_file: .env

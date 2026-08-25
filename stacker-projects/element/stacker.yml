@@ -1,0 +1,41 @@
+name: element
+
+project:
+  identity: element
+
+install:
+  inputs:
+    commonDomain: chat.example.com
+
+app:
+  type: custom
+  image: vectorim/element-web:latest
+  ports:
+    - "8080:80"
+  volumes:
+    - element_config:/app/config
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  element_config: {}

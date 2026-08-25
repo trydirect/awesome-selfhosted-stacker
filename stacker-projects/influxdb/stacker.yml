@@ -1,0 +1,53 @@
+name: influxdb
+
+project:
+  identity: influxdb
+
+install:
+  inputs:
+    commonDomain: influxdb.example.com
+
+app:
+  type: custom
+  image: influxdb:2.7
+  ports:
+    - "8086:8086"
+  environment:
+    DOCKER_INFLUXDB_INIT_MODE: setup
+    DOCKER_INFLUXDB_INIT_USERNAME: admin
+    DOCKER_INFLUXDB_INIT_PASSWORD: "${DB_PASSWORD}"
+    DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_ORG}
+    DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_BUCKET}
+    DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "${API_KEY}"
+  volumes:
+    - influxdb_data:/var/lib/influxdb2
+    - influxdb_config:/etc/influxdb2
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8086"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  influxdb_data: {}
+  influxdb_config: {}

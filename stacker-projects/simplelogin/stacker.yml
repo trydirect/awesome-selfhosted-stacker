@@ -1,0 +1,76 @@
+name: simplelogin
+
+project:
+  identity: simplelogin
+
+install:
+  inputs:
+    commonDomain: mail.example.com
+
+app:
+  type: custom
+  image: simplelogin/app:latest
+  ports:
+    - "8080:80"
+  environment:
+    APP_SECRET_KEY: "${SECRET_KEY}"
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_NAME: simplelogin
+    DB_USER: simplelogin
+    DB_PASSWORD: "${DB_PASSWORD}"
+    EMAIL_SERVER_HOST: "${SMTP_HOST}"
+    EMAIL_SERVER_PORT: "${SMTP_PORT:-587}"
+    EMAIL_SERVER_USERNAME: "${SMTP_USER}"
+    EMAIL_SERVER_PASSWORD: "${SMTP_PASSWORD}"
+    EMAIL_DOMAIN: "${EMAIL_DOMAIN}"
+  command: >-
+    sh -c "flask db upgrade && flask run --host=0.0.0.0 --port=80"
+  volumes:
+    - simplelogin_data:/data
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: simplelogin
+      POSTGRES_USER: simplelogin
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U simplelogin"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  simplelogin_data: {}
+  postgres_data: {}

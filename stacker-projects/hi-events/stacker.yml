@@ -1,0 +1,88 @@
+name: hi-events
+
+project:
+  identity: hi-events
+
+install:
+  inputs:
+    commonDomain: events.example.com
+
+app:
+  type: custom
+  image: ghcr.io/hidevops/hi-events:latest
+  ports:
+    - "8080:8080"
+  environment:
+    APP_NAME: Hi.Events
+    APP_URL: http://localhost:8080
+    APP_KEY: "${APP_KEY}"
+    DB_CONNECTION: pgsql
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_DATABASE: hievents
+    DB_USERNAME: hievents
+    DB_PASSWORD: "${DB_PASSWORD}"
+    CACHE_DRIVER: redis
+    REDIS_HOST: redis
+    SESSION_DRIVER: redis
+    QUEUE_CONNECTION: redis
+  command: >-
+    sh -c "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8080"
+  volumes:
+    - hievents_storage:/var/www/html/storage
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: hievents
+      POSTGRES_USER: hievents
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U hievents"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  hievents_storage: {}
+  postgres_data: {}

@@ -1,0 +1,66 @@
+name: readeck
+
+project:
+  identity: readeck
+
+install:
+  inputs:
+    commonDomain: readeck.example.com
+
+app:
+  type: custom
+  image: codeberg.org/readeck/readeck:latest
+  ports:
+    - "8000:8000"
+  environment:
+    READECK_DATABASE_DRIVER: postgres
+    READECK_DATABASE_SOURCE: "postgres://readeck:${DB_PASSWORD}@postgres:5432/readeck?sslmode=disable"
+    READECK_SECRET_KEY: "${SECRET_KEY}"
+  volumes:
+    - readeck_data:/data
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: readeck
+      POSTGRES_USER: readeck
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U readeck"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  readeck_data: {}
+  postgres_data: {}

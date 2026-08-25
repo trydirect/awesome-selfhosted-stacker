@@ -1,0 +1,50 @@
+name: manticore
+
+project:
+  identity: manticore
+
+install:
+  inputs:
+    commonDomain: search.example.com
+
+app:
+  type: custom
+  image: manticoresearch/manticore:latest
+  ports:
+    - "9306:9306"
+    - "9308:9308"
+    - "9312:9312"
+  volumes:
+    - manticore_data:/var/lib/manticore
+    - manticore_log:/var/log/manticore
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "9306"
+      - "9308"
+      - "9312"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  manticore_data: {}
+  manticore_log: {}

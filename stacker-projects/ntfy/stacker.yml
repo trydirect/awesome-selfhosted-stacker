@@ -1,0 +1,49 @@
+name: ntfy
+
+project:
+  identity: ntfy
+
+install:
+  inputs:
+    commonDomain: ntfy.example.com
+
+app:
+  type: custom
+  image: binwiederhier/ntfy:latest
+  ports:
+    - "8080:80"
+  command: "serve"
+  environment:
+    NTFY_BASE_URL: http://localhost:8080
+    NTFY_CACHE_FILE: /var/cache/ntfy/cache.db
+    NTFY_AUTH_FILE: /var/lib/ntfy/user.db
+    NTFY_AUTH_DEFAULT_ACCESS: "read-write"
+  volumes:
+    - ntfy_data:/var/lib/ntfy
+    - ntfy_cache:/var/cache/ntfy
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  ntfy_data: {}
+  ntfy_cache: {}

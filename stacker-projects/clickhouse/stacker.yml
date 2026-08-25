@@ -1,0 +1,52 @@
+name: clickhouse
+
+project:
+  identity: clickhouse
+
+install:
+  inputs:
+    commonDomain: clickhouse.example.com
+
+app:
+  type: custom
+  image: clickhouse/clickhouse-server:latest
+  ports:
+    - "8123:8123"
+    - "9000:9000"
+  environment:
+    CLICKHOUSE_USER: default
+    CLICKHOUSE_PASSWORD: "${DB_PASSWORD}"
+    CLICKHOUSE_DB: clickhouse
+  volumes:
+    - clickhouse_data:/var/lib/clickhouse
+    - clickhouse_logs:/var/log/clickhouse-server
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8123"
+      - "9000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  clickhouse_data: {}
+  clickhouse_logs: {}

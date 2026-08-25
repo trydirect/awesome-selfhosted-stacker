@@ -1,0 +1,72 @@
+name: apache-airflow
+
+project:
+  identity: apache-airflow
+
+install:
+  inputs:
+    commonDomain: airflow.example.com
+
+app:
+  type: custom
+  image: apache/airflow:latest
+  ports:
+    - "8080:8080"
+  environment:
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:${DB_PASSWORD}@postgres:5432/airflow"
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__FERNET_KEY: "${FERNET_KEY}"
+    AIRFLOW__WEBSERVER__SECRET_KEY: "${SECRET_KEY}"
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+  command: >-
+    sh -c "airflow db migrate && airflow webserver"
+  volumes:
+    - airflow_dags:/opt/airflow/dags
+    - airflow_logs:/opt/airflow/logs
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: airflow
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U airflow"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  airflow_dags: {}
+  airflow_logs: {}
+  postgres_data: {}

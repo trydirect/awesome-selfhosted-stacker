@@ -1,0 +1,81 @@
+name: baserow
+
+project:
+  identity: baserow
+
+install:
+  inputs:
+    commonDomain: database.example.com
+
+app:
+  type: custom
+  image: baserow/baserow:latest
+  ports:
+    - "80:80"
+    - "443:443"
+  environment:
+    BASEROW_PUBLIC_URL: http://localhost:80
+    DATABASE_HOST: postgres
+    DATABASE_PORT: 5432
+    DATABASE_NAME: baserow
+    DATABASE_USER: baserow
+    DATABASE_PASSWORD: "${DB_PASSWORD}"
+    SECRET_KEY: "${SECRET_KEY}"
+  volumes:
+    - baserow_data:/baserow/data
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: baserow
+      POSTGRES_USER: baserow
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U baserow"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "80"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  baserow_data: {}
+  postgres_data: {}

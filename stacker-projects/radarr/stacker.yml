@@ -1,0 +1,49 @@
+name: radarr
+
+project:
+  identity: radarr
+
+install:
+  inputs:
+    commonDomain: movies.example.com
+
+app:
+  type: custom
+  image: linuxserver/radarr:latest
+  ports:
+    - "7878:7878"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: Etc/UTC
+  volumes:
+    - radarr_config:/config
+    - radarr_movies:/movies
+    - radarr_downloads:/downloads
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "7878"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  radarr_config: {}
+  radarr_movies: {}
+  radarr_downloads: {}

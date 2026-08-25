@@ -1,0 +1,87 @@
+name: huly
+version: "0.6.0"
+
+app:
+  type: custom
+  image: ghcr.io/hcengineering/platform:latest
+  ports:
+    - "8080:8080"
+  environment:
+    SERVER_PORT: "8080"
+    DB_URL: postgres://postgres:${HULY_DATABASE_PASSWORD}@postgres:5432/huly
+    REDIS_URL: redis://redis:6379
+    ACCOUNTS_URL: http://localhost:8083
+    AUTH_SECRET: ${HULY_AUTH_SECRET}
+    UPLOAD_URL: /files
+    STORAGE_CONFIG: minio|localhost?accessKey=minioadmin&secretKey=minioadmin
+    TELEGRAM_API_ID: ""
+    TELEGRAM_API_KEY: ""
+    GITHUB_APP_NAME: ""
+    GITHUB_PRIVATE_KEY: ""
+    GITHUB_WEBHOOK_URL: ""
+    GITHUB_CLIENT_ID: ""
+    GITHUB_CLIENT_SECRET: ""
+  volumes:
+    - "huly-files:/files"
+
+services:
+  - name: huly-account
+    image: ghcr.io/hcengineering/account:latest
+    environment:
+      ACCOUNTS_PORT: "8083"
+      DB_URL: postgres://postgres:${HULY_DATABASE_PASSWORD}@postgres:5432/huly
+      REDIS_URL: redis://redis:6379
+      AUTH_SECRET: ${HULY_AUTH_SECRET}
+      SERVER_SECRET: ${HULY_SERVER_SECRET}
+    depends_on:
+      - postgres
+      - redis
+
+  - name: huly-worker
+    image: ghcr.io/hcengineering/worker:latest
+    environment:
+      SERVER_PORT: "8080"
+      DB_URL: postgres://postgres:${HULY_DATABASE_PASSWORD}@postgres:5432/huly
+      REDIS_URL: redis://redis:6379
+      ACCOUNTS_URL: http://huly-account:8083
+      UPLOAD_URL: /files
+      STORAGE_CONFIG: minio|localhost?accessKey=minioadmin&secretKey=minioadmin
+    volumes:
+      - "huly-files:/files"
+    depends_on:
+      - postgres
+      - redis
+      - huly-account
+
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: huly
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${HULY_DATABASE_PASSWORD}
+    volumes:
+      - "huly-postgres:/var/lib/postgresql/data"
+
+  - name: redis
+    image: redis:7-alpine
+    volumes:
+      - "huly-redis:/data"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: huly.try.direct
+      description: "Domain name for the application"
+    - name: huly-database-password
+      type: secret
+      default: ""
+      description: "PostgreSQL password for Huly"
+    - name: huly-auth-secret
+      type: secret
+      default: ""
+      description: "Huly auth secret"
+    - name: huly-server-secret
+      type: secret
+      default: ""
+      description: "Huly server secret"

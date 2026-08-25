@@ -1,0 +1,43 @@
+name: shaper
+
+project:
+  identity: shaper
+
+install:
+  inputs:
+    commonDomain: dashboards.example.com
+
+app:
+  type: custom
+  image: taleshape/shaper:latest
+  ports:
+    - "8080:8080"
+  environment:
+    DUCKDB_PATH: /data/shaper.duckdb
+  volumes:
+    - shaper_data:/data
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  shaper_data: {}

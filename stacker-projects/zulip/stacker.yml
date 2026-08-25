@@ -15,14 +15,14 @@ app:
     - "80:80"
     - "443:443"
   environment:
-    SETTING_EXTERNAL_HOST: zulip.example.com
+    SETTING_EXTERNAL_HOST: 91.99.5.184
     SETTING_ZULIP_ADMINISTRATOR: "admin@example.com"
     SETTING_EMAIL_HOST: smtp.example.com
     SETTING_EMAIL_HOST_USER: "${SMTP_USER}"
     SETTING_EMAIL_HOST_PASSWORD: "${SMTP_PASSWORD}"
     SETTING_EMAIL_PORT: "587"
-    SETTING_EMAIL_USE_TLS: "true"
-    SETTING_EMAIL_USE_SSL: "false"
+    SETTING_EMAIL_USE_TLS: "True"
+    SETTING_EMAIL_USE_SSL: "False"
     SETTING_DEFAULT_EMAIL_FORMAT: "text/html"
     SETTING_NOREPLY_EMAIL_ADDRESS: "noreply@example.com"
     SETTING_QUEUE_WORKERS: "4"
@@ -35,7 +35,7 @@ app:
 
 services:
   - name: zulip_db
-    image: zulip/zulip-postgresql:16
+    image: zulip/zulip-postgresql:latest
     environment:
       POSTGRES_DB: zulip
       POSTGRES_USER: zulip
@@ -63,7 +63,7 @@ deploy:
   cloud:
     provider: hetzner
     region: fsn1
-    size: cpx31
+    size: cpx22
     public_ports:
       - "80"
       - "443"

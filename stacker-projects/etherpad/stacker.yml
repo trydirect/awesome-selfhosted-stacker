@@ -1,0 +1,50 @@
+name: etherpad
+version: "1.10.0"
+
+app:
+  type: custom
+  image: etherpad/etherpad:latest
+  ports:
+    - "9001:9001"
+  environment:
+    DB_TYPE: dirty
+    DB_DIR: /opt/etherpad-lite/var/dirty.db
+    IP: "0.0.0.0"
+    PORT: "9001"
+    SHOW_SETTINGS_IN_ADMIN_PAGE: "true"
+    ADMIN_PASSWORD: ${ETHERPAD_ADMIN_PASSWORD}
+    USER_PASSWORD: ${ETHERPAD_USER_PASSWORD}
+    REQUIRE_SESSION: "false"
+    EDIT_ONLY: "false"
+    MINIFY: "true"
+    MAXAge: "21600"
+    ABIWORD: ""
+    SOFFICE: ""
+    TIDYPAR: ""
+    ALLOW_UNKNOWN_FILE_ENDS: "true"
+    REQUIRE_AUTHENTICATION: "false"
+    REQUIRE_AUTHORIZATION: "false"
+    TRUST_PROXY: "true"
+    DISABLE_IPLOGGING: "false"
+    automaticReconnectionTimeout: "0"
+    socketIo: {}
+    loadTest: "false"
+    loglevel: "WARN"
+    logconfig: {}
+  volumes:
+    - "etherpad-data:/opt/etherpad-lite/var"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: etherpad.try.direct
+      description: "Domain name for the application"
+    - name: etherpad-admin-password
+      type: secret
+      default: ""
+      description: "Etherpad admin password"
+    - name: etherpad-user-password
+      type: secret
+      default: ""
+      description: "Etherpad user password"

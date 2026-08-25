@@ -1,0 +1,32 @@
+name: code-server
+version: "4.90.4"
+
+app:
+  type: custom
+  image: lscr.io/linuxserver/code-server:latest
+  ports:
+    - "8443:8443"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: Etc/UTC
+    PASSWORD: ${CODE_SERVER_PASSWORD}
+    SUDO_PASSWORD: ${CODE_SERVER_SUDO_PASSWORD}
+    DEFAULT_WORKSPACE: /config/workspace
+  volumes:
+    - "code-server-config:/config"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: code.try.direct
+      description: "Domain name for the application"
+    - name: code-server-password
+      type: secret
+      default: ""
+      description: "code-server password"
+    - name: code-server-sudo-password
+      type: secret
+      default: ""
+      description: "code-server sudo password"

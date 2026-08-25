@@ -1,0 +1,52 @@
+name: anythingllm
+
+project:
+  identity: anythingllm
+
+install:
+  inputs:
+    commonDomain: chat.example.com
+
+app:
+  type: custom
+  image: mintplexlabs/anythingllm:latest
+  ports:
+    - "3001:3001"
+  environment:
+    STORAGE_DIR: /app/server/storage
+    JWT_SECRET: "${JWT_SECRET}"
+    LLM_PROVIDER: openai
+    OPEN_AI_KEY: "${OPENAI_API_KEY}"
+    OPEN_AI_MODEL_PREF: gpt-4o-mini
+    EMBEDDING_ENGINE: native
+    VECTOR_DB: lancedb
+  volumes:
+    - anythingllm_storage:/app/server/storage
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3001"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  anythingllm_storage: {}
