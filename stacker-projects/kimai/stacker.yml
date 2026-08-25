@@ -1,0 +1,70 @@
+name: kimai
+
+project:
+  identity: kimai
+
+install:
+  inputs:
+    commonDomain: time.example.com
+
+app:
+  type: custom
+  image: kimai/kimai2:latest
+  ports:
+    - "8001:8001"
+  environment:
+    DATABASE_URL: "mysql://kimai:${DB_PASSWORD}@mysql:3306/kimai"
+    APP_SECRET: "${APP_SECRET}"
+    TRUSTED_HOSTS: "localhost"
+    MAILER_URL: "null://localhost"
+  command: >-
+    sh -c "/opt/kimai/bin/console kimai:install --no-interaction && /opt/kimai/bin/console kimai:user:create admin admin@example.com ROLE_SUPER_ADMIN ${ADMIN_PASSWORD} && apache2-foreground"
+  volumes:
+    - kimai_data:/opt/kimai/var/data
+
+services:
+  - name: mysql
+    image: mysql:8
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      MYSQL_DATABASE: kimai
+      MYSQL_USER: kimai
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: "CMD mysqladmin ping -h localhost"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8001"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  kimai_data: {}
+  mysql_data: {}

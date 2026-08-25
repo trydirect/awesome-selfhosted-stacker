@@ -1,0 +1,45 @@
+name: restic-rest-server
+
+project:
+  identity: restic-rest-server
+
+install:
+  inputs:
+    commonDomain: backup.example.com
+
+app:
+  type: custom
+  image: restic/rest-server:latest
+  ports:
+    - "8000:8000"
+  command: --no-auth --listen :8000
+  volumes:
+    - restic_repos:/data
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  restic_repos: {}

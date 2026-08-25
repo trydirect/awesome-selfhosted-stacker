@@ -14,7 +14,7 @@ app:
   ports:
     - "8484:8484"
   environment:
-    APP_HOME_URL: "${APP_HOME_URL:-http://localhost:8484}"
+    APP_HOME_URL: "${APP_HOME_URL}"
     GRIST_DEFAULT_EMAIL: admin@example.com
     GRIST_SANDBOX_FLAVOR: fuse
   volumes:

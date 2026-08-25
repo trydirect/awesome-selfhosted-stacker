@@ -1,12 +1,12 @@
 # awesome-selfhosted-stacker
 
-> **135+ self-hostable apps, each deployable with a single `stacker.yml`.**
+> **244 self-hostable apps, each deployable with a single `stacker.yml`.**
 > Deploy to your laptop, your own server, or the cloud with one command —
 > database setup, health checks, secrets, and remote monitoring included.
 
 <p>
-  <img alt="Projects" src="https://img.shields.io/badge/projects-135%2B-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-69-brightgreen">
+  <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-100-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -446,46 +446,72 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (69)
+### Tested and verified (104)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
 
 | Project             | Type             | Port  | Image Fix / Notes |
 |---------------------|------------------|-------|--------------------|
+| Activepieces        | Automation       | 8080  | Zapier alternative |
+| Appsmith            | Low-code         | 80    | Internal tool builder |
+| Aptabase            | Analytics        | 3000  | + postgres + clickhouse |
+| Bitmagnet           | BitTorrent       | 3333  | + postgres |
+| Bitwarden          | Password mgr     | 80    | vaultwarden + postgres |
 | CyberChef           | Data tools       | 8000  | container listens on 8080 |
 | Dashy               | Dashboard        | 8082  | container listens on 8080, not 80 |
 | d8a                 | Analytics        | 3000  | |
 | Daily Stars Explorer| Astronomy        | 8080  | |
+| Directus            | Headless CMS     | 8055  | REST + GraphQL API |
 | Discourse           | Forum            | 80    | needs pgvector/pgvector instead of plain postgres |
 | Docmost             | Wiki             | 3000  | needs Redis service |
 | Druid               | Analytics        | 8888  | pinned apache/druid:31.0.0; removed broken druid_extensions_loadList env var |
 | FileBrowser         | File manager     | 8080  | |
-| Floci               | File sharing     | 8080  | needs docker.sock bind mount |
+| Floci               | Local cloud      | 4500  | TLS disabled; FLOCI_BASE_URL must match external IP |
 | Ganymede           | Video archive    | 4000  | |
 | Gitea              | Git hosting      | 3000  | |
 | Gitness            | Git hosting      | 3000  | needs GITNESS_PRINCIPAL_ADMIN_EMAIL |
 | Ghost              | Blogging         | 2368  | |
 | Glances            | System monitor   | 61208 | |
+| Gotify             | Notifications    | 8080  | |
+| GoatCounter        | Analytics        | 8080  | single container, no secrets |
+| Grafana            | Monitoring       | 3000  | admin/admin default |
+| Grocy              | Household        | 9283  | groceries, chores, batteries |
+| Grist              | Spreadsheet      | 8484  | relational spreadsheet with Python |
 | HedgeDoc           | Markdown editor  | 3000  | |
 | Home Assistant     | Smart home       | 8123  | slow startup (~50s) |
+| Homer              | Dashboard        | 8080  | Static dashboard, no DB |
+| Immich             | Photos           | 2283  | Google Photos alternative |
 | IT-Tools           | Developer tools  | 8083  | container listens on 80, not 8080 |
 | Jellyfin           | Media server     | 8096  | |
 | Jitsi Meet         | Video conf       | 80/443| uses :unstable tags; nginx permission bug |
+| Kavita             | Reading          | 5000  | comics/manga reader |
 | Komga              | Comics/manga     | 25600 | |
 | Lemmy              | Link aggregator  | 1234  | pinned dessalines/lemmy:0.19.11 |
+| Linkding           | Bookmarks        | 9090  | |
 | Linkwarden         | Bookmarks        | 3000  | |
 | Listmonk           | Newsletter       | 9000  | needs --install flag on first run |
 | Mastodon           | Social network   | 3000  | |
 | Maybe Finance      | Personal finance | 3000  | |
+| Mealie             | Recipes          | 9925  | SQLite by default |
+| Meilisearch        | Search           | 7700  | |
+| MeTube             | Media download   | 8081  | YouTube downloader |
+| Memos              | Notes            | 5230  | |
 | Metabase           | BI               | 3000  | |
+| Mattermost         | Team chat        | 8065  | Slack alternative + postgres |
 | Nextcloud          | File sync        | 8080  | |
+| Navidrome          | Music            | 4533  | music streaming server |
+| NocoDB             | Database         | 8080  | Airtable alternative + postgres |
+| Offen              | Analytics        | 3000  | single container, privacy-first |
+| Ombi               | Media requests   | 3579  | Plex/Jellyfin requests |
+| Organizr           | Dashboard        | 9983  | HTPC dashboard |
 | Open-WebUI         | AI chat          | 3000  | |
 | Outline            | Knowledge base   | 3000  | |
 | Paperless-ngx      | Document mgmt    | 8000  | |
 | Pi-hole            | DNS ad-block     | 8080  | |
-| Pingvin Share      | File sharing     | 3000  | |
+| Pingvin Share      | File sharing     | 3000  | WeTransfer alternative |
 | Plausible          | Analytics        | 8000  | |
+| Portainer          | Docker mgmt      | 9000  | container management UI |
 | PostHog            | Product analytics| 8000  | |
 | Postiz App         | Social scheduler | 4007  | 6 containers: app + postgres + redis + temporal + ES |
 | Redash             | BI               | 5000  | |
@@ -497,38 +523,34 @@ server target. Start here for production.
 | Semaphore         | Ansible UI       | 3000  | fixed DB_DIALECT typo |
 | Statistics for Strava | Fitness      | 8080  | waits for Strava API credentials |
 | Strapi            | CMS              | 1337  | uses naskio/strapi instead of strapi |
-| Supabase          | Backend platform | 8000  | 10 containers |
+| Supabase          | Backend platform | 8000  | 10 containers; needs role passwords set via supabase_admin |
+| Supabase-PostHog  | Analytics + Backend | 8000 | Supabase + PostHog combined |
 | Superset          | BI               | 8088  | needs manual `superset fab create-admin` + `db upgrade` + `init` |
 | Synapse           | Matrix chat      | 8008  | |
+| Syncthing         | File sync        | 8384  | P2P file synchronization |
 | Tandoor           | Recipes          | 8080  | fixed port mapping 8080->80 (nginx) |
 | Trilium           | Notes            | 8081  | |
 | Umami             | Analytics        | 3000  | |
 | UptimeKuma        | Monitoring       | 3001  | |
-| Vaultwarden       | Password mgr     | 8080  | |
+| Vaultwarden       | Password mgr     | 8080  | with Nginx Proxy Manager |
+| Wallabag          | Read-it-later    | 80    | + postgres + redis |
 | WordPress         | CMS              | 8080  | uses image: wordpress (no tag) + mysql:8.0 |
-| Zitadel           | IAM/SSO          | 8080  | uses LOGINV2_REQUIRED=false (legacy login) |
+| Zitadel           | IAM/SSO          | 8080  | ExternalDomain must match server IP |
 
 ### Pre-existing (configured, not re-deployed)
 
 | Project       | Type         | Notes |
 |---------------|--------------|-------|
-| Aptabase      | Analytics    | |
 | ArchiveBox    | Web archive  | |
 | AstrBot       | AI chatbot   | |
-| Bitmagnet     | BitTorrent   | |
-| Bitwarden     | Password mgr | |
 | ComfyUI       | AI image gen | Cloud: container runs but not reachable |
 | Coolify       | PaaS         | Cloud: local-exec provisioner error |
 | Countly Server| Analytics    | 4 containers running; nginx config needs manual SCP |
 | Floci         | File sharing | |
 | GoAccess      | Analytics    | Config bind-mount files not copied to server |
-| GoatCounter   | Analytics    | Single-container, no secrets needed |
 | HitKeep       | Bookmarks    | Single container |
 | Linkding      | Bookmarks    | Single container |
 | Matomo        | Analytics    | App + MariaDB |
-| Offen         | Analytics    | Single container |
-| Wallabag      | Read-it-later| App + postgres + redis |
-| Automatisch   | Automation   | Workflow automation (Zapier alt) |
 | Audiobookshelf| Audiobooks   | Single container |
 | Cal.com       | Scheduling   | Calendly alternative + postgres |
 | Calibre-web   | E-books      | linuxserver/calibre-web |
@@ -536,12 +558,9 @@ server target. Start here for production.
 | Gotify        | Notifications| Push notification server |
 | Homer         | Dashboard    | Static dashboard, no DB |
 | Kopia         | Backup       | Backup solution, no DB |
-| Mattermost    | Team chat    | Slack alternative + postgres |
-| MeTube        | Media download| YouTube downloader |
 | Memos         | Notes        | Lightweight note-taking |
 | Mealie        | Recipes      | Recipe manager |
 | n8n           | Automation   | Workflow automation + postgres |
-| Navidrome     | Music        | Music streaming server |
 | One Time Secret | Secret sharing | Self-destructing secret links |
 | Rallly        | Scheduling   | Date polls + postgres |
 | Screego       | Screen sharing| WebRTC screen sharing |
@@ -555,16 +574,11 @@ server target. Start here for production.
 | Duplicati     | Backup       | Encrypted backup to cloud/local |
 | Frigate       | Video NVR    | AI object detection |
 | FreshRSS      | RSS reader   | Self-hosted RSS |
-| Grafana       | Monitoring   | Observability dashboards |
-| Grocy         | Household    | Groceries, chores, batteries |
 | Home Assistant| Smart home   | Home automation platform |
 | Immich        | Photos       | Google Photos alternative |
-| Kavita        | Reading      | Books, manga, comics |
 | Keycloak      | IAM/SSO      | OAuth2/OIDC/SAML identity |
 | Meilisearch   | Search       | Lightning-fast search engine |
 | MinIO         | Object store | S3-compatible storage |
-| NocoDB        | Database     | Airtable alternative |
-| Portainer     | Docker mgmt  | Container management UI |
 | Speedtest Tracker | Monitoring| Internet speed tracking |
 | Syncthing     | File sync    | P2P Dropbox alternative |
 | Traefik       | Reverse proxy| Auto-discovery proxy |
@@ -574,8 +588,6 @@ server target. Start here for production.
 | Hanko         | Auth         | Passkeys + REST API |
 | Infisical     | Secrets      | Secret management + REST API |
 | Jellyseerr    | Media requests| Media request management + REST API |
-| Ombi          | Media requests| Plex/Jellyfin requests + REST API |
-| Organizr      | Dashboard    | HTPC dashboard + REST API |
 | Tautulli      | Plex monitor | Plex analytics + REST API |
 
 ### Known image issues
@@ -594,7 +606,6 @@ server target. Start here for production.
 
 | Issue | Cause | Fix |
 |-------|-------|-----|
-| `remote_user` Ansible error | Intermittent server-side bug | Retry deploy or `docker compose up -d` manually |
 | Service labels stripped | Stacker doesn't pass `services[].labels` to compose | Use app.env vars or nginx proxy instead |
 | serde_yaml 0.9 quoting | Round-trip strips quotes, adds `null`/`[]` | No fix yet; PR pending |
 | Bind mount files not found | File paths resolve relative to compose location on remote | Use Dockerfile COPY instead of bind mounts |
@@ -660,7 +671,7 @@ official image is the whole point.
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-07-25 — 135+ projects configured, 63 tested and verified on
+Last updated: 2026-08-19 — 244 projects configured, 83 tested and verified on
 Ubuntu 26.04.
 
 ---

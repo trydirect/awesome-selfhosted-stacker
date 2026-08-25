@@ -1,0 +1,46 @@
+name: dagu
+
+project:
+  identity: dagu
+
+install:
+  inputs:
+    commonDomain: dagu.example.com
+
+app:
+  type: custom
+  image: ghcr.io/dagucloud/dagu:latest
+  ports:
+    - "8080:8080"
+  environment:
+    DAGU_HOST: 0.0.0.0
+    DAGU_PORT: 8080
+  volumes:
+    - dagu_data:/var/lib/dagu
+    - dagu_dags:/var/lib/dagu/dags
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  dagu_data: {}
+  dagu_dags: {}

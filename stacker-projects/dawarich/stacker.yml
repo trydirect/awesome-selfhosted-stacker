@@ -1,0 +1,81 @@
+name: dawarich
+version: "0.16.0"
+
+app:
+  type: custom
+  image: freika/dawarich:latest
+  ports:
+    - "3000:3000"
+  environment:
+    RAILS_ENV: production
+    REDIS_URL: redis://redis:6379/0
+    DATABASE_HOST: postgres
+    DATABASE_PORT: "5432"
+    DATABASE_NAME: dawarich
+    DATABASE_USERNAME: dawarich
+    DATABASE_PASSWORD: ${DAWARICH_DATABASE_PASSWORD}
+    SECRET_KEY_BASE: ${DAWARICH_SECRET_KEY_BASE}
+    APPLICATION_HOST: ${DOMAIN}
+    APPLICATION_PROTOCOL: https
+    ENCRYPTION_PRIMARY_KEY: ${DAWARICH_ENCRYPTION_KEY}
+    ENCRYPTION_DTERMINARY_KEY: ${DAWARICH_ENCRYPTION_KEY}
+    DawarichBackgroundJob: enabled
+    SELF_HOSTED: "true"
+  volumes:
+    - "dawarich-storage:/var/app/storage"
+
+services:
+  - name: dawarich-background
+    image: freika/dawarich:latest
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    environment:
+      RAILS_ENV: production
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_HOST: postgres
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: dawarich
+      DATABASE_USERNAME: dawarich
+      DATABASE_PASSWORD: ${DAWARICH_DATABASE_PASSWORD}
+      SECRET_KEY_BASE: ${DAWARICH_SECRET_KEY_BASE}
+      APPLICATION_HOST: ${DOMAIN}
+      APPLICATION_PROTOCOL: https
+      ENCRYPTION_PRIMARY_KEY: ${DAWARICH_ENCRYPTION_KEY}
+      ENCRYPTION_DTERMINARY_KEY: ${DAWARICH_ENCRYPTION_KEY}
+    volumes:
+      - "dawarich-storage:/var/app/storage"
+    depends_on:
+      - postgres
+      - redis
+
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: dawarich
+      POSTGRES_USER: dawarich
+      POSTGRES_PASSWORD: ${DAWARICH_DATABASE_PASSWORD}
+    volumes:
+      - "dawarich-postgres:/var/lib/postgresql/data"
+
+  - name: redis
+    image: redis:7-alpine
+    volumes:
+      - "dawarich-redis:/data"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: locations.try.direct
+      description: "Domain name for the application"
+    - name: dawarich-database-password
+      type: secret
+      default: ""
+      description: "PostgreSQL password for Dawarich"
+    - name: dawarich-secret-key-base
+      type: secret
+      default: ""
+      description: "Rails secret key base"
+    - name: dawarich-encryption-key
+      type: secret
+      default: ""
+      description: "Dawarich encryption key"

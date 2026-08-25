@@ -1,0 +1,72 @@
+name: healthchecks
+
+project:
+  identity: healthchecks
+
+install:
+  inputs:
+    commonDomain: healthchecks.example.com
+
+app:
+  type: custom
+  image: healthchecks/healthchecks:latest
+  ports:
+    - "8000:8000"
+  environment:
+    DB: postgres
+    DB_CONN_MAX_AGE: "600"
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_NAME: healthchecks
+    DB_USER: healthchecks
+    DB_PASSWORD: "${DB_PASSWORD}"
+    SECRET_KEY: "${SECRET_KEY}"
+    ALLOWED_HOSTS: "*"
+  volumes:
+    - healthchecks_data:/data
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: healthchecks
+      POSTGRES_USER: healthchecks
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U healthchecks"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  healthchecks_data: {}
+  postgres_data: {}

@@ -1,0 +1,56 @@
+name: dockhand
+version: "1.0.0"
+
+project:
+  identity: dockhand
+
+install:
+  inputs:
+    commonDomain: dockhand.try.direct
+
+app:
+  type: custom
+  image: fnsys/dockhand:latest
+  ports:
+    - "3000:3000"
+  environment:
+    DATA_DIR: /app/data
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - dockhand-data:/app/data
+  healthcheck:
+    test: "CMD curl -fsS http://localhost:3000/"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+
+volumes:
+  dockhand-data: {}
+
+deploy:
+  target: cloud
+  cloud:
+    provider: hetzner
+    region: hel1
+    size: cpx22
+    key: htz-0
+    public_ports:
+      - "22"
+      - "80"
+      - "443"
+
+proxy:
+  type: nginx-proxy-manager
+  auto_detect: true
+  domains:
+    - domain: "dockhand.try.direct"
+      ssl: auto
+      upstream: "app:3000"
+
+monitoring:
+  status_panel: true
+  healthcheck:
+    endpoint: /
+    interval: 30s
+
+env_file: .env

@@ -1,0 +1,43 @@
+name: btcpay-server
+version: "2.0.0"
+
+app:
+  type: custom
+  image: btcpayserver/btcpayserver:latest
+  ports:
+    - "23000:23000"
+  environment:
+    BTCPAY_HOST: ${DOMAIN}
+    BTCPAY_PORT: "23000"
+    BTCPAY_PROTOCOL: https
+    NBITCOIN_NETWORK: mainnet
+    BTCPAY_CHAIN: BTC
+    BTCPAY_EXPLORERURL: ""
+    BTCPAY_LIGHTNING__CHARGEURL: ""
+    BTCPAY_SSHCONNECTION: ""
+    BTCPAY_SSHKEYFILE: ""
+    DATABASE: "User ID=postgres;Host=postgres;Port=5432;Database=btcpayserver;Application Name=btcpay"
+  volumes:
+    - "btcpay-data:/datadir"
+    - "btcpay-plugins:/plugins"
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: btcpayserver
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${BTCPAY_DATABASE_PASSWORD}
+    volumes:
+      - "btcpay-postgres:/var/lib/postgresql/data"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: btc.try.direct
+      description: "Domain name for the application"
+    - name: btcpay-database-password
+      type: secret
+      default: ""
+      description: "PostgreSQL password for BTCPay Server"

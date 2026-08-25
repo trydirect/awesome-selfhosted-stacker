@@ -1,0 +1,69 @@
+name: planka
+
+project:
+  identity: planka
+
+install:
+  inputs:
+    commonDomain: kanban.example.com
+
+app:
+  type: custom
+  image: ghcr.io/plankanban/planka:latest
+  ports:
+    - "1337:1337"
+  environment:
+    DATABASE_URL: "postgres://planka:${DB_PASSWORD}@postgres:5432/planka"
+    BASE_URL: http://localhost:1337
+    SECRET_KEY: "${SECRET_KEY}"
+    TRUST_PROXY: "0"
+  volumes:
+    - planka_data:/app/public/user-avatars
+    - planka_attachments:/app/private/attachments
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: planka
+      POSTGRES_USER: planka
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U planka"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "1337"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  planka_data: {}
+  planka_attachments: {}
+  postgres_data: {}

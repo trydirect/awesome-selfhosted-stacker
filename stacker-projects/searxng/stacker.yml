@@ -1,0 +1,27 @@
+name: searxng
+version: "2024.2.10"
+
+app:
+  type: custom
+  image: searxng/searxng:latest
+  ports:
+    - "8080:8080"
+  environment:
+    SEARXNG_BASE_URL: https://${DOMAIN}
+    SEARXNG_SECRET: ${SEARXNG_SECRET}
+    SEARXNG_RATELIMIT: true
+    SEARXNG_RATE_LIMIT_IP: 1/minute
+    SEARXNG_RATE_LIMIT_PER_IP: 3/second
+  volumes:
+    - "searxng-data:/etc/searxng"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: search.try.direct
+      description: "Domain name for the application"
+    - name: searxng-secret
+      type: secret
+      default: ""
+      description: "SearXNG secret key"

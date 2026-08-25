@@ -4,7 +4,7 @@ services:
     ports:
       - "8080:80"
     environment:
-      ADMIN_TOKEN: "ovEAH4/6K38td8xN/satkoKy0BWQOIriwXqEmLbWNOtLPOyk8TzuDHXIQ8aphnQ6"
+      ADMIN_TOKEN: "4enB+vV6NyjUjl9TkHThl1ZgAXLjIqQ8PO00umS3J6IP31j635rvyL2HpuUSBjrx"
       DOMAIN: "http://localhost:8080"
       SIGNUPS_ALLOWED: "true"
     volumes:
@@ -17,10 +17,29 @@ services:
       my.stacker.scope: "project"
       my.stacker.service: "vaultwarden"
 
+  proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    ports:
+      - "80:80"
+      - "443:443"
+      - "81:81"
+    volumes:
+      - "npm_data:/data"
+      - "npm_letsencrypt:/etc/letsencrypt"
+    restart: unless-stopped
+    networks:
+      - app-network
+    labels:
+      my.stacker.dns: "proxy-manager"
+      my.stacker.scope: "project"
+      my.stacker.service: "proxy-manager"
+
 networks:
   app-network:
     driver: bridge
 
 volumes:
   vaultwarden_data:
+  npm_data:
+  npm_letsencrypt:
 

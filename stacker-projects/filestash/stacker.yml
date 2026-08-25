@@ -1,0 +1,44 @@
+name: filestash
+
+project:
+  identity: filestash
+
+install:
+  inputs:
+    commonDomain: files.example.com
+
+app:
+  type: custom
+  image: machines/filestash:latest
+  ports:
+    - "8334:8334"
+  volumes:
+    - filestash_state:/app/data/state
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8334"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  filestash_state: {}

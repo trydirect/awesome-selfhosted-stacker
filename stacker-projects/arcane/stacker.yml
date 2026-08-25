@@ -1,0 +1,63 @@
+name: arcane
+version: "1.0.0"
+
+project:
+  identity: arcane
+
+install:
+  inputs:
+    commonDomain: arcane.try.direct
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+app:
+  type: custom
+  image: ghcr.io/getarcaneapp/manager:latest
+  ports:
+    - "3552:3552"
+  environment:
+    ENCRYPTION_KEY: "${ENCRYPTION_KEY}"
+    JWT_SECRET: "${JWT_SECRET}"
+    APP_URL: "https://arcane.try.direct"
+    TZ: "UTC"
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - arcane-data:/app/data
+  healthcheck:
+    test: "CMD ./arcane health --timeout 2s"
+    interval: 10s
+    timeout: 3s
+    retries: 5
+    start_period: 15s
+
+volumes:
+  arcane-data: {}
+
+deploy:
+  target: cloud
+  cloud:
+    provider: hetzner
+    region: hel1
+    size: cpx22
+    key: htz-0
+    public_ports:
+      - "22"
+      - "80"
+      - "443"
+
+proxy:
+  type: nginx-proxy-manager
+  auto_detect: true
+  domains:
+    - domain: "arcane.try.direct"
+      ssl: auto
+      upstream: "app:3552"
+
+monitoring:
+  status_panel: true
+  healthcheck:
+    endpoint: /health
+    interval: 30s
+
+env_file: .env

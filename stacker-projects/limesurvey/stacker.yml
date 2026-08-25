@@ -1,0 +1,46 @@
+name: limesurvey
+version: "6.5.0"
+
+app:
+  type: custom
+  image: misterunknown/limesurvey:latest
+  ports:
+    - "80:80"
+  environment:
+    LIMESURVEY_DBHOST: mysql
+    LIMESURVEY_DBNAME: limesurvey
+    LIMESURVEY_DBUSER: limesurvey
+    LIMESURVEY_DBPASS: ${LIMESURVEY_DATABASE_PASSWORD}
+    LIMESURVEY_DBPORT: "3306"
+    LIMESURVEY_AUTH_MODE: "database"
+    LIMESURVEY_ADMIN_USERNAME: admin
+    LIMESURVEY_ADMIN_PASSWORD: ${LIMESURVEY_ADMIN_PASSWORD}
+  volumes:
+    - "limesurvey-uploads:/var/www/html/upload"
+    - "limesurvey-config:/var/www/html/application/config"
+
+services:
+  - name: mysql
+    image: mariadb:11
+    environment:
+      MYSQL_DATABASE: limesurvey
+      MYSQL_USER: limesurvey
+      MYSQL_PASSWORD: ${LIMESURVEY_DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${LIMESURVEY_DATABASE_PASSWORD}
+    volumes:
+      - "limesurvey-mysql:/var/lib/mysql"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: surveys.try.direct
+      description: "Domain name for the application"
+    - name: limesurvey-database-password
+      type: secret
+      default: ""
+      description: "MariaDB password for LimeSurvey"
+    - name: limesurvey-admin-password
+      type: secret
+      default: ""
+      description: "LimeSurvey admin password"

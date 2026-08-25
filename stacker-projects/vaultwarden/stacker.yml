@@ -19,12 +19,19 @@ app:
     DOMAIN: http://localhost:8080
   command: null
   healthcheck: null
-services: []
+services:
+  - name: proxy-manager
+    image: jc21/nginx-proxy-manager:latest
+    ports:
+      - "80:80"
+      - "443:443"
+      - "81:81"
+    volumes:
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
 proxy:
   type: none
   auto_detect: false
-  domains: []
-  config: null
 deploy:
   target: server
   environment: null
@@ -43,9 +50,9 @@ deploy:
     public_ports:
     - '8080'
   server:
-    host: ${DEPLOY_HOST}
+    host: 46.224.139.90
     user: root
-    ssh_key: ${BASE_PATH}/stacker-project-test
+    ssh_key: ~/.config/stacker/ssh/server-451_ed25519
     port: 22
   registry: null
   default_target: null
@@ -74,3 +81,7 @@ env_file: .env
 env: {}
 config_contract:
   services: {}
+volumes:
+  vaultwarden_data: {}
+  npm_data: {}
+  npm_letsencrypt: {}

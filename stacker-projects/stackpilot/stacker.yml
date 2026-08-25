@@ -103,9 +103,9 @@ volumes:
 deploy:
   target: server
   server:
-    host: ${DEPLOY_HOST}
+    host: 46.224.139.90
     user: root
-    ssh_key: ${BASE_PATH}/stacker-project-test
+    ssh_key: ~/.config/stacker/ssh/server-436_ed25519
   cloud:
     provider: hetzner
     region: fsn1
@@ -115,6 +115,7 @@ deploy:
       - "443"
       - "8080"
       - "5678"
+      - "11434"
 
 proxy:
   type: nginx-proxy-manager

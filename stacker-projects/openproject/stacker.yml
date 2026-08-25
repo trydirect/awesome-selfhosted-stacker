@@ -1,0 +1,72 @@
+name: openproject
+version: "14.3.0"
+
+app:
+  type: custom
+  image: openproject/community:latest
+  ports:
+    - "8080:80"
+  environment:
+    OPENPROJECT_HOST__NAME: ${DOMAIN}
+    OPENPROJECT_HTTPS: "true"
+    OPENPROJECT_SECRET_KEY_BASE: ${OPENPROJECT_SECRET_KEY_BASE}
+    OPENPROJECT_DB__POSTGRESQL__HOST: postgres
+    OPENPROJECT_DB__POSTGRESQL__PORT: "5432"
+    OPENPROJECT_DB__POSTGRESQL__DATABASE: openproject
+    OPENPROJECT_DB__POSTGRESQL__USERNAME: openproject
+    OPENPROJECT_DB__POSTGRESQL__PASSWORD: ${OPENPROJECT_DATABASE_PASSWORD}
+    OPENPROJECT_RAILS__RELATIVE__URL__ROOT: "/"
+    OPENPROJECT MAILER__SENDMETHOD: smtp
+    OPENPROJECT_MAILER__SMTP__HOST: mailcatcher
+    OPENPROJECT_MAILER__SMTP__PORT: "1025"
+    OPENPROJECT_MAILER__SMTP__ENABLE__STARTTLS: "false"
+  volumes:
+    - "openproject-assets:/var/openproject/assets"
+    - "openproject-logs:/var/openproject/logs"
+
+services:
+  - name: openproject-worker
+    image: openproject/community:latest
+    command: bundle exec rails jobs:work
+    environment:
+      OPENPROJECT_HOST__NAME: ${DOMAIN}
+      OPENPROJECT_HTTPS: "true"
+      OPENPROJECT_SECRET_KEY_BASE: ${OPENPROJECT_SECRET_KEY_BASE}
+      OPENPROJECT_DB__POSTGRESQL__HOST: postgres
+      OPENPROJECT_DB__POSTGRESQL__PORT: "5432"
+      OPENPROJECT_DB__POSTGRESQL__DATABASE: openproject
+      OPENPROJECT_DB__POSTGRESQL__USERNAME: openproject
+      OPENPROJECT_DB__POSTGRESQL__PASSWORD: ${OPENPROJECT_DATABASE_PASSWORD}
+    volumes:
+      - "openproject-assets:/var/openproject/assets"
+    depends_on:
+      - postgres
+
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: openproject
+      POSTGRES_USER: openproject
+      POSTGRES_PASSWORD: ${OPENPROJECT_DATABASE_PASSWORD}
+    volumes:
+      - "openproject-postgres:/var/lib/postgresql/data"
+
+  - name: mailcatcher
+    image: sj26/mailcatcher:latest
+    ports:
+      - "1080:1080"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: projects.try.direct
+      description: "Domain name for the application"
+    - name: openproject-secret-key-base
+      type: secret
+      default: ""
+      description: "Rails secret key base"
+    - name: openproject-database-password
+      type: secret
+      default: ""
+      description: "PostgreSQL password for OpenProject"

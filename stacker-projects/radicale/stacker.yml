@@ -1,0 +1,48 @@
+name: radicale
+
+project:
+  identity: radicale
+
+install:
+  inputs:
+    commonDomain: calendar.example.com
+
+app:
+  type: custom
+  image: tomsquest/docker-radicale:latest
+  ports:
+    - "5232:5232"
+  environment:
+    RADICALE_AUTH_TYPE: htpasswd
+  volumes:
+    - radicale_data:/data
+    - radicale_config:/config
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "5232"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  radicale_data: {}
+  radicale_config: {}

@@ -1,5 +1,7 @@
 # StackPilot
 
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/stackpilot&ref=main)
+
 **Self-hosted AI website support assistant** — a fully functional RAG-based chat widget that learns from your data, deployable with a single command.
 
 ```
@@ -11,12 +13,21 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                  STACKPILOT API (FastAPI)                   │
 │  • Widget endpoint  • Admin dashboard  • RAG pipeline       │
-└───┬──────────┬──────────┬──────────┬───────────────────────┘
+└───┬──────────┬──────────┬──────────┬────────────────────────┘
     ▼          ▼          ▼          ▼
 ┌────────┐ ┌────────┐ ┌────────┐ ┌────────────┐
 │Postgres│ │ Redis  │ │Ollama  │ │    n8n     │
 │+pgvec  │ │        │ │        │ │            │
 └────────┘ └────────┘ └────────┘ └────────────┘
+```
+
+---
+
+## Quick Deploy
+
+```bash
+stacker install stackpilot
+stacker deploy --target cloud --key htz-0
 ```
 
 ---

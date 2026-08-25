@@ -1,0 +1,37 @@
+name: wikijs
+version: "2.0.300"
+
+app:
+  type: custom
+  image: ghcr.io/requarks/wiki:2
+  ports:
+    - "3000:3000"
+  environment:
+    DB_TYPE: postgres
+    DB_HOST: postgres
+    DB_PORT: "5432"
+    DB_NAME: wikijs
+    DB_USER: wikijs
+    DB_PASS: ${WIKIJS_DATABASE_PASSWORD}
+    PGSSLMODE: disable
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: wikijs
+      POSTGRES_USER: wikijs
+      POSTGRES_PASSWORD: ${WIKIJS_DATABASE_PASSWORD}
+    volumes:
+      - "wikijs-postgres:/var/lib/postgresql/data"
+
+config_contract:
+  inputs:
+    - name: domain
+      type: string
+      default: wiki.try.direct
+      description: "Domain name for the application"
+    - name: wikijs-database-password
+      type: secret
+      default: ""
+      description: "PostgreSQL password for Wiki.js"

@@ -1,0 +1,86 @@
+name: kestra
+
+project:
+  identity: kestra
+
+install:
+  inputs:
+    commonDomain: workflows.example.com
+
+app:
+  type: custom
+  image: kestra/kestra:latest
+  ports:
+    - "8080:8080"
+  environment:
+    KESTRA_CONFIGURATION: |
+      datasources:
+        postgres:
+          url: jdbc:postgresql://postgres:5432/kestra
+          driver-class-name: org.postgresql.Driver
+          username: kestra
+          password: ${DB_PASSWORD}
+      kestra:
+        repository:
+          type: postgres
+        storage:
+          type: local
+          local:
+            base-path: /app/storage
+        queue:
+          type: postgres
+        tasks:
+          tmp-dir:
+            path: /tmp/kestra-wd/tmp
+        url: http://localhost:8080/
+  command: server standalone
+  volumes:
+    - kestra_data:/app/storage
+    - kestra_tmp:/tmp/kestra-wd
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: kestra
+      POSTGRES_USER: kestra
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U kestra"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  kestra_data: {}
+  kestra_tmp: {}
+  postgres_data: {}

@@ -1,0 +1,81 @@
+name: funkwhale
+
+project:
+  identity: funkwhale
+
+install:
+  inputs:
+    commonDomain: music.example.com
+
+app:
+  type: custom
+  image: funkwhale/all-in-one:latest
+  ports:
+    - "5000:5000"
+  environment:
+    FUNKWHALE_HOSTNAME: localhost:5000
+    DJANGO_SECRET_KEY: "${SECRET_KEY}"
+    DATABASE_URL: "postgres://funkwhale:${DB_PASSWORD}@postgres:5432/funkwhale"
+    CACHE_URL: "redis://redis:6379/0"
+    MEDIA_ROOT: /srv/funkwhale/data/media
+    MUSIC_DIRECTORY_PATH: /srv/funkwhale/data/music
+  command: >-
+    sh -c "python manage.py migrate && python manage.py collectstatic --no-input && daphne -b 0.0.0.0 -p 5000 config.asgi:application"
+  volumes:
+    - funkwhale_data:/srv/funkwhale/data
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: funkwhale
+      POSTGRES_USER: funkwhale
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U funkwhale"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "5000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  funkwhale_data: {}
+  postgres_data: {}

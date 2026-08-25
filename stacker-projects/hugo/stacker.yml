@@ -1,0 +1,42 @@
+name: hugo
+
+project:
+  identity: hugo
+
+install:
+  inputs:
+    commonDomain: blog.example.com
+
+app:
+  type: custom
+  image: klakegg/hugo:latest
+  ports:
+    - "1313:1313"
+  command: server --bind 0.0.0.0 --baseURL http://localhost:1313
+  volumes:
+    - hugo_data:/src
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "1313"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  hugo_data: {}
