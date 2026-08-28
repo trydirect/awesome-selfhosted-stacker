@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **114 tested & verified** · Updated 2026-08-25
+**248 projects** · **115 tested & verified** · Updated 2026-08-28
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -48,7 +48,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | private-sovereign-ai | ghcr.io/open-webui/open-webui | 3000 | — | ✅ |
 | anythingllm | mintplexlabs/anythingllm | 3001 | — | |
 | langflow | langflowai/langflow | 7860 | postgres | |
-| localai | localai/localai | 8080 | — | |
+| localai | localai/localai | 8080 | — | ✅ |
 | khoj | ghcr.io/khoj-ai/khoj | 42110 | postgres | |
 | lobechat | lobehub/lobe-chat | 3210 | postgres | |
 
