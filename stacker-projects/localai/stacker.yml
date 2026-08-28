@@ -20,20 +20,23 @@ app:
     - localai_models:/models
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: localai.example.com
+      ssl: off
+      upstream: app:8080
 
 deploy:
-  target: server
-  server:
-    host: ${DEPLOY_HOST}
-    user: root
-    ssh_key: ${BASE_PATH}/stacker-project-test
+  target: cloud
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "8080"
 
 hooks:
