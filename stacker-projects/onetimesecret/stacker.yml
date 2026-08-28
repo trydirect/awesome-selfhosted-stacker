@@ -1,5 +1,8 @@
 name: onetimesecret
 
+project:
+  identity: onetimesecret
+
 app:
   type: custom
   image: onetimesecret/onetimesecret:latest
@@ -28,10 +31,29 @@ volumes:
   ots_redis: {}
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: onetimesecret.example.com
+      ssl: off
+      upstream: app:3000
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+deploy:
+  target: cloud
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "3000"
 
 env_file: .env

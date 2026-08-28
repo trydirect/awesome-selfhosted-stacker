@@ -1,8 +1,40 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**244 projects** · **83 tested & verified** · Updated 2026-08-19
+**248 projects** · **114 tested & verified** · Updated 2026-08-25
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
+
+## Proxy Support
+
+Stacker supports multiple reverse proxy types for automatic HTTPS and domain routing:
+
+| Type | Image | Auto-HTTPS | Notes |
+|------|-------|------------|-------|
+| `traefik` | traefik:latest | ✅ (Let's Encrypt) | Default for cloud deploys |
+| `caddy` | caddy:2-alpine | ✅ (automatic) | Simple config, zero-touch TLS |
+| `nginx-proxy-manager` | jc21/nginx-proxy-manager | ✅ (Let's Encrypt) | GUI-based management |
+| `nginx` | nginx:alpine | ❌ | Manual config |
+| `none` | — | — | No proxy (direct port access) |
+
+Configure in `stacker.yml`:
+```yaml
+proxy:
+  type: caddy  # or: traefik, nginx-proxy-manager, nginx, none
+  domains:
+    - domain: app.example.com
+      ssl: off
+      upstream: app:3000
+```
+
+## Secret Management
+
+Generate secrets with `./scripts/generate-secrets.sh` or use the Stacker CLI:
+
+```bash
+stacker secrets list                    # list local .env secrets
+stacker secrets validate                # check all ${VAR} refs are set
+stacker secrets set KEY --scope service --service my-app --body "value"  # remote Vault
+```
 
 ---
 
@@ -91,7 +123,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
-| bookstack | lscr.io/linuxserver/bookstack | 6875 | mariadb | |
+| bookstack | lscr.io/linuxserver/bookstack | 6875 | mariadb | ✅ |
 | directus | directus/directus | 8055 | postgres | ✅ |
 | ghost | ghost:5-alpine | 2368 | mysql | ✅ |
 | outline | outlinewiki/outline | 3000 | postgres, redis | ✅ |
@@ -117,10 +149,10 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | listmonk | listmonk/listmonk | 9000 | postgres | ✅ | |
 | zulip | zulip/docker-zulip | 80 | postgres | | |
 | element | vectorim/element-web | 8080 | — | | |
-| ntfy | binwiederhier/ntfy | 8080 | — | | |
+| ntfy | binwiederhier/ntfy | 8080 | — | ✅ | |
 | anycable | anycable/anycable-go | 8080 | — | | |
 | centrifugo | centrifugo/centrifugo | 8000 | — | | |
-| apprise | caronc/apprise | 8000 | — | | |
+| apprise | caronc/apprise | 8000 | — | ✅ | |
 
 ## Design (1)
 
@@ -158,7 +190,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | traefik | traefik:v3.0 | 80 | — | | |
 | wireguard | lscr.io/linuxserver/wireguard | 51820 | — | | |
 | woodpecker-ci | woodpeckerci/woodpecker-server | 8000 | — | | |
-| olivetin | jamesread/olivetin | 1337 | — | | |
+| olivetin | jamesread/olivetin | 1337 | — | ✅ | |
 | appwrite | appwrite/appwrite | 80 | mariadb, redis | | Auto-migrate |
 | budibase | budibase/budibase | 80 | couchdb, redis | | |
 | prowlarr | linuxserver/prowlarr | 9696 | — | | |
@@ -282,7 +314,7 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | standard-notes | standardnotes/server | 3000 | postgres, redis | | Auto-migrate |
 | appflowy | appflowyinc/appflowy_cloud | 8000 | postgres, redis | | Auto-migrate |
 
-## Password Management (7)
+## Password Management (13)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -291,10 +323,20 @@ Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../READ
 | hanko | ghcr.io/teamhanko/hanko | 8000 | postgres | ✅ |
 | infisical | infisical/infisical | 8080 | postgres | ✅ |
 | keycloak | quay.io/keycloak/keycloak | 8080 | postgres | |
-| onetimesecret | onetimesecret/onetimesecret | 3000 | redis | |
+| onetimesecret | onetimesecret/onetimesecret | 3000 | redis | ✅ |
 | passbolt | passbolt/passbolt_api | 443 | mariadb | |
 | vaultwarden | vaultwarden/server | 8080 | — | ✅ |
+| vaultwarden-traefik | vaultwarden/server | 80/443 | — | ✅ |
+| vaultwarden-caddy | vaultwarden/server | 80/443 | — | ✅ |
+| vaultwarden-npm | vaultwarden/server | 80/443 | — | ✅ |
+| vaultwarden-secrets | vaultwarden/server | 8080 | — | ✅ |
 | zitadel | ghcr.io/zitadel/zitadel | 8080 | postgres, redis | ✅ |
+
+> **`vaultwarden-*` are feature-test variants** of a single vaultwarden base,
+> each exercising one Stacker capability end-to-end: `-traefik`/`-caddy`/`-npm`
+> reverse-proxy routing (`vault.example.com → app:80`), and `-secrets` the
+> `stacker secrets` workflow (`ADMIN_TOKEN` in a local `.env`). See
+> [vaultwarden-caddy/README.md](vaultwarden-caddy/README.md) for the commands.
 
 ## Project Management (4)
 
