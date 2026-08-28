@@ -14,7 +14,7 @@ app:
     - "8080:80"
   command: "serve"
   environment:
-    NTFY_BASE_URL: http://localhost:8080
+    NTFY_BASE_URL: http://ntfy.example.com
     NTFY_CACHE_FILE: /var/cache/ntfy/cache.db
     NTFY_AUTH_FILE: /var/lib/ntfy/user.db
     NTFY_AUTH_DEFAULT_ACCESS: "read-write"
@@ -23,20 +23,27 @@ app:
     - ntfy_cache:/var/cache/ntfy
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: ntfy.example.com
+      ssl: off
+      upstream: app:80
 
 deploy:
   target: server
   server:
-    host: ${DEPLOY_HOST}
+    host: 188.245.97.117
     user: root
-    ssh_key: ${BASE_PATH}/stacker-project-test
+    ssh_key: ~/.config/stacker/ssh/server-580_ed25519
   cloud:
     provider: hetzner
-    region: fsn1
-    size: cpx22
+    region: nbg1
+    size: cx23
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "8080"
 
 monitoring:

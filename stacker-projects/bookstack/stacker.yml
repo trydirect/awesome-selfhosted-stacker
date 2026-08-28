@@ -1,5 +1,8 @@
 name: bookstack
 
+project:
+  identity: bookstack
+
 app:
   type: custom
   image: lscr.io/linuxserver/bookstack:latest
@@ -9,7 +12,7 @@ app:
     PUID: "1000"
     PGID: "1000"
     TZ: UTC
-    APP_URL: http://localhost:6875
+    APP_URL: http://bookstack.example.com
     DB_HOST: bookstack-db
     DB_USER: bookstack
     DB_PASS: ${DB_PASSWORD}
@@ -36,10 +39,29 @@ volumes:
   bookstack_db: {}
 
 proxy:
-  type: none
+  type: traefik
   auto_detect: false
+  domains:
+    - domain: bookstack.example.com
+      ssl: off
+      upstream: app:80
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+monitoring:
+  status_panel: true
+
 env_file: .env
+
+deploy:
+  target: cloud
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "6875"
