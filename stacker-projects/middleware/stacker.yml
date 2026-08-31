@@ -29,15 +29,26 @@ app:
     SYNC_SERVER_PORT: "9697"
     DEFAULT_SYNC_DAYS: "${DEFAULT_SYNC_DAYS}"
 proxy:
-  type: "none"
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: middleware.example.com
+      ssl: off
+      upstream: app:3333
 deploy:
-  target: "local"
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
-    provider: "hetzner"
-    region: "fsn1"
-    size: "cpx22"
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "3333"
 monitoring:
   status_panel: true
