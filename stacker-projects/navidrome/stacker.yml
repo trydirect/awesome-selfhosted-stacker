@@ -1,5 +1,12 @@
 name: navidrome
 
+project:
+  identity: navidrome
+
+install:
+  inputs:
+    commonDomain: navidrome.try.direct
+
 app:
   type: custom
   image: deluan/navidrome:latest
@@ -18,8 +25,12 @@ volumes:
   navidrome_music: {}
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: navidrome.example.com
+      ssl: off
+      upstream: app:4533
 
 monitoring:
   status_panel: true
@@ -29,12 +40,15 @@ env_file: .env
 deploy:
   target: server
   server:
-    host: ${EXISTING_SERVER_HOST}
-    user: ${EXISTING_SERVER_USER}
+    host: 46.224.127.228
+    user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "4533"
