@@ -1,5 +1,12 @@
 name: kopia
 
+project:
+  identity: kopia
+
+install:
+  inputs:
+    commonDomain: kopia.try.direct
+
 app:
   type: custom
   image: kopia/kopia:latest
@@ -20,10 +27,33 @@ volumes:
   kopia_logs: {}
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: kopia.example.com
+      ssl: off
+      upstream: app:51515
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+monitoring:
+  status_panel: true
+
 env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "51515"

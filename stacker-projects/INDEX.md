@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **116 tested & verified** · Updated 2026-08-31
+**248 projects** · **117 tested & verified** · Updated 2026-08-31
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -208,7 +208,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | stirling-pdf | frooodle/s-pdf | 8080 | — | ✅ |
 | outline | outlinewiki/outline | 3000 | postgres, redis | ✅ |
 | wikijs | ghcr.io/requarks/wiki | 3000 | postgres | |
-| kopia | kopia/kopia | 51515 | — | |
+| kopia | kopia/kopia | 51515 | — | ✅ |
 
 ## File Management (11)
 
