@@ -1,4 +1,12 @@
 name: duplicati
+
+project:
+  identity: duplicati
+
+install:
+  inputs:
+    commonDomain: duplicati.try.direct
+
 app:
   type: custom
   image: lscr.io/linuxserver/duplicati:latest
@@ -18,19 +26,29 @@ volumes:
   duplicati_backups: {}
   duplicati_source: {}
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: duplicati.example.com
+      ssl: off
+      upstream: app:8200
 env_file: .env
+
+monitoring:
+  status_panel: true
+
 deploy:
   target: server
   server:
     host: ${EXISTING_SERVER_HOST}
     user: ${EXISTING_SERVER_USER}
-    ssh_key: /Users/vasilipascal/.config/stacker/ssh/server-556_ed25519
-    port: 22
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
-    - '8200'
+      - "80"
+      - "443"
+      - "8200"

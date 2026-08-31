@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **119 tested & verified** · Updated 2026-08-31
+**248 projects** · **120 tested & verified** · Updated 2026-08-31
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -214,7 +214,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
-| duplicati | lscr.io/linuxserver/duplicati | 8200 | — | | |
+| duplicati | lscr.io/linuxserver/duplicati | 8200 | — | ✅ | |
 | filebrowser | filebrowser/filebrowser | 8080 | — | ✅ | |
 | minio | minio/minio | 9000 | — | | |
 | nextcloud | nextcloud | 8080 | mariadb, redis | ✅ | |
