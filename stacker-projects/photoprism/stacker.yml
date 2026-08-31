@@ -57,8 +57,8 @@ monitoring:
 deploy:
   target: server
   server:
-    host: 46.224.127.228
-    user: root
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
     ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
