@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **127 tested & verified** · Updated 2026-08-31
+**248 projects** · **128 tested & verified** · Updated 2026-08-31
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -56,7 +56,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
-| aptabase | ghcr.io/aptabase/aptabase | 3000 | postgres, clickhouse | |
+| aptabase | ghcr.io/aptabase/aptabase | 3000 | postgres, clickhouse | ✅ |
 | countly-server | bitnami/nginx | 8080 | mongodb | |
 | d8a | ghcr.io/d8a-tech/d8a | 3000 | — | ✅ |
 | daily-stars-explorer | ghcr.io/emanuelef/daily-stars-explorer | 8080 | — | ✅ |
