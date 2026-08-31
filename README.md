@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-115-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-116-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -544,6 +544,7 @@ server target. Start here for production.
 | Discourse           | Forum            | 80    | —          | needs pgvector/pgvector instead of plain postgres |
 | Docmost             | Wiki             | 3000  | —          | needs Redis service |
 | Druid               | Analytics        | 8888  | —          | pinned apache/druid:31.0.0; removed broken druid_extensions_loadList env var |
+| Duplicati           | Backup           | 8200  | caddy      | Encrypted backup to cloud/local |
 | FileBrowser         | File manager     | 8080  | —          | |
 | Floci               | Local cloud      | 4500  | —          | TLS disabled; FLOCI_BASE_URL must match external IP |
 | Ganymede           | Video archive    | 4000  | —          | |
