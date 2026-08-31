@@ -1,26 +1,36 @@
 name: duplicati
-
 app:
   type: custom
   image: lscr.io/linuxserver/duplicati:latest
   ports:
-    - "8200:8200"
+  - 8200:8200
   environment:
-    PUID: "1000"
-    PGID: "1000"
+    PUID: '1000'
+    PGID: '1000'
     TZ: UTC
+    SETTINGS_ENCRYPTION_KEY: ${SETTINGS_ENCRYPTION_KEY}
   volumes:
-    - duplicati_config:/config
-    - duplicati_backups:/backups
-    - duplicati_source:/source
-
+  - duplicati_config:/config
+  - duplicati_backups:/backups
+  - duplicati_source:/source
 volumes:
   duplicati_config: {}
   duplicati_backups: {}
   duplicati_source: {}
-
 proxy:
   type: none
   auto_detect: false
-
 env_file: .env
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: /Users/vasilipascal/.config/stacker/ssh/server-556_ed25519
+    port: 22
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+    - '8200'

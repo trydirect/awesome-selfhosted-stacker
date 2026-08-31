@@ -33,8 +33,8 @@ proxy:
 deploy:
   target: server
   server:
-    host: 188.245.97.117
-    user: root
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
     ssh_key: ~/.config/stacker/ssh/server-580_ed25519
   cloud:
     provider: hetzner
