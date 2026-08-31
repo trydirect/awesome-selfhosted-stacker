@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **120 tested & verified** · Updated 2026-08-31
+**248 projects** · **121 tested & verified** · Updated 2026-08-31
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -137,7 +137,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | AstrBot | soulter/astrbot | 6185 | — | ✅ | |
-| chatwoot | chatwoot/chatwoot | 3000 | postgres, redis | | |
+| chatwoot | chatwoot/chatwoot | 3000 | postgres, redis | ✅ | |
 | discourse | discourse/discourse | 80 | postgres, redis | ✅ | |
 | gotify | gotify/server | 8080 | — | | |
 | jitsi | jitsi/web:unstable | 80 | — | ✅ | |
