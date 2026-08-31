@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-119-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-120-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -569,6 +569,7 @@ server target. Start here for production.
 | Kavita             | Reading          | 5000  | —          | comics/manga reader |
 | Komga              | Comics/manga     | 25600 | —          | |
 | Kopia              | Backup           | 51515 | caddy      | Encrypted backup to cloud/local |
+| Langflow           | AI workflows     | 7860  | caddy      | AI workflow builder + postgres |
 | Lemmy              | Link aggregator  | 1234  | —          | pinned dessalines/lemmy:0.19.11 |
 | Linkding           | Bookmarks        | 9090  | —          | |
 | Linkwarden         | Bookmarks        | 3000  | —          | |
