@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-125-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-126-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -560,6 +560,7 @@ server target. Start here for production.
 | Grocy              | Household        | 9283  | —          | groceries, chores, batteries |
 | Grist              | Spreadsheet      | 8484  | —          | relational spreadsheet with Python |
 | HedgeDoc           | Markdown editor  | 3000  | —          | |
+| HitKeep            | Bookmarks        | 8080  | caddy      | Single container |
 | Home Assistant     | Smart home       | 8123  | —          | slow startup (~50s) |
 | Homer              | Dashboard        | 8080  | —          | Static dashboard, no DB |
 | Immich             | Photos           | 2283  | —          | Google Photos alternative |
