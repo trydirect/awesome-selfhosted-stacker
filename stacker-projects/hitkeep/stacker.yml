@@ -60,15 +60,26 @@ app:
     HITKEEP_MAIL_FROM_ADDRESS: "${HITKEEP_MAIL_FROM_ADDRESS}"
     HITKEEP_MAIL_FROM_NAME: "${HITKEEP_MAIL_FROM_NAME}"
 proxy:
-  type: "none"
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: hitkeep.example.com
+      ssl: off
+      upstream: app:8080
 deploy:
-  target: "local"
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
-    provider: "hetzner"
-    region: "fsn1"
-    size: "cpx22"
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "8080"
 monitoring:
   status_panel: true
