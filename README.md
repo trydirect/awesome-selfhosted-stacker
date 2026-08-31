@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-122-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-123-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -575,6 +575,7 @@ server target. Start here for production.
 | Lemmy              | Link aggregator  | 1234  | —          | pinned dessalines/lemmy:0.19.11 |
 | Linkding           | Bookmarks        | 9090  | —          | |
 | Linkwarden         | Bookmarks        | 3000  | —          | |
+| LobeChat           | AI chat          | 3210  | caddy      | ChatGPT alternative + postgres |
 | Listmonk           | Newsletter       | 9000  | —          | needs --install flag on first run |
 | LocalAI            | AI inference     | 8080  | caddy      | Local LLM inference server |
 | Mastodon           | Social network   | 3000  | —          | |
