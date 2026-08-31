@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-118-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-119-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -603,6 +603,7 @@ server target. Start here for production.
 | Postiz App         | Social scheduler | 4007  | —          | 6 containers: app + postgres + redis + temporal + ES |
 | Redash             | BI               | 5000  | —          | |
 | Rocket.Chat        | Chat             | 3000  | —          | needs manual `rs.initiate()` on mongo |
+| Rallly             | Scheduling       | 3000  | caddy      | Date polls + postgres |
 | ROMM              | ROM manager      | 8080  | —          | |
 | RustFS            | File storage     | 3001  | —          | |
 | Rybbit            | Analytics        | 8080  | —          | Clickhouse config bind mount |

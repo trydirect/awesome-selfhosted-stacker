@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **122 tested & verified** · Updated 2026-08-31
+**248 projects** · **123 tested & verified** · Updated 2026-08-31
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -89,7 +89,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | dify | (static) | — | — | | |
 | homeassistant | lscr.io/linuxserver/homeassistant | 8123 | — | | |
 | n8n | n8nio/n8n | 5678 | postgres | ✅ | |
-| rallly | lukevella/rallly | 3000 | postgres | | |
+| rallly | lukevella/rallly | 3000 | postgres | ✅ | |
 | typebot | baptistearno/typebot-builder | 3001 | postgres | | |
 | vikunja | (Dockerfile) | 3456 | postgres | ⚠️ | |
 | apache-airflow | apache/airflow | 8080 | postgres | | DB migrate |

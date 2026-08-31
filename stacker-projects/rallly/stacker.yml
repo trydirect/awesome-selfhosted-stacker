@@ -1,5 +1,12 @@
 name: rallly
 
+project:
+  identity: rallly
+
+install:
+  inputs:
+    commonDomain: rallly.try.direct
+
 app:
   type: custom
   image: lukevella/rallly:latest
@@ -8,7 +15,7 @@ app:
   environment:
     DATABASE_URL: postgresql://rallly:${DB_PASSWORD}@rallly-db:5432/rallly
     SECRET: ${SECRET}
-    NEXT_PUBLIC_BASE_URL: http://localhost:3000
+    NEXT_PUBLIC_BASE_URL: http://rallly.example.com
 
 services:
   - name: rallly-db
@@ -29,10 +36,32 @@ volumes:
   rallly_db: {}
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: rallly.example.com
+      ssl: off
+      upstream: app:3000
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+monitoring:
+  status_panel: true
+
 env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "80"
+      - "443"
+      - "3000"
