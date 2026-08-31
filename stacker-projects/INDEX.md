@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **132 tested & verified** · Updated 2026-08-31
+**248 projects** · **133 tested & verified** · Updated 2026-08-31
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -67,7 +67,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | matomo | matomo | 8080 | mariadb | ✅ |
 | metabase | metabase/metabase | 3000 | postgres | ✅ |
 | middleware | middlewareeng/middleware | 3333 | postgres | ✅ |
-| offen | offen/offen | 3000 | — | |
+| offen | offen/offen | 3000 | — | ✅ |
 | plausible | ghcr.io/plausible/community-edition | 8000 | postgres, clickhouse | ✅ |
 | posthog | posthog/posthog | 8000 | postgres, redis | ✅ |
 | redash | redash/redash | 5000 | postgres, redis | ✅ |
