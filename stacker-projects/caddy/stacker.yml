@@ -1,22 +1,25 @@
 name: caddy
-
 app:
   type: custom
   image: caddy:latest
   ports:
-    - "80:80"
-    - "443:443"
-    - "443:443/udp"
+  - 80:80
+  - 443:443
+  - 443:443/udp
   volumes:
-    - caddy_data:/data
-    - caddy_config:/config
-
+  - caddy_data:/data
+  - caddy_config:/config
 volumes:
   caddy_data: {}
   caddy_config: {}
-
 proxy:
   type: none
   auto_detect: false
-
 env_file: .env
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    port: 22
