@@ -1,6 +1,13 @@
 name: photoprism
 version: "240721-a0e3e14"
 
+project:
+  identity: photoprism
+
+install:
+  inputs:
+    commonDomain: photoprism.try.direct
+
 app:
   type: custom
   image: photoprism/photoprism:latest
@@ -35,3 +42,32 @@ config_contract:
       type: secret
       default: ""
       description: "PhotoPrism admin password"
+
+proxy:
+  type: caddy
+  auto_detect: false
+  domains:
+    - domain: photoprism.example.com
+      ssl: off
+      upstream: app:2342
+
+monitoring:
+  status_panel: true
+
+deploy:
+  target: server
+  server:
+    host: 46.224.127.228
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "2342"
+
+env_file: .env
