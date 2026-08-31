@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-114-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-115-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -619,6 +619,7 @@ server target. Start here for production.
 | Vaultwarden       | Password mgr     | 8080  | —          | with Nginx Proxy Manager |
 | Wallabag          | Read-it-later    | 80    | —          | + postgres + redis |
 | WordPress         | CMS              | 8080  | —          | uses image: wordpress (no tag) + mysql:8.0 |
+| Windmill          | Automation       | 8000  | caddy      | Workflow automation + postgres |
 | Zitadel           | IAM/SSO          | 8080  | —          | ExternalDomain must match server IP |
 
 ### Pre-existing (configured, not re-deployed)
