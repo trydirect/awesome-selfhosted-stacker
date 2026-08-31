@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-124-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-125-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -555,7 +555,7 @@ server target. Start here for production.
 | Ghost              | Blogging         | 2368  | —          | |
 | Glances            | System monitor   | 61208 | —          | |
 | Gotify             | Notifications    | 8080  | —          | |
-| GoatCounter        | Analytics        | 8080  | —          | single container, no secrets |
+| GoatCounter        | Analytics        | 8080  | caddy      | single container, no secrets |
 | Grafana            | Monitoring       | 3000  | —          | admin/admin default |
 | Grocy              | Household        | 9283  | —          | groceries, chores, batteries |
 | Grist              | Spreadsheet      | 8484  | —          | relational spreadsheet with Python |

@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **128 tested & verified** · Updated 2026-08-31
+**248 projects** · **129 tested & verified** · Updated 2026-08-31
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -62,7 +62,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | daily-stars-explorer | ghcr.io/emanuelef/daily-stars-explorer | 8080 | — | ✅ |
 | druid | apache/druid:31.0.0 | 8888 | postgres, zookeeper | ✅ |
 | goaccess | nginx:1.27-alpine | 8080 | — | |
-| goatcounter | arp242/goatcounter | 8080 | — | |
+| goatcounter | arp242/goatcounter | 8080 | — | ✅ |
 | hitkeep | ghcr.io/pascalebeier/hitkeep | 8080 | — | |
 | matomo | matomo | 8080 | mariadb | |
 | metabase | metabase/metabase | 3000 | postgres | ✅ |
