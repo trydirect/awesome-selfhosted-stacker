@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-128-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-129-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -594,7 +594,7 @@ server target. Start here for production.
 | NocoDB             | Database         | 8080  | —          | Airtable alternative + postgres |
 | Navidrome          | Music            | 4533  | caddy      | music streaming server |
 | Ntfy               | Notifications    | 8080  | caddy      | Push notification server |
-| Offen              | Analytics        | 3000  | —          | single container, privacy-first |
+| Offen              | Analytics        | 3000  | caddy      | single container, privacy-first |
 | Ombi               | Media requests   | 3579  | —          | Plex/Jellyfin requests |
 | OneTimeSecret      | Secret sharing   | 3000  | caddy      | Self-destructing secret links |
 | Organizr           | Dashboard        | 9983  | —          | HTPC dashboard |
