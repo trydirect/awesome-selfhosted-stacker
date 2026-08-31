@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **121 tested & verified** · Updated 2026-08-31
+**248 projects** · **122 tested & verified** · Updated 2026-08-31
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -393,7 +393,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 |---------|-------|------|----|:------:|-------|
 | clickhouse | clickhouse/clickhouse-server | 8123 | — | | |
 | surrealdb | surrealdb/surrealdb | 8000 | — | | |
-| influxdb | influxdb:2.7 | 8086 | — | | |
+| influxdb | influxdb:2.7 | 8086 | — | ✅ | |
 | mongodb | mongo:7 | 27017 | — | | |
 
 ## Storage (3)
