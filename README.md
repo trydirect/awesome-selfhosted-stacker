@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-134-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-135-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -630,6 +630,7 @@ server target. Start here for production.
 | Typebot           | Chatbots         | 3001  | caddy      | Conversational form builder + postgres |
 | Umami             | Analytics        | 3000  | —          | |
 | UptimeKuma        | Monitoring       | 3001  | —          | |
+| UrBackup           | Backup           | 55414 | caddy      | Backup server |
 | Vaultwarden       | Password mgr     | 8080  | —          | with Nginx Proxy Manager |
 | Vikunja           | Task management  | 3456  | caddy      | Project management + postgres |
 | Wallabag          | Read-it-later    | 80    | —          | + postgres + redis |
