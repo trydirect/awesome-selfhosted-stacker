@@ -1,5 +1,12 @@
 name: screego
 
+project:
+  identity: screego
+
+install:
+  inputs:
+    commonDomain: screego.example.com
+
 app:
   type: custom
   image: ghcr.io/screego/server:latest
@@ -10,8 +17,12 @@ app:
     SCREEGO_TURN_PORT_RANGE: 10000:10100
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: screego.example.com
+      ssl: off
+      upstream: app:5050
 
 monitoring:
   status_panel: true
@@ -28,5 +39,8 @@ deploy:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "5050"
