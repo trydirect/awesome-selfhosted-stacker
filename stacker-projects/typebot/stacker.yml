@@ -1,5 +1,12 @@
 name: typebot
 
+project:
+  identity: typebot
+
+install:
+  inputs:
+    commonDomain: typebot.example.com
+
 app:
   type: custom
   image: baptistearno/typebot-builder:latest
@@ -11,6 +18,7 @@ app:
     NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
     ENCRYPTION_SECRET: ${ENCRYPTION_SECRET}
     ADMIN_EMAIL: admin@example.com
+    NEXT_PUBLIC_VIEWER_URL: ${NEXT_PUBLIC_VIEWER_URL}
 
 services:
   - name: typebot-db
@@ -31,11 +39,18 @@ volumes:
   typebot_db: {}
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: typebot.example.com
+      ssl: off
+      upstream: app:3000
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
 
 env_file: .env
 
@@ -49,5 +64,8 @@ deploy:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "3001"
