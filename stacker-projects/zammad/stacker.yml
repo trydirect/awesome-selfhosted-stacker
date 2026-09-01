@@ -1,11 +1,18 @@
 name: zammad
 version: "6.3.0"
 
+project:
+  identity: zammad
+
+install:
+  inputs:
+    commonDomain: support.example.com
+
 app:
   type: custom
   image: zammad/zammad:latest
   ports:
-    - "80:80"
+    - "8080:80"
   environment:
     POSTGRESQL_HOST: postgres
     POSTGRESQL_PORT: "5432"
@@ -88,3 +95,36 @@ config_contract:
       type: secret
       default: ""
       description: "PostgreSQL password for Zammad"
+
+proxy:
+  type: caddy
+  auto_detect: false
+  domains:
+    - domain: support.example.com
+      ssl: off
+      upstream: app:80
+
+monitoring:
+  status_panel: true
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+
+env_file: .env
+
+volumes:
+  zammad-storage: {}
+  zammad-postgres: {}
+  zammad-redis: {}
