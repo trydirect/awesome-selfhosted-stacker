@@ -1,6 +1,13 @@
 name: librechat
 version: "0.7.3"
 
+project:
+  identity: librechat
+
+install:
+  inputs:
+    commonDomain: librechat.example.com
+
 app:
   type: custom
   image: ghcr.io/danny-avila/librechat:latest
@@ -48,3 +55,38 @@ config_contract:
       type: secret
       default: ""
       description: "JWT refresh secret"
+
+proxy:
+  type: caddy
+  auto_detect: false
+  domains:
+    - domain: librechat.example.com
+      ssl: off
+      upstream: app:3080
+
+monitoring:
+  status_panel: true
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "3080"
+
+env_file: .env
+
+volumes:
+  librechat-images: {}
+  librechat-logs: {}
+  librechat-cache: {}
+  librechat-mongo: {}
