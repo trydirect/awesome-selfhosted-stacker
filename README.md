@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-155-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-156-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -633,6 +633,7 @@ server target. Start here for production.
 | Semaphore         | Ansible UI       | 3000  | —          | fixed DB_DIALECT typo |
 | Shaper            | Dashboards       | 8080  | caddy      | DuckDB analytics |
 | Shlink            | URL shortener    | 8080  | caddy      | URL shortener + postgres |
+| SimpleLogin       | Email alias      | 8080  | caddy      | Email alias + postgres (needs SMTP/DKIM) |
 | Statistics for Strava | Fitness      | 8080  | —          | waits for Strava API credentials |
 | Strapi            | CMS              | 1337  | —          | uses naskio/strapi instead of strapi |
 | Supabase          | Backend platform | 8000  | —          | 10 containers; needs role passwords set via supabase_admin |

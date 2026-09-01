@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **159 tested & verified** · Updated 2026-09-01
+**248 projects** · **160 tested & verified** · Updated 2026-09-01
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -272,7 +272,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
-| simplelogin | simplelogin/app | 8080 | postgres | | DB migrate |
+| simplelogin | simplelogin/app | 8080 | postgres | ✅ | DB migrate |
 | stalwart-mail | stalwartlabs/mail-server | 8080 | — | | Built-in DB |
 
 ## Events (1)
