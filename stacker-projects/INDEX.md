@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **144 tested & verified** · Updated 2026-09-01
+**248 projects** · **145 tested & verified** · Updated 2026-09-01
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -105,7 +105,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | urbackup | uroni/urbackup-server | 55414 | — | ✅ | |
-| restic-rest-server | restic/rest-server | 8000 | — | | |
+| restic-rest-server | restic/rest-server | 8000 | — | ✅ | |
 
 ## Bookmarks & Link Sharing (7)
 
