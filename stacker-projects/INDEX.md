@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **142 tested & verified** · Updated 2026-09-01
+**248 projects** · **143 tested & verified** · Updated 2026-09-01
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -96,7 +96,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | dagu | ghcr.io/dagucloud/dagu | 8080 | — | ✅ | |
 | dittofeed | dittofeed/dittofeed | 3000 | postgres, clickhouse, kafka | | Auto-migrate |
 | huginn | ghcr.io/huginn/huginn | 3000 | postgres | ✅ | DB migrate+seed |
-| kestra | kestra/kestra | 8080 | postgres | | |
+| kestra | kestra/kestra | 8080 | postgres | ✅ | |
 | windmill | ghcr.io/windmill-labs/windmill | 8000 | postgres | ✅ | |
 | cronicle | cronicle/cronicle | 3012 | — | | |
 
