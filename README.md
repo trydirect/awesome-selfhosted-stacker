@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-136-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-137-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -543,6 +543,7 @@ server target. Start here for production.
 | CyberChef           | Data tools       | 8000  | —          | container listens on 8080 |
 | Dashy               | Dashboard        | 8082  | —          | container listens on 8080, not 80 |
 | d8a                 | Analytics        | 3000  | —          | |
+| Dagu               | Automation       | 8080  | caddy      | Workflow automation |
 | Daily Stars Explorer| Astronomy        | 8080  | —          | |
 | Directus            | Headless CMS     | 8055  | —          | REST + GraphQL API |
 | Discourse           | Forum            | 80    | —          | needs pgvector/pgvector instead of plain postgres |
