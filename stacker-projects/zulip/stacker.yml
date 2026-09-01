@@ -63,11 +63,7 @@ proxy:
       upstream: app:80
 
 deploy:
-  target: server
-  server:
-    host: ${EXISTING_SERVER_HOST}
-    user: ${EXISTING_SERVER_USER}
-    ssh_key: ${BASE_PATH}/stacker-project-test
+  target: cloud
   cloud:
     provider: hetzner
     region: fsn1
