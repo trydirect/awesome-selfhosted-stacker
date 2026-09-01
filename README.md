@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-139-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-140-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -541,6 +541,7 @@ server target. Start here for production.
 | Chatwoot           | Support          | 3000  | caddy      | Customer support + postgres + redis |
 | ClickHouse         | Database         | 8123  | caddy      | Column-oriented OLAP database |
 | CyberChef           | Data tools       | 8000  | —          | container listens on 8080 |
+| Cronicle           | Scheduler        | 3012  | caddy      | Job scheduler |
 | Dashy               | Dashboard        | 8082  | —          | container listens on 8080, not 80 |
 | d8a                 | Analytics        | 3000  | —          | |
 | Dagu               | Automation       | 8080  | caddy      | Workflow automation |
