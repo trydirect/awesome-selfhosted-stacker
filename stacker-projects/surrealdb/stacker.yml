@@ -15,26 +15,33 @@ app:
   environment:
     SURREAL_USER: root
     SURREAL_PASS: "${DB_PASSWORD}"
-    SURREAL_PATH: file:///data/surrealdb
-  command: start --log trace --user ${SURREAL_USER} --pass ${SURREAL_PASS} file:///data/surrealdb
+    SURREAL_PATH: rocksdb:///data/surrealdb
+  command: start --log trace --user ${SURREAL_USER} --pass ${SURREAL_PASS} rocksdb:///data/surrealdb
   volumes:
     - surrealdb_data:/data
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: surrealdb.example.com
+      ssl: off
+      upstream: app:8000
 
 deploy:
   target: server
   server:
-    host: ${DEPLOY_HOST}
-    user: root
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
     ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "8000"
 
 hooks:
