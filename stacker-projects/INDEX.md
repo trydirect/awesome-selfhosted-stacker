@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **149 tested & verified** · Updated 2026-09-01
+**248 projects** · **150 tested & verified** · Updated 2026-09-01
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -151,7 +151,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | element | vectorim/element-web | 8080 | — | ✅ | |
 | ntfy | binwiederhier/ntfy | 8080 | — | ✅ | |
 | anycable | anycable/anycable-go | 8080 | — | | |
-| centrifugo | centrifugo/centrifugo | 8000 | — | | |
+| centrifugo | centrifugo/centrifugo | 8000 | — | ✅ | |
 | apprise | caronc/apprise | 8000 | — | ✅ | |
 
 ## Design (1)
