@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **133 tested & verified** · Updated 2026-08-31
+**248 projects** · **134 tested & verified** · Updated 2026-09-01
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -76,7 +76,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | supabase-posthog | kong/kong:3.9.1 | 8000 | postgres | |
 | superset | apache/superset | 8088 | postgres, redis | ✅ |
 | umami | ghcr.io/umami-software/umami | 3000 | postgres | ✅ |
-| shaper | taleshape/shaper | 8080 | — | |
+| shaper | taleshape/shaper | 8080 | — | ✅ |
 
 ## Automation (19)
 
