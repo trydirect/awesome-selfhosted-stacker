@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **155 tested & verified** · Updated 2026-09-01
+**248 projects** · **156 tested & verified** · Updated 2026-09-01
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -432,7 +432,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
-| wger | wger/server | 8000 | postgres | | Auto-migrate |
+| wger | wger/server | 8000 | postgres | ✅ | Auto-migrate |
 
 ## Pastebins (1)
 
