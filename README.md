@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-144-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-145-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -552,6 +552,7 @@ server target. Start here for production.
 | Druid               | Analytics        | 8888  | —          | pinned apache/druid:31.0.0; removed broken druid_extensions_loadList env var |
 | Duplicati           | Backup           | 8200  | caddy      | Encrypted backup to cloud/local |
 | FileBrowser         | File manager     | 8080  | —          | |
+| Element            | Matrix chat      | 8080  | caddy      | Matrix chat client |
 | Floci               | Local cloud      | 4500  | —          | TLS disabled; FLOCI_BASE_URL must match external IP |
 | Ganymede           | Video archive    | 4000  | —          | |
 | Gitea              | Git hosting      | 3000  | —          | |
