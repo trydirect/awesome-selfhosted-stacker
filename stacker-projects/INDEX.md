@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **145 tested & verified** · Updated 2026-09-01
+**248 projects** · **146 tested & verified** · Updated 2026-09-01
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -141,7 +141,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | discourse | discourse/discourse | 80 | postgres, redis | ✅ | |
 | gotify | gotify/server | 8080 | — | | |
 | jitsi | jitsi/web:unstable | 80 | — | ✅ | |
-| librechat | ghcr.io/danny-avila/librechat | 3080 | mongo | | |
+| librechat | ghcr.io/danny-avila/librechat | 3080 | mongo | ✅ | |
 | mattermost | mattermost/mattermost-enterprise-edition | 8065 | postgres | | |
 | rocket-chat | rocket.chat | 3000 | mongo | ✅ | |
 | screego | ghcr.io/screego/server | 5050 | — | | |
