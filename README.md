@@ -561,7 +561,7 @@ server target. Start here for production.
 | Grist              | Spreadsheet      | 8484  | —          | relational spreadsheet with Python |
 | HedgeDoc           | Markdown editor  | 3000  | —          | |
 | HitKeep            | Bookmarks        | 8080  | caddy      | Single container |
-| Home Assistant     | Smart home       | 8123  | —          | slow startup (~50s) |
+| Home Assistant     | Smart home       | 8123  | caddy      | slow startup (~50s) |
 | Homer              | Dashboard        | 8080  | —          | Static dashboard, no DB |
 | Immich             | Photos           | 2283  | —          | Google Photos alternative |
 | InfluxDB           | Time-series DB   | 8086  | caddy      | Time-series database |
