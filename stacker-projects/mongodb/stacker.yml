@@ -20,20 +20,27 @@ app:
     - mongodb_config:/data/configdb
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: mongodb.example.com
+      ssl: off
+      upstream: app:27017
 
 deploy:
   target: server
   server:
-    host: ${DEPLOY_HOST}
-    user: root
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
     ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "27017"
 
 hooks:
