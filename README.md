@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-147-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-148-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -593,6 +593,7 @@ server target. Start here for production.
 | Maybe Finance      | Personal finance | 3000  | —          | |
 | Mealie             | Recipes          | 9925  | —          | SQLite by default |
 | Meilisearch        | Search           | 7700  | —          | |
+| MongoDB            | Database         | 27017 | caddy      | Document database |
 | MeTube             | Media download   | 8081  | —          | YouTube downloader |
 | Memos              | Notes            | 5230  | —          | |
 | Metabase           | BI               | 3000  | —          | |
