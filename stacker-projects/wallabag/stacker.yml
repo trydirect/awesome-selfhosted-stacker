@@ -12,7 +12,7 @@ app:
   type: php
   image: wallabag/wallabag:latest
   ports:
-    - "80:80"
+    - "8080:80"
   environment:
     SYMFONY_ENV: prod
     SYMFONY_DEBUG: "0"
@@ -64,17 +64,27 @@ volumes:
   wallabag_redis: {}
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: wallabag.example.com
+      ssl: off
+      upstream: app:80
 
 deploy:
-  target: local
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
       - "80"
+      - "443"
 
 config_contract:
   app:
