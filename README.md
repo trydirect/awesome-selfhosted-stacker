@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-146-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-147-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -632,6 +632,7 @@ server target. Start here for production.
 | Supabase          | Backend platform | 8000  | —          | 10 containers; needs role passwords set via supabase_admin |
 | Supabase-PostHog  | Analytics + Backend | 8000 | —          | Supabase + PostHog combined |
 | Superset          | BI               | 8088  | —          | needs manual `superset fab create-admin` + `db upgrade` + `init` |
+| SurrealDB         | Database         | 8000  | caddy      | Multi-model database |
 | Synapse           | Matrix chat      | 8008  | —          | |
 | Syncthing         | File sync        | 8384  | —          | P2P file synchronization |
 | Tandoor           | Recipes          | 8080  | —          | fixed port mapping 8080->80 (nginx) |
