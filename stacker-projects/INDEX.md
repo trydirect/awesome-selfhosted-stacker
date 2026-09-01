@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **136 tested & verified** · Updated 2026-09-01
+**248 projects** · **137 tested & verified** · Updated 2026-09-01
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -91,7 +91,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | n8n | n8nio/n8n | 5678 | postgres | ✅ | |
 | rallly | lukevella/rallly | 3000 | postgres | ✅ | |
 | typebot | baptistearno/typebot-builder | 3001 | postgres | ✅ | |
-| vikunja | (Dockerfile) | 3456 | postgres | ⚠️ | |
+| vikunja | (Dockerfile) | 3456 | postgres | ✅ | |
 | apache-airflow | apache/airflow | 8080 | postgres | | DB migrate |
 | dagu | ghcr.io/dagucloud/dagu | 8080 | — | | |
 | dittofeed | dittofeed/dittofeed | 3000 | postgres, clickhouse, kafka | | Auto-migrate |
