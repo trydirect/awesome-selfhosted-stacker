@@ -1,0 +1,6 @@
+^Dy
+Stacker wants to create stacker.yml in the current directory. Allow? [y/N] [?25l[2KStacker wants to create stacker.yml in the current directory. Allow? yes
+[?25hInstalled 'ghost' as project #371.
+Wrote stacker.yml
+  Hooks in this file will be REFUSED by `stacker deploy` until you review them and remove the '# @stacker-origin: marketplace' marker line (or pass --allow-untrusted-hooks).
+Deploy with: stacker deploy --project ghost

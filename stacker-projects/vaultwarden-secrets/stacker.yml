@@ -1,0 +1,49 @@
+name: vaultwarden-secrets
+version: "1.0.0"
+
+project:
+  identity: vaultwarden-secrets
+
+install:
+  inputs:
+    commonDomain: vault.example.com
+
+# Secrets-focused variant: no proxy. ADMIN_TOKEN (and the DB password, if the
+# postgres backend is enabled) are managed via `stacker secrets` (local .env)
+# rather than hardcoded. See SECRETS.md.
+app:
+  type: custom
+  image: vaultwarden/server:latest
+  ports:
+    - "8080:80"
+  environment:
+    ADMIN_TOKEN: ${ADMIN_TOKEN}
+    SIGNUPS_ALLOWED: "false"
+    DOMAIN: http://localhost:8080
+  volumes:
+    - vaultwarden_data:/data
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  vaultwarden_data: {}

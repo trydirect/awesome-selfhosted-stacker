@@ -1,0 +1,34 @@
+# @stacker-origin: marketplace
+# Delete the line above once you have reviewed hooks in this file — `stacker deploy` refuses to run hooks while the marker is present.
+name: plausible
+services:
+  plausible:
+    image: ghcr.io/plausible/community-edition:latest
+    ports:
+    - 8000:8000
+    environment:
+      SECRET_KEY_BASE: '***REDACTED***'
+      TOTP_VAULT_KEY: a/obB445Gq2RvjR5qTbGpWTX8v/CUQukE+bKjGxIqPQ=
+      DATABASE_URL: postgres://postgres:postgres@plausible_db:5432/plausible
+      CLICKHOUSE_DATABASE_URL: http://plausible_events_db:8123/plausible
+      BASE_URL: http://localhost:8000
+      DISABLE_REGISTRATION: 'false'
+  plausible_db:
+    image: postgres:latest
+    ports:
+    - 5432:5432
+    volumes:
+    - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: '***REDACTED***'
+      POSTGRES_DB: plausible
+  plausible_events_db:
+    image: clickhouse/clickhouse-server:latest
+    ports:
+    - 8123:8123
+    volumes:
+    - event_data:/var/lib/clickhouse
+    - event_logs:/var/log/clickhouse-server
+    - ./configs/init-clickhouse.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      CLICKHOUSE_SKIP_USER_SETUP: '1'

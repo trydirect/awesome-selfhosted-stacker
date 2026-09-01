@@ -1,0 +1,74 @@
+name: pipe-webhook-demo
+version: "1.0.0"
+
+# Super-simple PIPE test: two tiny apps co-located on ONE server so the Stacker
+# agent can resolve both containers (via my.stacker.service labels) and run a
+# pipe between them. Source = apprise, Target = ntfy (webhook sink).
+#
+#   apprise (source)  --stacker pipe-->  ntfy POST /{topic}  (webhook receiver)
+#
+# Verify the delivered message on ntfy: GET /{topic}/json.
+
+project:
+  identity: pipe-webhook-demo
+
+install:
+  inputs:
+    commonDomain: pipe.example.com
+
+# SOURCE — apprise notification gateway (REST API on :8000)
+app:
+  type: custom
+  image: caronc/apprise:latest
+  ports:
+    - "8000:8000"
+  environment:
+    APPRISE_STATEFUL_MODE: enabled
+    APPRISE_WORKER_COUNT: 1
+  volumes:
+    - apprise_config:/config
+
+services:
+  # TARGET — ntfy webhook sink (POST /{topic} publishes; GET /{topic}/json reads)
+  - name: ntfy
+    image: binwiederhier/ntfy:latest
+    command: serve
+    ports:
+      - "8080:80"
+    environment:
+      NTFY_BASE_URL: http://localhost:8080
+      NTFY_AUTH_DEFAULT_ACCESS: "read-write"
+    volumes:
+      - ntfy_data:/var/lib/ntfy
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+      - "8080"
+
+monitoring:
+  status_panel: true
+  alerts:
+    interval: 30
+    on_recovery: true
+    target:
+      terminal: true
+
+env_file: .env
+
+volumes:
+  apprise_config: {}
+  ntfy_data: {}

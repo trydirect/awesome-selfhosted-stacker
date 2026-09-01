@@ -1,0 +1,52 @@
+name: vaultwarden-caddy
+version: "1.0.0"
+
+project:
+  identity: vaultwarden-caddy
+
+install:
+  inputs:
+    commonDomain: vault.example.com
+
+app:
+  type: custom
+  image: vaultwarden/server:latest
+  ports:
+    - "8080:80"
+  environment:
+    ADMIN_TOKEN: ${ADMIN_TOKEN}
+    SIGNUPS_ALLOWED: "true"
+    DOMAIN: http://vault.example.com
+  volumes:
+    - vaultwarden_data:/data
+
+proxy:
+  type: caddy
+  auto_detect: false
+  domains:
+    - domain: vault.example.com
+      ssl: "off"
+      upstream: app:80
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "80"
+      - "443"
+      - "8080"
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  vaultwarden_data: {}

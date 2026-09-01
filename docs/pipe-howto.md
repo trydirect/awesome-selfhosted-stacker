@@ -26,6 +26,30 @@ stacker pipe create directus chatwoot \
   --name "directus-chatwoot"
 ```
 
+## Example: apprise → ntfy (webhook, end-to-end verified)
+
+apprise has no auto-discoverable API, so it can only be piped with manual
+endpoints. Deliver a payload to ntfy's `POST /{topic}` webhook:
+
+```bash
+stacker pipe create app ntfy \
+  --source-endpoint "GET /status" \
+  --target-endpoint "POST /pipetest" \
+  --source-fields message \
+  --target-fields message \
+  --name apprise-to-ntfy
+
+stacker pipe activate <pipe-id> --trigger manual
+stacker pipe trigger  <pipe-id> --data '{"message":"hello from the pipe"}'   # → delivered: true
+
+# verify the target received it:
+curl "http://<server-ip>:8080/pipetest/json?poll=1"
+# {"event":"message","topic":"pipetest","message":"{\"message\":\"hello from the pipe\"}"}
+```
+
+(Both apps must be co-located on one server so the agent can resolve each
+container by its `my.stacker.service` label.)
+
 ## How it works
 
 1. **Source endpoint**: Where data comes from (e.g., Directus webhook)
@@ -33,16 +57,25 @@ stacker pipe create directus chatwoot \
 3. **Fields**: Data fields to map between source and target
 4. **Name**: Pipe name (skips interactive prompt)
 
-The pipe automatically maps source fields to target fields using deterministic matching.
+Fields are mapped source → target by matching field **name**, falling back to
+**positional** alignment, then **identity** (`target ← $.target`). An empty
+`--target-fields` produces a pass-through mapping (the whole payload).
+
+When both `--source-endpoint` and `--target-endpoint` are given, endpoint
+**discovery is skipped entirely** — so this works for apps whose APIs aren't
+auto-discoverable (and is fully non-interactive/scriptable).
 
 ## Activation
 
 ```bash
-stacker pipe list                    # get pipe ID
-stacker pipe activate <pipe-id>      # start listening for data
+stacker pipe list                                 # get the pipe instance ID
+stacker pipe activate <pipe-id> --trigger manual  # arm for manual triggering
 stacker pipe trigger <pipe-id> --data '{"name":"Test","email":"test@example.com","message":"Hello!"}'
-stacker pipe history <pipe-id>       # view execution log
+stacker pipe history <pipe-id>                     # view execution log (✓ success)
 ```
+
+> Use `--trigger manual` so the pipe fires on `pipe trigger`. `--trigger webhook`
+> (the default) and `--trigger poll --poll-interval <s>` are also available.
 
 ## Benefits
 

@@ -1,0 +1,29 @@
+# @stacker-origin: marketplace
+# Delete the line above once you have reviewed hooks in this file — `stacker deploy` refuses to run hooks while the marker is present.
+name: ghost
+services:
+  ghost:
+    image: ghost:5-alpine
+    ports:
+    - 2368:2368
+    volumes:
+    - ghost_content:/var/lib/ghost/content
+    environment:
+      database__connection__database: ghost
+      database__client: mysql
+      database__connection__user: ghost
+      NODE_ENV: production
+      url: http://localhost:2368
+      database__connection__password: '***REDACTED***'
+      database__connection__host: mysql
+  mysql:
+    image: mysql:8
+    ports:
+    - 3306:3306
+    volumes:
+    - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_USER: ghost
+      MYSQL_DATABASE: ghost
+      MYSQL_ROOT_PASSWORD: '***REDACTED***'
+      MYSQL_PASSWORD: '***REDACTED***'

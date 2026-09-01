@@ -1,6 +1,13 @@
 name: ollama-local
 version: "latest"
 
+project:
+  identity: ollama-local
+
+install:
+  inputs:
+    commonDomain: ollama.try.direct
+
 app:
   type: custom
   image: ollama/ollama:latest
@@ -21,3 +28,35 @@ config_contract:
       type: string
       default: ollama.try.direct
       description: "Domain name for the application"
+
+proxy:
+  type: caddy
+  auto_detect: false
+  domains:
+    - domain: ollama.example.com
+      ssl: off
+      upstream: app:11434
+
+monitoring:
+  status_panel: true
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "11434"
+
+env_file: .env
+
+volumes:
+  ollama-data: {}
