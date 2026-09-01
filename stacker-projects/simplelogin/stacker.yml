@@ -14,16 +14,19 @@ app:
     - "8080:80"
   environment:
     APP_SECRET_KEY: "${SECRET_KEY}"
+    URL: "http://mail.example.com"
     DB_HOST: postgres
     DB_PORT: 5432
     DB_NAME: simplelogin
     DB_USER: simplelogin
     DB_PASSWORD: "${DB_PASSWORD}"
     EMAIL_SERVER_HOST: "${SMTP_HOST}"
-    EMAIL_SERVER_PORT: "${SMTP_PORT:-587}"
+    EMAIL_SERVER_PORT: "${SMTP_PORT}"
     EMAIL_SERVER_USERNAME: "${SMTP_USER}"
     EMAIL_SERVER_PASSWORD: "${SMTP_PASSWORD}"
     EMAIL_DOMAIN: "${EMAIL_DOMAIN}"
+    SUPPORT_EMAIL: "support@${EMAIL_DOMAIN}"
+    EMAIL_SERVERS_WITH_PRIORITY: "{'10': 'smtp.example.com'}"
   command: >-
     sh -c "flask db upgrade && flask run --host=0.0.0.0 --port=80"
   volumes:
@@ -47,20 +50,27 @@ services:
       retries: 5
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: mail.example.com
+      ssl: off
+      upstream: app:80
 
 deploy:
   target: server
   server:
-    host: ${DEPLOY_HOST}
-    user: root
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
     ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "8080"
 
 hooks:
