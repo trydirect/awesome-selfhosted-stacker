@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-140-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-141-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -615,6 +615,7 @@ server target. Start here for production.
 | PostHog            | Product analytics| 8000  | —          | |
 | Postiz App         | Social scheduler | 4007  | —          | 6 containers: app + postgres + redis + temporal + ES |
 | Redash             | BI               | 5000  | —          | |
+| Restic REST Server | Backup           | 8000  | caddy      | Backup server |
 | Rocket.Chat        | Chat             | 3000  | —          | needs manual `rs.initiate()` on mongo |
 | Rallly             | Scheduling       | 3000  | caddy      | Date polls + postgres |
 | ROMM              | ROM manager      | 8080  | —          | |
