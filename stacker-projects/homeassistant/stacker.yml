@@ -1,5 +1,12 @@
 name: homeassistant
 
+project:
+  identity: homeassistant
+
+install:
+  inputs:
+    commonDomain: homeassistant.example.com
+
 app:
   type: custom
   image: lscr.io/linuxserver/homeassistant:latest
@@ -16,14 +23,30 @@ volumes:
   ha_config: {}
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: homeassistant.example.com
+      ssl: off
+      upstream: app:8123
 
 deploy:
   target: server
   server:
-    host: ${DEPLOY_HOST}
-    user: root
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
     ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "8123"
+
+monitoring:
+  status_panel: true
 
 env_file: .env
