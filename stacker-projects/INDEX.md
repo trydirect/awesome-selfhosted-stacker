@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **156 tested & verified** · Updated 2026-09-01
+**248 projects** · **157 tested & verified** · Updated 2026-09-01
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -366,7 +366,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | photoprism | photoprism/photoprism | 2342 | — | ✅ | |
-| lychee | lycheeorg/lychee | 8080 | postgres | | Auto-migrate |
+| lychee | lycheeorg/lychee | 8080 | postgres | ✅ | Auto-migrate |
 
 ## Recipe & Lifestyle (3)
 
