@@ -14,7 +14,7 @@ app:
     - "8000:8000"
   environment:
     APP_KEY: "${APP_KEY}"
-    APP_URL: http://localhost:8000
+    APP_URL: http://cachet.example.com
     DB_DRIVER: pgsql
     DB_HOST: postgres
     DB_PORT: 5432
@@ -58,20 +58,23 @@ services:
       retries: 5
 
 proxy:
-  type: none
+  type: traefik
   auto_detect: false
+  domains:
+    - domain: cachet.example.com
+      ssl: off
+      upstream: app:8000
 
 deploy:
-  target: server
-  server:
-    host: ${DEPLOY_HOST}
-    user: root
-    ssh_key: ${BASE_PATH}/stacker-project-test
+  target: cloud
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "8000"
 
 hooks:

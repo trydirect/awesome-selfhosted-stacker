@@ -79,6 +79,17 @@ deploy:
 | `"53/udp"` | UDP | DNS |
 | `"8053/tcp"` | TCP on alt port | Pihole DNS workaround |
 
+### Correction (2026-08-20): auto-detection can cover missing `public_ports`
+
+Tested with `caddy` (no `deploy:`/`deploy.cloud` section in `stacker.yml`
+at all — no `provider`, `region`, `size`, or `public_ports`): cloud deploy
+still auto-opened `80/tcp` and `443/tcp` correctly, derived from
+`app.ports` (`"80:80"`, `"443:443"`, `"443:443/udp"`). So the "without
+`public_ports`, only SSH is open" warning above isn't universal — don't
+assume a project needs an explicit `public_ports` list just because
+`stacker.yml` lacks one; check `stacker cloud firewall list --server-id
+<id>` after deploy before concluding ports are closed.
+
 ### Known issue: auto-firewall needs listening MQ listener
 
 The auto-firewall only works when `stacker listener` (MQ consumer) is running.
@@ -464,6 +475,28 @@ on the generated compose — `normalize_generated_compose_paths` doesn't rewrite
 sources the way it rewrites `build.context`. If local deploys fail with missing bind
 mount files, extend `normalize_generated_compose_paths` to rewrite volume sources too.
 
+### CRITICAL: `--target server` shares ONE remote path across every project (2026-08-20)
+
+The same unnamespaced-project-name bug as #235 (local `--target local`) also hits
+the **remote** `--target server` path, and it's more dangerous because the target
+server may host other people's real, working deployments. Every project deployed
+via `--target server` to the same host writes to the **exact same**
+`/home/trydirect/project/docker-compose.yml` (and `.env`), unconditionally
+overwriting whatever was there — confirmed by deploying `duplicati` to the shared
+`EXISTING_SERVER_HOST` right after a pre-existing `rallly` deployment was already
+running there: `duplicati`'s deploy reported "completed" but the compose file on
+disk still showed rallly's config, and rallly's `app`+`db` containers were left
+crash-looping (compose-file thrashing between the two projects' definitions).
+
+**Do not casually run `--target server` against a shared/multi-tenant host** —
+first check `ls -la /home/trydirect/` (or wherever the target's deploy path is) for
+existing project directories, and treat any occupied host as carrying real risk to
+whatever's already deployed there. When testing this repo's projects against a
+shared box, prefer provisioning a fresh dedicated server per testing session
+(`stacker deploy --target cloud --force-new` against any project, then
+`stacker config setup server --ip <new-ip>` to register it) over reusing a
+long-lived shared `EXISTING_SERVER_HOST` that may carry other real deployments.
+
 ---
 
 ## 10. Port Conflict Validation
@@ -476,7 +509,46 @@ The fix is in `extract_host_port_from_string` (`deploy.rs:1626`): the protocol
 suffix (e.g., `/tcp`, `/udp`) is now included in the extracted host port,
 preventing false conflicts when the same host port is used for both protocols.
 
-### NPM proxy-manager preflight false positive
+### Proxy architecture & the NPM double-ownership regression (deep analysis 2026-08-23)
+
+**Design (docs/APP_DEPLOYMENT.md, confirmed with maintainer):** a proxy
+declared via the **`proxy:` block** (`proxy.type: nginx|nginx-proxy-manager|
+traefik|caddy`) is **platform-managed** — it lives in its OWN dir
+(`/home/trydirect/{nginx_proxy_manager,traefik,caddy}/`), is deployed by a
+**backend ansible role**, and must **NOT** appear in the project compose.
+The convention exists explicitly "to prevent duplicate runtime ownership."
+The trigger is the `proxy:` block, **not** the image/name — a user may run
+their own traefik/caddy/nginx as an ordinary `services:` entry, which is
+project-scoped and stays in the compose.
+
+**The regression:** `build_proxy_service()`
+(`src/cli/generator/compose.rs`) synthesizes the proxy as a compose
+service stamped `my.stacker.scope: "platform"`, and the config-bundle
+deploy path ships that compose **verbatim** → the proxy lands in the
+project compose AND is deployed again by the backend role → both bind
+80/443/81 → the role's preflight fails `PRECHECK_PORT_CONFLICT rc: 42`
+(mis-reported as generic `hcloud... unclassified internal error`, #241).
+
+Why the existing exclusion misses it: `PLATFORM_MANAGED_APP_CODES =
+["nginx_proxy_manager","statuspanel"]` is applied only in
+`build_project_body()` (app *registration*) over `config.services` — the
+synthesized proxy isn't a `config.service`, so it's never filtered. The
+config-bundle compose path has no platform filter.
+
+**Correct fix (agreed, not yet implemented):** discriminate by the
+`my.stacker.scope == platform` label (already set on synthesized proxies;
+user services lack it) — NOT by image name (do not extend
+`PLATFORM_MANAGED_APP_CODES` with traefik/caddy: it's name/image-based and
+would over-match user services). Piece 1: strip `scope: platform` services
+from the compose shipped to the backend on **cloud/server** deploys (keep
+them for `--target local`, where no backend role runs). Generalizing to
+traefik/caddy is gated on their backend roles + `proxy.type→role-tag`
+mapping existing and being verified functional (unconfirmed as of
+2026-08-23; roles are in the private `tools/stacks` submodule). Caddy is
+also not yet a `ProxyType` variant. Separately, #242 (routing config from
+`proxy.domains` never generated) is orthogonal — deploy != route.
+
+### NPM proxy-manager preflight false positive (symptom of the above)
 
 **Bug:** `nginx-proxy-manager` role starts the container, then the preflight
 check runs — NPM's own ports (80, 443, 81) show as occupied, failing with
@@ -569,6 +641,22 @@ Common causes:
 
 The Install Service failed during the app deployment step. The server is
 provisioned but the containers couldn't start. SSH investigation needed.
+
+### "local-exec provisioner error" / generic "paused due to internal error"
+
+stacker collapses the real failure into a generic wrapper string —
+`stacker status`/`stacker deployment events` will NOT show the actual
+cause. The real error lives only in the backend's Terraform/Ansible
+subprocess log (`watchers.py execute_tf()`), which the CLI doesn't
+expose. **You cannot diagnose these from stacker alone** — this is a known
+observability gap ([stacker#241](https://github.com/trydirect/stacker/issues/241),
+generalizing the closed #222). Common real causes hidden behind this
+string: a host **port conflict** on the target (e.g. `Bind for
+0.0.0.0:5000 failed: port is already allocated` — statuspanel uses 5000),
+a container crash on start, or a provider quota error. To actually
+diagnose: SSH to the server and read `docker`/journal logs, or get the
+raw TF/Ansible log from the backend. Don't just retry blindly — but note
+that retrying is often all you *can* do from the CLI until #241 lands.
 
 ### SSH key not accessible
 

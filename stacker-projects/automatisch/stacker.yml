@@ -1,5 +1,12 @@
 name: automatisch
 
+project:
+  identity: automatisch
+
+install:
+  inputs:
+    commonDomain: automatisch.try.direct
+
 app:
   type: custom
   image: automatisch/automatisch:latest
@@ -34,10 +41,33 @@ volumes:
   automatisch_db: {}
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: automatisch.example.com
+      ssl: off
+      upstream: app:3000
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+monitoring:
+  status_panel: true
+
 env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "3000"

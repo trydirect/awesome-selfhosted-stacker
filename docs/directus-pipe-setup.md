@@ -2,6 +2,25 @@
 
 *How to fetch data from Directus and deliver it to any HTTP endpoint — no curl, no scripts, just `stacker pipe`.*
 
+> ⚠️ **CLI accuracy note (2026-08-25):** the `stacker pipe activate`/`trigger`
+> examples below use `--source-url`, `--target-header`, and `--json` flags that
+> are **not** in the current CLI. In the shipped CLI the endpoints are fixed at
+> **create** time and `activate`/`trigger` take only:
+> `activate <pipe-id> --trigger manual|webhook|poll` and
+> `trigger <pipe-id> --data '<json>'`. To set the source/target endpoints
+> explicitly, use the manual-endpoint flags on `pipe create` — see
+> [pipe-howto.md](pipe-howto.md):
+> ```bash
+> stacker pipe create directus chatwoot \
+>   --source-endpoint "GET /items/pages" \
+>   --target-endpoint "POST /api/v1/conversations" \
+>   --source-fields name,email,message --target-fields content \
+>   --name directus-chatwoot
+> stacker pipe activate <pipe-id> --trigger manual
+> stacker pipe trigger  <pipe-id> --data '{"name":"…","email":"…","message":"…"}'
+> ```
+> The prose below is kept for the conceptual walkthrough.
+
 ---
 
 ## What We Built

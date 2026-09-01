@@ -27,12 +27,20 @@ app:
     TRUST_PROXY: "true"
     DISABLE_IPLOGGING: "false"
     automaticReconnectionTimeout: "0"
-    socketIo: {}
     loadTest: "false"
     loglevel: "WARN"
-    logconfig: {}
   volumes:
     - "etherpad-data:/opt/etherpad-lite/var"
+
+proxy:
+  type: nginx-proxy-manager
+  auto_detect: true
+  domains:
+    - domain: etherpad.example.com
+      ssl: auto
+      upstream: app:9001
+
+env_file: .env
 
 config_contract:
   inputs:

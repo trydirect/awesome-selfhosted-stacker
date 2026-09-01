@@ -39,7 +39,22 @@ The agent probes for:
 
 Apps that use non-standard paths (like Directus at `/items/*` or Chatwoot at `/api/v1/*`) are not discovered.
 
-## Workaround
+## Resolution (2026-08-25): manual endpoints bypass discovery
+
+The discovery limitation above is no longer a blocker. `stacker pipe create` now
+supports **explicit endpoints**, skipping discovery entirely — so any app (incl.
+Directus `/items`, Chatwoot `/api/v1/*`, apprise, Hanko `/v1/*`) can be piped:
+
+```bash
+stacker pipe create <source> <target> \
+  --source-endpoint "METHOD /path" --target-endpoint "METHOD /path" \
+  --source-fields a,b --target-fields a,b --name my-pipe
+```
+
+Verified end-to-end (apprise → ntfy, manual trigger, delivered) — see
+[pipe-howto.md](pipe-howto.md).
+
+### Legacy workaround (only if you rely on auto-discovery)
 
 Use apps that expose standard API patterns:
 - **WordPress** with Contact Form 7 (forms discovered)

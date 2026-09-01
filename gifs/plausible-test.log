@@ -1,0 +1,36 @@
+$ stacker install plausible --domain analytics.example.com \
+    --key htz-0 --provider hetzner --region fsn1 --size cx23
+
+Stacker wants to create stacker.yml in the current directory. Allow? [y/N] y
+Installed 'plausible' as project #372.
+Wrote stacker.yml
+  Hooks in this file will be REFUSED by 'stacker deploy' until you review
+  them and remove the '# @stacker-origin: marketplace' marker line (or pass
+  --allow-untrusted-hooks).
+Deploy with: stacker deploy --project plausible
+
+$ cat stacker.yml
+name: plausible
+services:
+  plausible:
+    image: ghcr.io/plausible/community-edition:latest
+    ports: [8000:8000]
+  plausible_db:
+    image: postgres:latest
+    ports: [5432:5432]
+  plausible_events_db:
+    image: clickhouse/clickhouse-server:latest
+    ports: [8123:8123]
+
+$ stacker deploy --target cloud --key htz-0 --force-new
+
+Using cloud credential override: htz-0 (id=11, provider=htz)
+Deploying project 'plausible' (id=251)...
+  ✓ completed (deployment #403)
+
+$ stacker list deployments | head -3
+
+ID     PROJECT    STATUS        DEPLOYMENT HASH                                 CREATED
+403    251        ✓ completed   deployment_7e4c1c95-bc11-4302-999a-36550c655113  2026-07-21T18:33:54Z
+
+$ # Plausible is running at http://94.130.99.220:8000
