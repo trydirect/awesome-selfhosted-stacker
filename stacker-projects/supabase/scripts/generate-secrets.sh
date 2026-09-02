@@ -40,8 +40,6 @@ set_if_empty "JWT_SECRET"          "$(openssl rand -hex 32)"
 set_if_empty "SECRET_KEY_BASE"     "$(openssl rand -hex 64)"
 set_if_empty "PG_META_CRYPTO_KEY"  "$(openssl rand -hex 32)"
 set_if_empty "DASHBOARD_PASSWORD"  "$(openssl rand -hex 16)"
-set_if_empty "AUTHENTICATOR_PASSWORD" "$(openssl rand -hex 16)"
-set_if_empty "SUPABASE_AUTH_ADMIN_PASSWORD" "$(openssl rand -hex 16)"
 
 # ANON_KEY and SERVICE_ROLE_KEY are actually JWT tokens signed with JWT_SECRET.
 # Generate a placeholder of appropriate length; replace with real tokens from
