@@ -80,64 +80,64 @@ User "authenticator" has no password assigned.
 ---
 
 
-## [BUG] Cloud deploy: Hetzner resource limit error not surfaced in deploy output
+~~## [BUG] Cloud deploy: Hetzner resource limit error not surfaced in deploy output~~
 
-**Severity:** Medium  
-**Date:** 2026-08-17  
-**Affected:** All cloud deploys when Hetzner account hits resource limits
+~~**Severity:** Medium~~  
+~~**Date:** 2026-08-17~~  
+~~**Affected:** All cloud deploys when Hetzner account hits resource limits~~
 
-### Symptom
-`stacker deploy --target cloud --force-new --watch` shows:
-```
-Deployment still in progress (Creating server infrastructure), waiting for IP...
-...
-Deployment #675 finished with status 'paused' — server IP may not be available.
-Server found but IP not yet assigned (attempt 1/6), retrying in 10s...
-```
+~~### Symptom~~
+~~`stacker deploy --target cloud --force-new --watch` shows:~~
+~~```~~
+~~Deployment still in progress (Creating server infrastructure), waiting for IP...~~
+~~...~~
+~~Deployment #675 finished with status 'paused' — server IP may not be available.~~
+~~Server found but IP not yet assigned (attempt 1/6), retrying in 10s...~~
+~~```~~
 
-The actual error is only visible in `stacker deployment events`:
-```
-Error: network limit reached (resource_limit_exceeded, 1b09dc9ad070d4d2689182f997167b67)
-```
+~~The actual error is only visible in `stacker deployment events`:~~
+~~```~~
+~~Error: network limit reached (resource_limit_exceeded, 1b09dc9ad070d4d2689182f997167b67)~~
+~~```~~
 
-### Root Cause
-Hetzner API returns `resource_limit_exceeded` but Stacker's `--watch` mode doesn't surface this error. It only shows "server IP not yet assigned" and retries, then marks as "paused".
+~~### Root Cause~~
+~~Hetzner API returns `resource_limit_exceeded` but Stacker's `--watch` mode doesn't surface this error. It only shows "server IP not yet assigned" and retries, then marks as "paused".~~
 
-### Expected
-The deploy command should show the actual Hetzner error immediately:
-```
-Error: Hetzner resource limit reached. Delete unused servers or increase limits.
-```
+~~### Expected~~
+~~The deploy command should show the actual Hetzner error immediately:~~
+~~```~~
+~~Error: Hetzner resource limit reached. Delete unused servers or increase limits.~~
+~~```~~
 
-### Actual
-User sees generic "IP not assigned" messages and has to run `stacker deployment events` to find the real error.
+~~### Actual~~
+~~User sees generic "IP not assigned" messages and has to run `stacker deployment events` to find the real error.~~
 
-### Fix Needed
-1. Surface Hetzner API errors in the `--watch` output
-2. Don't retry when the error is `resource_limit_exceeded` — it won't resolve on its own
-3. Show actionable message (e.g., "Delete unused servers or increase Hetzner limits")
+~~### Fix Needed~~
+~~1. Surface Hetzner API errors in the `--watch` output~~
+~~2. Don't retry when the error is `resource_limit_exceeded` — it won't resolve on its own~~
+~~3. Show actionable message (e.g., "Delete unused servers or increase Hetzner limits")~~
 
----
+~~---~~
 
 
-## [BUG] Infisical cloud deploy: firewall limit exceeded
+~~## [BUG] Infisical cloud deploy: firewall limit exceeded~~
 
-Stacker reports generic "server IP not yet assigned / paused" during `stacker deploy --target cloud`, but the real cause is Hetzner returning `resource_limit_exceeded` on firewall creation:
+~~Stacker reports generic "server IP not yet assigned / paused" during `stacker deploy --target cloud`, but the real cause is Hetzner returning `resource_limit_exceeded` on firewall creation:~~
 
-```
-Deployment #753 finished with status 'paused'
-Error: firewall limit exceeded (resource_limit_exceeded, 81778aac82198b853f27b4d8fbcad6ec)
-```
+~~```~~
+~~Deployment #753 finished with status 'paused'~~
+~~Error: firewall limit exceeded (resource_limit_exceeded, 81778aac82198b853f27b4d8fbcad6ec)~~
+~~```~~
 
-### Steps to reproduce
-1. `stacker deploy --target cloud --key htz-0 --force-new --watch` for a project with `public_ports`
-2. Watch the deployment pause during "Creating server infrastructure"
+~~### Steps to reproduce~~
+~~1. `stacker deploy --target cloud --key htz-0 --force-new --watch` for a project with `public_ports`~~
+~~2. Watch the deployment pause during "Creating server infrastructure"~~
 
-### Expected
-Clear error about firewall/resource limits with actionable remediation.
+~~### Expected~~
+~~Clear error about firewall/resource limits with actionable remediation.~~
 
-### Actual
-Generic "server IP not yet assigned" retry loop, then "paused". Only `stacker deployment events` reveals the firewall limit error.
+~~### Actual~~
+~~Generic "server IP not yet assigned" retry loop, then "paused". Only `stacker deployment events` reveals the firewall limit error.~~
 
-### Notes
-Same class as the previously documented `resource_limit_exceeded` network/placement errors. Hetzner per-project firewall quotas are being exhausted by repeated testing; user must delete old servers/firewalls or request a quota increase.
+~~### Notes~~
+~~Same class as the previously documented `resource_limit_exceeded` network/placement errors. Hetzner per-project firewall quotas are being exhausted by repeated testing; user must delete old servers/firewalls or request a quota increase.~~

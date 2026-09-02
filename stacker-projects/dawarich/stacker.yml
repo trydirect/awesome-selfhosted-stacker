@@ -1,6 +1,13 @@
 name: dawarich
 version: "0.16.0"
 
+project:
+  identity: dawarich
+
+install:
+  inputs:
+    commonDomain: locations.example.com
+
 app:
   type: custom
   image: freika/dawarich:latest
@@ -79,3 +86,37 @@ config_contract:
       type: secret
       default: ""
       description: "Dawarich encryption key"
+
+proxy:
+  type: caddy
+  auto_detect: false
+  domains:
+    - domain: locations.example.com
+      ssl: off
+      upstream: app:3000
+
+monitoring:
+  status_panel: true
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "3000"
+
+env_file: .env
+
+volumes:
+  dawarich-storage: {}
+  dawarich-postgres: {}
+  dawarich-redis: {}
