@@ -23,11 +23,8 @@ proxy:
 env_file: .env
 
 deploy:
-  target: server
-  server:
-    host: 178.105.43.154
-    user: root
-    ssh_key: ~/.config/stacker/ssh/server-439_ed25519
+  target: cloud
+  server: null
   cloud:
     provider: hetzner
     region: fsn1

@@ -47,12 +47,8 @@ proxy:
   type: none
   auto_detect: false
 deploy:
-  target: server
-  server:
-    host: 46.225.141.37
-    user: root
-    ssh_key: ~/.config/stacker/ssh/server-445_ed25519
-    port: 22
+  target: cloud
+  server: null
   cloud:
     provider: hetzner
     region: fsn1

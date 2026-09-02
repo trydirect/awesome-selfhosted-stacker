@@ -19,7 +19,7 @@ app:
     FLOCI_HOSTNAME: floci
     FLOCI_SERVICES_DOCKER_NETWORK: floci_default
     FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ENABLED: 'true'
-    FLOCI_BASE_URL: http://${DEPLOY_HOST}:4566
+    FLOCI_BASE_URL: http://floci:4566
     FLOCI_SERVICES_RDS_PROXY_BASE_PORT: '7001'
   command: null
   healthcheck:
@@ -44,7 +44,7 @@ proxy:
   domains: []
   config: null
 deploy:
-  target: server
+  target: cloud
   environment: null
   compose_file: null
   deployment_hash: null
@@ -60,11 +60,7 @@ deploy:
     server: null
     public_ports:
     - '4566'
-  server:
-    host: 46.225.141.37
-    user: root
-    ssh_key: ~/.config/stacker/ssh/server-446_ed25519
-    port: 22
+  server: null
   registry: null
   default_target: null
   targets: {}
