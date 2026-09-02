@@ -1,5 +1,12 @@
 name: minio
 
+project:
+  identity: minio
+
+install:
+  inputs:
+    commonDomain: s3.example.com
+
 app:
   type: custom
   image: minio/minio:latest
@@ -17,8 +24,15 @@ volumes:
   minio_data: {}
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: s3.example.com
+      ssl: off
+      upstream: app:9000
+
+monitoring:
+  status_panel: true
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -35,5 +49,9 @@ deploy:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
-      - "9000 9001"
+      - "80"
+      - "443"
+      - "9000"
+      - "9001"
