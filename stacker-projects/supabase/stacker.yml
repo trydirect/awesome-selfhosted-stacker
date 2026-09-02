@@ -40,6 +40,9 @@ services:
       POSTGRES_DB: "${POSTGRES_DB}"
       JWT_SECRET: "${JWT_SECRET}"
       JWT_EXP: "${JWT_EXPIRY}"
+      AUTHENTICATOR_PASSWORD: "${POSTGRES_PASSWORD}"
+      SUPABASE_AUTH_ADMIN_PASSWORD: "${POSTGRES_PASSWORD}"
+      SUPABASE_FUNCTIONS_ADMIN_PASSWORD: "${POSTGRES_PASSWORD}"
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
@@ -63,7 +66,7 @@ services:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       PG_META_CRYPTO_KEY: "${PG_META_CRYPTO_KEY}"
       PGRST_DB_SCHEMAS: "${PGRST_DB_SCHEMAS}"
-      SUPABASE_URL: http://kong:8000
+      SUPABASE_URL: http://app:8000
       SUPABASE_PUBLIC_URL: "${SUPABASE_PUBLIC_URL}"
       SUPABASE_ANON_KEY: "${ANON_KEY}"
       SUPABASE_SERVICE_KEY: "${SERVICE_ROLE_KEY}"
@@ -167,7 +170,7 @@ services:
     image: supabase/edge-runtime:v1.74.0
     environment:
       JWT_SECRET: "${JWT_SECRET}"
-      SUPABASE_URL: http://kong:8000
+      SUPABASE_URL: http://app:8000
       SUPABASE_PUBLIC_URL: "${SUPABASE_PUBLIC_URL}"
       SUPABASE_ANON_KEY: "${ANON_KEY}"
       SUPABASE_SERVICE_ROLE_KEY: "${SERVICE_ROLE_KEY}"
