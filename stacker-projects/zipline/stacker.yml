@@ -37,20 +37,27 @@ services:
       retries: 5
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: upload.example.com
+      ssl: off
+      upstream: app:3000
 
 deploy:
   target: server
   server:
-    host: ${DEPLOY_HOST}
-    user: root
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
     ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "3000"
 
 hooks:

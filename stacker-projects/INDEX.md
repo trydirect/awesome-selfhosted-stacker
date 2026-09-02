@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **164 tested & verified** · Updated 2026-09-02
+**248 projects** · **165 tested & verified** · Updated 2026-09-02
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -222,7 +222,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | rustfs | rustfs/rustfs | 9000 | — | ✅ | |
 | s4core | s4core/s4core | 9000 | — | ✅ | |
 | syncthing | lscr.io/linuxserver/syncthing | 8384 | — | | |
-| zipline | ghcr.io/diced/zipline | 3000 | postgres | | Auto-migrate |
+| zipline | ghcr.io/diced/zipline | 3000 | postgres | ✅ | Auto-migrate |
 
 ## Media (25)
 
