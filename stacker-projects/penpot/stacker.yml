@@ -1,6 +1,13 @@
 name: penpot
 version: "2.1"
 
+project:
+  identity: penpot
+
+install:
+  inputs:
+    commonDomain: penpot.example.com
+
 app:
   type: custom
   image: penpotapp/penpot-frontend:latest
@@ -73,3 +80,37 @@ config_contract:
       type: secret
       default: ""
       description: "PostgreSQL password for Penpot"
+
+proxy:
+  type: caddy
+  auto_detect: false
+  domains:
+    - domain: penpot.example.com
+      ssl: off
+      upstream: app:80
+
+monitoring:
+  status_panel: true
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "9001"
+
+env_file: .env
+
+volumes:
+  penpot-assets: {}
+  penpot-postgres: {}
+  penpot-redis: {}
