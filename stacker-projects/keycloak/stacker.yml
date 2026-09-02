@@ -1,5 +1,12 @@
 name: keycloak
 
+project:
+  identity: keycloak
+
+install:
+  inputs:
+    commonDomain: auth.example.com
+
 app:
   type: custom
   image: quay.io/keycloak/keycloak:latest
@@ -33,8 +40,15 @@ volumes:
   keycloak_db: {}
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: auth.example.com
+      ssl: off
+      upstream: app:8080
+
+monitoring:
+  status_panel: true
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -51,5 +65,8 @@ deploy:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "8080"

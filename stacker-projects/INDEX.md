@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **167 tested & verified** · Updated 2026-09-02
+**248 projects** · **168 tested & verified** · Updated 2026-09-02
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -322,7 +322,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | cryptpad | cryptpad/cryptpad | 3000 | — | |
 | hanko | ghcr.io/teamhanko/hanko | 8000 | postgres | ✅ |
 | infisical | infisical/infisical | 8080 | postgres | ✅ |
-| keycloak | quay.io/keycloak/keycloak | 8080 | postgres | |
+| keycloak | quay.io/keycloak/keycloak | 8080 | postgres | ✅ |
 | onetimesecret | onetimesecret/onetimesecret | 3000 | redis | ✅ |
 | passbolt | passbolt/passbolt_api | 443 | mariadb | |
 | vaultwarden | vaultwarden/server | 8080 | — | ✅ |
