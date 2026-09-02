@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **161 tested & verified** · Updated 2026-09-02
+**248 projects** · **162 tested & verified** · Updated 2026-09-02
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -167,7 +167,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | appsmith | appsmith/appsmith-ce | 80 | — | |
 | dashy | lissy93/dashy | 8082 | — | ✅ |
 | grist | gristlabs/grist | 8484 | — | ⚠️ |
-| homer | b4bz/homer | 8080 | — | |
+| homer | b4bz/homer | 8080 | — | ✅ |
 | organizr | organizr/organizr | 9983 | — | |
 
 ## Developer & DevOps Tools (20)

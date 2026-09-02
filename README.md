@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-157-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-158-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -568,7 +568,7 @@ server target. Start here for production.
 | HedgeDoc           | Markdown editor  | 3000  | —          | |
 | HitKeep            | Bookmarks        | 8080  | caddy      | Single container |
 | Home Assistant     | Smart home       | 8123  | caddy      | slow startup (~50s) |
-| Homer              | Dashboard        | 8080  | —          | Static dashboard, no DB |
+| Homer              | Dashboard        | 8080  | caddy      | Static dashboard, no DB |
 | Huginn             | Automation       | 3000  | caddy      | Task automation + postgres |
 | Immich             | Photos           | 2283  | —          | Google Photos alternative |
 | InfluxDB           | Time-series DB   | 8086  | caddy      | Time-series database |
