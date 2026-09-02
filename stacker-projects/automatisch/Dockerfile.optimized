@@ -1,0 +1,57 @@
+# Multi-stage build for automatisch
+# Optimized: 3.98GB → 579MB (110MB compressed)
+#
+# Build: docker build --platform linux/amd64 -t trydirect/automatisch:latest -f Dockerfile.optimized .
+# Push:  docker push trydirect/automatisch:latest
+
+# Stage 1: Build frontend
+FROM node:22.15.0-alpine AS frontend-builder
+
+WORKDIR /automatisch
+
+COPY packages/web/package.json packages/web/yarn.lock ./packages/web/
+COPY .yarnrc ./
+
+RUN cd packages/web && yarn --frozen-lockfile
+
+COPY packages/web/ ./packages/web/
+
+RUN cd packages/web && yarn build
+
+# Stage 2: Build backend dependencies
+FROM node:22.15.0-alpine AS backend-builder
+
+RUN apk --no-cache add python3 build-base git make g++
+
+WORKDIR /automatisch
+
+COPY packages/backend/package.json packages/backend/yarn.lock ./packages/backend/
+COPY .yarnrc ./
+
+RUN cd packages/backend && yarn --production --frozen-lockfile
+
+# Stage 3: Final image
+FROM node:22.15.0-alpine
+
+ENV PORT=3000
+
+RUN apk --no-cache add curl
+
+WORKDIR /automatisch
+
+# Copy built frontend (vite outputs to build/)
+COPY --from=frontend-builder /automatisch/packages/web/build ./packages/web/build
+COPY --from=frontend-builder /automatisch/packages/web/package.json ./packages/web/
+
+# Copy backend with production dependencies
+COPY --from=backend-builder /automatisch/packages/backend/node_modules ./packages/backend/node_modules
+COPY --from=backend-builder /automatisch/packages/backend/package.json ./packages/backend/
+
+# Copy backend source
+COPY packages/backend/ ./packages/backend/
+
+# Copy entrypoint
+COPY docker/entrypoint.sh /entrypoint.sh
+
+EXPOSE 3000
+ENTRYPOINT ["sh", "/entrypoint.sh"]
