@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-163-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-164-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -578,6 +578,7 @@ server target. Start here for production.
 | Jellyfin           | Media server     | 8096  | —          | |
 | Jitsi Meet         | Video conf       | 80/443| —          | uses :unstable tags; nginx permission bug |
 | Kavita             | Reading          | 5000  | —          | comics/manga reader |
+| Keycloak           | IAM/SSO          | 8080  | caddy      | OAuth2/OIDC identity + postgres |
 | Karakeep           | Bookmarks        | 3000  | caddy      | Bookmarks + postgres + meilisearch |
 | Komga              | Comics/manga     | 25600 | —          | |
 | Kopia              | Backup           | 51515 | caddy      | Encrypted backup to cloud/local |
