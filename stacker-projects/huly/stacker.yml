@@ -1,6 +1,13 @@
 name: huly
 version: "0.6.0"
 
+project:
+  identity: huly
+
+install:
+  inputs:
+    commonDomain: huly.example.com
+
 app:
   type: custom
   image: ghcr.io/hcengineering/platform:latest
@@ -85,3 +92,37 @@ config_contract:
       type: secret
       default: ""
       description: "Huly server secret"
+
+proxy:
+  type: caddy
+  auto_detect: false
+  domains:
+    - domain: huly.example.com
+      ssl: off
+      upstream: app:8080
+
+monitoring:
+  status_panel: true
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+      - "8080"
+
+env_file: .env
+
+volumes:
+  huly-files: {}
+  huly-postgres: {}
+  huly-redis: {}

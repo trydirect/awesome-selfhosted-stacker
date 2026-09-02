@@ -1,11 +1,18 @@
 name: passbolt
 version: "4.7.0"
 
+project:
+  identity: passbolt
+
+install:
+  inputs:
+    commonDomain: passwords.example.com
+
 app:
   type: custom
   image: passbolt/passbolt_api:latest
   ports:
-    - "443:443"
+    - "8443:443"
   environment:
     APP_FULL_BASE_URL: https://${DOMAIN}
     DATASOURCES_DEFAULT_HOST: postgres
@@ -54,3 +61,36 @@ config_contract:
       type: secret
       default: ""
       description: "GPG key fingerprint"
+
+proxy:
+  type: caddy
+  auto_detect: false
+  domains:
+    - domain: passwords.example.com
+      ssl: off
+      upstream: app:443
+
+monitoring:
+  status_panel: true
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    public_ports:
+      - "80"
+      - "443"
+
+env_file: .env
+
+volumes:
+  passbolt-gpg: {}
+  passbolt-images: {}
+  passbolt-mysql: {}
