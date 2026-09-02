@@ -23,11 +23,8 @@ monitoring:
 env_file: .env
 
 deploy:
-  target: server
-  server:
-    host: 178.105.135.200
-    user: root
-    ssh_key: ~/.config/stacker/ssh/server-438_ed25519
+  target: cloud
+  server: null
   cloud:
     provider: hetzner
     region: fsn1

@@ -47,11 +47,8 @@ hooks:
 env_file: .env
 
 deploy:
-  target: server
-  server:
-    host: 62.238.110.174
-    user: root
-    ssh_key: ~/.config/stacker/ssh/server-391_ed25519
+  target: cloud
+  server: null
   cloud:
     provider: hetzner
     region: fsn1
