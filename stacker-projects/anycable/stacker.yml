@@ -16,9 +16,6 @@ app:
   environment:
     ANYCABLE_HOST: 0.0.0.0
     ANYCABLE_PORT: 8080
-    ANYCABLE_GRPC_PORT: 50051
-    ANYCABLE_REDIS_URL: redis://redis:6379
-  command: --port=8080 --grpc_port=50051
 
 services:
   - name: redis
@@ -32,21 +29,29 @@ services:
       retries: 5
 
 proxy:
-  type: none
+  type: caddy
   auto_detect: false
+  domains:
+    - domain: ws.example.com
+      ssl: off
+      upstream: app:8080
 
 deploy:
   target: server
   server:
-    host: ${DEPLOY_HOST}
-    user: root
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
     ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
+    ssh_key: ${BASE_PATH}/stacker-project-test
     public_ports:
+      - "80"
+      - "443"
       - "8080"
+      - "50051"
 
 monitoring:
   status_panel: true
