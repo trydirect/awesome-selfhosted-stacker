@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-164-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-165-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -534,6 +534,7 @@ server target. Start here for production.
 | AnythingLLM         | AI chat          | 3001  | caddy      | LLM chat with vector DB |
 | AnyCable           | Websocket        | 8080  | caddy      | Real-time websocket server |
 | Apache Airflow      | Automation       | 8080  | caddy      | Workflow automation + postgres |
+| Automatisch        | Automation       | 3000  | caddy      | Zapier alternative + postgres + redis |
 | Appsmith            | Low-code         | 80    | —          | Internal tool builder |
 | Aptabase            | Analytics        | 3000  | caddy      | + postgres + clickhouse |
 | Bitmagnet           | BitTorrent       | 3333  | —          | + postgres |
