@@ -42,11 +42,13 @@ services:
       POSTGRES_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
     volumes:
       - "db_data:/var/lib/postgresql/data"
+      - "./volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro"
+      - "./volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:ro"
     healthcheck:
-      test: "CMD pg_isready -U postgres"
+      test: "CMD pg_isready -U postgres && psql -U postgres -c \"SELECT 1 FROM pg_roles WHERE rolname='authenticator' AND rolpassword IS NOT NULL\" | grep -q 1"
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 20
     restart: unless-stopped
     networks:
       - app-network
