@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **162 tested & verified** · Updated 2026-09-02
+**248 projects** · **163 tested & verified** · Updated 2026-09-02
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -193,7 +193,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | olivetin | jamesread/olivetin | 1337 | — | ✅ | |
 | appwrite | appwrite/appwrite | 80 | mariadb, redis | | Auto-migrate |
 | budibase | budibase/budibase | 80 | couchdb, redis | | |
-| prowlarr | linuxserver/prowlarr | 9696 | — | | |
+| prowlarr | linuxserver/prowlarr | 9696 | — | ✅ | |
 
 ## Document Management (10)
 

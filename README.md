@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-158-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-159-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -622,6 +622,7 @@ server target. Start here for production.
 | Portainer          | Docker mgmt      | 9000  | —          | container management UI |
 | PostHog            | Product analytics| 8000  | —          | |
 | Postiz App         | Social scheduler | 4007  | —          | 6 containers: app + postgres + redis + temporal + ES |
+| Prowlarr           | Indexer manager  | 9696  | caddy      | Indexer manager |
 | Redash             | BI               | 5000  | —          | |
 | Readeck            | Bookmarks        | 8000  | caddy      | Bookmarks + postgres |
 | Restic REST Server | Backup           | 8000  | caddy      | Backup server |
