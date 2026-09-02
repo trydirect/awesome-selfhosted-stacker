@@ -21,18 +21,6 @@ app:
       nginx['listen_https'] = false
       gitlab_rails['gitlab_shell_ssh_port'] = 2222
       gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD}'
-      gitlab_rails['time_zone'] = 'UTC'
-      puma['worker_processes'] = 2
-      sidekiq['max_concurrency'] = 10
-      prometheus_monitoring['enable'] = false
-      alertmanager['enable'] = false
-      node_exporter['enable'] = false
-      redis_exporter['enable'] = false
-      postgres_exporter['enable'] = false
-      gitlab_exporter['enable'] = false
-      registry['enable'] = false
-      gitlab_pages['enable'] = false
-      mattermost['enable'] = false
   volumes:
     - gitlab_config:/etc/gitlab
     - gitlab_logs:/var/log/gitlab

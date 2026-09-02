@@ -36,10 +36,13 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     environment:
+      AUTHENTICATOR_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
       JWT_EXP: "3600"
       JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
       POSTGRES_DB: "postgres"
       POSTGRES_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
+      SUPABASE_AUTH_ADMIN_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
+      SUPABASE_FUNCTIONS_ADMIN_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
     volumes:
       - "db_data:/var/lib/postgresql/data"
       - "./volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro"
@@ -74,7 +77,7 @@ services:
       SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
       SUPABASE_SERVICE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
-      SUPABASE_URL: "http://kong:8000"
+      SUPABASE_URL: "http://app:8000"
     volumes:
       - "studio_snippets:/app/snippets"
     restart: unless-stopped
@@ -226,7 +229,7 @@ services:
       SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
       SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
-      SUPABASE_URL: "http://kong:8000"
+      SUPABASE_URL: "http://app:8000"
       VERIFY_JWT: "false"
     volumes:
       - "./volumes/functions:/home/deno/functions:ro"
