@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **166 tested & verified** · Updated 2026-09-02
+**248 projects** · **167 tested & verified** · Updated 2026-09-02
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -344,7 +344,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 |---------|-------|------|----|:------:|-------|
 | huly | ghcr.io/hcengineering/platform | 8080 | postgres, redis | | |
 | openproject | openproject/community | 8080 | postgres | | |
-| focalboard | mattermost/focalboard | 8000 | postgres | | Auto-migrate |
+| focalboard | mattermost/focalboard | 8000 | postgres | ✅ | Auto-migrate |
 | planka | ghcr.io/plankanban/planka | 1337 | postgres | ✅ | Auto-migrate |
 
 ## Maps & GPS (2)
