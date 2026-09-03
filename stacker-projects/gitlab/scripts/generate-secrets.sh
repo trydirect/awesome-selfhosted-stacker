@@ -17,18 +17,27 @@ need() {
   [ -z "$val" ]
 }
 
+set_secret() {
+  local key="$1" val="$2"
+  if [ "$(uname)" = "Darwin" ]; then
+    sed -i '' "s|^$key=.*|$key=$val|" .env
+  else
+    sed -i "s|^$key=.*|$key=$val|" .env
+  fi
+}
+
 if need "GITLAB_ROOT_PASSWORD"; then
-  sed -i '' "s|^GITLAB_ROOT_PASSWORD=.*|GITLAB_ROOT_PASSWORD=$(openssl rand -hex 24)|" .env
+  set_secret "GITLAB_ROOT_PASSWORD" "$(openssl rand -hex 24)"
   echo "  Generated GITLAB_ROOT_PASSWORD"
 fi
 
 if need "SECRET_KEY_BASE"; then
-  sed -i '' "s|^SECRET_KEY_BASE=.*|SECRET_KEY_BASE=$(openssl rand -hex 64)|" .env
+  set_secret "SECRET_KEY_BASE" "$(openssl rand -hex 64)"
   echo "  Generated SECRET_KEY_BASE"
 fi
 
 if need "OTP_SECRET"; then
-  sed -i '' "s|^OTP_SECRET=.*|OTP_SECRET=$(openssl rand -base64 32)|" .env
+  set_secret "OTP_SECRET" "$(openssl rand -base64 32)"
   echo "  Generated OTP_SECRET"
 fi
 
