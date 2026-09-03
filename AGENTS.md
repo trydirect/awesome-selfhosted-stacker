@@ -73,10 +73,14 @@ stacker-projects/<name>/     # one independent project per subdirectory, each wi
   confirmation first — these are treated as fixtures for testing the
   stacker CLI itself. Exceptions: `BUGS.md` and `*_DEPLOY_SUCCESS.md` test
   artifacts may be created/updated freely.
-- **Prefer the `stacker` CLI** for deployment, logs (`stacker logs`), keys
-  (`stacker key`), secrets (`stacker secret`), and proxy/ingress. Only fall
-  back to `curl`/`ssh`/`docker` when stacker has no equivalent command —
-  and note the gap as a potential missing feature in `BUGS.md`.
+- **Always use the `stacker` CLI** for deployment, logs (`stacker logs`), keys
+  (`stacker key`), secrets (`stacker secret`), and proxy/ingress. **Never
+  deploy containers manually via `ssh` + `docker compose up -d`** — this
+  bypasses Stacker's tracking, breaks the Stack Builder UI artifacts, and
+  invalidates the test. If `stacker deploy` fails, log the failure in
+  `BUGS.md` and stop — do NOT work around it with manual SSH. Only fall
+  back to `curl`/`ssh`/`docker` for read-only investigation (logs, ps,
+  inspect) — and note the gap as a potential missing feature in `BUGS.md`.
 - **Secrets** live in `.env` (gitignored) and are generated per-project via
   `./scripts/generate-secrets.sh`. Never hardcode credentials or commit
   `.env`.
