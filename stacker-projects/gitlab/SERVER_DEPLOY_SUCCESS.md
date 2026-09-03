@@ -1,7 +1,7 @@
 # GitLab CE — Existing Server Deploy Success
 
-**Date:** 2026-09-02
-**Server:** 46.224.127.228 (Ubuntu 26.04 LTS, 7.0GB RAM, Docker 29.6.1)
+**Date:** 2026-09-03
+**Server:** 46.224.127.228 (Ubuntu 26.04 LTS, 18.0GB RAM, Docker 29.6.1)
 **GitLab Version:** 18.10.1-ce.0
 
 ## Deploy Command
@@ -17,7 +17,7 @@ stacker deploy --target server
 - **GitLab CE** omnibus container (`gitlab/gitlab-ce:18.10.1-ce.0`)
 - Single container with bundled PostgreSQL, Redis, Nginx, Puma, Sidekiq
 - Persistent volumes: `gitlab_config`, `gitlab_logs`, `gitlab_data`
-- Memory optimizations applied (2 Puma workers, Sidekiq concurrency 10, Prometheus disabled)
+- Config via `gitlab.rb` bind mount (not `GITLAB_OMNIBUS_CONFIG` env var)
 
 ## Access
 
@@ -26,21 +26,21 @@ stacker deploy --target server
 - **Username:** `root`
 - **Password:** (stored in `.env` as `GITLAB_ROOT_PASSWORD`)
 
-## Stacker Deploy Notes
+## Key Design Decisions
 
-The `stacker deploy --target server` command created the project in Stacker's backend (project ID: 634) but the container was not automatically started on the server. The compose file was generated correctly in `.stacker/deploy/default/docker-compose.remote.yml`.
+### gitlab.rb instead of GITLAB_OMNIBUS_CONFIG
 
-**Workaround:** Deployed manually via SSH:
-```bash
-ssh -i ${BASE_PATH}/stacker-project-test root@46.224.127.228
-mkdir -p /opt/gitlab && cd /opt/gitlab
-# Copy compose file and run:
-docker compose up -d
+The `GITLAB_OMNIBUS_CONFIG` multiline environment variable caused `invalid containerPort: 133342` errors when serialized through Stacker's compose pipeline. Single quotes inside the YAML value break Docker Compose parsing.
+
+**Fix:** Use a `gitlab.rb` config file mounted as a bind mount at `/etc/gitlab/gitlab.rb:ro`. This avoids all quoting issues.
+
+### Healthcheck format
+
+Must use `CMD-SHELL` not `CMD` for string-form healthchecks:
+```yaml
+healthcheck:
+  test: "CMD-SHELL curl -f http://localhost/-/health || exit 1"
 ```
-
-## Health Check Fix
-
-The initial healthcheck format `"CMD curl -f ..."` failed with `/bin/sh: 1: CMD: not found`. Fixed to use `"CMD-SHELL curl -f ... || exit 1"` which works correctly.
 
 ## Verification
 
@@ -52,9 +52,7 @@ $ docker ps --format '{{.Names}}\t{{.Status}}'
 gitlab-app-1   Up X minutes (healthy)
 ```
 
-## Container Status
+## Known Issues
 
-```
-CONTAINER       STATUS                  PORTS
-gitlab-app-1    Up (healthy)            0.0.0.0:8082->80/tcp, 0.0.0.0:2222->22/tcp
-```
+- `stacker deploy --target server` fails with "SSH key is not available" due to Vault storage errors. Workaround: manually add SSH key to server and deploy via SSH.
+- `stacker deploy --target cloud --force-new` fails with "SSH key status is 'none', not active" — Stacker backend SSH key provisioning bug.
