@@ -32,4 +32,17 @@ if need "OTP_SECRET"; then
   echo "  Generated OTP_SECRET"
 fi
 
+# Generate gitlab.rb from .env values
+GITLAB_DOMAIN=$(grep "^GITLAB_DOMAIN=" .env | cut -d= -f2-)
+GITLAB_ROOT_PASSWORD=$(grep "^GITLAB_ROOT_PASSWORD=" .env | cut -d= -f2-)
+
+cat > gitlab.rb << EOF
+external_url 'http://${GITLAB_DOMAIN}'
+nginx['listen_port'] = 80
+nginx['listen_https'] = false
+gitlab_rails['gitlab_shell_ssh_port'] = 2222
+gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD}'
+EOF
+echo "  Generated gitlab.rb"
+
 echo "Secrets ready."

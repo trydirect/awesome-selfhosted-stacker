@@ -14,17 +14,12 @@ app:
   ports:
     - "8082:80"
     - "2222:22"
-  environment:
-    GITLAB_OMNIBUS_CONFIG: |
-      external_url 'http://${GITLAB_DOMAIN}'
-      nginx['listen_port'] = 80
-      nginx['listen_https'] = false
-      gitlab_rails['gitlab_shell_ssh_port'] = 2222
-      gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD}'
+  environment: {}
   volumes:
     - gitlab_config:/etc/gitlab
     - gitlab_logs:/var/log/gitlab
     - gitlab_data:/var/opt/gitlab
+    - ./gitlab.rb:/etc/gitlab/gitlab.rb:ro
   shm_size: 256m
   healthcheck:
     test: "CMD-SHELL curl -f http://localhost/-/health || exit 1"
@@ -52,7 +47,7 @@ deploy:
     orchestrator: remote
     region: ${HETZNER_REGION}
     size: ${HETZNER_SERVER_TYPE}
-    ssh_key: ${BASE_PATH}/stacker-project-test
+    ssh_key: ~/.config/stacker/ssh/gitlab-cloud
     key: gitlab
     public_ports:
       - "80"
