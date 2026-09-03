@@ -14,12 +14,12 @@ app:
   ports:
     - "8082:80"
     - "2222:22"
-  environment: {}
+  environment:
+    GITLAB_OMNIBUS_CONFIG: ${GITLAB_OMNIBUS_CONFIG}
   volumes:
     - gitlab_config:/etc/gitlab
     - gitlab_logs:/var/log/gitlab
     - gitlab_data:/var/opt/gitlab
-    - ./gitlab.rb:/etc/gitlab/gitlab.rb:ro
   shm_size: 256m
   healthcheck:
     test: "CMD-SHELL curl -f http://localhost/-/health || exit 1"
