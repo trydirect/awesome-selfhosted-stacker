@@ -81,6 +81,12 @@ stacker-projects/<name>/     # one independent project per subdirectory, each wi
   `BUGS.md` and stop — do NOT work around it with manual SSH. Only fall
   back to `curl`/`ssh`/`docker` for read-only investigation (logs, ps,
   inspect) — and note the gap as a potential missing feature in `BUGS.md`.
+- **Quote port mappings in `stacker.yml`** — always use `"2222:22"` not
+  `2222:22`. YAML 1.1 readers (PyYAML, Go, linters, CI tools) parse
+  unquoted `N:M` as sexagesimal (base-60) when the right side is 0–59,
+  silently turning `2222:22` into `133342`. Stacker's own parser (YAML
+  1.2 / serde_yaml) handles this correctly, but downstream tools may
+  not. This applies to `ports:`, `expose:`, and any `N:M` value.
 - **Secrets** live in `.env` (gitignored) and are generated per-project via
   `./scripts/generate-secrets.sh`. Never hardcode credentials or commit
   `.env`.
