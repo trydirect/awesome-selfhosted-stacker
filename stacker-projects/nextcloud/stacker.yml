@@ -10,7 +10,7 @@ app:
   image: nextcloud:latest
   build: null
   ports:
-  - 8081:80
+  - "8081:80"
   volumes:
   - nextcloud_data:/var/www/html
   environment:
@@ -27,7 +27,7 @@ services:
 - name: nextcloud_db
   image: mariadb:latest
   ports:
-  - 127.0.0.1:3306:3306
+  - "127.0.0.1:3306:3306"
   environment:
     MARIADB_USER: nextcloud
     MARIADB_PASSWORD: ${DB_PASSWORD}
@@ -45,7 +45,7 @@ services:
 - name: redis
   image: redis:7-alpine
   ports:
-  - 127.0.0.1:6379:6379
+  - "127.0.0.1:6379:6379"
   environment: {}
   volumes:
   - nextcloud_redis:/data

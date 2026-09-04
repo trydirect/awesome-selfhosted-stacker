@@ -10,7 +10,7 @@ app:
   image: vaultwarden/server:latest
   build: null
   ports:
-  - 8080:80
+  - "8080:80"
   volumes:
   - vaultwarden_data:/data
   environment:

@@ -3,7 +3,7 @@ app:
   type: custom
   image: directus/directus:latest
   ports:
-  - 8055:8055
+  - "8055:8055"
   environment:
     KEY: ${KEY}
     SECRET: ${SECRET}

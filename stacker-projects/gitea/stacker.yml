@@ -10,8 +10,8 @@ app:
   image: gitea/gitea:latest
   build: null
   ports:
-  - 3000:3000
-  - 2222:22
+  - "3000:3000"
+  - "2222:22"
   volumes:
   - gitea_data:/data
   environment:
@@ -33,7 +33,7 @@ services:
 - name: gitea_db
   image: postgres:16-alpine
   ports:
-  - 127.0.0.1:5432:5432
+  - "127.0.0.1:5432:5432"
   environment:
     POSTGRES_PASSWORD: ${DB_PASSWORD}
     POSTGRES_DB: gitea

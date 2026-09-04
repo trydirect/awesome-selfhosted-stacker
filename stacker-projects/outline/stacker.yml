@@ -6,7 +6,7 @@ app:
   type: node
   image: outlinewiki/outline:latest
   ports:
-  - 3000:3000
+  - "3000:3000"
   environment:
     PORT: '3000'
     NODE_ENV: production
@@ -22,7 +22,7 @@ services:
 - name: postgres
   image: postgres:16
   ports:
-  - 127.0.0.1:5432:5432
+  - "127.0.0.1:5432:5432"
   environment:
     POSTGRES_USER: outline
     POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -32,7 +32,7 @@ services:
 - name: redis
   image: redis:7-alpine
   ports:
-  - 127.0.0.1:6380:6379
+  - "127.0.0.1:6380:6379"
   environment: {}
   volumes: []
 proxy:

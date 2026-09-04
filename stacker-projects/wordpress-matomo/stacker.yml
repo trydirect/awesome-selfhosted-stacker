@@ -3,7 +3,7 @@ app:
   type: php
   image: wordpress
   ports:
-  - 8080:80
+  - "8080:80"
   environment:
     WORDPRESS_DB_HOST: wp-db:3306
     WORDPRESS_DB_NAME: wordpress
@@ -22,7 +22,7 @@ services:
     MYSQL_PASSWORD: ${DB_PASSWORD}
     MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
   ports:
-  - 127.0.0.1:3306:3306
+  - "127.0.0.1:3306:3306"
   volumes:
   - wp_db:/var/lib/mysql
   healthcheck:
@@ -33,7 +33,7 @@ services:
 - name: matomo
   image: matomo:latest
   ports:
-  - 8081:80
+  - "8081:80"
   environment:
     MATOMO_DATABASE_HOST: matomo-db
     MATOMO_DATABASE_DBNAME: matomo
@@ -51,7 +51,7 @@ services:
     MARIADB_PASSWORD: ${DB_PASSWORD}
     MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
   ports:
-  - 127.0.0.1:3307:3306
+  - "127.0.0.1:3307:3306"
   volumes:
   - matomo_db:/var/lib/mysql
   healthcheck:

@@ -9,7 +9,7 @@ app:
   type: custom
   image: dessalines/lemmy:0.19.11
   ports:
-  - 8536:8536
+  - "8536:8536"
   environment:
     LEMMY_HOSTNAME: lemmy.example.com
     LEMMY_DATABASE_URL: postgresql://lemmy:${DB_PASSWORD}@lemmy_db:5432/lemmy
@@ -33,7 +33,7 @@ services:
     POSTGRES_PASSWORD: ${DB_PASSWORD}
     POSTGRES_INITDB_ARGS: -c shared_buffers=256MB
   ports:
-  - 127.0.0.1:5432:5432
+  - "127.0.0.1:5432:5432"
   volumes:
   - lemmy_db:/var/lib/postgresql/data
   healthcheck:
@@ -48,7 +48,7 @@ services:
     PICTRS_LOG_TARGETS: warn
     PICTRS_MEDIA_LOCATION: /mnt/pictrs
   ports:
-  - 127.0.0.1:6969:6969
+  - "127.0.0.1:6969:6969"
   volumes:
   - lemmy_pictrs:/mnt/pictrs
 volumes:

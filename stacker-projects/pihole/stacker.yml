@@ -10,7 +10,7 @@ app:
   image: pihole/pihole:latest
   build: null
   ports:
-  - 8080:80
+  - "8080:80"
   - 8053:53/udp
   - 8053:53/tcp
   volumes: []

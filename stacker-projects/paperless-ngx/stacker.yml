@@ -10,7 +10,7 @@ app:
   image: ghcr.io/paperless-ngx/paperless-ngx:latest
   build: null
   ports:
-  - 8000:8000
+  - "8000:8000"
   volumes:
   - paperless_data:/usr/src/paperless/data
   - paperless_media:/usr/src/paperless/media
@@ -35,7 +35,7 @@ services:
 - name: paperless_db
   image: postgres:16-alpine
   ports:
-  - 127.0.0.1:5432:5432
+  - "127.0.0.1:5432:5432"
   environment:
     POSTGRES_USER: paperless
     POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -53,7 +53,7 @@ services:
 - name: redis
   image: redis:7-alpine
   ports:
-  - 127.0.0.1:6379:6379
+  - "127.0.0.1:6379:6379"
   environment: {}
   volumes:
   - paperless_redis:/data

@@ -9,8 +9,8 @@ app:
   type: custom
   image: discourse/discourse:latest
   ports:
-  - 80:80
-  - 443:443
+  - "80:80"
+  - "443:443"
   environment:
     DISCOURSE_HOSTNAME: forum.example.com
     DISCOURSE_DEVELOPER_EMAILS: admin@example.com
@@ -34,7 +34,7 @@ services:
     POSTGRES_USER: discourse
     POSTGRES_PASSWORD: ${DB_PASSWORD}
   ports:
-  - 127.0.0.1:5432:5432
+  - "127.0.0.1:5432:5432"
   volumes:
   - discourse_db:/var/lib/postgresql/data
   healthcheck:
@@ -45,7 +45,7 @@ services:
 - name: redis
   image: redis:7-alpine
   ports:
-  - 127.0.0.1:6379:6379
+  - "127.0.0.1:6379:6379"
   volumes:
   - discourse_redis:/data
   healthcheck:

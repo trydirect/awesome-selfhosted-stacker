@@ -10,7 +10,7 @@ app:
   image: s4core/s4core:latest
   build: null
   ports:
-  - 9000:9000
+  - "9000:9000"
   volumes:
   - s4_data:/data
   environment:
@@ -32,7 +32,7 @@ services:
 - name: s4console
   image: s4core/s4console:latest
   ports:
-  - 3000:3000
+  - "3000:3000"
   environment:
     NODE_ENV: production
     S4_BACKEND_URL: http://app:9000

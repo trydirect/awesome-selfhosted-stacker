@@ -10,7 +10,7 @@ app:
   image: ghcr.io/umami-software/umami:postgresql-latest
   build: null
   ports:
-  - 3000:3000
+  - "3000:3000"
   volumes: []
   environment:
     DATABASE_URL: postgresql://umami:${DB_PASSWORD}@postgres:5432/umami
@@ -25,7 +25,7 @@ services:
 - name: postgres
   image: postgres:15-alpine
   ports:
-  - 127.0.0.1:5432:5432
+  - "127.0.0.1:5432:5432"
   environment:
     POSTGRES_PASSWORD: ${DB_PASSWORD}
     POSTGRES_DB: umami

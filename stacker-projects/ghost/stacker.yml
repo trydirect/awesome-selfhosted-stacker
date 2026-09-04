@@ -10,7 +10,7 @@ app:
   image: ghost:5-alpine
   build: null
   ports:
-  - 2368:2368
+  - "2368:2368"
   volumes:
   - ghost_content:/var/lib/ghost/content
   environment:
@@ -27,7 +27,7 @@ services:
 - name: mysql
   image: mysql:8
   ports:
-  - 127.0.0.1:3306:3306
+  - "127.0.0.1:3306:3306"
   environment:
     MYSQL_USER: ghost
     MYSQL_DATABASE: ghost

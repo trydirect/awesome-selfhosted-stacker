@@ -10,7 +10,7 @@ app:
   image: naskio/strapi:latest
   build: null
   ports:
-  - 1337:1337
+  - "1337:1337"
   volumes:
   - strapi_data:/strapi/src/api
   environment:
@@ -29,7 +29,7 @@ services:
 - name: strapi_db
   image: postgres:16-alpine
   ports:
-  - 127.0.0.1:5432:5432
+  - "127.0.0.1:5432:5432"
   environment:
     POSTGRES_USER: strapi
     POSTGRES_DB: strapi

@@ -10,8 +10,8 @@ app:
   image: matrixdotorg/synapse:latest
   build: null
   ports:
-  - 8008:8008
-  - 8448:8448
+  - "8008:8008"
+  - "8448:8448"
   volumes:
   - synapse_data:/data
   environment:
@@ -27,7 +27,7 @@ services:
 - name: synapse_db
   image: postgres:16-alpine
   ports:
-  - 127.0.0.1:5432:5432
+  - "127.0.0.1:5432:5432"
   environment:
     POSTGRES_PASSWORD: ${DB_PASSWORD}
     POSTGRES_USER: synapse

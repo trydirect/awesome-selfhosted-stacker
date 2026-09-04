@@ -17,7 +17,7 @@ app:
   type: custom
   image: apache/druid:31.0.0
   ports:
-  - 8888:8888
+  - "8888:8888"
   command: router
   volumes:
   - druid_shared:/opt/shared
@@ -119,7 +119,7 @@ services:
 - name: middlemanager
   image: apache/druid:31.0.0
   ports:
-  - 8091:8091
+  - "8091:8091"
   - 8100-8105:8100-8105
   command: middleManager
   volumes:

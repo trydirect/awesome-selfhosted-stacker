@@ -10,7 +10,7 @@ app:
   image: ghcr.io/emanuelef/daily-stars-explorer:latest
   build: null
   ports:
-  - 8080:8080
+  - "8080:8080"
   volumes: []
   environment:
     PAT: ${PAT}

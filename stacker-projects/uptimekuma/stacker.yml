@@ -10,7 +10,7 @@ app:
   image: louislam/uptime-kuma:2
   build: null
   ports:
-  - 3001:3001
+  - "3001:3001"
   volumes:
   - uptime_kuma_data:/app/data
   environment:

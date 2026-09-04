@@ -32,7 +32,7 @@ app:
   type: custom
   image: ghcr.io/rybbit-io/rybbit-client:latest
   ports:
-  - 3002:3002
+  - "3002:3002"
   environment:
     NODE_ENV: production
     NEXT_PUBLIC_BACKEND_URL: ${BASE_URL}
@@ -81,7 +81,7 @@ services:
 - name: backend
   image: ghcr.io/rybbit-io/rybbit-backend:latest
   ports:
-  - 3001:3001
+  - "3001:3001"
   environment:
     NODE_ENV: production
     CLICKHOUSE_HOST: http://clickhouse:8123
