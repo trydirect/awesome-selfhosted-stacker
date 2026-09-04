@@ -10,7 +10,7 @@ app:
   image: floci/floci:latest
   build: null
   ports:
-  - 4566:4566
+  - "4566:4566"
   volumes:
   - /var/run/docker.sock:/var/run/docker.sock
   - ./data:/app/data

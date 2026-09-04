@@ -10,8 +10,8 @@ app:
   image: rustfs/rustfs:latest
   build: null
   ports:
-  - 9000:9000
-  - 9001:9001
+  - "9000:9000"
+  - "9001:9001"
   volumes:
   - rustfs_data:/data
   - rustfs_logs:/app/logs

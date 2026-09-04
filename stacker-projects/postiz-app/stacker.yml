@@ -26,7 +26,7 @@ app:
   type: custom
   image: ghcr.io/gitroomhq/postiz-app:latest
   ports:
-  - 4007:5000
+  - "4007:5000"
   volumes:
   - postiz_config:/config
   - postiz_uploads:/uploads
@@ -98,7 +98,7 @@ services:
 - name: temporal
   image: temporalio/auto-setup:1.28.1
   ports:
-  - 127.0.0.1:7233:7233
+  - "127.0.0.1:7233:7233"
   volumes:
   - ./dynamicconfig/development-sql.yaml:/etc/temporal/config/dynamicconfig/development-sql.yaml:ro
   environment:

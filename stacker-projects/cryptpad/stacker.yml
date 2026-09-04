@@ -4,8 +4,8 @@ app:
   type: custom
   image: cryptpad/cryptpad:latest
   ports:
-  - 3000:3000
-  - 3001:3001
+  - "3000:3000"
+  - "3001:3001"
   environment:
     CPAD_MAIN_DOMAIN: https://${DOMAIN}
     CPAD_CONF: /cryptpad/config/config.js

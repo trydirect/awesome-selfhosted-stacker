@@ -10,7 +10,7 @@ app:
   image: ghcr.io/d8a-tech/d8a:latest
   build: null
   ports:
-  - 8080:8080
+  - "8080:8080"
   volumes:
   - d8a_data:/var/lib/d8a
   - ./config.yaml:/etc/d8a/config.yaml:ro

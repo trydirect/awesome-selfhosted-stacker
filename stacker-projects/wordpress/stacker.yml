@@ -9,7 +9,7 @@ app:
   type: php
   image: wordpress
   ports:
-  - 8080:80
+  - "8080:80"
   environment:
     WORDPRESS_DB_HOST: wordpress_db:3306
     WORDPRESS_DB_NAME: wordpress
@@ -28,7 +28,7 @@ services:
     MYSQL_PASSWORD: ${DB_PASSWORD}
     MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
   ports:
-  - 127.0.0.1:3306:3306
+  - "127.0.0.1:3306:3306"
   volumes:
   - wordpress_db:/var/lib/mysql
   healthcheck:

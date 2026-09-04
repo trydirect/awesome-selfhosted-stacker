@@ -6,7 +6,7 @@ app:
   type: custom
   image: rommapp/romm:latest
   ports:
-  - 8080:8080
+  - "8080:8080"
   environment:
     DB_HOST: romm-db
     DB_NAME: romm

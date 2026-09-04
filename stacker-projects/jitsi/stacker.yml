@@ -9,8 +9,8 @@ app:
   type: custom
   image: jitsi/web:unstable
   ports:
-  - 80:80
-  - 443:443
+  - "80:80"
+  - "443:443"
   environment:
     XMPP_SERVER: xmpp.meet.jitsi
     XMPP_DOMAIN: meet.jitsi
@@ -60,7 +60,7 @@ services:
   image: jitsi/jvb:unstable
   ports:
   - 10000:10000/udp
-  - 4443:4443
+  - "4443:4443"
   environment:
     XMPP_AUTH_DOMAIN: auth.meet.jitsi
     XMPP_INTERNAL_MUC_DOMAIN: internal-muc.meet.jitsi

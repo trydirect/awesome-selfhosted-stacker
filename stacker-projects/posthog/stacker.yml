@@ -10,7 +10,7 @@ app:
   image: posthog/posthog:latest
   build: null
   ports:
-  - 8000:8000
+  - "8000:8000"
   volumes: []
   environment:
     POSTGRES_DB: posthog
@@ -28,7 +28,7 @@ services:
 - name: posthog_db
   image: postgres:16-alpine
   ports:
-  - 127.0.0.1:5432:5432
+  - "127.0.0.1:5432:5432"
   environment:
     POSTGRES_USER: posthog
     POSTGRES_INITDB_ARGS: -c shared_buffers=256MB
@@ -46,7 +46,7 @@ services:
 - name: redis
   image: redis:7-alpine
   ports:
-  - 127.0.0.1:6379:6379
+  - "127.0.0.1:6379:6379"
   environment: {}
   volumes:
   - posthog_redis:/data

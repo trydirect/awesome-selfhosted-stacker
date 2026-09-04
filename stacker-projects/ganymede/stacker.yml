@@ -20,7 +20,7 @@ app:
   type: custom
   image: ghcr.io/zibbp/ganymede:latest
   ports:
-  - 4800:4000
+  - "4800:4000"
   volumes:
   - ganymede_videos:/data/videos
   - ganymede_temp:/data/temp

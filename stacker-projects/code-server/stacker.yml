@@ -4,7 +4,7 @@ app:
   type: custom
   image: lscr.io/linuxserver/code-server:latest
   ports:
-  - 8443:8443
+  - "8443:8443"
   environment:
     PUID: '1000'
     PGID: '1000'

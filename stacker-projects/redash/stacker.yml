@@ -9,7 +9,7 @@ app:
   type: custom
   image: redash/redash:latest
   ports:
-  - 5000:5000
+  - "5000:5000"
   environment:
     REDASH_DATABASE_URL: postgresql://redash:${DB_PASSWORD}@redash_db:5432/redash
     REDASH_REDIS_URL: redis://redis:6379
@@ -28,7 +28,7 @@ services:
     POSTGRES_USER: redash
     POSTGRES_PASSWORD: ${DB_PASSWORD}
   ports:
-  - 127.0.0.1:5432:5432
+  - "127.0.0.1:5432:5432"
   volumes:
   - redash_db:/var/lib/postgresql/data
   healthcheck:
@@ -39,7 +39,7 @@ services:
 - name: redis
   image: redis:7-alpine
   ports:
-  - 127.0.0.1:6379:6379
+  - "127.0.0.1:6379:6379"
   volumes:
   - redash_redis:/data
   healthcheck:

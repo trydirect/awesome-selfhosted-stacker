@@ -10,7 +10,7 @@ app:
   image: jellyfin/jellyfin:latest
   build: null
   ports:
-  - 8096:8096
+  - "8096:8096"
   volumes:
   - jellyfin_config:/config
   - jellyfin_cache:/cache

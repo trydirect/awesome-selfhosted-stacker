@@ -18,7 +18,7 @@ services:
 - name: stackdog
   image: trydirect/stackdog
   ports:
-  - 5000:5000
+  - "5000:5000"
   environment:
     STACKDOG_SNIFF_INTERVAL: '600'
     STACKDOG_AI_PROVIDER: openai
