@@ -1,37 +1,32 @@
 name: meilisearch
-
 app:
   type: custom
   image: getmeili/meilisearch:latest
   ports:
-    - "7700:7700"
+  - 7700:7700
   environment:
     MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
     MEILI_ENV: production
   volumes:
-    - meilisearch_data:/meili_data
-
+  - meilisearch_data:/meili_data
 volumes:
   meilisearch_data: {}
-
 proxy:
   type: none
   auto_detect: false
-
 hooks:
   pre_build: ./scripts/generate-secrets.sh
-
 env_file: .env
-
 deploy:
   target: server
   server:
-    host: ${EXISTING_SERVER_HOST}
-    user: ${EXISTING_SERVER_USER}
+    host: 46.224.127.228
+    user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
+    port: 22
   cloud:
     provider: hetzner
     region: fsn1
     size: cpx22
     public_ports:
-      - "7700"
+    - '7700'
