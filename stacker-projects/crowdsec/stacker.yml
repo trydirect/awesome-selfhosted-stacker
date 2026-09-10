@@ -19,4 +19,15 @@ proxy:
   type: none
   auto_detect: false
 
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    region: fsn1
+    size: cpx22
+
 env_file: .env
