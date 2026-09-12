@@ -664,6 +664,46 @@ New servers provisioned with `--force-new` don't have a local backup SSH key if
 the deploy command timed out before the key was saved. Use Vault-backed keys
 or check `~/.config/stacker/ssh/` for the key file.
 
+### SSH key not installed on server (recurring regression)
+
+**Symptom:** Deployment "completes" but SSH access fails with "Permission denied".
+`stacker ssh-key inject` returns "SSH key status is 'none', not active".
+The server's `/root/.ssh/authorized_keys` is empty or contains only the
+initial Hetzner key, not the Stacker-generated key.
+
+**Root cause:** The Stacker Install Service creates an SSH key object on
+Hetzner but fails to inject it into the server during provisioning. The
+Terraform `hcloud_server` resource references a key ID that was never
+activated. This is a backend regression that has been fixed and broken
+multiple times.
+
+**Verification:**
+```bash
+# Check what keys are on the server
+ssh -i <key> root@<IP> "cat /root/.ssh/authorized_keys"
+
+# Check Hetzner key status
+curl -s "https://api.hetzner.cloud/v1/ssh_keys/<ID>" \
+  -H "Authorization: Bearer $HTZ_TOKEN" | python3 -c "
+import json,sys; d=json.load(sys.stdin)
+print(f'Status: {d[\"ssh_key\"][\"status\"]}')"
+```
+
+**Also:** The local backup key (`~/.config/stacker/ssh/server-<ID>_ed25519`)
+is sometimes not saved either — the CLI reports "Local SSH backup key saved"
+but the file doesn't exist or contains a key that doesn't match the server.
+
+**Impact:** Every `--target cloud --force-new` deploy loses SSH access.
+`stacker agent install`, `stacker logs`, and `stacker agent status` all fail.
+
+**Fix:** Stacker Install Service must ensure the SSH key is:
+1. Created on Hetzner with `status: active`
+2. Referenced in the Terraform `hcloud_server.ssh_keys` array
+3. Installed on the server during provisioning
+4. Saved locally as a backup
+
+This is a backend issue, not a project config issue.
+
 ### Cloud deploy: server created but IP never assigned (2026-08-14)
 
 ```bash
