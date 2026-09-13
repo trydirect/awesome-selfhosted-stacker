@@ -13,8 +13,8 @@ app:
   ports:
     - "3000:3000"
     - "8080:80"
-    - "53:53/tcp"
-    - "53:53/udp"
+    - "8053:53/tcp"
+    - "8053:53/udp"
   volumes:
     - adguard_work:/opt/adguardhome/work
     - adguard_conf:/opt/adguardhome/conf
@@ -37,8 +37,8 @@ deploy:
     public_ports:
       - "3000"
       - "8080"
-      - "53/tcp"
-      - "53/udp"
+      - "8053/tcp"
+      - "8053/udp"
 
 monitoring:
   status_panel: true
