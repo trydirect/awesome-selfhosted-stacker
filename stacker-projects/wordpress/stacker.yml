@@ -46,6 +46,7 @@ deploy:
   target: server
   cloud:
     provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
     region: fsn1
     size: cpx22
     public_ports:
