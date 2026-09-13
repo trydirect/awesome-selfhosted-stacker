@@ -81,6 +81,10 @@ stacker-projects/<name>/     # one independent project per subdirectory, each wi
   `BUGS.md` and stop — do NOT work around it with manual SSH. Only fall
   back to `curl`/`ssh`/`docker` for read-only investigation (logs, ps,
   inspect) — and note the gap as a potential missing feature in `BUGS.md`.
+- **Verify SSH access immediately after cloud server creation.** If SSH
+  fails right after `--force-new`, stop with an error — do not continue
+  deploying or testing. A server you can't SSH into is broken infrastructure,
+  not something to work around.
 - **Quote port mappings in `stacker.yml`** — always use `"2222:22"` not
   `2222:22`. YAML 1.1 readers (PyYAML, Go, linters, CI tools) parse
   unquoted `N:M` as sexagesimal (base-60) when the right side is 0–59,

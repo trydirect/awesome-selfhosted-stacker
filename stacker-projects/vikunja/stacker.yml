@@ -23,8 +23,7 @@ app:
     VIKUNJA_DATABASE_PASSWORD: "${DB_PASSWORD}"
   volumes:
     - vikunja_files:/app/vikunja/files
-  depends_on:
-    - postgres
+  command: sh -c "chown -R 1000:1000 /app/vikunja/files && /app/vikunja/vikunja"
 
 services:
   - name: postgres
@@ -79,7 +78,6 @@ config_contract:
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
-  post_deploy: ./scripts/fix-volume-permissions.sh
 
 monitoring:
   status_panel: true
