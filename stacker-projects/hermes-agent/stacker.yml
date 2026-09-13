@@ -3,9 +3,8 @@ project:
   identity: hermes-agent
 version: 1.0.0
 app:
-  type: python
-  path: .
-  dockerfile: Dockerfile
+  type: custom
+  image: nousresearch/hermes-agent:latest
   ports:
   - "8000:8000"
   - "8001:8001"
@@ -18,12 +17,20 @@ proxy:
   type: none
   auto_detect: false
 deploy:
-  target: server
+  target: cloud
   server:
-    host: ${DEPLOY_HOST}
+    host: 116.202.19.183
     user: root
-    ssh_key: ${BASE_PATH}/stacker-project-test
+    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
     port: 22
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+      - "8001"
 monitoring:
   status_panel: true
 env_file: .env

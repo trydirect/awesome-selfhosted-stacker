@@ -108,6 +108,7 @@ deploy:
     ssh_key: ~/.config/stacker/ssh/server-436_ed25519
   cloud:
     provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
     region: fsn1
     size: cpx32
     public_ports:

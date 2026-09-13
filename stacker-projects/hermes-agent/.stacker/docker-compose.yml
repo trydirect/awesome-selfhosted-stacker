@@ -1,22 +1,22 @@
 services:
   app:
-    build:
-      context: ..
-      dockerfile: .stacker/Dockerfile
+    image: nousresearch/hermes-agent:latest
     ports:
-    - 8000:8000
-    - 8001:8001
+      - "8000:8000"
+      - "8001:8001"
     environment:
-      HERMES_GID: '1000'
-      HERMES_UID: '1000'
-      PYTHONUNBUFFERED: '1'
+      HERMES_GID: "1000"
+      HERMES_UID: "1000"
+      PYTHONUNBUFFERED: "1"
     restart: unless-stopped
     networks:
-    - app-network
+      - app-network
     labels:
-      my.stacker.dns: app
-      my.stacker.scope: project
-      my.stacker.service: app
+      my.stacker.dns: "app"
+      my.stacker.scope: "project"
+      my.stacker.service: "hermes-agent"
+
 networks:
   app-network:
     driver: bridge
+

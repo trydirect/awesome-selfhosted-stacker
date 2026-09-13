@@ -23,6 +23,7 @@ deploy:
   deployment_hash: null
   cloud:
     provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
     orchestrator: remote
     region: null
     size: null

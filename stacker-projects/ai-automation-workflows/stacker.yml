@@ -121,6 +121,7 @@ deploy:
   target: cloud
   cloud:
     provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
     region: hel1
     size: cpx32
     key: htz-0
