@@ -23,7 +23,7 @@ app:
     VIKUNJA_DATABASE_PASSWORD: "${DB_PASSWORD}"
   volumes:
     - vikunja_files:/app/vikunja/files
-  command: sh -c "chown -R 1000:1000 /app/vikunja/files && /app/vikunja/vikunja"
+  user: "0:0"
 
 services:
   - name: postgres

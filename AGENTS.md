@@ -68,6 +68,10 @@ stacker-projects/<name>/     # one independent project per subdirectory, each wi
 
 ## Working conventions in this repo
 
+- **Re-evaluate before every retry or deployment.** Re-read the applicable
+  `stacker.yml`, `SKILL.md`, deployment status/events, existing success files,
+  lock files, and known failures. Confirm the next command addresses the
+  current failure and stop if it would repeat a known-bad operation.
 - **Never modify files inside a `stacker-projects/<name>/` directory**
   (`stacker.yml`, Dockerfile, app source, etc.) without explicit user
   confirmation first — these are treated as fixtures for testing the
@@ -81,10 +85,14 @@ stacker-projects/<name>/     # one independent project per subdirectory, each wi
   `BUGS.md` and stop — do NOT work around it with manual SSH. Only fall
   back to `curl`/`ssh`/`docker` for read-only investigation (logs, ps,
   inspect) — and note the gap as a potential missing feature in `BUGS.md`.
-- **Verify SSH access immediately after cloud server creation.** If SSH
-  fails right after `--force-new`, stop with an error — do not continue
-  deploying or testing. A server you can't SSH into is broken infrastructure,
-  not something to work around.
+- **Verify SSH access after cloud server creation.** For `--force-new`, wait
+  until deployment status is `in_progress`, a server IP is reported, and
+  Ansible tasks are running. Run the deploy with a timeout of at least 15
+  minutes or in the background. Wait for the exact `✓ Your SSH key authorized`
+  line before testing SSH. Without that line, an SSH check is inconclusive.
+  If SSH fails after that line, stop with an error — do not continue deploying
+  or testing. A server you can't SSH into is broken infrastructure, not
+  something to work around.
 - **Quote port mappings in `stacker.yml`** — always use `"2222:22"` not
   `2222:22`. YAML 1.1 readers (PyYAML, Go, linters, CI tools) parse
   unquoted `N:M` as sexagesimal (base-60) when the right side is 0–59,
