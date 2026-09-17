@@ -56,6 +56,58 @@ deploy:
     size: cpx22
     public_ports:
       - "8080"
+
+config_contract:
+  services:
+    app:
+      fields:
+        ZITADEL_MASTERKEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ZITADEL_DOMAIN:
+          mutability: editable
+        ZITADEL_PORT:
+          mutability: editable
+          display: number
+        ZITADEL_EXTERNALPORT:
+          mutability: editable
+          display: number
+        ZITADEL_EXTERNALSECURE:
+          mutability: editable
+          display: boolean
+        ZITADEL_TLS_ENABLED:
+          mutability: editable
+          display: boolean
+        ZITADEL_PUBLIC_SCHEME:
+          mutability: editable
+        ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_REQUIRED:
+          mutability: editable
+          display: boolean
+        ZITADEL_LOGSTORE_ACCESS_STDOUT_ENABLED:
+          mutability: editable
+          display: boolean
+        ZITADEL_CACHES_CONNECTORS_REDIS_ENABLED:
+          mutability: editable
+          display: boolean
+    postgres:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        POSTGRES_DB:
+          mutability: editable
+
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 env_file: .env
