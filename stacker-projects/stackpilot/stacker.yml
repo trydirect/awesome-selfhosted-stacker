@@ -9,26 +9,33 @@ install:
     commonDomain: stackpilot.try.direct
 
 config_contract:
-  app:
-    environment:
-      - name: SECRET_KEY
-        required: true
-        secret: true
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: ADMIN_PASSWORD
-        required: true
-        secret: true
-      - name: N8N_PASSWORD
-        required: true
-        secret: true
-      - name: OLLAMA_MODEL
-        required: false
-        secret: false
-      - name: OLLAMA_EMBED_MODEL
-        required: false
-        secret: false
+  services:
+    app:
+      fields:
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 16
+          display: password
+        N8N_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 16
+          display: password
+        OLLAMA_MODEL:
+          mutability: editable
+        OLLAMA_EMBED_MODEL:
+          mutability: editable
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
