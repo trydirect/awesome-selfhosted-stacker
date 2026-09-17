@@ -13,6 +13,10 @@ proxy:
   auto_detect: false
 monitoring:
   status_panel: true
+config_contract:
+  services:
+    app:
+      fields: {}
 env_file: .env
 deploy:
   target: server

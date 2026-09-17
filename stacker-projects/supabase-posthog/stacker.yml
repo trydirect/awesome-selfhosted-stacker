@@ -213,14 +213,42 @@ hooks:
 config_contract:
   services:
     app:
-      secret:
-        - POSTGRES_PASSWORD
-        - JWT_SECRET
-        - ANON_KEY
-        - SERVICE_ROLE_KEY
-        - SECRET_KEY_BASE
-        - PG_META_CRYPTO_KEY
-        - DASHBOARD_PASSWORD
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ANON_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SERVICE_ROLE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PG_META_CRYPTO_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DASHBOARD_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 env_file: .env
 

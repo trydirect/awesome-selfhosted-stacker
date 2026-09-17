@@ -40,6 +40,16 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        APPRISE_STATEFUL_MODE:
+          mutability: editable
+        APPRISE_WORKER_COUNT:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

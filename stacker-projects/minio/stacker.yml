@@ -37,6 +37,21 @@ monitoring:
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+config_contract:
+  services:
+    app:
+      fields:
+        MINIO_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MINIO_ROOT_USER:
+          mutability: editable
+        command:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 deploy:

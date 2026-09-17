@@ -8,10 +8,22 @@ install:
 config_contract:
   services:
     app:
-      secret:
-        - BETTER_AUTH_SECRET
-        - CLICKHOUSE_PASSWORD
-        - POSTGRES_PASSWORD
+      fields:
+        BETTER_AUTH_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CLICKHOUSE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:

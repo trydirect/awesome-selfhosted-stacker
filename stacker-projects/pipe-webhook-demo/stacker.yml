@@ -68,6 +68,25 @@ monitoring:
     target:
       terminal: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        APPRISE_STATEFUL_MODE:
+          mutability: editable
+        APPRISE_WORKER_COUNT:
+          mutability: editable
+        volumes:
+          mutability: editable
+    ntfy:
+      fields:
+        NTFY_AUTH_DEFAULT_ACCESS:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        NTFY_BASE_URL:
+          mutability: editable
 env_file: .env
 
 volumes:

@@ -50,6 +50,23 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        SURREAL_PASS:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SURREAL_PATH:
+          mutability: editable
+        SURREAL_USER:
+          mutability: editable
+        command:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

@@ -31,4 +31,14 @@ deploy:
     region: fsn1
     size: cpx22
 
+config_contract:
+  services:
+    app:
+      fields:
+        COLLECTIONS:
+          mutability: editable
+        GID:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env

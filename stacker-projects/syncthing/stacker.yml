@@ -23,4 +23,16 @@ proxy:
   type: none
   auto_detect: false
 
+config_contract:
+  services:
+    app:
+      fields:
+        PGID:
+          mutability: editable
+        PUID:
+          mutability: editable
+        TZ:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env

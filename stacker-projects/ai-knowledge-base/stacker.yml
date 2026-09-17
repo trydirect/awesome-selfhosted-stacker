@@ -11,13 +11,37 @@ install:
 config_contract:
   services:
     app:
-      secret:
-        - SECRET_KEY
-        - DB_PASSWORD
-        - POSTGRES_PASSWORD
-        - QDRANT_API_KEY
-        - INIT_PASSWORD
-        - APP_SECRET_KEY
+      fields:
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        QDRANT_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        INIT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        APP_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

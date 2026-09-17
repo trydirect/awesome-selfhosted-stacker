@@ -47,6 +47,27 @@ deploy:
       - "8080"
 monitoring:
   status_panel: true
+config_contract:
+  services:
+    "countly-api":
+      fields:
+        COUNTLY_CONFIG_API_API_WORKERS:
+          mutability: editable
+        COUNTLY_CONFIG__FILESTORAGE:
+          mutability: editable
+        COUNTLY_CONFIG__MONGODB_HOST:
+          mutability: editable
+        COUNTLY_PLUGINS:
+          mutability: editable
+        NODE_OPTIONS:
+          mutability: editable
+    "mongodb":
+      fields:
+        ALLOW_EMPTY_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 env_file: ".env"
 volumes:
   countly_mongodb_data: {}

@@ -42,6 +42,14 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        TZ:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

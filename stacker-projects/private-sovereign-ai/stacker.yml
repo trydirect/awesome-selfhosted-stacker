@@ -11,9 +11,17 @@ install:
 config_contract:
   services:
     app:
-      secret:
-        - WEBUI_SECRET_KEY
-        - INITIAL_ADMIN_PASSWORD
+      fields:
+        WEBUI_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        INITIAL_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

@@ -49,6 +49,45 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        DATABASE_URL:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        NEXT_PUBLIC_BASE_URL:
+          mutability: editable
+        SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    rallly-db:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 deploy:

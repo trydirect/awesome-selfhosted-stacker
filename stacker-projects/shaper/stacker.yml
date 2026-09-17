@@ -44,6 +44,14 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        DUCKDB_PATH:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

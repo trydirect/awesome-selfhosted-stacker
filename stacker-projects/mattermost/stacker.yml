@@ -59,4 +59,40 @@ deploy:
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+config_contract:
+  services:
+    app:
+      fields:
+        MM_SERVICESETTINGS_SITEURL:
+          mutability: editable
+        MM_SQLSETTINGS_DATASOURCE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MM_SQLSETTINGS_DRIVERNAME:
+          mutability: editable
+        volumes:
+          mutability: editable
+    mattermost-db:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env

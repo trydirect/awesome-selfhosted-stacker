@@ -51,6 +51,18 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        CRONICLE_base_app_url:
+          mutability: editable
+        CRONICLE_echo:
+          mutability: editable
+        CRONICLE_foreground:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

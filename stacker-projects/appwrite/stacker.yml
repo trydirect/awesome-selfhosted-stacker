@@ -93,6 +93,73 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        _APP_DB_HOST:
+          mutability: editable
+        _APP_DB_PASS:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        _APP_DB_PORT:
+          mutability: editable
+          display: number
+        _APP_DB_SCHEMA:
+          mutability: editable
+        _APP_DB_USER:
+          mutability: editable
+        _APP_DOMAIN:
+          mutability: editable
+        _APP_DOMAIN_TARGET:
+          mutability: editable
+        _APP_OPENSSL_KEY_V1:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        _APP_REDIS_HOST:
+          mutability: editable
+        _APP_REDIS_PORT:
+          mutability: editable
+          display: number
+        volumes:
+          mutability: editable
+    influxdb:
+      fields:
+        INFLUXDB_ADMIN_ENABLED:
+          mutability: editable
+          display: boolean
+        INFLUXDB_DB:
+          mutability: editable
+    mariadb:
+      fields:
+        MYSQL_DATABASE:
+          mutability: editable
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env
 
 volumes:

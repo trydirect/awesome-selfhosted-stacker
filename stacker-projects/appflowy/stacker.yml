@@ -70,6 +70,42 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        APPFLOWY_DATABASE_URL:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        APPFLOWY_ENVIRONMENT:
+          mutability: editable
+        APPFLOWY_REDIS_URI:
+          mutability: editable
+        volumes:
+          mutability: editable
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env
 
 volumes:

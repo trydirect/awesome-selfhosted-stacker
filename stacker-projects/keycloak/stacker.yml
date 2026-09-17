@@ -53,6 +53,56 @@ monitoring:
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+config_contract:
+  services:
+    app:
+      fields:
+        KC_DB:
+          mutability: editable
+        KC_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        KC_DB_URL:
+          mutability: editable
+        KC_DB_USERNAME:
+          mutability: editable
+        KEYCLOAK_ADMIN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        KEYCLOAK_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        command:
+          mutability: editable
+    keycloak-db:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 deploy:

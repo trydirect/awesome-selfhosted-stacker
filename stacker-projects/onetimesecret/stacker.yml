@@ -56,4 +56,19 @@ deploy:
       - "443"
       - "3000"
 
+config_contract:
+  services:
+    app:
+      fields:
+        HOSTNAME:
+          mutability: editable
+        REDIS_URL:
+          mutability: editable
+        SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        volumes:
+          mutability: editable
 env_file: .env

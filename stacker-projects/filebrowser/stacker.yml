@@ -42,6 +42,21 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        FB_DATABASE:
+          mutability: editable
+        FB_NOAUTH:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        FB_ROOT:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

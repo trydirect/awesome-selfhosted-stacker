@@ -27,6 +27,15 @@ proxy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        SCREEGO_EXTERNAL_IP:
+          mutability: editable
+        SCREEGO_TURN_PORT_RANGE:
+          mutability: editable
+          display: number
 env_file: .env
 
 deploy:

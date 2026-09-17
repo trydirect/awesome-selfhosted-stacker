@@ -52,6 +52,47 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        APP_URL:
+          mutability: editable
+        DB_DATABASE:
+          mutability: editable
+        DB_HOST:
+          mutability: editable
+        DB_PASS:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_USER:
+          mutability: editable
+        PGID:
+          mutability: editable
+        PUID:
+          mutability: editable
+        TZ:
+          mutability: editable
+        volumes:
+          mutability: editable
+    bookstack-db:
+      fields:
+        MYSQL_DATABASE:
+          mutability: editable
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_USER:
+          mutability: editable
 env_file: .env
 
 deploy:

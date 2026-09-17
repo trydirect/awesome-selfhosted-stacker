@@ -33,4 +33,12 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        CLI_ARGS:
+          mutability: editable
+        PRELOAD_MODELS:
+          mutability: editable
 env_file: .env

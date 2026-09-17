@@ -53,6 +53,32 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        EMBEDDING_ENGINE:
+          mutability: editable
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        LLM_PROVIDER:
+          mutability: editable
+        OPEN_AI_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPEN_AI_MODEL_PREF:
+          mutability: editable
+        STORAGE_DIR:
+          mutability: editable
+        VECTOR_DB:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

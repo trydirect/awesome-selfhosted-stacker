@@ -46,6 +46,17 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        DAGU_HOST:
+          mutability: editable
+        DAGU_PORT:
+          mutability: editable
+          display: number
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

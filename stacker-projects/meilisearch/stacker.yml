@@ -16,6 +16,19 @@ proxy:
   auto_detect: false
 hooks:
   pre_build: ./scripts/generate-secrets.sh
+config_contract:
+  services:
+    app:
+      fields:
+        MEILI_ENV:
+          mutability: editable
+        MEILI_MASTER_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        volumes:
+          mutability: editable
 env_file: .env
 deploy:
   target: server

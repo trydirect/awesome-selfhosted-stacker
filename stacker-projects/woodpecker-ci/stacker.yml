@@ -35,4 +35,29 @@ proxy:
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+config_contract:
+  services:
+    app:
+      fields:
+        WOODPECKER_AGENT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        WOODPECKER_GITEA:
+          mutability: editable
+        WOODPECKER_GITHUB:
+          mutability: editable
+        WOODPECKER_HOST:
+          mutability: editable
+        WOODPECKER_OPEN:
+          mutability: editable
+        volumes:
+          mutability: editable
+    woodpecker-agent:
+      fields:
+        WOODPECKER_SERVER:
+          mutability: editable
+        depends_on:
+          mutability: editable
 env_file: .env

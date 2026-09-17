@@ -48,6 +48,21 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        DISABLE_INSTALL_DEMO_CONFIG:
+          mutability: editable
+        OPENSEARCH_INITIAL_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENSEARCH_JAVA_OPTS:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

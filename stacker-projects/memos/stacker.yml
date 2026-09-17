@@ -28,4 +28,8 @@ deploy:
     public_ports:
       - "5230"
 
+config_contract:
+  services:
+    app:
+      fields: {}
 env_file: .env

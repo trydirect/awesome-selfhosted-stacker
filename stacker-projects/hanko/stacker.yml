@@ -44,6 +44,59 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
   post_deploy: ./scripts/migrate.sh
 
+config_contract:
+  services:
+    app:
+      fields:
+        HANKO_DATABASE_HOST:
+          mutability: editable
+        HANKO_DATABASE_NAME:
+          mutability: editable
+        HANKO_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HANKO_DATABASE_PORT:
+          mutability: editable
+          display: number
+        HANKO_DATABASE_USER:
+          mutability: editable
+        HANKO_SECRETS_DEFAULT:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HANKO_SERVER_PUBLIC_PORT:
+          mutability: editable
+          display: number
+        HANKO_URL:
+          mutability: editable
+        command:
+          mutability: editable
+    hanko-db:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 deploy:

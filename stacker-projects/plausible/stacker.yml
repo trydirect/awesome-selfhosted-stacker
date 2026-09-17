@@ -110,9 +110,17 @@ config_contract:
       - BASE_URL
       - DATABASE_URL
       - CLICKHOUSE_DATABASE_URL
-      secret:
-      - SECRET_KEY_BASE
-      - TOTP_VAULT_KEY
+      fields:
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TOTP_VAULT_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     plausible_db:
       required:
       - POSTGRES_DB

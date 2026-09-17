@@ -53,6 +53,23 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        PGID:
+          mutability: editable
+        PUID:
+          mutability: editable
+        TZ:
+          mutability: editable
+        URBACKUP_WEB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

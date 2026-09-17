@@ -47,6 +47,22 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        ADMIN_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DOMAIN:
+          mutability: editable
+        SIGNUPS_ALLOWED:
+          mutability: editable
+          display: boolean
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

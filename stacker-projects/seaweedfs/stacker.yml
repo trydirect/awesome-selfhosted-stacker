@@ -44,6 +44,16 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        WEED_SERVER_ADDR:
+          mutability: editable
+        command:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

@@ -25,6 +25,27 @@ proxy:
   type: none
   auto_detect: false
 
+config_contract:
+  services:
+    app:
+      fields:
+        PEERS:
+          mutability: editable
+        PGID:
+          mutability: editable
+        PUID:
+          mutability: editable
+        SERVERPORT:
+          mutability: editable
+          display: number
+        SERVERURL:
+          mutability: editable
+        TZ:
+          mutability: editable
+        cap_add:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 deploy:

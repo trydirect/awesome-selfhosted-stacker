@@ -37,6 +37,52 @@ proxy:
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+config_contract:
+  services:
+    app:
+      fields:
+        AUTH_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_CONNECTION_URI:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        NODE_ENV:
+          mutability: editable
+        SITE_URL:
+          mutability: editable
+    infisical-db:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 deploy:

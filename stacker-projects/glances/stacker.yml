@@ -40,4 +40,14 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        GLANCES_OPT:
+          mutability: editable
+        privileged:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env

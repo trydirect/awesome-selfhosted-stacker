@@ -43,6 +43,21 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        WHOOGLE_DOTENV:
+          mutability: editable
+        WHOOGLE_PASS:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        WHOOGLE_USER:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

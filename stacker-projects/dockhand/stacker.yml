@@ -54,4 +54,22 @@ monitoring:
     endpoint: /
     interval: 30s
 
+config_contract:
+  services:
+    app:
+      fields:
+        DATA_DIR:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
