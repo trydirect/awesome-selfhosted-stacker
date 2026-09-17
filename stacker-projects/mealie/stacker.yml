@@ -32,4 +32,16 @@ deploy:
     public_ports:
       - "9925"
 
+config_contract:
+  services:
+    app:
+      fields:
+        ALLOW_SIGNUP:
+          mutability: editable
+          display: boolean
+        DB_ENGINE:
+          mutability: editable
+        BASE_URL:
+          mutability: editable
+
 env_file: .env

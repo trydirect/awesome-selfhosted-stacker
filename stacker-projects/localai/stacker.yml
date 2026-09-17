@@ -39,6 +39,19 @@ deploy:
       - "443"
       - "8080"
 
+config_contract:
+  services:
+    app:
+      fields:
+        MODELS_PATH:
+          mutability: editable
+        THREADS:
+          mutability: editable
+          display: number
+        DEBUG:
+          mutability: editable
+          display: boolean
+
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

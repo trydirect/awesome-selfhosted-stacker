@@ -59,6 +59,41 @@ deploy:
     public_ports:
       - "2283"
 
+config_contract:
+  services:
+    app:
+      fields:
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_HOSTNAME:
+          mutability: editable
+        DB_USERNAME:
+          mutability: editable
+        DB_DATABASE_NAME:
+          mutability: editable
+        REDIS_HOSTNAME:
+          mutability: editable
+        UPLOAD_LOCATION:
+          mutability: editable
+        IMMICH_HOST:
+          mutability: editable
+        HOST:
+          mutability: editable
+    immich-db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        POSTGRES_DB:
+          mutability: editable
+
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

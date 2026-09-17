@@ -32,6 +32,13 @@ deploy:
       - "80"
       - "443"
 
+config_contract:
+  services:
+    app:
+      fields:
+        COMMON_DOMAIN:
+          mutability: editable
+
 monitoring:
   status_panel: true
 
