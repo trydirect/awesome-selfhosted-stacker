@@ -211,29 +211,16 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
 
 config_contract:
-  app:
-    environment:
-      - name: POSTGRES_PASSWORD
-        required: true
-        secret: true
-      - name: JWT_SECRET
-        required: true
-        secret: true
-      - name: ANON_KEY
-        required: true
-        secret: true
-      - name: SERVICE_ROLE_KEY
-        required: true
-        secret: true
-      - name: SECRET_KEY_BASE
-        required: true
-        secret: true
-      - name: PG_META_CRYPTO_KEY
-        required: true
-        secret: true
-      - name: DASHBOARD_PASSWORD
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - POSTGRES_PASSWORD
+        - JWT_SECRET
+        - ANON_KEY
+        - SERVICE_ROLE_KEY
+        - SECRET_KEY_BASE
+        - PG_META_CRYPTO_KEY
+        - DASHBOARD_PASSWORD
 
 env_file: .env
 

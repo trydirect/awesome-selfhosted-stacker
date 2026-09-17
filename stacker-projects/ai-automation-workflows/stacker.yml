@@ -13,26 +13,14 @@ install:
     commonDomain: ai-automation-workflows.try.direct
 
 config_contract:
-  app:
-    environment:
-      - name: FLOWISE_USERNAME
-        required: true
-        secret: false
-      - name: FLOWISE_PASSWORD
-        required: true
-        secret: true
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: APIKEY_SECRET
-        required: true
-        secret: true
-      - name: SECRET_KEY
-        required: true
-        secret: true
-      - name: N8N_PASSWORD
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - FLOWISE_PASSWORD
+        - DB_PASSWORD
+        - APIKEY_SECRET
+        - SECRET_KEY
+        - N8N_PASSWORD
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

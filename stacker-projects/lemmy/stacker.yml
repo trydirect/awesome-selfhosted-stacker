@@ -72,17 +72,12 @@ deploy:
     ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22
 config_contract:
-  app:
-    environment:
-    - name: DB_PASSWORD
-      required: true
-      secret: true
-    - name: JWT_SECRET
-      required: true
-      secret: true
-    - name: ADMIN_PASSWORD
-      required: true
-      secret: true
+  services:
+    app:
+      secret:
+        - DB_PASSWORD
+        - JWT_SECRET
+        - ADMIN_PASSWORD
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 monitoring:

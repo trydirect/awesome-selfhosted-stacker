@@ -6,20 +6,11 @@ install:
   inputs:
     commonDomain: strava.example.com
 config_contract:
-  app:
-    environment:
-    - name: TZ
-      required: false
-      secret: false
-    - name: STRAVA_CLIENT_ID
-      required: true
-      secret: false
-    - name: STRAVA_CLIENT_SECRET
-      required: true
-      secret: true
-    - name: STRAVA_REFRESH_TOKEN
-      required: true
-      secret: true
+  services:
+    app:
+      secret:
+        - STRAVA_CLIENT_SECRET
+        - STRAVA_REFRESH_TOKEN
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:

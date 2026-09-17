@@ -9,14 +9,11 @@ install:
     commonDomain: private-sovereign-ai.try.direct
 
 config_contract:
-  app:
-    environment:
-      - name: WEBUI_SECRET_KEY
-        required: true
-        secret: true
-      - name: INITIAL_ADMIN_PASSWORD
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - WEBUI_SECRET_KEY
+        - INITIAL_ADMIN_PASSWORD
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

@@ -71,14 +71,11 @@ deploy:
       - "8080"
 
 config_contract:
-  app:
-    environment:
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: DB_ROOT_PASSWORD
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - DB_PASSWORD
+        - DB_ROOT_PASSWORD
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

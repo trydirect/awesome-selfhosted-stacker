@@ -6,26 +6,12 @@ install:
   inputs:
     commonDomain: rybbit.example.com
 config_contract:
-  app:
-    environment:
-    - name: BASE_URL
-      required: true
-      secret: false
-    - name: DISABLE_SIGNUP
-      required: false
-      secret: false
-    - name: BETTER_AUTH_SECRET
-      required: true
-      secret: true
-    - name: CLICKHOUSE_PASSWORD
-      required: true
-      secret: true
-    - name: POSTGRES_PASSWORD
-      required: true
-      secret: true
-    - name: REDIS_PASSWORD
-      required: true
-      secret: true
+  services:
+    app:
+      secret:
+        - BETTER_AUTH_SECRET
+        - CLICKHOUSE_PASSWORD
+        - POSTGRES_PASSWORD
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:

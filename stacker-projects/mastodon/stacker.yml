@@ -102,23 +102,13 @@ deploy:
       - "3000"
 
 config_contract:
-  app:
-    environment:
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: SECRET_KEY_BASE
-        required: true
-        secret: true
-      - name: OTP_SECRET
-        required: true
-        secret: true
-      - name: VAPID_PRIVATE_KEY
-        required: true
-        secret: true
-      - name: VAPID_PUBLIC_KEY
-        required: true
-        secret: false
+  services:
+    app:
+      secret:
+        - DB_PASSWORD
+        - SECRET_KEY_BASE
+        - OTP_SECRET
+        - VAPID_PRIVATE_KEY
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
