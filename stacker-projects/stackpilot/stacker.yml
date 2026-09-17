@@ -11,31 +11,11 @@ install:
 config_contract:
   services:
     app:
-      fields:
-        SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        ADMIN_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 16
-          display: password
-        N8N_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 16
-          display: password
-        OLLAMA_MODEL:
-          mutability: editable
-        OLLAMA_EMBED_MODEL:
-          mutability: editable
+      secret:
+        - SECRET_KEY
+        - DB_PASSWORD
+        - ADMIN_PASSWORD
+        - N8N_PASSWORD
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
