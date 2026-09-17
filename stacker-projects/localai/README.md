@@ -1,13 +1,13 @@
 # LocalAI
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/localai&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/localaiquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/localai&ref=mainref=e68926c)
 
 Run AI models locally — no API keys, no data leaks, full privacy.
 
 ## One-click deploy
 
 Click the badge above, or open the deep link:
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/localai&ref=main
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/localaiquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/localai&ref=mainref=e68926c
 
 ## Default port
 

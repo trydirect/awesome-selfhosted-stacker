@@ -1,6 +1,6 @@
 # AI Automation Workflows
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-automation-workflows&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-automation-workflowsquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-automation-workflows&ref=mainref=e68926c)
 
 **Self-hosted AI workflow automation** — Flowise + n8n + Ollama + Qdrant.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-automation-workflows&ref=main
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-automation-workflowsquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-automation-workflows&ref=mainref=e68926c
 ```
 
 TryDirect validates the stack's `stacker.yml`, presents the `.env.example` fields

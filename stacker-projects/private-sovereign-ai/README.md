@@ -1,6 +1,6 @@
 # Private Sovereign AI
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/private-sovereign-ai&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/private-sovereign-aiquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/private-sovereign-ai&ref=mainref=e68926c)
 
 **Self-hosted private AI assistant** — Open WebUI + Ollama + SearXNG.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/private-sovereign-ai&ref=main
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/private-sovereign-aiquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/private-sovereign-ai&ref=mainref=e68926c
 ```
 
 TryDirect validates the stack's `stacker.yml`, presents the `.env.example` fields

@@ -1,6 +1,6 @@
 # Floci
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/floci&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/flociquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/floci&ref=mainref=e68926c)
 
 **Self-hosted local cloud** — AWS-compatible local cloud services (Lambda, S3, SNS, SQS, RDS, and more).
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/floci&ref=main
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/flociquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/floci&ref=mainref=e68926c
 ```
 
 TryDirect validates the stack's `stacker.yml`, presents the `.env.example` fields

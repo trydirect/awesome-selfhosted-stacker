@@ -1,6 +1,6 @@
 # AI Knowledge Base
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-knowledge-base&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-knowledge-basequick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-knowledge-base&ref=mainref=e68926c)
 
 **Self-hosted AI knowledge base** — Dify + PostgreSQL + Redis + Weaviate + Sandbox.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-knowledge-base&ref=main
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-knowledge-basequick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/ai-knowledge-base&ref=mainref=e68926c
 ```
 
 TryDirect validates the stack's `stacker.yml`, presents the `.env.example` fields
