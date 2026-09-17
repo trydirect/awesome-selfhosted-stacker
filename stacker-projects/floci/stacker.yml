@@ -33,7 +33,7 @@ services:
     ports:
       - "4500:4500"
     environment:
-      FLOCI_ENDPOINT: http://${DEPLOY_HOST}:4566
+      FLOCI_ENDPOINT: http://floci:4566
       AWS_REGION: us-east-1
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
@@ -95,15 +95,26 @@ config_contract:
           mutability: generated
           type: alphanumeric
           length: 16
+        FLOCI_TLS_ENABLED:
+          mutability: editable
+          display: boolean
+        FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ENABLED:
+          mutability: editable
+          display: boolean
+        FLOCI_SERVICES_RDS_PROXY_BASE_PORT:
+          mutability: editable
+          display: number
     floci-ui:
       fields:
         AWS_ACCESS_KEY_ID:
           mutability: generated
           type: alphanumeric
           length: 20
+          display: password
         AWS_SECRET_ACCESS_KEY:
           mutability: generated
           type: base64
           length: 40
+          display: password
         AWS_REGION:
           mutability: editable
