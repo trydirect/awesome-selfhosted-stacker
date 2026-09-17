@@ -1,6 +1,6 @@
 # Mealie
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/mealie&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/mealiequick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/mealie&ref=mainref=e68926c)
 
 **Self-hosted recipe manager** — organize, search, and share your recipes.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/mealie&ref=main
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/mealiequick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/mealie&ref=mainref=e68926c
 ```
 
 ## Manual deploy

@@ -1,6 +1,6 @@
 # Linkding
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/linkding&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/linkdingquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/linkding&ref=mainref=e68926c)
 
 **Self-hosted bookmark manager** — fast, minimal, and privacy-focused.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/linkding&ref=main
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/linkdingquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/linkding&ref=mainref=e68926c
 ```
 
 ## Manual deploy

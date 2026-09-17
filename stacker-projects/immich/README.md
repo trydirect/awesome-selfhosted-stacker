@@ -1,6 +1,6 @@
 # Immich
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/immich&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/immichquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/immich&ref=mainref=e68926c)
 
 **Self-hosted photo and video management** — Google Photos alternative with mobile apps.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/immich&ref=main
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/immichquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/immich&ref=mainref=e68926c
 ```
 
 TryDirect validates the stack's `stacker.yml`, presents the `.env.example` fields

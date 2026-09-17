@@ -1,6 +1,6 @@
 # Supabase + PostHog
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabase-posthog&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabase-posthogquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabase-posthog&ref=mainref=e68926c)
 
 **Self-hosted Supabase + PostHog analytics** — Postgres, Auth, Realtime, Storage + Product Analytics.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabase-posthog&ref=main
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabase-posthogquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabase-posthog&ref=mainref=e68926c
 ```
 
 ## Manual deploy

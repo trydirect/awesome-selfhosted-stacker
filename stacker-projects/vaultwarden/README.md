@@ -1,6 +1,6 @@
 # Vaultwarden
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/vaultwarden&ref=main)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/vaultwardenquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/vaultwarden&ref=mainref=e68926c)
 
 **Self-hosted password manager** — Bitwarden-compatible server written in Rust.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/vaultwarden&ref=main
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/vaultwardenquick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/vaultwarden&ref=mainref=e68926c
 ```
 
 ## Manual deploy
