@@ -6,11 +6,9 @@ install:
   inputs:
     commonDomain: "middleware.example.com"
 config_contract:
-  app:
-    environment:
-      - name: "DEFAULT_SYNC_DAYS"
-        required: false
-        secret: false
+  services:
+    app:
+      fields: {}
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:

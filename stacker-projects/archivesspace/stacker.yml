@@ -6,32 +6,9 @@ install:
   inputs:
     commonDomain: "archivesspace.example.com"
 config_contract:
-  app:
-    environment:
-      - name: "PUBLIC_URL"
-        required: true
-        secret: false
-      - name: "DB_PASSWORD"
-        required: true
-        secret: true
-      - name: "DB_ROOT_PASSWORD"
-        required: true
-        secret: true
-      - name: "FRONTEND_COOKIE_SECRET"
-        required: true
-        secret: true
-      - name: "PUBLIC_COOKIE_SECRET"
-        required: true
-        secret: true
-      - name: "PUBLIC_USER_SECRET"
-        required: true
-        secret: true
-      - name: "SEARCH_USER_SECRET"
-        required: true
-        secret: true
-      - name: "STAFF_USER_SECRET"
-        required: true
-        secret: true
+  services:
+    app:
+      fields: {}
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:

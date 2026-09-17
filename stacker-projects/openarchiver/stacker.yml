@@ -6,17 +6,10 @@ install:
   inputs:
     commonDomain: "openarchiver.example.com"
 config_contract:
-  app:
-    environment:
-      - name: "POSTGRES_PASSWORD"
-        required: true
-        secret: true
-      - name: "REDIS_PASSWORD"
-        required: true
-        secret: true
-      - name: "MEILI_MASTER_KEY"
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - POSTGRES_PASSWORD
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
