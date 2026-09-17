@@ -6,50 +6,9 @@ install:
   inputs:
     commonDomain: "socio.localtest.me"
 config_contract:
-  app:
-    environment:
-      - name: "BASE_DOMAIN"
-        required: true
-        secret: false
-      - name: "TWILIO_ACC_SID"
-        required: false
-        secret: true
-      - name: "TWILIO_AUTH_KEY"
-        required: false
-        secret: true
-      - name: "TWILIO_SERVICE_ID"
-        required: false
-        secret: true
-      - name: "AUTH_SECRET"
-        required: true
-        secret: true
-      - name: "AUTH_TOKEN_SECRET"
-        required: true
-        secret: true
-      - name: "SQL_DB_PASS"
-        required: true
-        secret: true
-      - name: "SQL_DB_ROOT_PASS"
-        required: true
-        secret: true
-      - name: "MONGO_PASS"
-        required: true
-        secret: true
-      - name: "LARAVEL_KEY"
-        required: true
-        secret: true
-      - name: "ADMIN_PASSWORD"
-        required: true
-        secret: true
-      - name: "ADMIN_SESSION_KEY"
-        required: true
-        secret: true
-      - name: "API_SESSION_KEY_1"
-        required: true
-        secret: true
-      - name: "API_SESSION_KEY_2"
-        required: true
-        secret: true
+  services:
+    app:
+      fields: {}
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:

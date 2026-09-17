@@ -6,14 +6,9 @@ install:
   inputs:
     commonDomain: "hitkeep.example.com"
 config_contract:
-  app:
-    environment:
-      - name: "HITKEEP_PUBLIC_URL"
-        required: true
-        secret: false
-      - name: "HITKEEP_JWT_SECRET"
-        required: true
-        secret: true
+  services:
+    app:
+      fields: {}
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:

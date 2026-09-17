@@ -6,20 +6,9 @@ install:
   inputs:
     commonDomain: "activepieces.example.com"
 config_contract:
-  app:
-    environment:
-      - name: "AP_FRONTEND_URL"
-        required: true
-        secret: false
-      - name: "AP_POSTGRES_PASSWORD"
-        required: true
-        secret: true
-      - name: "AP_ENCRYPTION_KEY"
-        required: true
-        secret: true
-      - name: "AP_JWT_SECRET"
-        required: true
-        secret: true
+  services:
+    app:
+      fields: {}
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:

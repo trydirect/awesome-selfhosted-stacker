@@ -6,20 +6,9 @@ install:
   inputs:
     commonDomain: "aptabase.example.com"
 config_contract:
-  app:
-    environment:
-      - name: "BASE_URL"
-        required: true
-        secret: false
-      - name: "DB_PASSWORD"
-        required: true
-        secret: true
-      - name: "CLICKHOUSE_PASSWORD"
-        required: true
-        secret: true
-      - name: "AUTH_SECRET"
-        required: true
-        secret: true
+  services:
+    app:
+      fields: {}
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:

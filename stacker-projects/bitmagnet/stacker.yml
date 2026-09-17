@@ -6,11 +6,10 @@ install:
   inputs:
     commonDomain: "bitmagnet.example.com"
 config_contract:
-  app:
-    environment:
-      - name: "DB_PASSWORD"
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - DB_PASSWORD
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
