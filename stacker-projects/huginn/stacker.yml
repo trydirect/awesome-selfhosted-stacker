@@ -76,6 +76,67 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        APP_SECRET_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DATABASE_ADAPTER:
+          mutability: editable
+        DATABASE_HOST:
+          mutability: editable
+        DATABASE_NAME:
+          mutability: editable
+        DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DATABASE_PORT:
+          mutability: editable
+          display: number
+        DATABASE_USERNAME:
+          mutability: editable
+        HUGINN_DATABASE_HOST:
+          mutability: editable
+        HUGINN_DATABASE_NAME:
+          mutability: editable
+        HUGINN_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HUGINN_DATABASE_USERNAME:
+          mutability: editable
+        command:
+          mutability: editable
+        volumes:
+          mutability: editable
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env
 
 volumes:

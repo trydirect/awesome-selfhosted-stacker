@@ -93,12 +93,32 @@ deploy:
 config_contract:
   services:
     app:
-      secret:
-        - JICOFO_SECRET
-        - JVB_PASSWORD
-        - JIGASI_PASSWORD
-        - JIBRI_PASSWORD
-        - JICOFO_PASSWORD
+      fields:
+        JICOFO_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JVB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JIGASI_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JIBRI_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JICOFO_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 monitoring:

@@ -66,6 +66,45 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        CORE_RETURN_HTTPS:
+          mutability: editable
+        CORE_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DATABASE_URL:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        volumes:
+          mutability: editable
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env
 
 volumes:

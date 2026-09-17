@@ -69,9 +69,17 @@ deploy:
 config_contract:
   services:
     app:
-      secret:
-        - JWT_SECRET
-        - DB_PASSWORD
+      fields:
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

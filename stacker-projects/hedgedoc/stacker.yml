@@ -59,9 +59,17 @@ deploy:
 config_contract:
   services:
     app:
-      secret:
-        - DB_PASSWORD
-        - SESSION_SECRET
+      fields:
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SESSION_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

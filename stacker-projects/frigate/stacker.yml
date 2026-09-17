@@ -27,4 +27,15 @@ proxy:
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+config_contract:
+  services:
+    app:
+      fields:
+        FRIGATE_RTSP_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        volumes:
+          mutability: editable
 env_file: .env

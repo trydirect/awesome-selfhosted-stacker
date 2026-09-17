@@ -64,6 +64,54 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        APP_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DATABASE_URL:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MAILER_URL:
+          mutability: editable
+        TRUSTED_HOSTS:
+          mutability: editable
+        command:
+          mutability: editable
+        volumes:
+          mutability: editable
+    mysql:
+      fields:
+        MYSQL_DATABASE:
+          mutability: editable
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env
 
 volumes:

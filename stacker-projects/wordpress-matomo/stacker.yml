@@ -73,6 +73,28 @@ monitoring:
   status_panel: true
 hooks:
   pre_build: ./scripts/generate-secrets.sh
+config_contract:
+  services:
+    app:
+      fields:
+        WORDPRESS_DB_HOST:
+          mutability: editable
+        WORDPRESS_DB_NAME:
+          mutability: editable
+        WORDPRESS_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        WORDPRESS_DB_USER:
+          mutability: editable
+        WORDPRESS_DEBUG:
+          mutability: editable
+          display: boolean
+        WORDPRESS_TABLE_PREFIX:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 deploy:
   target: server

@@ -52,9 +52,17 @@ config_contract:
       required:
       - MARIADB_DATABASE
       - MARIADB_USER
-      secret:
-      - MARIADB_ROOT_PASSWORD
-      - MARIADB_PASSWORD
+      fields:
+        MARIADB_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MARIADB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     romm:
       required:
       - DB_HOST

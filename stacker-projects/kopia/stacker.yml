@@ -40,6 +40,21 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        KOPIA_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        USER:
+          mutability: editable
+        command:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 deploy:

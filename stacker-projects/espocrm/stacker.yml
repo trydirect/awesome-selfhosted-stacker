@@ -68,6 +68,61 @@ deploy:
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
+config_contract:
+  services:
+    app:
+      fields:
+        ESPOCRM_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ESPOCRM_DATABASE_HOST:
+          mutability: editable
+        ESPOCRM_DATABASE_NAME:
+          mutability: editable
+        ESPOCRM_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ESPOCRM_DATABASE_PLATFORM:
+          mutability: editable
+        ESPOCRM_DATABASE_PORT:
+          mutability: editable
+          display: number
+        ESPOCRM_DATABASE_USER:
+          mutability: editable
+        ESPOCRM_SITE_URL:
+          mutability: editable
+        volumes:
+          mutability: editable
+    mysql:
+      fields:
+        MYSQL_DATABASE:
+          mutability: editable
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env
 
 volumes:

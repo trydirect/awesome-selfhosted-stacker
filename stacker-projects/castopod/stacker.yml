@@ -65,6 +65,55 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        CP_ANALYTICS_SALT:
+          mutability: editable
+        CP_BASEURL:
+          mutability: editable
+        CP_CACHE_HANDLER:
+          mutability: editable
+        CP_DATABASE_HOST:
+          mutability: editable
+        CP_DATABASE_NAME:
+          mutability: editable
+        CP_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CP_DATABASE_USER:
+          mutability: editable
+        volumes:
+          mutability: editable
+    mysql:
+      fields:
+        MYSQL_DATABASE:
+          mutability: editable
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env
 
 volumes:

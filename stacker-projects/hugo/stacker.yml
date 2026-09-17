@@ -37,6 +37,10 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields: {}
 env_file: .env
 
 volumes:

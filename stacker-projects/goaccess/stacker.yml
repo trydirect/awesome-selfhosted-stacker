@@ -40,6 +40,10 @@ deploy:
       - "8080"
 monitoring:
   status_panel: true
+config_contract:
+  services:
+    app:
+      fields: {}
 env_file: ".env"
 volumes:
   goaccess_logs: {}

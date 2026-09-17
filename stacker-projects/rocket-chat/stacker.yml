@@ -53,4 +53,16 @@ deploy:
     port: 22
 monitoring:
   status_panel: true
+config_contract:
+  services:
+    app:
+      fields:
+        MONGO_OPLOG_URL:
+          mutability: editable
+        MONGO_URL:
+          mutability: editable
+        ROOT_URL:
+          mutability: editable
+        depends_on:
+          mutability: editable
 env_file: .env

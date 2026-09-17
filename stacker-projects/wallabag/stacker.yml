@@ -89,9 +89,17 @@ deploy:
 config_contract:
   services:
     app:
-      secret:
-        - DB_PASSWORD
-        - SYMFONY_SECRET
+      fields:
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SYMFONY_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

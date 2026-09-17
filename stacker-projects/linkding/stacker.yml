@@ -43,8 +43,12 @@ deploy:
 config_contract:
   services:
     app:
-      secret:
-        - ADMIN_PASSWORD
+      fields:
+        ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

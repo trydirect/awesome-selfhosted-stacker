@@ -101,6 +101,69 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        CLICKHOUSE_HOST:
+          mutability: editable
+        CLICKHOUSE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CLICKHOUSE_USER:
+          mutability: editable
+        DATABASE_URL:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        KAFKA_BROKERS:
+          mutability: editable
+        NODE_ENV:
+          mutability: editable
+        volumes:
+          mutability: editable
+    kafka:
+      fields:
+        CLUSTER_ID:
+          mutability: editable
+        KAFKA_ADVERTISED_LISTENERS:
+          mutability: editable
+        KAFKA_CONTROLLER_LISTENER_NAMES:
+          mutability: editable
+        KAFKA_CONTROLLER_QUORUM_VOTERS:
+          mutability: editable
+        KAFKA_LISTENERS:
+          mutability: editable
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:
+          mutability: editable
+        KAFKA_NODE_ID:
+          mutability: editable
+        KAFKA_PROCESS_ROLES:
+          mutability: editable
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env
 
 volumes:

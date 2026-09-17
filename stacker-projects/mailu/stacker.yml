@@ -12,3 +12,8 @@ app:
   path: .
 monitoring:
   status_panel: false
+
+config_contract:
+  services:
+    app:
+      fields: {}

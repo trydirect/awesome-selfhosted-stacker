@@ -53,6 +53,30 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        DOCKER_INFLUXDB_INIT_ADMIN_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DOCKER_INFLUXDB_INIT_BUCKET:
+          mutability: editable
+        DOCKER_INFLUXDB_INIT_MODE:
+          mutability: editable
+        DOCKER_INFLUXDB_INIT_ORG:
+          mutability: editable
+        DOCKER_INFLUXDB_INIT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DOCKER_INFLUXDB_INIT_USERNAME:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

@@ -50,6 +50,26 @@ deploy:
     - '2222'
 monitoring:
   status_panel: true
+config_contract:
+  services:
+    app:
+      fields:
+        GITLAB_OMNIBUS_CONFIG:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        shm_size:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 volumes:
   gitlab_config: {}

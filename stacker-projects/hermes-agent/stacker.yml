@@ -33,5 +33,15 @@ deploy:
       - "8001"
 monitoring:
   status_panel: true
+config_contract:
+  services:
+    app:
+      fields:
+        HERMES_GID:
+          mutability: editable
+        HERMES_UID:
+          mutability: editable
+        PYTHONUNBUFFERED:
+          mutability: editable
 env_file: .env
 env: {}

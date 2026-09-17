@@ -71,6 +71,56 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        DJANGO_ALLOWED_HOSTS:
+          mutability: editable
+        DJANGO_DB_DATABASE:
+          mutability: editable
+        DJANGO_DB_ENGINE:
+          mutability: editable
+        DJANGO_DB_HOST:
+          mutability: editable
+        DJANGO_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DJANGO_DB_PORT:
+          mutability: editable
+          display: number
+        DJANGO_DB_USER:
+          mutability: editable
+        DJANGO_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        volumes:
+          mutability: editable
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env
 
 volumes:

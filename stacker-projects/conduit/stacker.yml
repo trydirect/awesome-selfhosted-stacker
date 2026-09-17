@@ -41,6 +41,21 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        CONDUIT_DATABASE_BACKEND:
+          mutability: editable
+        CONDUIT_DATABASE_PATH:
+          mutability: editable
+        CONDUIT_PORT:
+          mutability: editable
+          display: number
+        CONDUIT_SERVER_NAME:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 volumes:

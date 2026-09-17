@@ -8,9 +8,17 @@ install:
 config_contract:
   services:
     app:
-      secret:
-        - STRAVA_CLIENT_SECRET
-        - STRAVA_REFRESH_TOKEN
+      fields:
+        STRAVA_CLIENT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        STRAVA_REFRESH_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:

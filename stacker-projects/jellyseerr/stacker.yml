@@ -11,6 +11,10 @@ volumes:
 proxy:
   type: none
   auto_detect: false
+config_contract:
+  services:
+    app:
+      fields: {}
 env_file: .env
 deploy:
   target: server

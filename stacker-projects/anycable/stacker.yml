@@ -56,4 +56,13 @@ deploy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        ANYCABLE_HOST:
+          mutability: editable
+        ANYCABLE_PORT:
+          mutability: editable
+          display: number
 env_file: .env

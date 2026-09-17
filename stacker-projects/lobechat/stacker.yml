@@ -74,6 +74,68 @@ hooks:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        ACCESS_CODE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DATABASE_URL:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        NEXT_PUBLIC_SELF_HOSTED:
+          mutability: editable
+        NEXT_SERVER_ACTIONS_ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        S3_ACCESS_KEY_ID:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        S3_BUCKET:
+          mutability: editable
+        S3_ENDPOINT:
+          mutability: editable
+        S3_REGION:
+          mutability: editable
+        S3_SECRET_ACCESS_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        depends_on:
+          mutability: editable
+        volumes:
+          mutability: editable
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
 env_file: .env
 
 volumes:

@@ -35,6 +35,18 @@ proxy:
 monitoring:
   status_panel: true
 
+config_contract:
+  services:
+    app:
+      fields:
+        ND_BASEURL:
+          mutability: editable
+        ND_LOGLEVEL:
+          mutability: editable
+        ND_SCANSCHEDULE:
+          mutability: editable
+        volumes:
+          mutability: editable
 env_file: .env
 
 deploy:

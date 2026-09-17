@@ -15,12 +15,32 @@ install:
 config_contract:
   services:
     app:
-      secret:
-        - FLOWISE_PASSWORD
-        - DB_PASSWORD
-        - APIKEY_SECRET
-        - SECRET_KEY
-        - N8N_PASSWORD
+      fields:
+        FLOWISE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        APIKEY_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        N8N_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
