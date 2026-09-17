@@ -6,14 +6,10 @@ install:
   inputs:
     commonDomain: ganymede.example.com
 config_contract:
-  app:
-    environment:
-    - name: TZ
-      required: false
-      secret: false
-    - name: DB_PASSWORD
-      required: true
-      secret: true
+  services:
+    app:
+      secret:
+        - DB_PASSWORD
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:

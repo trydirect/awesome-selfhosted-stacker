@@ -91,23 +91,14 @@ deploy:
     ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22
 config_contract:
-  app:
-    environment:
-    - name: JICOFO_SECRET
-      required: true
-      secret: true
-    - name: JVB_PASSWORD
-      required: true
-      secret: true
-    - name: JIGASI_PASSWORD
-      required: true
-      secret: true
-    - name: JIBRI_PASSWORD
-      required: true
-      secret: true
-    - name: JICOFO_PASSWORD
-      required: true
-      secret: true
+  services:
+    app:
+      secret:
+        - JICOFO_SECRET
+        - JVB_PASSWORD
+        - JIGASI_PASSWORD
+        - JIBRI_PASSWORD
+        - JICOFO_PASSWORD
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 monitoring:

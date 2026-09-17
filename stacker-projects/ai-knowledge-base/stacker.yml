@@ -9,26 +9,15 @@ install:
     commonDomain: ai-knowledge-base.try.direct
 
 config_contract:
-  app:
-    environment:
-      - name: SECRET_KEY
-        required: true
-        secret: true
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: POSTGRES_PASSWORD
-        required: true
-        secret: true
-      - name: QDRANT_API_KEY
-        required: false
-        secret: true
-      - name: INIT_PASSWORD
-        required: true
-        secret: true
-      - name: APP_SECRET_KEY
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - SECRET_KEY
+        - DB_PASSWORD
+        - POSTGRES_PASSWORD
+        - QDRANT_API_KEY
+        - INIT_PASSWORD
+        - APP_SECRET_KEY
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

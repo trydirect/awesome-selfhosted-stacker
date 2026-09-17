@@ -63,14 +63,11 @@ deploy:
       - "3012"
 
 config_contract:
-  app:
-    environment:
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: ADMIN_TOKEN
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - DB_PASSWORD
+        - ADMIN_TOKEN
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

@@ -60,14 +60,11 @@ deploy:
       - "3000"
 
 config_contract:
-  app:
-    environment:
-      - name: SECRET_KEY_BASE
-        required: true
-        secret: true
-      - name: DB_PASSWORD
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - SECRET_KEY_BASE
+        - DB_PASSWORD
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

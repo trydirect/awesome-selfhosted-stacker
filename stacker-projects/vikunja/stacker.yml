@@ -67,14 +67,11 @@ deploy:
       - "3456"
 
 config_contract:
-  app:
-    environment:
-      - name: JWT_SECRET
-        required: true
-        secret: true
-      - name: DB_PASSWORD
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - JWT_SECRET
+        - DB_PASSWORD
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

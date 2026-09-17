@@ -41,11 +41,10 @@ deploy:
       - "9090"
 
 config_contract:
-  app:
-    environment:
-      - name: ADMIN_PASSWORD
-        required: true
-        secret: true
+  services:
+    app:
+      secret:
+        - ADMIN_PASSWORD
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
