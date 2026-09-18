@@ -32,6 +32,20 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+    stackpilot-db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    stackpilot-n8n:
+      fields:
+        N8N_BASIC_AUTH_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

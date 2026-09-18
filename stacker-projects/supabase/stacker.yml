@@ -209,41 +209,223 @@ install:
 
 config_contract:
   services:
+    app:
+      fields:
+        DASHBOARD_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SUPABASE_ANON_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SUPABASE_SERVICE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     db:
-      secrets:
-        - POSTGRES_PASSWORD
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AUTHENTICATOR_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SUPABASE_AUTH_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SUPABASE_FUNCTIONS_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     studio:
-      secrets:
-        - POSTGRES_PASSWORD
-        - PG_META_CRYPTO_KEY
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PG_META_CRYPTO_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SUPABASE_ANON_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SUPABASE_SERVICE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     auth:
-      secrets:
-        - POSTGRES_PASSWORD
-        - JWT_SECRET
-        - SMTP_PASS
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SMTP_PASS:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GOTRUE_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     rest:
-      secrets:
-        - POSTGRES_PASSWORD
-        - JWT_SECRET
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PGRST_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PGRST_APP_SETTINGS_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     realtime:
-      secrets:
-        - POSTGRES_PASSWORD
-        - JWT_SECRET
-        - SECRET_KEY_BASE
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 64
+          display: password
+        DB_ENC_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        METRICS_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PGRST_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     storage:
-      secrets:
-        - ANON_KEY
-        - SERVICE_ROLE_KEY
-        - JWT_SECRET
-        - POSTGRES_PASSWORD
+      fields:
+        ANON_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SERVICE_ROLE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SERVICE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     meta:
-      secrets:
-        - POSTGRES_PASSWORD
-        - PG_META_CRYPTO_KEY
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PG_META_CRYPTO_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PG_META_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CRYPTO_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     functions:
-      secrets:
-        - JWT_SECRET
-        - ANON_KEY
-        - SERVICE_ROLE_KEY
+      fields:
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ANON_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SERVICE_ROLE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SUPABASE_ANON_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SUPABASE_SERVICE_ROLE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 env_file: .env

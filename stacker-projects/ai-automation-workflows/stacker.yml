@@ -21,7 +21,7 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        DB_PASSWORD:
+        DATABASE_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -31,12 +31,26 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        SECRET_KEY:
+        SECRETKEY_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
         N8N_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    ai-workflows-db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    ai-workflows-n8n:
+      fields:
+        N8N_BASIC_AUTH_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32

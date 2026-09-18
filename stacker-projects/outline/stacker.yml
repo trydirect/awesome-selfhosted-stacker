@@ -64,13 +64,28 @@ install:
 config_contract:
   services:
     app:
-      environment:
-      - name: DB_PASSWORD
-        required: true
-        secret: true
-      - name: SECRET_KEY
-        required: true
-        secret: true
-      - name: UTILS_SECRET
-        required: true
-        secret: true
+      fields:
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        UTILS_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        REDIS_URL:
+          mutability: editable
+          display: string
+        DATABASE_URL:
+          mutability: editable
+          display: string
+        FILE_STORAGE_UPLOAD_MAX_SIZE:
+          mutability: editable
+          display: number
