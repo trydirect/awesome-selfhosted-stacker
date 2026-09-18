@@ -18,8 +18,8 @@ app:
     plugins.security.disabled: "true"
     DISABLE_INSTALL_DEMO_CONFIG: "true"
     OPENSEARCH_INITIAL_ADMIN_PASSWORD: "${OPENSEARCH_ADMIN_PASSWORD}"
-    bootstrap.memory_lock: "true"
-    OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+    bootstrap.memory_lock: "false"
+    OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
   volumes:
     - opensearch_data:/usr/share/opensearch/data
 
