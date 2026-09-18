@@ -16,4 +16,5 @@ set_secret() {
 if need "SEAFILE_ADMIN_PASSWORD"; then set_secret "SEAFILE_ADMIN_PASSWORD" "$(openssl rand -hex 16)"; fi
 if need "DB_ROOT_PASSWORD"; then set_secret "DB_ROOT_PASSWORD" "$(openssl rand -hex 16)"; fi
 if need "DB_PASSWORD"; then set_secret "DB_PASSWORD" "$(openssl rand -hex 16)"; fi
+if need "JWT_PRIVATE_KEY"; then set_secret "JWT_PRIVATE_KEY" "$(openssl rand -hex 32)"; fi
 echo "Secrets ready."

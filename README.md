@@ -5,8 +5,8 @@
 > database setup, health checks, secrets, and remote monitoring included.
 
 <p>
-  <img alt="Projects" src="https://img.shields.io/badge/projects-244-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-166-brightgreen">
+  <img alt="Projects" src="https://img.shields.io/badge/projects-248-blue">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-155-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -801,7 +801,7 @@ official image is the whole point.
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-08-25 — 244 projects configured, 110 tested and verified on
+Last updated: 2026-09-18 — 248 projects configured, 155 tested and verified on
 Ubuntu 26.04. Proxy support: traefik, caddy, nginx-proxy-manager.
 
 ---

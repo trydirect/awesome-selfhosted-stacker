@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **170 tested & verified** · Updated 2026-09-02
+**248 projects** · **155 tested & verified** · Updated 2026-09-18
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -383,9 +383,9 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | meilisearch | getmeili/meilisearch | 7700 | — | ✅ | |
 | searxng | searxng/searxng | 8080 | — | | |
 | whoogle | benbusby/whoogle-search | 5000 | — | | |
-| typesense | typesense/typesense:27.1 | 8108 | — | | |
-| opensearch | opensearchproject/opensearch | 9200 | — | | |
-| manticore | manticoresearch/manticore | 9306 | — | | |
+| typesense | typesense/typesense:27.1 | 8108 | — | ✅ | |
+| opensearch | opensearchproject/opensearch | 9200 | — | ✅ | |
+| manticore | manticoresearch/manticore | 9306 | — | ✅ | |
 
 ## Databases (4)
 
@@ -400,9 +400,9 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
-| seaweedfs | chrislusf/seaweedfs | 8888 | — | | |
-| seafile | seafileltd/seafile-mc | 8080 | mysql | | |
-| filestash | machines/filestash | 8334 | — | | |
+| seaweedfs | chrislusf/seaweedfs | 8888 | — | ✅ | |
+| seafile | seafileltd/seafile-mc | 8080 | mysql | ✅ | |
+| filestash | machines/filestash | 8334 | — | ✅ | |
 
 ## Feed Readers (1)
 
