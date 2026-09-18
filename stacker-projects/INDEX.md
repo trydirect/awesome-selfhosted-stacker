@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **155 tested & verified** · Updated 2026-09-18
+**248 projects** · **164 tested & verified** · Updated 2026-09-18
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -44,7 +44,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 |---------|-------|------|----|:------:|
 | ai-knowledge-base | langgenius/dify-api, qdrant/qdrant | 8080 | postgres, qdrant | ✅ |
 | ai-automation-workflows | flowiseai/flowise, n8nio/n8n | 3000 | postgres | ✅ |
-| ollama-local | ollama/ollama | 11434 | — | |
+| ollama-local | ollama/ollama | 11434 | — | ✅ |
 | private-sovereign-ai | ghcr.io/open-webui/open-webui | 3000 | — | ✅ |
 | anythingllm | mintplexlabs/anythingllm | 3001 | — | ✅ |
 | langflow | langflowai/langflow | 7860 | postgres | ✅ |
@@ -115,7 +115,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | freshrss | lscr.io/linuxserver/freshrss | 8080 | — | ✅ |
 | linkding | sissbruecker/linkding | 9090 | — | ✅ |
 | linkwarden | ghcr.io/linkwarden/linkwarden | 3000 | postgres | ✅ |
-| wallabag | wallabag/wallabag | 80 | postgres, redis | |
+| wallabag | wallabag/wallabag | 80 | postgres, redis | ✅ |
 | karakeep | ghcr.io/karakeep-app/karakeep | 3000 | postgres, meilisearch | ✅ | Auto-migrate |
 | readeck | codeberg.org/readeck/readeck | 8000 | postgres | ✅ | Auto-migrate |
 
@@ -207,7 +207,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | paperless-ngx | ghcr.io/paperless-ngx/paperless-ngx | 8000 | postgres, redis | ✅ |
 | stirling-pdf | frooodle/s-pdf | 8080 | — | ✅ |
 | outline | outlinewiki/outline | 3000 | postgres, redis | ✅ |
-| wikijs | ghcr.io/requarks/wiki | 3000 | postgres | |
+| wikijs | ghcr.io/requarks/wiki | 3000 | postgres | ✅ |
 | kopia | kopia/kopia | 51515 | — | ✅ |
 
 ## File Management (11)
@@ -293,7 +293,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | speedtest-tracker | lscr.io/linuxserver/speedtest-tracker | 8080 | — | | |
 | stackdog | trydirect/stackdog | 5000 | — | ✅ | |
 | uptimekuma | louislam/uptime-kuma:2 | 3001 | — | ✅ | |
-| healthchecks | healthchecks/healthchecks | 8000 | postgres | | Auto-migrate |
+| healthchecks | healthchecks/healthchecks | 8000 | postgres | ✅ | Auto-migrate |
 | cachet | cachethq/cachet | 8000 | postgres, redis | | DB migrate |
 
 ## Money & Budgeting (3)
@@ -301,7 +301,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | btcpay-server | btcpayserver/btcpayserver | 23000 | postgres | | |
-| firefly-iii | fireflyiii/core | 8080 | postgres | | |
+| firefly-iii | fireflyiii/core | 8080 | postgres | ✅ | |
 | ghostfolio | ghostfolio/ghostfolio | 3333 | postgres, redis | | |
 
 ## Note-taking (5)
@@ -309,7 +309,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | hedgedoc | quay.io/hedgedoc/hedgedoc | 3000 | postgres | ✅ | |
-| memos | ghcr.io/usememos/memos | 5230 | — | | |
+| memos | ghcr.io/usememos/memos | 5230 | — | ✅ | |
 | trilium | zadam/trilium | 8081 | — | ✅ | |
 | standard-notes | standardnotes/server | 3000 | postgres, redis | | Auto-migrate |
 | appflowy | appflowyinc/appflowy_cloud | 8000 | postgres, redis | | Auto-migrate |
@@ -352,7 +352,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | dawarich | freika/dawarich | 3000 | postgres, redis | | |
-| traccar | traccar/traccar | 8082 | postgres | | Auto-migrate |
+| traccar | traccar/traccar | 8082 | postgres | ✅ | Auto-migrate |
 
 ## Office Suites (2)
 
@@ -426,7 +426,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
-| node-red | nodered/node-red | 1880 | — | | |
+| node-red | nodered/node-red | 1880 | — | ✅ | |
 
 ## Health & Fitness (1)
 
@@ -492,7 +492,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | arcane | ghcr.io/getarcaneapp/manager | 3552 | — | ✅ |
 | coolify | coollabsio/coolify | 8000 | postgres, redis | |
 | dockhand | fnsys/dockhand | 3000 | — | ✅ |
-| portainer | portainer/portainer-ce | 9000 | — | |
+| portainer | portainer/portainer-ce | 9000 | — | ✅ |
 
 ## Social (7)
 
