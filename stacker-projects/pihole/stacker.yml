@@ -78,4 +78,11 @@ hooks:
 env_file: .env
 env: {}
 config_contract:
-  services: {}
+  services:
+    app:
+      fields:
+        WEBPASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password

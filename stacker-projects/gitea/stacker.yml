@@ -101,4 +101,28 @@ hooks:
 env_file: .env
 env: {}
 config_contract:
-  services: {}
+  services:
+    app:
+      fields:
+        GITEA_SECURITY_INTERNAL_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GITEA_DATABASE_PASSWD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GITEA_SECURITY_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    gitea_db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password

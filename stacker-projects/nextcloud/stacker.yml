@@ -109,4 +109,28 @@ hooks:
 env_file: .env
 env: {}
 config_contract:
-  services: {}
+  services:
+    app:
+      fields:
+        NEXTCLOUD_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    nextcloud_db:
+      fields:
+        MARIADB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MARIADB_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password

@@ -117,4 +117,28 @@ hooks:
 env_file: .env
 env: {}
 config_contract:
-  services: {}
+  services:
+    app:
+      fields:
+        PAPERLESS_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PAPERLESS_DBPASS:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PAPERLESS_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    paperless_db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password

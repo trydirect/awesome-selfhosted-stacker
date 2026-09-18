@@ -44,7 +44,9 @@ install:
 config_contract:
   services:
     app:
-      environment:
-        - name: ADMIN_PASSWORD
-          required: true
-          secret: true
+      fields:
+        ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
