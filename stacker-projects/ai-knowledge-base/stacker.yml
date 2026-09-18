@@ -42,6 +42,37 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        EMBEDDING_OPENAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    ai-knowledge-base-db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    ai-knowledge-base-qdrant:
+      fields:
+        QDRANT__SERVICE__API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    ai-knowledge-base-sandbox:
+      fields:
+        API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh

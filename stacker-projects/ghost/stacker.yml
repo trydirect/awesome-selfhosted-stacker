@@ -92,4 +92,22 @@ env_file: .env
 env: {}
 config_contract:
   services:
-    mysql: {}
+    app:
+      fields:
+        database__connection__password:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    mysql:
+      fields:
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password

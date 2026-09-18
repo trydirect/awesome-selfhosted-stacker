@@ -93,4 +93,17 @@ env_file: .env
 env: {}
 config_contract:
   services:
-    app: {}
+    app:
+      fields:
+        APP_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    postgres:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
