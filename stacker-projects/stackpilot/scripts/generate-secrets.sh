@@ -44,8 +44,8 @@ generate_if_empty() {
 echo "==> Generating missing secrets..."
 
 generate_if_empty SECRET_KEY hex 32
-generate_if_empty DB_PASSWORD hex 16
+generate_if_empty POSTGRES_PASSWORD hex 16
 generate_if_empty ADMIN_PASSWORD hex 16
-generate_if_empty N8N_PASSWORD hex 16
+generate_if_empty N8N_BASIC_AUTH_PASSWORD hex 16
 
 echo "==> Secrets generation complete."
