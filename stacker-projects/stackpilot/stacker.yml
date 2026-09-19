@@ -17,17 +17,7 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         ADMIN_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        N8N_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -56,7 +46,7 @@ app:
   ports:
     - "8080:8000"
   environment:
-    DATABASE_URL: "postgresql://stackpilot:${DB_PASSWORD}@stackpilot-db:5432/stackpilot"
+    DATABASE_URL: "postgresql://stackpilot:${POSTGRES_PASSWORD}@stackpilot-db:5432/stackpilot"
     REDIS_URL: "redis://stackpilot-redis:6379"
     OLLAMA_BASE_URL: "http://stackpilot-ollama:11434"
     N8N_WEBHOOK_URL: "http://stackpilot-n8n:5678/webhook/stackpilot"
@@ -74,7 +64,7 @@ services:
     environment:
       POSTGRES_DB: stackpilot
       POSTGRES_USER: stackpilot
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - stackpilot_pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -105,7 +95,7 @@ services:
     environment:
       N8N_BASIC_AUTH_ACTIVE: "true"
       N8N_BASIC_AUTH_USER: admin
-      N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD}
       N8N_WEBHOOK_URL: "http://stackpilot-n8n:5678/"
       GENERIC_TIMEZONE: "UTC"
     volumes:
