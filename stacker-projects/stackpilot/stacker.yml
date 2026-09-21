@@ -119,6 +119,10 @@ deploy:
     region: fsn1
     size: cpx32
     public_ports:
+      # SSH must be listed explicitly: the firewall is built from this list
+      # alone, so omitting 22 locks the owner out of their own server once the
+      # rules are applied after the deploy.
+      - "22"
       - "80"
       - "443"
       - "8080"
