@@ -36,7 +36,10 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
+    stackpilot-ollama:
+      volumes:
+        stackpilot_ollama:
+          mutability: fixed
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

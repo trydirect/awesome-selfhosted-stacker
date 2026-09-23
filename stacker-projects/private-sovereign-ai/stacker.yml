@@ -22,7 +22,10 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
+    sovereign-ai-ollama:
+      volumes:
+        sovereign_ai_ollama:
+          mutability: fixed
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

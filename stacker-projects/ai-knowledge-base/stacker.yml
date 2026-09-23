@@ -60,6 +60,9 @@ config_contract:
           length: 32
           display: password
     ai-knowledge-base-qdrant:
+      volumes:
+        ai_kb_qdrant_data:
+          mutability: fixed
       fields:
         QDRANT__SERVICE__API_KEY:
           mutability: generated
@@ -73,7 +76,10 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
+    ai-knowledge-base-ollama:
+      volumes:
+        ai_kb_ollama:
+          mutability: fixed
 hooks:
   pre_build: ./scripts/generate-secrets.sh
   post_deploy: ./scripts/post-install.sh
