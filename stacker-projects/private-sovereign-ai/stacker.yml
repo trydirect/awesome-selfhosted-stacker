@@ -24,7 +24,16 @@ config_contract:
           display: password
     sovereign-ai-ollama:
       volumes:
+        # Model weights: gigabytes behind a pull. No credentials — Ollama holds
+        # no secret of its own.
         sovereign_ai_ollama:
+          mutability: fixed
+    sovereign-ai-pipelines:
+      volumes:
+        # The integration scripts the author ships. Credentials for whatever a
+        # pipeline talks to are Open WebUI "valves", stored in its own volume
+        # (sovereign_ai_webui), which resets — so nothing secret lives here.
+        sovereign_ai_pipelines:
           mutability: fixed
 hooks:
   pre_build: ./scripts/generate-secrets.sh
