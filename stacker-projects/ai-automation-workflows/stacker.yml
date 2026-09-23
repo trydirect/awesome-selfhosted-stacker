@@ -55,7 +55,14 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
+    ai-workflows-ollama:
+      volumes:
+        ai_workflows_ollama:
+          mutability: fixed
+    ai-workflows-qdrant:
+      volumes:
+        ai_workflows_qdrant:
+          mutability: fixed
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
