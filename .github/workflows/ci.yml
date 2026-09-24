@@ -77,15 +77,20 @@ jobs:
   validate:
     name: Validate stacker configs
     runs-on: ubuntu-latest
+    env:
+      BASE_PATH: ${{ github.workspace }}
+      DEPLOY_HOST: 127.0.0.1
+      EXISTING_SERVER_HOST: 127.0.0.1
+      EXISTING_SERVER_USER: runner
     needs: structure
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Stacker
         run: |
-          VERSION="0.3.1"
-          curl -fsSL "https://github.com/trydirect/stacker/releases/download/v${VERSION}/stacker-v${VERSION}-x86_64-linux.tar.gz" \
-            | tar xz -C /usr/local/bin stacker
+          curl -fsSL https://raw.githubusercontent.com/trydirect/stacker/main/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.local/bin:$PATH"
           stacker --version
 
       - name: Generate .env files
@@ -93,6 +98,9 @@ jobs:
           for dir in stacker-projects/*/; do
             name=$(basename "$dir")
             [ "$name" = "test" ] && continue
+            if [ ! -f "$dir/.env" ] && [ -f "$dir/.env.example" ]; then
+              cp "$dir/.env.example" "$dir/.env"
+            fi
             [ ! -f "$dir/scripts/generate-secrets.sh" ] && continue
             cd "$dir"
             bash scripts/generate-secrets.sh || true
@@ -110,6 +118,9 @@ jobs:
 
             total=$((total + 1))
             cd "$dir"
+            while IFS= read -r key; do
+              [ -z "$key" ] || [ -n "${!key:-}" ] || export "$key=ci-placeholder"
+            done < <(grep -Eo '\$\{?[A-Za-z_][A-Za-z0-9_]*\}?' stacker.yml | tr -d '${}' | sort -u)
             if stacker config validate 2>&1; then
               echo "✅ $name"
             else
@@ -188,6 +199,11 @@ jobs:
   validate-changed:
     name: Validate changed projects
     runs-on: ubuntu-latest
+    env:
+      BASE_PATH: ${{ github.workspace }}
+      DEPLOY_HOST: 127.0.0.1
+      EXISTING_SERVER_HOST: 127.0.0.1
+      EXISTING_SERVER_USER: runner
     needs: changes
     if: needs.changes.outputs.projects != ''
     steps:
@@ -195,9 +211,9 @@ jobs:
 
       - name: Install Stacker
         run: |
-          VERSION="0.3.1"
-          curl -fsSL "https://github.com/trydirect/stacker/releases/download/v${VERSION}/stacker-v${VERSION}-x86_64-linux.tar.gz" \
-            | tar xz -C /usr/local/bin stacker
+          curl -fsSL https://raw.githubusercontent.com/trydirect/stacker/main/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.local/bin:$PATH"
           stacker --version
 
       - name: Validate changed projects
@@ -210,8 +226,13 @@ jobs:
             echo "=== Validating $name ==="
             cd "$dir"
 
-            # Generate .env if needed
+            # Copy example env values and generate secrets if supported.
+            [ -f .env ] || [ ! -f .env.example ] || cp .env.example .env
             [ -f scripts/generate-secrets.sh ] && bash scripts/generate-secrets.sh || true
+
+            while IFS= read -r key; do
+              [ -z "$key" ] || [ -n "${!key:-}" ] || export "$key=ci-placeholder"
+            done < <(grep -Eo '\$\{?[A-Za-z_][A-Za-z0-9_]*\}?' stacker.yml | tr -d '${}' | sort -u)
 
             # Validate
             stacker config validate 2>&1
