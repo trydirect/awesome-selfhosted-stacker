@@ -79,6 +79,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BASE_PATH: ${{ github.workspace }}
+      DEPLOY_HOST: 127.0.0.1
+      EXISTING_SERVER_HOST: 127.0.0.1
+      EXISTING_SERVER_USER: runner
     needs: structure
     steps:
       - uses: actions/checkout@v4
@@ -95,6 +98,9 @@ jobs:
           for dir in stacker-projects/*/; do
             name=$(basename "$dir")
             [ "$name" = "test" ] && continue
+            if [ ! -f "$dir/.env" ] && [ -f "$dir/.env.example" ]; then
+              cp "$dir/.env.example" "$dir/.env"
+            fi
             [ ! -f "$dir/scripts/generate-secrets.sh" ] && continue
             cd "$dir"
             bash scripts/generate-secrets.sh || true
@@ -112,6 +118,9 @@ jobs:
 
             total=$((total + 1))
             cd "$dir"
+            while IFS= read -r key; do
+              [ -z "$key" ] || [ -n "${!key:-}" ] || export "$key=ci-placeholder"
+            done < <(grep -Eo '\$\{?[A-Za-z_][A-Za-z0-9_]*\}?' stacker.yml | tr -d '${}' | sort -u)
             if stacker config validate 2>&1; then
               echo "✅ $name"
             else
@@ -192,6 +201,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BASE_PATH: ${{ github.workspace }}
+      DEPLOY_HOST: 127.0.0.1
+      EXISTING_SERVER_HOST: 127.0.0.1
+      EXISTING_SERVER_USER: runner
     needs: changes
     if: needs.changes.outputs.projects != ''
     steps:
@@ -214,8 +226,13 @@ jobs:
             echo "=== Validating $name ==="
             cd "$dir"
 
-            # Generate .env if needed
+            # Copy example env values and generate secrets if supported.
+            [ -f .env ] || [ ! -f .env.example ] || cp .env.example .env
             [ -f scripts/generate-secrets.sh ] && bash scripts/generate-secrets.sh || true
+
+            while IFS= read -r key; do
+              [ -z "$key" ] || [ -n "${!key:-}" ] || export "$key=ci-placeholder"
+            done < <(grep -Eo '\$\{?[A-Za-z_][A-Za-z0-9_]*\}?' stacker.yml | tr -d '${}' | sort -u)
 
             # Validate
             stacker config validate 2>&1
