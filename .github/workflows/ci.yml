@@ -77,6 +77,8 @@ jobs:
   validate:
     name: Validate stacker configs
     runs-on: ubuntu-latest
+    env:
+      BASE_PATH: ${{ github.workspace }}
     needs: structure
     steps:
       - uses: actions/checkout@v4
@@ -188,6 +190,8 @@ jobs:
   validate-changed:
     name: Validate changed projects
     runs-on: ubuntu-latest
+    env:
+      BASE_PATH: ${{ github.workspace }}
     needs: changes
     if: needs.changes.outputs.projects != ''
     steps:
