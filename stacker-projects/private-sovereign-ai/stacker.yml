@@ -12,6 +12,12 @@ config_contract:
   services:
     app:
       fields:
+        # The buyer's own address. Declared so the bake turns the literal URL
+        # baked into the compose back into ${WEBUI_URL}: without it every clone
+        # would keep pointing links and redirects at the author's domain.
+        WEBUI_URL:
+          mutability: provided
+          display: string
         WEBUI_SECRET_KEY:
           mutability: generated
           type: alphanumeric
@@ -46,7 +52,7 @@ app:
   environment:
     OLLAMA_BASE_URL: "http://sovereign-ai-ollama:11434"
     WEBUI_SECRET_KEY: "${WEBUI_SECRET_KEY}"
-    WEBUI_URL: "https://${commonDomain}"
+    WEBUI_URL: "${WEBUI_URL}"
     SCARF_NO_ANALYTICS: "true"
     DO_NOT_TRACK: "true"
     ANONYMIZED_TELEMETRY: "false"
