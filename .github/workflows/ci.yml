@@ -6,6 +6,9 @@ on:
   push:
     branches: [main]
 
+env:
+  STACKER_VERSION: v0.3.4
+
 jobs:
   structure:
     name: Structure checks
@@ -88,7 +91,10 @@ jobs:
 
       - name: Install Stacker
         run: |
-          curl -fsSL https://raw.githubusercontent.com/trydirect/stacker/main/install.sh | bash
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL "https://github.com/trydirect/stacker/releases/download/${STACKER_VERSION}/stacker-${STACKER_VERSION}-x86_64-linux.tar.gz" \
+            | tar -xz -C "$HOME/.local/bin"
+          chmod +x "$HOME/.local/bin/stacker"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           export PATH="$HOME/.local/bin:$PATH"
           stacker --version
@@ -211,7 +217,10 @@ jobs:
 
       - name: Install Stacker
         run: |
-          curl -fsSL https://raw.githubusercontent.com/trydirect/stacker/main/install.sh | bash
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL "https://github.com/trydirect/stacker/releases/download/${STACKER_VERSION}/stacker-${STACKER_VERSION}-x86_64-linux.tar.gz" \
+            | tar -xz -C "$HOME/.local/bin"
+          chmod +x "$HOME/.local/bin/stacker"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           export PATH="$HOME/.local/bin:$PATH"
           stacker --version
