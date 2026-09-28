@@ -438,3 +438,27 @@ Silent redirect to the locked server. Workaround: delete
 ### Fix Needed
 Validate lock-vs-config consistency, or make `deploy.server.host` authoritative
 and the lock a cache only.
+
+---
+
+
+## [BUG] `./file` bind mounts break LOCAL deploys — resolved against `.stacker/`, not the project root
+
+**Severity:** High (silent directory-creation failure; affects every template with file binds)
+**Date:** 2026-09-28
+**Seen in:** hanko (`./config.yaml`), homer (`./config.yml`)
+
+The generated compose lives in `.stacker/`, and Docker resolves relative bind sources
+against the compose file's directory. `./config.yml` therefore looks for
+`.stacker/config.yml`, doesn't find it, and silently creates a **directory** at the
+target (`read …: is a directory` app failures). The config-bundle pipeline handles
+remote deploys fine (`Config file: config.yml -> config.yml`), but nothing stages the
+file for local runs.
+
+### Workaround
+`cp <file> .stacker/` before `stacker deploy --target local`.
+
+### Fix Needed
+Resolve bind sources against the project root (or run compose with
+`--project-directory <project root>`), or stage bind files into `.stacker/` during
+render — one behavior for both local and remote.

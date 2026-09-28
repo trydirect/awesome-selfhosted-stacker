@@ -49,8 +49,11 @@ proxy:
   auto_detect: false
 
 deploy:
-  target: cloud
-  server: null
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test
