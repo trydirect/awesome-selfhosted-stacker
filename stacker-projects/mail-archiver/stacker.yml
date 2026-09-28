@@ -8,14 +8,16 @@ install:
 config_contract:
   services:
     app:
-      fields: {}
+      volumes:
+        mailarchiver_keys: { mutability: generated }
+        mailarchiver_postgres_data: { mutability: generated }
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
   image: "s1t5/mailarchiver:latest"
   ports:
-    - "5000:5000"
+    - "5002:5000"
   volumes:
     - "mailarchiver_keys:/app/DataProtection-Keys"
   environment:
@@ -42,12 +44,16 @@ proxy:
   auto_detect: false
 deploy:
   target: "local"
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: "hetzner"
     region: "fsn1"
     size: "cpx22"
     public_ports:
-      - "5000"
+      - "5002"
 monitoring:
   status_panel: true
 env_file: ".env"
