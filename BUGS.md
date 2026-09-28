@@ -462,3 +462,32 @@ file for local runs.
 Resolve bind sources against the project root (or run compose with
 `--project-directory <project root>`), or stage bind files into `.stacker/` during
 render — one behavior for both local and remote.
+
+---
+
+
+## [BUG] Port preflight cannot parse `${VAR:-default}` port forms — false conflicts block `deploy.compose_file` stacks
+
+**Severity:** High (blocks deployment of any third-party compose using default-expansion syntax)
+**Date:** 2026-09-28
+**Affected:** stacker 0.3.4, `src/cli/install_runner.rs` preflight (same probe as the range bug)
+
+### Symptom
+`stacker deploy` for `insforge` (which uses `deploy.compose_file: ./compose.yml`):
+
+```
+Host port conflict detected before deploy:
+  • port -7130} (service 'insforge') is already allocated on this host
+  • port -7131} (service 'insforge') is already allocated on this host
+  • port -7133} (service 'deno') is already allocated on this host
+```
+
+### Root Cause
+The host-port collector extracts the raw substring from `"${APP_PORT:-7130}:7130"`
+as `-7130}` and probes `TcpListener::bind("0.0.0.0:-7130}")` — an invalid address
+that always errors, i.e. "occupied" (identical mechanism to the `8100-8105` range
+false positive above).
+
+### Fix Needed
+Resolve `${VAR:-default}`/`${VAR}` in port strings (compose does this at up-time —
+preflight should mirror it) before probing; same fix as the range case.
