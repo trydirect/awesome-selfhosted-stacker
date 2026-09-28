@@ -21,7 +21,7 @@ app:
     POSTGRES_PORT: "5432"
     POSTGRES_DATABASE: automatisch
     POSTGRES_USERNAME: automatisch
-    POSTGRES_PASSWORD: ${DB_PASSWORD}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     WEB_APP_URL: http://localhost:3000
 
 services:
@@ -30,7 +30,7 @@ services:
     environment:
       POSTGRES_DB: automatisch
       POSTGRES_USER: automatisch
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - automatisch_db:/var/lib/postgresql/data
     healthcheck:
