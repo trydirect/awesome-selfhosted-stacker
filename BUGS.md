@@ -376,3 +376,33 @@ Expand the range to discrete pairs in `stacker.yml` (`"8100:8100"` … `"8105:81
 ### Fix Needed
 Expand `start-end:...` host specs before probing (or use a proper socket-availability
 check that handles ranges).
+
+---
+
+
+## [BUG] `app.privileged: true` silently dropped — same unknown-field class as `app.platform`
+
+**Severity:** High for hardware/NIC templates (frigate needs privileged for USB/tun)
+**Date:** 2026-09-28
+**Affected:** stacker 0.3.4 compose generator
+
+`privileged: true` under `app:` passes `stacker config validate` but is absent from
+the generated compose; `docker inspect` shows `HostConfig.Privileged=false`. Silent
+config loss — the app runs without the capability it declared (frigate: no device
+access). Same root cause family as `app.platform`: `AppSource` fields the generator
+does not implement are accepted and dropped instead of rejected.
+
+### Fix Needed
+Implement `privileged` (app + services) in the compose generator and/or add
+`deny_unknown_fields` to `AppSource`/`ServiceDefinition` so unknown keys fail loudly.
+
+---
+
+
+## [NOTE] Host port 5000 collides with the platform Status Panel (and macOS AirPlay)
+
+Templates binding host port 5000 (e.g. `frigate`) cannot deploy to managed boxes —
+`statuspanel` owns `0.0.0.0:5000`. On macOS dev machines, the AirPlay Receiver
+(`ControlCenter`) also owns 5000. `frigate` remapped to `"5001:5000"` in this pass.
+Recommendation: the platform should either reserve port 5000 in validation (W-code)
+or document it as reserved.

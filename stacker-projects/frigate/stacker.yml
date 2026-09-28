@@ -4,7 +4,7 @@ app:
   type: custom
   image: ghcr.io/blakeblackshear/frigate:stable
   ports:
-    - "5000:5000"
+    - "5001:5000"
     - "8554:8554"
     - "8555:8555/tcp"
     - "8555:8555/udp"
@@ -23,6 +23,13 @@ volumes:
 proxy:
   type: none
   auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
