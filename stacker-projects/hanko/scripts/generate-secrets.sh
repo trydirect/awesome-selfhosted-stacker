@@ -41,4 +41,15 @@ secrets:
   default: ${SECRETS_DEFAULT}
 EOF
 
+if need "HANKO_DATABASE_PASSWORD" || need "POSTGRES_PASSWORD"; then
+  db_pass=$(grep "^DB_PASSWORD=" .env | cut -d= -f2-)
+  for key in HANKO_DATABASE_PASSWORD POSTGRES_PASSWORD; do
+    if grep -q "^${key}=" .env; then
+      sed -i '' "s|^${key}=.*|${key}=${db_pass}|" .env
+    else
+      echo "${key}=${db_pass}" >> .env
+    fi
+  done
+  echo "  Synced HANKO_DATABASE_PASSWORD/POSTGRES_PASSWORD to DB_PASSWORD"
+fi
 echo "Secrets ready."
