@@ -16,7 +16,8 @@ monitoring:
 config_contract:
   services:
     app:
-      fields: {}
+      volumes:
+        gotify_data: { mutability: generated }
 env_file: .env
 deploy:
   target: server

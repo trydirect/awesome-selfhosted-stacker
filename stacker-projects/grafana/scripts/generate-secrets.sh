@@ -13,4 +13,8 @@ if need "ADMIN_PASSWORD"; then
   sed -i '' "s|^ADMIN_PASSWORD=.*|ADMIN_PASSWORD=$(openssl rand -hex 12)|" .env
   echo "  Generated ADMIN_PASSWORD"
 fi
+if need "GF_SECURITY_ADMIN_PASSWORD"; then
+  sed -i '' "s|^GF_SECURITY_ADMIN_PASSWORD=.*|GF_SECURITY_ADMIN_PASSWORD=$(openssl rand -hex 16)|" .env
+  echo "  Generated GF_SECURITY_ADMIN_PASSWORD"
+fi
 echo "Secrets ready."
