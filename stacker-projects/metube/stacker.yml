@@ -23,7 +23,9 @@ monitoring:
 config_contract:
   services:
     app:
-      fields: {}
+      volumes:
+        metube_downloads: { mutability: generated }
+        metube_state: { mutability: generated }
 env_file: .env
 
 deploy:
