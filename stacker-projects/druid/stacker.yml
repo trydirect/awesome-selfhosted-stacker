@@ -29,6 +29,7 @@ app:
     DRUID_SINGLE_NODE_CONF: micro-quickstart
     druid_emitter_logging_logLevel: debug
     druid_zk_service_host: zookeeper
+    druid_extensions_loadList: '["postgresql-metadata-storage"]'
     druid_metadata_storage_type: postgresql
     druid_metadata_storage_connector_connectURI: jdbc:postgresql://postgres:5432/druid
     druid_metadata_storage_connector_user: druid
@@ -70,6 +71,7 @@ services:
     DRUID_SINGLE_NODE_CONF: micro-quickstart
     druid_emitter_logging_logLevel: debug
     druid_zk_service_host: zookeeper
+    druid_extensions_loadList: '["postgresql-metadata-storage"]'
     druid_metadata_storage_type: postgresql
     druid_metadata_storage_connector_connectURI: jdbc:postgresql://postgres:5432/druid
     druid_metadata_storage_connector_user: druid
@@ -89,6 +91,7 @@ services:
     DRUID_SINGLE_NODE_CONF: micro-quickstart
     druid_emitter_logging_logLevel: debug
     druid_zk_service_host: zookeeper
+    druid_extensions_loadList: '["postgresql-metadata-storage"]'
     druid_metadata_storage_type: postgresql
     druid_metadata_storage_connector_connectURI: jdbc:postgresql://postgres:5432/druid
     druid_metadata_storage_connector_user: druid
@@ -109,6 +112,7 @@ services:
     DRUID_SINGLE_NODE_CONF: micro-quickstart
     druid_emitter_logging_logLevel: debug
     druid_zk_service_host: zookeeper
+    druid_extensions_loadList: '["postgresql-metadata-storage"]'
     druid_metadata_storage_type: postgresql
     druid_metadata_storage_connector_connectURI: jdbc:postgresql://postgres:5432/druid
     druid_metadata_storage_connector_user: druid
@@ -123,7 +127,12 @@ services:
   image: apache/druid:31.0.0
   ports:
   - "8091:8091"
-  - 8100-8105:8100-8105
+  - "8100:8100"
+  - "8101:8101"
+  - "8102:8102"
+  - "8103:8103"
+  - "8104:8104"
+  - "8105:8105"
   command: middleManager
   volumes:
   - druid_shared:/opt/shared
@@ -132,6 +141,7 @@ services:
     DRUID_SINGLE_NODE_CONF: micro-quickstart
     druid_emitter_logging_logLevel: debug
     druid_zk_service_host: zookeeper
+    druid_extensions_loadList: '["postgresql-metadata-storage"]'
     druid_metadata_storage_type: postgresql
     druid_metadata_storage_connector_connectURI: jdbc:postgresql://postgres:5432/druid
     druid_metadata_storage_connector_user: druid
