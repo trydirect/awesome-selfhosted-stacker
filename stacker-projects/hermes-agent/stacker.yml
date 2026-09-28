@@ -5,6 +5,7 @@ version: 1.0.0
 app:
   type: custom
   image: nousresearch/hermes-agent:latest
+  command: sleep infinity
   ports:
   - "8000:8000"
   - "8001:8001"
@@ -12,6 +13,10 @@ app:
     HERMES_UID: '1000'
     HERMES_GID: '1000'
     PYTHONUNBUFFERED: '1'
+    HERMES_DASHBOARD: '1'
+    HERMES_DASHBOARD_PORT: '8000'
+    HERMES_DASHBOARD_BASIC_AUTH_USERNAME: admin
+    HERMES_DASHBOARD_BASIC_AUTH_PASSWORD: "${HERMES_DASHBOARD_BASIC_AUTH_PASSWORD}"
 services: []
 proxy:
   type: none
@@ -19,9 +24,9 @@ proxy:
 deploy:
   target: cloud
   server:
-    host: 116.202.19.183
+    host: ${EXISTING_SERVER_HOST}
     user: root
-    ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
+    ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22
   cloud:
     provider: hetzner
@@ -41,6 +46,11 @@ config_contract:
           mutability: editable
         HERMES_UID:
           mutability: editable
+        HERMES_DASHBOARD_BASIC_AUTH_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         PYTHONUNBUFFERED:
           mutability: editable
 env_file: .env

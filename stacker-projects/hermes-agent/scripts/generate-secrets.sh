@@ -107,4 +107,12 @@ if need "DB_ROOT_PASSWORD"; then
   echo "  Generated DB_ROOT_PASSWORD"
 fi
 
+if ! grep -q "^HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=." .env 2>/dev/null; then
+  if grep -q "^HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=" .env; then
+    sed -i '' "s|^HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=.*|HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=$(openssl rand -hex 16)|" .env
+  else
+    echo "HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=$(openssl rand -hex 16)" >> .env
+  fi
+  echo "  Generated HERMES_DASHBOARD_BASIC_AUTH_PASSWORD"
+fi
 echo "Secrets ready."
