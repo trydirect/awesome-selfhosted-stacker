@@ -141,3 +141,194 @@ User "authenticator" has no password assigned.
 
 ~~### Notes~~
 ~~Same class as the previously documented `resource_limit_exceeded` network/placement errors. Hetzner per-project firewall quotas are being exhausted by repeated testing; user must delete old servers/firewalls or request a quota increase.~~
+
+---
+
+
+## [BUG] Config subcommands `inventory`/`diff`/`check`/`promote`/`contract suggest` unreachable from CLI
+
+**Severity:** Medium
+**Date:** 2026-09-25
+**Affected:** stacker CLI 0.3.4 (and current source: `try.direct/stacker` `bin/stacker.rs`)
+
+### Symptom
+`stacker config --help` lists only `validate`, `show`, `example`, `fix`, `lock`, `unlock`, `setup`. The config-contract commands announced in CHANGELOG 0.2.8 — `stacker config check`, `stacker config inventory`, `stacker config diff`, `stacker config promote`, `stacker config contract suggest` — cannot be invoked.
+
+### Root Cause
+The command implementations exist and are complete (`ConfigCheckCommand`, `ConfigInventoryCommand`, `ConfigDiffCommand`, `ConfigPromoteCommand`, `ConfigContractSuggestCommand` in `src/console/commands/cli/config.rs`, each with a `CallableTrait` impl and doc comment stating the intended CLI syntax), but the clap `ConfigCommands` enum in `src/bin/stacker.rs` never gained matching variants and the dispatch match never constructs them. The commands are orphaned — likely dropped during the clap migration.
+
+### Steps to Reproduce
+1. `stacker config --help` — no `check`/`inventory`/`diff`/`promote`/`contract` subcommands listed
+2. `stacker config check --env production` — unknown command error
+3. Compare with `src/console/commands/cli/config.rs` (structs + `CallableTrait` impls present) vs `src/bin/stacker.rs` `enum ConfigCommands` (no variants for them)
+
+### Expected
+`stacker config check --env <name> [--service <target>] [--json] [--strict]`, `stacker config inventory`, `stacker config diff --from --to`, `stacker config promote --from --to`, and `stacker config contract suggest --env <name>` work as documented in CHANGELOG 0.2.8 and in `docs/FIELD_POLICY.md`.
+
+### Actual
+Commands do not exist at the CLI surface; `config_contract` in stacker.yml can only be exercised via `stacker config validate` and the publish gate.
+
+### Fix Needed
+Add the five variants to `ConfigCommands` (and the `contract suggest` subcommand) in `src/bin/stacker.rs` and wire them to the existing command structs in the dispatch match.
+
+---
+
+
+## [BUG] `stacker destroy` cannot tear down a local deployment
+
+**Severity:** Medium
+**Date:** 2026-09-25
+**Affected:** stacker CLI 0.3.4, `deploy.target: local`
+
+### Symptom
+Immediately after a successful `stacker deploy` (local), `stacker destroy -y` fails:
+```
+Error: Configuration validation error: No deployment found. Nothing to destroy.
+```
+Meanwhile the container is running and `.stacker/deployment-local.lock` exists. `stacker status` shows only the last *remote* deployment (#680) — the local one is invisible to both commands.
+
+### Steps to Reproduce
+1. `cd stacker-projects/appsmith` (deploy.target: local), `stacker deploy`
+2. Container `appsmith-app-1` is Up; `.stacker/deployment-local.lock` written
+3. `stacker destroy -y` → "No deployment found. Nothing to destroy."
+
+### Expected
+`stacker destroy` tears down the locally-deployed stack (containers, network; `--volumes` for named volumes).
+
+### Actual
+Local deployments are not tracked as destroyable deployments. Cleanup requires manual `docker compose -p <project> down`, which is a workaround the QA rules forbid for deploys and is easy to get wrong (compose project name is the project name, not the `.stacker` directory name — `docker compose -f .stacker/docker-compose.yml down` silently no-ops).
+
+### Fix Needed
+Track local deployments in the deployment registry (or read `.stacker/deployment-local.lock`) and let `stacker destroy` resolve them.
+
+---
+
+
+## [BUG] audiobookshelf: `stacker config validate` rejects template — empty `config_contract` fields block
+
+**Severity:** Medium (template unusable with current CLI)
+**Date:** 2026-09-25
+**Affected:** `stacker-projects/audiobookshelf/stacker.yml`
+
+### Symptom
+```
+$ stacker config validate
+Error: Failed to parse stacker.yml: invalid value at `config_contract.services.app`:
+config_contract.services: declares neither `fields:` nor `volumes:`. A service with no policy
+ does not need a block at all — an empty one usually means a declaration was lost, so it is
+refused rather than silently ignored. at line 22 column 5
+```
+
+### Root Cause
+The template carries an empty policy block:
+```yaml
+config_contract:
+  services:
+    app:
+      fields: {}
+```
+The current parser (post `9ab4f41d` "refuse a service block that declares nothing") rejects a service block with empty `fields` and no `volumes`. The template predates that rule.
+
+### Expected
+Template parses and deploys (or, if the policy is intentional, declares actual fields).
+
+### Actual
+All stacker commands that load the config fail at parse time — deploy, validate, show.
+
+### Fix Needed
+Remove the empty `config_contract` block (or declare the real fields) in the template. Fixture not modified — awaiting confirmation per repo rules.
+
+---
+
+
+## [BUG] Catalog-wide: empty `config_contract` `fields: {}` blocks break parsing on current CLI
+
+**Severity:** High (many templates fail `stacker config validate` outright)
+**Date:** 2026-09-28
+
+Since stacker `9ab4f41d` ("refuse a service block that declares nothing"), a
+`config_contract.services.<svc>` entry with empty `fields: {}` and no `volumes:`
+is a parse error. Templates predating the rule fail every config-loading command:
+
+```
+Error: Failed to parse stacker.yml: invalid value at `config_contract.services.app`:
+config_contract.services: declares neither `fields:` nor `volumes:` ...
+```
+
+Confirmed hits via `rg "fields: \{\}"` (as of 2026-09-28):
+aptabase, baikal, traefik, hitkeep, jellyseerr, element, moodist, caddy,
+network-tools, olivetin, activepieces, middleware, goaccess, mail-archiver,
+manticore, hugo, mailu, portainer, metube, stirling-pdf, filestash, memos,
+swarm-ui, goatcounter, socioboard, archivesspace, homer, restic-rest-server,
+changedetection, insforge, headscale, adguard-home, it-tools, gotify, dashy
+(+ audiobookshelf/cyberchef already fixed in this campaign).
+
+### Fix
+Remove the empty block (stateless services) or declare real `fields:`/`volumes:`
+policy. Note some of these templates have older success files — they were tested
+before the parser rule landed and would now fail validation.
+
+---
+
+
+## [BUG] `stacker deploy --target server` reports success when the remote container fails to start (port conflict)
+
+**Severity:** High (silent deploy failure — false success)
+**Date:** 2026-09-28
+**Affected:** stacker 0.3.4, `--target server` path
+
+### Symptom
+Deploy prints "Deploying project ... Deployment context saved" and exits 0, but the
+remote container sits in `Created` state:
+
+```
+state=created err=failed to set up container networking: ... Bind for 0.0.0.0:8082
+failed: port is already allocated exit=128
+```
+
+### Steps to Reproduce
+1. Have a service already listening on the template's host port on the target server
+   (in this case `gitlab-app-1` owns `0.0.0.0:8082`)
+2. `stacker deploy --target server` for `dashy` (maps `"8082:8080"`)
+3. Deploy exits success; `docker ps` shows `project-app-1` Created, never Started
+
+### Expected
+The deploy fails (or at minimum warns) when a remote container does not reach Running.
+
+### Actual
+Success reported; only `docker inspect` reveals the bind error. The local deploy
+path has a proper port-conflict preflight (see the calcom test) — the remote path
+needs the same, or a post-start container state check.
+
+### Fix Needed
+Post-start verification on remote deploys: fail if the service container is not
+Running/healthy, and surface the Docker bind error in the deploy output.
+
+---
+
+
+## [BUG] dashy server test blocked on the shared box — host port 8082 collides with GitLab
+
+**Severity:** Low (environment-specific)
+**Date:** 2026-09-28
+
+`dashy` maps `"8082:8080"`; the reused test server runs `gitlab-app-1` on
+`0.0.0.0:8082` (a 3-week-old deployment — not touched). The template's port choice
+is fine on a clean host; this is a collision of the shared test box. Local test
+passed (`LOCAL_DEPLOY_SUCCESS.md`). Server test result: blocked.
+
+---
+
+
+## [BUG] Templates binding host 80/443 cannot deploy to boxes with the platform caddy
+
+**Severity:** Medium (structural: `--target server` on managed boxes)
+**Date:** 2026-09-28
+
+`discourse` maps `"80:80"`/`"443:443"` (proxy.type: none). On the shared test box the
+platform-managed `caddy` already owns 80/443, so `project-app-1` fails to bind and —
+per the silent-success bug above — the deploy still reports success. Same class as
+`dashy` vs GitLab's 8082.
+
+Recommendation: stacker should either route such apps through the platform proxy on
+remote targets, or fail the deploy with the bind error surfaced.

@@ -40,7 +40,8 @@ monitoring:
 config_contract:
   services:
     app:
-      fields: {}
+      volumes:
+        dashy_config: { mutability: generated }
 env_file: .env
 
 volumes:

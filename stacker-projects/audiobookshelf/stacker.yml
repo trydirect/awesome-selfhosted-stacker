@@ -4,7 +4,7 @@ app:
   type: custom
   image: ghcr.io/advplyr/audiobookshelf:latest
   ports:
-    - "13378:13378"
+    - "13378:80"
   volumes:
     - audiobooks_data:/audiobooks
     - audiobooks_config:/config
@@ -25,7 +25,14 @@ monitoring:
 config_contract:
   services:
     app:
-      fields: {}
+      fields:
+        TZ:
+          mutability: editable
+          display: string
+      volumes:
+        audiobooks_data: { mutability: generated }
+        audiobooks_config: { mutability: generated }
+        audiobooks_metadata: { mutability: generated }
 env_file: .env
 
 deploy:

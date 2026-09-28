@@ -10,6 +10,7 @@ install:
 app:
   type: custom
   image: chatwoot/chatwoot:develop-ce
+  command: sh docker/entrypoints/rails.sh sh -c "bundle exec rails db:prepare && mkdir -p tmp/pids && bundle exec puma -C config/puma.rb"
   ports:
     - "3000:3000"
   environment:
@@ -23,7 +24,7 @@ app:
 
 services:
   - name: chatwoot-db
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16
     environment:
       POSTGRES_DB: chatwoot
       POSTGRES_USER: chatwoot

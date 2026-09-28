@@ -17,8 +17,8 @@ if need "ENCRYPTION_KEY"; then
   sed -i '' "s|^ENCRYPTION_KEY=.*|ENCRYPTION_KEY=$(openssl rand -hex 32)|" .env
   echo "  Generated ENCRYPTION_KEY"
 fi
-if need "DB_PASSWORD"; then
-  sed -i '' "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" .env
-  echo "  Generated DB_PASSWORD"
+if need "POSTGRES_PASSWORD"; then
+  sed -i '' "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=$(openssl rand -hex 16)|" .env
+  echo "  Generated POSTGRES_PASSWORD"
 fi
 echo "Secrets ready."
