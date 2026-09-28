@@ -5,9 +5,14 @@ services:
       - "8000:8000"
       - "8001:8001"
     environment:
+      HERMES_DASHBOARD: "1"
+      HERMES_DASHBOARD_BASIC_AUTH_PASSWORD: ${HERMES_DASHBOARD_BASIC_AUTH_PASSWORD}
+      HERMES_DASHBOARD_BASIC_AUTH_USERNAME: "admin"
+      HERMES_DASHBOARD_PORT: "8000"
       HERMES_GID: "1000"
       HERMES_UID: "1000"
       PYTHONUNBUFFERED: "1"
+    command: "sleep infinity"
     restart: unless-stopped
     networks:
       - app-network
