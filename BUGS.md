@@ -406,3 +406,35 @@ Templates binding host port 5000 (e.g. `frigate`) cannot deploy to managed boxes
 (`ControlCenter`) also owns 5000. `frigate` remapped to `"5001:5000"` in this pass.
 Recommendation: the platform should either reserve port 5000 in validation (W-code)
 or document it as reserved.
+
+---
+
+
+## [BUG] Stale `.stacker/deployment-server.lock` silently redirects `--target server` deploys
+
+**Severity:** High (deploys land on an unrelated old server)
+**Date:** 2026-09-28
+**Affected:** stacker 0.3.4
+
+### Symptom
+`stacker deploy --target server` for `hanko` attempted
+`Failed to connect to 62.238.110.174 over SSH` — an old server from a previous
+session — although `stacker.yml` has `deploy.server: null` and the environment
+exports `EXISTING_SERVER_HOST=46.224.127.228`.
+
+### Root Cause
+`.stacker/deployment-server.lock` (checked-in state from an earlier deployment:
+`server_ip: 62.238.110.174, deployment_id: 600`) takes precedence over the
+missing `deploy.server` config — no E002, no confirmation, no warning.
+
+### Expected
+E002 ("Server host is required") or at least a warning that a stale lock is
+being used; ideally the lock should verify it matches the current config.
+
+### Actual
+Silent redirect to the locked server. Workaround: delete
+`.stacker/deployment-server.lock` before deploying.
+
+### Fix Needed
+Validate lock-vs-config consistency, or make `deploy.server.host` authoritative
+and the lock a cache only.
