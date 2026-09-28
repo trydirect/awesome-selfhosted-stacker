@@ -49,5 +49,6 @@ monitoring:
 config_contract:
   services:
     app:
-      fields: {}
+      volumes:
+        homer_config: { mutability: generated }
 env_file: .env
