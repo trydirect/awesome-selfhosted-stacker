@@ -21,6 +21,8 @@ app:
     LEMMY_RATE_LIMIT_POST_INTERVAL: '600'
     LEMMY_FEDERATION_ENABLED: 'true'
     LEMMY_FEDERATION_STRICT_ALLOWLIST: 'false'
+  volumes:
+  - ./config.hjson:/config/config.hjson:ro
   depends_on:
   - lemmy_db
   - lemmy_pictrs

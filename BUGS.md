@@ -491,3 +491,17 @@ false positive above).
 ### Fix Needed
 Resolve `${VAR:-default}`/`${VAR}` in port strings (compose does this at up-time —
 preflight should mirror it) before probing; same fix as the range case.
+
+---
+
+
+## [NOTE] Transient `Stacker server request failed (500)` on `--target server` deploys
+
+**Date:** 2026-09-28 (kavita)
+
+Two consecutive `stacker deploy --target server` runs failed with
+`Could not fetch server details: Deployment to server failed: Stacker server request
+failed (500). Rerun with DEBUG=true or …`; a third run succeeded unchanged. Platform-side
+transient error surfaced as a hard deploy failure with no retry. Suggestion: retry
+idempotent server-detail fetches, and make `DEBUG=true` actually print endpoint details
+(it printed nothing; `RUST_LOG=debug` also showed no extra lines).

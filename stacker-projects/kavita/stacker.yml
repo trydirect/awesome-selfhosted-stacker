@@ -4,7 +4,7 @@ app:
   type: custom
   image: lscr.io/linuxserver/kavita:latest
   ports:
-    - "5000:5000"
+    - "5001:5000"
   environment:
     PUID: "1000"
     PGID: "1000"
@@ -47,4 +47,4 @@ deploy:
     region: fsn1
     size: cpx22
     public_ports:
-      - "5000"
+      - "5001"
