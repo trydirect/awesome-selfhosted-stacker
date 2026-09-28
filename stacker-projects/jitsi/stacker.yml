@@ -9,8 +9,8 @@ app:
   type: custom
   image: jitsi/web:unstable
   ports:
-  - "80:80"
-  - "443:443"
+  - "80:8000"
+  - "443:8443"
   environment:
     XMPP_SERVER: xmpp.meet.jitsi
     XMPP_DOMAIN: meet.jitsi
@@ -33,6 +33,8 @@ services:
   image: jitsi/prosody:unstable
   environment:
     XMPP_DOMAIN: meet.jitsi
+    JICOFO_AUTH_USER: focus
+    JICOFO_AUTH_PASSWORD: ${JICOFO_PASSWORD}
     XMPP_AUTH_DOMAIN: auth.meet.jitsi
     XMPP_MUC_DOMAIN: muc.meet.jitsi
     XMPP_INTERNAL_MUC_DOMAIN: internal-muc.meet.jitsi

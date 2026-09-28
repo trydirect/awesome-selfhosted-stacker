@@ -14,7 +14,8 @@ proxy:
 config_contract:
   services:
     app:
-      fields: {}
+      volumes:
+        jellyseerr_config: { mutability: generated }
 env_file: .env
 deploy:
   target: server
