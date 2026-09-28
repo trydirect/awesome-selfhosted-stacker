@@ -332,3 +332,47 @@ per the silent-success bug above — the deploy still reports success. Same clas
 
 Recommendation: stacker should either route such apps through the platform proxy on
 remote targets, or fail the deploy with the bind error surfaced.
+
+---
+
+
+## [BUG] Port-conflict preflight false-positives on ALL range mappings (`8100-8105:8100-8105`)
+
+**Severity:** High (blocks deploy of any template using a port range)
+**Date:** 2026-09-28
+**Affected:** stacker 0.3.4, local deploys; `src/cli/install_runner.rs:655`
+
+### Symptom
+`stacker deploy --target local` for `druid` aborts:
+```
+Host port conflict detected before deploy:
+  • port 8100-8105 (service 'middlemanager') is already allocated on this host
+```
+but `nc -z`/`lsof` show every port 8100-8105 free.
+
+### Root Cause
+`check_local_host_port_conflicts` probes each host port with
+`TcpListener::bind(&format!("0.0.0.0:{}", port))`. For a range mapping, `port` is the
+literal string `8100-8105`, so the bind address is invalid and `bind()` **always**
+errors — the code treats `is_err()` as "port occupied":
+
+```rust
+.filter(|(port, _)| {
+    let addr = format!("0.0.0.0:{}", port);
+    TcpListener::bind(&addr).is_err()   // ← invalid "0.0.0.0:8100-8105" ⇒ true for every range
+})
+```
+
+### Expected
+Range mappings expand to their individual ports (8100…8105), each probed separately;
+or ranges skip the TCP probe and rely on Docker's own bind error.
+
+### Actual
+Every range-mapped service is reported as a conflict — deploy is impossible.
+
+### Workaround
+Expand the range to discrete pairs in `stacker.yml` (`"8100:8100"` … `"8105:8105"`).
+
+### Fix Needed
+Expand `start-end:...` host specs before probing (or use a proper socket-availability
+check that handles ranges).
