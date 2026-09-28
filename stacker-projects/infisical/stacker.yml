@@ -11,8 +11,17 @@ app:
     DB_CONNECTION_URI: postgresql://infisical:${DB_PASSWORD}@infisical-db:5432/infisical
     SITE_URL: http://localhost:8080
     NODE_ENV: production
+    REDIS_URL: redis://infisical-redis:6379
 
 services:
+  - name: infisical-redis
+    image: redis:7-alpine
+    healthcheck:
+      test: CMD redis-cli ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   - name: infisical-db
     image: postgres:16-alpine
     environment:
