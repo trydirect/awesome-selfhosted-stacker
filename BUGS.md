@@ -638,3 +638,27 @@ every service fails role auth with mysterious `password authentication failed`.
 Wiping the volume fixes it, but nothing warns. Recommendation: include the project
 identity in remote volume names (or force `external: false` + project-prefixed
 volume names in the remote compose).
+
+---
+
+
+## [BUG] Injected `default_network` + hostname-binding apps = wrong-interface bind (empty replies)
+
+**Severity:** High (app serves nothing through the published port)
+**Date:** 2026-09-29 (typebot builder — Next.js 16)
+
+With `monitoring.status_panel: true` the compose attaches containers to BOTH the
+external `default_network` (172.18.x) and the project network (192.168.203.x).
+Next.js binds to the address `getent hosts $(hostname)` returns first — the
+`default_network` IP — while Docker's published port DNATs to the *project-network*
+IP. Result: `curl host:3001` gets an empty reply while `http://<hostname>:3000`
+inside the container answers 200.
+
+### Workaround
+Set `HOSTNAME: 0.0.0.0` (or `HOST: 0.0.0.0`) in the app environment — apps with
+`HOSTNAME`-based binding (Next.js) then listen on all interfaces.
+
+### Fix Needed
+Prefer injecting `default_network` without making it the first/primary network, or
+set a deterministic `hostname:` per service whose resolution lands on the
+publishing network.
