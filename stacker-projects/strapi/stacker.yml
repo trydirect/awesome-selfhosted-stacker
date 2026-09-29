@@ -23,7 +23,7 @@ app:
     DATABASE_PORT: '5432'
     DATABASE_USERNAME: strapi
     NODE_ENV: production
-  command: null
+  command: strapi start
   healthcheck: null
 services:
 - name: strapi_db

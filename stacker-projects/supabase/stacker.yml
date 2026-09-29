@@ -44,6 +44,7 @@ services:
       SUPABASE_AUTH_ADMIN_PASSWORD: "${POSTGRES_PASSWORD}"
       SUPABASE_FUNCTIONS_ADMIN_PASSWORD: "${POSTGRES_PASSWORD}"
     volumes:
+      - ./postgresql.schema.sql:/etc/postgresql.schema.sql:ro
       - db_data:/var/lib/postgresql/data
       - ./volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
       - ./volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:ro
@@ -120,7 +121,7 @@ services:
       DB_USER: supabase_admin
       DB_PASSWORD: "${POSTGRES_PASSWORD}"
       DB_NAME: "${POSTGRES_DB}"
-      DB_ENC_KEY: supabaserealtime
+      DB_ENC_KEY: "${DB_ENC_KEY}"
       JWT_SECRET: "${JWT_SECRET}"
       SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
       APP_NAME: realtime
@@ -168,6 +169,7 @@ services:
 
   - name: functions
     image: supabase/edge-runtime:v1.74.0
+    command: start --main-service /home/deno/functions/main --port 8081
     environment:
       JWT_SECRET: "${JWT_SECRET}"
       SUPABASE_URL: http://app:8000
@@ -187,7 +189,7 @@ deploy:
   server:
     host: ${EXISTING_SERVER_HOST}
     user: ${EXISTING_SERVER_USER}
-    ssh_key: ~/.config/stacker/ssh/server-443_ed25519
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test

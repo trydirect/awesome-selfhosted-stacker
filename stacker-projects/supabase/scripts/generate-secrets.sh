@@ -54,3 +54,48 @@ set_if_empty "SMTP_PASS" "" \
   "provide your real SMTP password"
 
 echo "Done."
+
+# --- contract-key alignment (config_contract generated fields) ---
+gen() { openssl rand -hex 16; }
+sync() { # sync <KEY> <VALUE>
+  if grep -q "^${1}=" .env; then sed -i '' "s|^${1}=.*|${1}=${2}|" .env; else echo "${1}=${2}" >> .env; fi
+}
+ANON=$(grep "^ANON_KEY=" .env | cut -d= -f2-)
+SVC=$(grep "^SERVICE_ROLE_KEY=" .env | cut -d= -f2-)
+JWT=$(grep "^JWT_SECRET=" .env | cut -d= -f2-)
+PG=$(grep "^POSTGRES_PASSWORD=" .env | cut -d= -f2-)
+CRYPTO=$(grep "^PG_META_CRYPTO_KEY=" .env | cut -d= -f2-)
+sync SUPABASE_ANON_KEY "$ANON"
+sync SUPABASE_SERVICE_KEY "$SVC"
+sync SUPABASE_SERVICE_ROLE_KEY "$SVC"
+sync SERVICE_KEY "$SVC"
+sync DB_PASSWORD "$PG"
+sync GOTRUE_JWT_SECRET "$JWT"
+sync PGRST_JWT_SECRET "$JWT"
+sync PGRST_APP_SETTINGS_JWT_SECRET "$JWT"
+sync CRYPTO_KEY "$CRYPTO"
+# The template's design: every role password equals POSTGRES_PASSWORD
+sync AUTHENTICATOR_PASSWORD "$PG"
+sync SUPABASE_AUTH_ADMIN_PASSWORD "$PG"
+sync SUPABASE_FUNCTIONS_ADMIN_PASSWORD "$PG"
+sync DB_PASSWORD "$PG"
+sync PG_META_DB_PASSWORD "$PG"
+for key in SMTP_PASS METRICS_JWT_SECRET; do
+  if ! grep -q "^${key}=." .env 2>/dev/null; then sync "${key}" "$(gen)"; fi
+done
+echo "  Contract keys aligned"
+
+# postgresql.schema.sql: sets role passwords post-init (image reads /etc/postgresql.schema.sql)
+{
+  echo "ALTER ROLE authenticator PASSWORD '$(grep "^AUTHENTICATOR_PASSWORD=" .env | cut -d= -f2-)';"
+  echo "ALTER ROLE supabase_auth_admin PASSWORD '$(grep "^SUPABASE_AUTH_ADMIN_PASSWORD=" .env | cut -d= -f2-)';"
+  echo "ALTER ROLE supabase_functions_admin PASSWORD '$(grep "^SUPABASE_FUNCTIONS_ADMIN_PASSWORD=" .env | cut -d= -f2-)';"
+  echo "ALTER ROLE supabase_storage_admin PASSWORD '$(grep "^SUPABASE_AUTH_ADMIN_PASSWORD=" .env | cut -d= -f2-)';"
+  echo "ALTER ROLE supabase_read_only_user PASSWORD '$(grep "^AUTHENTICATOR_PASSWORD=" .env | cut -d= -f2-)';"
+  echo "CREATE SCHEMA IF NOT EXISTS graphql_public;"
+  echo "DO \$\$ DECLARE r RECORD; BEGIN FOR r IN SELECT proname, pg_get_function_identity_arguments(oid) AS args FROM pg_proc WHERE pronamespace = 'auth'::regnamespace LOOP EXECUTE format('ALTER FUNCTION auth.%I(%s) OWNER TO supabase_auth_admin', r.proname, r.args); END LOOP; END \$\$;"
+  echo "ALTER SCHEMA auth OWNER TO supabase_auth_admin;"
+} > postgresql.schema.sql
+echo "  Wrote postgresql.schema.sql"
+if ! grep -q "^DB_ENC_KEY=." .env 2>/dev/null; then sync DB_ENC_KEY "$(openssl rand -hex 8)"; fi
+echo "  DB_ENC_KEY (16-byte AES-128) set"
