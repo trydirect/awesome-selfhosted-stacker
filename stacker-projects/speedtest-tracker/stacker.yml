@@ -9,6 +9,7 @@ app:
     PUID: "1000"
     PGID: "1000"
     TZ: UTC
+    APP_KEY: ${APP_KEY}
   volumes:
     - speedtest_config:/config
 
@@ -18,6 +19,13 @@ volumes:
 proxy:
   type: none
   auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
 
 config_contract:
   services:

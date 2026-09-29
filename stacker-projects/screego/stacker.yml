@@ -9,11 +9,11 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/screego/server:latest
+  image: ghcr.io/screego/server:1
   ports:
     - "5050:5050"
   environment:
-    SCREEGO_EXTERNAL_IP: auto
+    SCREEGO_EXTERNAL_IP: 127.0.0.1
     SCREEGO_TURN_PORT_RANGE: 10000:10100
 
 proxy:
