@@ -26,6 +26,10 @@ proxy:
 
 deploy:
   target: cloud
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test
@@ -40,5 +44,7 @@ monitoring:
 config_contract:
   services:
     app:
-      fields: {}
+      volumes:
+        swarm_data: { mutability: generated }
+        swarm_backend: { mutability: generated }
 env_file: .env

@@ -7,14 +7,7 @@ app:
     - "80:80"
     - "443:443"
     - "8080:8080"
-  command:
-    - --providers.docker=true
-    - --providers.docker.exposedbydefault=false
-    - --entrypoints.web.address=:80
-    - --entrypoints.websecure.address=:443
-    - --api.dashboard=true
-    - --api.insecure=true
-    - --ping=true
+  command: --providers.docker=true --providers.docker.exposedbydefault=false --entrypoints.web.address=:80 --entrypoints.websecure.address=:443 --api.dashboard=true --api.insecure=true --ping=true
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock:ro
     - traefik_certs:/certs
@@ -26,8 +19,16 @@ proxy:
   type: none
   auto_detect: false
 
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
+
 config_contract:
   services:
     app:
-      fields: {}
+      volumes:
+        traefik_certs: { mutability: generated }
 env_file: .env
