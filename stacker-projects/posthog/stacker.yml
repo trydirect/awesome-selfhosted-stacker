@@ -15,6 +15,7 @@ app:
   environment:
     POSTGRES_DB: posthog
     POSTGRES_PASSWORD: ${DB_PASSWORD}
+    DATABASE_URL: postgresql://posthog:${DB_PASSWORD}@posthog_db:5432/posthog
     DEPLOYMENT: docker
     POSTGRES_HOST: posthog_db
     SECURE_COOKIES: 'false'
@@ -46,7 +47,7 @@ services:
 - name: redis
   image: redis:7-alpine
   ports:
-  - "127.0.0.1:6379:6379"
+  - "127.0.0.1:6380:6379"
   environment: {}
   volumes:
   - posthog_redis:/data

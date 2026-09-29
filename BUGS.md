@@ -505,3 +505,42 @@ failed (500). Rerun with DEBUG=true or …`; a third run succeeded unchanged. Pl
 transient error surfaced as a hard deploy failure with no retry. Suggestion: retry
 idempotent server-detail fetches, and make `DEBUG=true` actually print endpoint details
 (it printed nothing; `RUST_LOG=debug` also showed no extra lines).
+
+---
+
+
+## [BUG] Debug tooling blind to local deploys: `stacker logs` ("Cannot determine deployment hash") and `stacker status` (API-only)
+
+**Severity:** High (blocks stacker-native debugging of local deploys)
+**Date:** 2026-09-29
+**Affected:** stacker 0.3.4
+
+### Symptom
+From a project directory with a valid `.stacker/deployment-local.lock` and `stacker.yml`:
+
+```
+$ stacker logs
+Error: Configuration validation error: Cannot determine deployment hash.
+Use 'stacker agent logs <app>' with --deployment <HASH>, or run from a directory
+with a deployment lock or stacker.yml.
+
+$ stacker status
+Error: ... Project 'posthog' was not found on Stacker API ...
+```
+
+Both refuse to observe a perfectly running local stack — `stacker logs` fails to
+resolve the deployment hash even though the lock file it asks for is present, and
+`stacker status` only queries the platform API (local deploys are never registered
+there).
+
+### Expected
+`stacker logs` tails local container logs from the deployment lock; `stacker status`
+reports local state when no remote deployment exists (or with a `--local` flag).
+
+### Actual
+All local observability must fall back to `docker logs/ps` — which also means these
+code paths stay untested by the QA campaign.
+
+### Note
+This compounds the earlier `stacker destroy` local gap — the local lifecycle is
+tracked in `deployment-*.lock` but no command consumes it except deploy itself.

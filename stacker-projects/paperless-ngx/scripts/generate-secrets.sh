@@ -107,4 +107,16 @@ if need "DB_ROOT_PASSWORD"; then
   echo "  Generated DB_ROOT_PASSWORD"
 fi
 
+db_pass=$(grep "^DB_PASSWORD=" .env | cut -d= -f2-)
+admin_pass=$(grep "^ADMIN_PASSWORD=" .env | cut -d= -f2-)
+secret_key=$(grep "^SECRET_KEY=" .env | cut -d= -f2-)
+for pair in "PAPERLESS_DBPASS:${db_pass}" "POSTGRES_PASSWORD:${db_pass}" "PAPERLESS_ADMIN_PASSWORD:${admin_pass}" "PAPERLESS_SECRET_KEY:${secret_key}"; do
+  key="${pair%%:*}"; val="${pair#*:}"
+  if grep -q "^${key}=" .env; then
+    sed -i '' "s|^${key}=.*|${key}=${val}|" .env
+  else
+    echo "${key}=${val}" >> .env
+  fi
+done
+echo "  Synced paperless contract keys"
 echo "Secrets ready."
