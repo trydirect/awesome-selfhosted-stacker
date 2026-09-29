@@ -26,4 +26,13 @@ if need "ROMM_AUTH_SECRET_KEY"; then
   echo "  Generated ROMM_AUTH_SECRET_KEY"
 fi
 
+if ! grep -q "^MARIADB_PASSWORD=." .env 2>/dev/null; then
+  db_pass=$(grep "^DB_PASSWD=" .env | cut -d= -f2-)
+  if grep -q "^MARIADB_PASSWORD=" .env; then
+    sed -i '' "s|^MARIADB_PASSWORD=.*|MARIADB_PASSWORD=${db_pass}|" .env
+  else
+    echo "MARIADB_PASSWORD=${db_pass}" >> .env
+  fi
+  echo "  Synced MARIADB_PASSWORD"
+fi
 echo "Secrets ready."
