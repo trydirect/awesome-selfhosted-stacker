@@ -146,3 +146,17 @@ plugins:
 EOF
 
 echo "Regenerated ${KONG_FILE} with current API keys."
+
+if ! grep -q "^DB_ENC_KEY=." .env 2>/dev/null; then
+  set_if_empty "DB_ENC_KEY" "$(openssl rand -hex 8)"
+fi
+{
+  echo "ALTER ROLE authenticator PASSWORD '$(grep "^POSTGRES_PASSWORD=" .env | cut -d= -f2-)';"
+  echo "ALTER ROLE supabase_auth_admin PASSWORD '$(grep "^POSTGRES_PASSWORD=" .env | cut -d= -f2-)';"
+  echo "ALTER ROLE supabase_functions_admin PASSWORD '$(grep "^POSTGRES_PASSWORD=" .env | cut -d= -f2-)';"
+  echo "ALTER ROLE supabase_storage_admin PASSWORD '$(grep "^POSTGRES_PASSWORD=" .env | cut -d= -f2-)';"
+  echo "CREATE SCHEMA IF NOT EXISTS graphql_public;"
+  echo "DO \$\$ DECLARE r RECORD; BEGIN FOR r IN SELECT proname, pg_get_function_identity_arguments(oid) AS args FROM pg_proc WHERE pronamespace = 'auth'::regnamespace LOOP EXECUTE format('ALTER FUNCTION auth.%I(%s) OWNER TO supabase_auth_admin', r.proname, r.args); END LOOP; END \$\$;"
+  echo "ALTER SCHEMA auth OWNER TO supabase_auth_admin;"
+} > postgresql.schema.sql
+echo "  Wrote postgresql.schema.sql"

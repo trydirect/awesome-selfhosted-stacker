@@ -621,3 +621,20 @@ empty. Workaround: create the files on the server manually.
 Collect directory bind sources recursively in `build_config_bundle` (same as files),
 or stage them during render like the local `.stacker/` gap (see the companion
 local-bind bug above).
+
+---
+
+
+## [BUG] stacker#235 live reproduction: shared-path volume names collide across templates
+
+**Severity:** High (silent cross-template data/password reuse on `--target server`)
+**Date:** 2026-09-29 (supabase-posthog)
+
+The shared-path compose project (`project`, see stacker#240) namespaces volumes as
+`project_<volume-key>`. Any two templates using the same volume key (e.g. `db_data`)
+share the SAME volume on the box: the second template's db boots on the first
+template's data — initdb never runs, `postgresql.schema.sql` never applies, and
+every service fails role auth with mysterious `password authentication failed`.
+Wiping the volume fixes it, but nothing warns. Recommendation: include the project
+identity in remote volume names (or force `external: false` + project-prefixed
+volume names in the remote compose).

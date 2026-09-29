@@ -48,6 +48,7 @@ services:
       JWT_EXP: "${JWT_EXPIRY}"
       DB_INIT_PASSWORD: "${POSTGRES_PASSWORD}"
     volumes:
+      - ./postgresql.schema.sql:/etc/postgresql.schema.sql:ro
       - db_data:/var/lib/postgresql/data
       - ./db-init-fix.sh:/docker-entrypoint-initdb.d/zz-fix-passwords.sh:ro
     healthcheck:
@@ -123,7 +124,7 @@ services:
       DB_USER: supabase_admin
       DB_PASSWORD: "${POSTGRES_PASSWORD}"
       DB_NAME: "${POSTGRES_DB}"
-      DB_ENC_KEY: supabaserealtime
+      DB_ENC_KEY: "${DB_ENC_KEY}"
       JWT_SECRET: "${JWT_SECRET}"
       METRICS_JWT_SECRET: "${JWT_SECRET}"
       SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
@@ -193,7 +194,7 @@ deploy:
   server:
     host: ${EXISTING_SERVER_HOST}
     user: ${EXISTING_SERVER_USER}
-    ssh_key: ~/.config/stacker/ssh/server-444_ed25519
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test
