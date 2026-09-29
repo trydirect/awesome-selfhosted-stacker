@@ -91,4 +91,7 @@ env_file: .env
 env: {}
 config_contract:
   services:
-    app: {}
+    app:
+      volumes:
+        rustfs_data: { mutability: generated }
+        rustfs_logs: { mutability: generated }
