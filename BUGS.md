@@ -587,8 +587,20 @@ $ stacker target local && stacker logs    # ✓ tails local docker logs
 $ stacker target local && stacker status  # ✓ docker compose ps
 ```
 
-Regression tests in `deployment_context.rs` (12) and `local_compose.rs` cover the
+Regression tests in `deployment_context.rs` (21) and `local_compose.rs` cover the
 multi-lock ambiguity, self-heal, and compose-precedence cases.
+
+Follow-up (code review, same day): one real regression caught and fixed —
+agent-mediated commands (`stacker agent *`, single-service deploy, monitor) must
+never be gated by a local placement, since `stacker agent install` pins
+`deploy.deployment_hash` precisely so they work from any target. They now use
+`resolve_agent_deployment_hash` (hash chain always reachable), while `pipe`
+keeps the strict gate. Also fixed: the hash-resolution error no longer claims
+"the deployment lock is present" when it isn't (evidence-based wording);
+`active-target` content is validated (`Unknown active target '…'`); legacy +
+per-target locks count as ambiguous; a failed deploy watch no longer flips
+`active-target`; `init`'s active-target write is best-effort. Two pre-existing
+flaky tests (env-var and ephemeral-port races) were stabilized.
 
 ---
 
