@@ -107,4 +107,15 @@ if need "DB_ROOT_PASSWORD"; then
   echo "  Generated DB_ROOT_PASSWORD"
 fi
 
+db_pass=$(grep "^DB_PASSWORD=" .env | cut -d= -f2-)
+for pair in "DATABASE_PASSWORD:${db_pass}" "POSTGRES_PASSWORD:${db_pass}" "ADMIN_JWT_SECRET:__GEN__"; do
+  key="${pair%%:*}"; val="${pair#*:}"
+  [ "$val" = "__GEN__" ] && val=$(openssl rand -hex 16)
+  if grep -q "^${key}=" .env; then
+    sed -i '' "s|^${key}=.*|${key}=${val}|" .env
+  else
+    echo "${key}=${val}" >> .env
+  fi
+  echo "  Generated ${key}"
+done
 echo "Secrets ready."

@@ -544,3 +544,68 @@ code paths stay untested by the QA campaign.
 ### Note
 This compounds the earlier `stacker destroy` local gap — the local lifecycle is
 tracked in `deployment-*.lock` but no command consumes it except deploy itself.
+
+### Resolution (2026-09-29, stacker source fix)
+
+Root cause was not two bugs but one: three diverging sources of truth for "where
+does this stack live?" (`stacker.yml` `deploy.target`, N × `deployment-*.lock`,
+`.stacker/active-target`) with no write-side discipline (`stacker deploy` never
+wrote `active-target`) and per-command read-side precedence (`DeploymentLock::load()`
+preferred cloud > server > local, so posthog's stale July `deployment-server.lock`
+shadowed today's `deployment-local.lock`). `stacker logs` then entered its remote
+path (the local probe rejected `target: server` configs before even looking at
+`.stacker/docker-compose.yml`) and failed to resolve a deployment hash — a concept
+local deploys don't have; `stacker status` went straight to the API.
+
+Fix (in the stacker repo):
+
+- New `src/cli/deployment_context.rs`: single `resolve_deploy_placement()`
+  (API-free) + `resolve_deployment_context()` / `resolve_deployment_hash()`
+  promoting pipe.rs's existing `DeploymentContext` pattern to the whole CLI.
+  Precedence: explicit flag → `active-target` → lockfiles (exactly one = adopt +
+  self-heal `active-target`; several = hard error
+  `No active target set. Use: stacker target <local|cloud|server>`) → `stacker.yml`.
+- Write-side: `save_deployment_lock` (every successful deploy) now records
+  `active-target`; `stacker init` defaults it to `local`.
+- Consumers routed through the resolver: `logs` (local → `docker compose logs`,
+  added missing `-p <project>` per GH #235), `status` (local → `docker compose ps`;
+  remote 404 now appends a "run `stacker target local`" hint), `agent`, `proxy`
+  (incl. `proxy detect`/`proxy add` routing), `pipe`, `deployment`. Duplicated
+  `is_remote_deployment` / `resolve_deployment_hash` copies (logs.rs, status.rs,
+  agent.rs, proxy.rs) removed. `config lock` and `agent install` lock reads now
+  use `load_active` (respect `active-target`) instead of the cloud-first `load()`.
+- `resolve_local_compose_path`: `stacker target local` + generated compose now beat
+  `stacker.yml`'s declared remote target (a local deploy doesn't rewrite stacker.yml).
+
+Verified on the posthog repro (both locks present, `stacker.yml target: server`):
+
+```
+$ stacker logs|status                     # before: hash error / API 404
+Error: ... No active target set. Use: stacker target <local|cloud|server>
+Multiple deployment locks found: server, local.
+$ stacker target local && stacker logs    # ✓ tails local docker logs
+$ stacker target local && stacker status  # ✓ docker compose ps
+```
+
+Regression tests in `deployment_context.rs` (12) and `local_compose.rs` cover the
+multi-lock ambiguity, self-heal, and compose-precedence cases.
+
+---
+
+
+## [BUG] Config bundle collects file bind-mounts but NOT directory bind-mounts
+
+**Severity:** High (remote deploys silently serve empty dirs for directory binds)
+**Date:** 2026-09-29 (supabase `./volumes/functions:/home/deno/functions:ro`)
+
+`build_config_bundle` ships file binds (`kong.yml`, `postgresql.schema.sql`,
+`volumes/db/*.sql` — all listed as `Config file: ... -> ...`) but skips directory
+binds. On the remote host Docker creates the missing source as an **empty
+directory** (the documented bind-mount failure mode), e.g. edge-runtime:
+`could not find an appropriate entrypoint` because `/home/deno/functions/main` is
+empty. Workaround: create the files on the server manually.
+
+### Fix Needed
+Collect directory bind sources recursively in `build_config_bundle` (same as files),
+or stage them during render like the local `.stacker/` gap (see the companion
+local-bind bug above).

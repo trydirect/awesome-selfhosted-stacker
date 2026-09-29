@@ -10,4 +10,15 @@ if [ ! -f "$ENV_FILE" ]; then
   cp "$EXAMPLE_FILE" "$ENV_FILE"
 fi
 
-echo "No generated secrets required for this project."
+for key in STRAVA_CLIENT_SECRET STRAVA_REFRESH_TOKEN; do
+  if ! grep -q "^${key}=." "$ENV_FILE" 2>/dev/null; then
+    val=$(openssl rand -hex 16)
+    if grep -q "^${key}=" "$ENV_FILE"; then
+      sed -i '' "s|^${key}=.*|${key}=${val}|" "$ENV_FILE"
+    else
+      echo "${key}=${val}" >> "$ENV_FILE"
+    fi
+    echo "  Generated ${key} (contract-declared)"
+  fi
+done
+echo "Secrets ready."

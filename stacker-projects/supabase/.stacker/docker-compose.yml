@@ -5,10 +5,10 @@ services:
       - "8000:8000"
       - "8443:8443"
     environment:
-      ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
-      DASHBOARD_PASSWORD: "f9beb1dd0eaac090a95588eaa149cae5"
+      ANON_KEY: ${ANON_KEY}
+      DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
       DASHBOARD_USERNAME: "supabase"
-      JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
+      JWT_SECRET: ${JWT_SECRET}
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: "/usr/local/kong/kong.yml"
       KONG_DNS_NOT_FOUND_TTL: "1"
@@ -17,10 +17,10 @@ services:
       KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: "160k"
       KONG_PLUGINS: "request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function,correlation-id"
       KONG_PROXY_ACCESS_LOG: "/dev/stdout combined"
-      SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
-      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
+      SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
-      SUPABASE_SERVICE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
     volumes:
       - "./kong.yml:/usr/local/kong/kong.yml"
     restart: unless-stopped
@@ -36,19 +36,20 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     environment:
-      AUTHENTICATOR_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
+      AUTHENTICATOR_PASSWORD: ${AUTHENTICATOR_PASSWORD}
       JWT_EXP: "3600"
-      JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
+      JWT_SECRET: ${JWT_SECRET}
       POSTGRES_DB: "postgres"
-      POSTGRES_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
-      SUPABASE_AUTH_ADMIN_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
-      SUPABASE_FUNCTIONS_ADMIN_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SUPABASE_AUTH_ADMIN_PASSWORD: ${SUPABASE_AUTH_ADMIN_PASSWORD}
+      SUPABASE_FUNCTIONS_ADMIN_PASSWORD: ${SUPABASE_FUNCTIONS_ADMIN_PASSWORD}
     volumes:
+      - "./postgresql.schema.sql:/etc/postgresql.schema.sql:ro"
       - "db_data:/var/lib/postgresql/data"
       - "./volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro"
       - "./volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:ro"
     healthcheck:
-      test: "CMD pg_isready -U postgres && psql -U postgres -c \"SELECT 1 FROM pg_roles WHERE rolname='authenticator' AND rolpassword IS NOT NULL\" | grep -q 1"
+      test: ["CMD-SHELL", "pg_isready -U postgres && psql -U postgres -c \"SELECT 1 FROM pg_roles WHERE rolname='authenticator' AND rolpassword IS NOT NULL\" | grep -q 1"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -66,17 +67,17 @@ services:
       - "127.0.0.1:3000:3000"
     environment:
       HOSTNAME: "0.0.0.0"
-      JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
+      JWT_SECRET: ${JWT_SECRET}
       PGRST_DB_SCHEMAS: "public,storage,graphql_public"
-      PG_META_CRYPTO_KEY: "2e46436bee4602457a1aaa506fae50c80742ab668e5e71465a4a15953bd2d150"
+      PG_META_CRYPTO_KEY: ${PG_META_CRYPTO_KEY}
       POSTGRES_DB: "postgres"
       POSTGRES_HOST: "db"
-      POSTGRES_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_PORT: "5432"
       STUDIO_PG_META_URL: "http://meta:8080"
-      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
-      SUPABASE_SERVICE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
       SUPABASE_URL: "http://app:8000"
     volumes:
       - "studio_snippets:/app/snippets"
@@ -103,7 +104,7 @@ services:
       GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
       GOTRUE_JWT_EXP: "3600"
       GOTRUE_JWT_ISSUER: "http://localhost:8000/auth/v1"
-      GOTRUE_JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
+      GOTRUE_JWT_SECRET: ${GOTRUE_JWT_SECRET}
       GOTRUE_MAILER_AUTOCONFIRM: "false"
       GOTRUE_SITE_URL: "http://localhost:3000"
       GOTRUE_SMTP_ADMIN_EMAIL: "admin@example.com"
@@ -124,13 +125,13 @@ services:
     image: postgrest/postgrest:v14.12
     environment:
       PGRST_APP_SETTINGS_JWT_EXP: "3600"
-      PGRST_APP_SETTINGS_JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
+      PGRST_APP_SETTINGS_JWT_SECRET: ${PGRST_APP_SETTINGS_JWT_SECRET}
       PGRST_DB_ANON_ROLE: "anon"
       PGRST_DB_EXTRA_SEARCH_PATH: "public"
       PGRST_DB_MAX_ROWS: "1000"
       PGRST_DB_SCHEMAS: "public,storage,graphql_public"
       PGRST_DB_URI: "postgres://authenticator:913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c@db:5432/postgres"
-      PGRST_JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
+      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET}
     restart: unless-stopped
     networks:
       - app-network
@@ -143,18 +144,18 @@ services:
     image: supabase/realtime:v2.102.3
     environment:
       APP_NAME: "realtime"
-      DB_ENC_KEY: "supabaserealtime"
+      DB_ENC_KEY: ${DB_ENC_KEY}
       DB_HOST: "db"
       DB_NAME: "postgres"
-      DB_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
+      DB_PASSWORD: ${DB_PASSWORD}
       DB_PORT: "5432"
       DB_USER: "supabase_admin"
       DISABLE_HEALTHCHECK_LOGGING: "true"
-      JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
-      METRICS_JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
+      JWT_SECRET: ${JWT_SECRET}
+      METRICS_JWT_SECRET: ${METRICS_JWT_SECRET}
       PORT: "4000"
       RUN_JANITOR: "true"
-      SECRET_KEY_BASE: "743a9a648b4d8d0650f182ce1a886355fca35cff2d019e7669cac25ba78e6e60"
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       SEED_SELF_HOST: "true"
     restart: unless-stopped
     networks:
@@ -167,17 +168,17 @@ services:
   storage:
     image: supabase/storage-api:v1.60.4
     environment:
-      ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
+      ANON_KEY: ${ANON_KEY}
       DATABASE_URL: "postgres://supabase_storage_admin:913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c@db:5432/postgres"
       ENABLE_IMAGE_TRANSFORMATION: "true"
       FILE_SIZE_LIMIT: "52428800"
       FILE_STORAGE_BACKEND_PATH: "/var/lib/storage"
       IMGPROXY_URL: "http://imgproxy:5001"
-      JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
-      PGRST_JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
+      JWT_SECRET: ${JWT_SECRET}
+      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET}
       POSTGREST_URL: "http://rest:3000"
       REGION: "stub"
-      SERVICE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
+      SERVICE_KEY: ${SERVICE_KEY}
       STORAGE_BACKEND: "file"
       STORAGE_PUBLIC_URL: "http://localhost:8000"
     volumes:
@@ -207,10 +208,10 @@ services:
   meta:
     image: supabase/postgres-meta:v0.96.6
     environment:
-      CRYPTO_KEY: "2e46436bee4602457a1aaa506fae50c80742ab668e5e71465a4a15953bd2d150"
+      CRYPTO_KEY: ${CRYPTO_KEY}
       PG_META_DB_HOST: "db"
       PG_META_DB_NAME: "postgres"
-      PG_META_DB_PASSWORD: "913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c"
+      PG_META_DB_PASSWORD: ${PG_META_DB_PASSWORD}
       PG_META_DB_PORT: "5432"
       PG_META_DB_USER: "postgres"
       PG_META_PORT: "8080"
@@ -225,12 +226,13 @@ services:
   functions:
     image: supabase/edge-runtime:v1.74.0
     environment:
-      JWT_SECRET: "28b35c7dd1625924794145fa6eb5d234203df2c6c4ec522bfeccac7d92b83af6"
-      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjA0MzkwODAwLCJleHAiOjE5NzAwNTQyMDB9.dpB6Gi6uF-7s17fQ-z84Dzwsrxtd9J5Fi9Eiup5W3NM"
+      JWT_SECRET: ${JWT_SECRET}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
-      SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE2MDQzOTA4MDAsImV4cCI6MTk3MDA1NDIwMH0.3g2bMmfRyu-kquVFoH2Pp-yCJdDrFhpcWnqNsrlvM7Y"
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
       SUPABASE_URL: "http://app:8000"
       VERIFY_JWT: "false"
+    command: "start --main-service /home/deno/functions/main --port 8081"
     volumes:
       - "./volumes/functions:/home/deno/functions:ro"
     restart: unless-stopped
