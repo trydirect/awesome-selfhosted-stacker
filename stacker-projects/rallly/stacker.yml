@@ -14,7 +14,8 @@ app:
     - "3000:3000"
   environment:
     DATABASE_URL: postgresql://rallly:${DB_PASSWORD}@rallly-db:5432/rallly
-    SECRET: ${SECRET}
+    SECRET_PASSWORD: ${SECRET_PASSWORD}
+    SUPPORT_EMAIL: admin@example.com
     NEXT_PUBLIC_BASE_URL: http://rallly.example.com
 
 services:
@@ -60,9 +61,11 @@ config_contract:
           display: password
         NEXT_PUBLIC_BASE_URL:
           mutability: editable
-        SECRET:
+        SECRET_PASSWORD:
           mutability: generated
           type: alphanumeric
+        SUPPORT_EMAIL:
+          mutability: editable
           length: 32
           display: password
     rallly-db:
