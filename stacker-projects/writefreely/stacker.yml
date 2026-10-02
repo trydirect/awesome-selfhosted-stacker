@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  dockerfile: Dockerfile
+  dockerfile: Dockerfile.custom
   ports:
     - "8082:8080"
   environment:

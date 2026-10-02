@@ -681,3 +681,28 @@ and `app.privileged`: compose-generator fields the parser accepts and drops.
 Implement `cap_add`/`cap_drop`/`privileged`/`platform`/`devices` etc. in the compose
 generator, and/or add `deny_unknown_fields` to `AppSource`/`ServiceDefinition` so
 unsupported keys fail loudly instead of deploying a broken stack.
+
+---
+
+
+## [BUG] Compose path normalization rewrites `app.dockerfile: Dockerfile` to a file that is never generated
+
+**Severity:** High — `stacker deploy` fails with `failed to read dockerfile: open Dockerfile: no such file or directory`... actually `open .stacker/Dockerfile: no such file or directory` at build time.
+**Date:** 2026-10-02 (writefreely)
+
+`deploy.rs` (`normalize` step, ~line 661) rewrites the `app` service's build section
+unconditionally: `context: .` → `context: ..` and `dockerfile: Dockerfile` →
+`dockerfile: .stacker/Dockerfile`. But when `app.dockerfile` is set explicitly, the
+generator deliberately does **not** create `.stacker/Dockerfile` (asserted by test
+`deploy.rs:5591` — "Custom Dockerfile should not be overwritten / .stacker/Dockerfile
+should NOT be generated"). Result: compose points at a nonexistent Dockerfile and the
+local build fails.
+
+### Workaround
+Rename the project Dockerfile (e.g. `Dockerfile.custom`) and set
+`app.dockerfile: Dockerfile.custom` — the rewrite only matches
+`None | "Dockerfile" | "./Dockerfile"`.
+
+### Fix Needed
+Skip the `dockerfile:` rewrite when `config.app.dockerfile` is set (or rewrite to the
+configured path instead of `.stacker/Dockerfile`).
