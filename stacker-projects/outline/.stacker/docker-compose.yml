@@ -11,16 +11,16 @@ services:
       NODE_ENV: "production"
       PORT: "3000"
       REDIS_URL: "redis://redis:6379"
-      SECRET_KEY: "b83a850e209eac1ae45034486e3103de72f4647e12d544f341e1bd08d8afc86b"
+      SECRET_KEY: ${SECRET_KEY}
       URL: "http://localhost:3000"
-      UTILS_SECRET: "6053f6b4d20fe37f6b5587c70e78764ff36d176400f9b52a772ef5f57fadd68e"
+      UTILS_SECRET: ${UTILS_SECRET}
     restart: unless-stopped
     networks:
       - app-network
     labels:
       my.stacker.dns: "app"
       my.stacker.scope: "project"
-      my.stacker.service: "app"
+      my.stacker.service: "outline"
 
   postgres:
     image: postgres:16
