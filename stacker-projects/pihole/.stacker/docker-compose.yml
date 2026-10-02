@@ -10,14 +10,14 @@ services:
       DNSSEC: "true"
       PIHOLE_DNS_: "1.1.1.1;1.0.0.1"
       TZ: "UTC"
-      WEBPASSWORD: "admin"
+      WEBPASSWORD: ${WEBPASSWORD}
     restart: unless-stopped
     networks:
       - app-network
     labels:
       my.stacker.dns: "app"
       my.stacker.scope: "project"
-      my.stacker.service: "app"
+      my.stacker.service: "pihole"
 
 networks:
   app-network:
