@@ -12,13 +12,15 @@ app:
     PUID: "1000"
     PGID: "1000"
     TZ: UTC
-    APP_URL: http://bookstack.example.com
+    APP_URL: http://localhost:6875
     DB_HOST: bookstack-db
     DB_USER: bookstack
     DB_PASS: ${DB_PASSWORD}
+    APP_KEY: ${APP_KEY}
     DB_DATABASE: bookstack
   volumes:
     - bookstack_data:/config
+    - "./bookstack.env:/config/www/.env:ro"
 
 services:
   - name: bookstack-db
@@ -97,6 +99,10 @@ env_file: .env
 
 deploy:
   target: cloud
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     region: fsn1
