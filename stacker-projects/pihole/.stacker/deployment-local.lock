@@ -2,10 +2,11 @@ target: local
 server_ip: 127.0.0.1
 ssh_user: null
 ssh_port: null
+ssh_key: null
 server_name: null
 deployment_id: null
 project_id: null
 cloud_id: null
 project_name: null
 stacker_email: null
-deployed_at: 2026-06-30T09:20:43.955512+00:00
+deployed_at: 2026-10-02T13:19:15.281554+00:00
