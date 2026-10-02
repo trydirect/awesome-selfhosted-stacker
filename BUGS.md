@@ -682,6 +682,23 @@ Implement `cap_add`/`cap_drop`/`privileged`/`platform`/`devices` etc. in the com
 generator, and/or add `deny_unknown_fields` to `AppSource`/`ServiceDefinition` so
 unsupported keys fail loudly instead of deploying a broken stack.
 
+### Resolution (2026-09-30, stacker source `ea01dbb6`)
+
+Full family implemented: `cap_add`, `cap_drop`, `privileged`, `platform`, `devices` —
+on both `app` and `services[]` (`config_parser.rs:235-245,313-324`, rendered in
+`generator/compose.rs:362-366,697-699`). Verified live 2026-10-02 on
+`stacker 0.3.4 (ea01dbb)`:
+
+- `stacker deploy --target local --force-rebuild` (wireguard) →
+  `docker inspect → CapAdd=["CAP_NET_ADMIN","CAP_SYS_MODULE"]` (was `[]` under the
+  test-bench build `28a86cd`, which predated the fix — our QA run hit the old binary)
+- synthetic config with `privileged: true` + `platform: linux/amd64` + `devices`
+  renders all four keys into `.stacker/docker-compose.yml`
+
+Remaining gap vs. the composite fix: unknown-field rejection (`deny_unknown_fields`)
+is still absent — future unknown app keys will still be silently dropped, just not
+this family.
+
 ---
 
 
