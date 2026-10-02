@@ -25,11 +25,21 @@ app:
     - "openarchiver_storage:/data/storage"
   environment:
     PORT_FRONTEND: "3000"
+    PORT_BACKEND: "3001"
     STORAGE_LOCAL_ROOT_PATH: "/data/storage"
+    STORAGE_TYPE: "local"
+    ENCRYPTION_KEY: "${ENCRYPTION_KEY}"
+    JWT_SECRET: "${JWT_SECRET}"
+    JWT_EXPIRES_IN: "1d"
+    MEILI_HOST: "http://meilisearch:7700"
+    STORAGE_ENCRYPTION_KEY: "${STORAGE_ENCRYPTION_KEY}"
     POSTGRES_DB: "open_archive"
     POSTGRES_USER: "admin"
     POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    DATABASE_URL: "${DATABASE_URL}"
     REDIS_PASSWORD: "${REDIS_PASSWORD}"
+    REDIS_HOST: "valkey"
+    REDIS_PORT: "6379"
     MEILI_MASTER_KEY: "${MEILI_MASTER_KEY}"
 services:
   - name: "postgres"
@@ -38,6 +48,7 @@ services:
       POSTGRES_DB: "open_archive"
       POSTGRES_USER: "admin"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    DATABASE_URL: "${DATABASE_URL}"
     volumes:
       - "openarchiver_postgres_data:/var/lib/postgresql/data"
     healthcheck:
@@ -75,6 +86,10 @@ proxy:
   auto_detect: false
 deploy:
   target: "local"
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: "hetzner"
     region: "fsn1"
