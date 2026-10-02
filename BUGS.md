@@ -662,3 +662,22 @@ Set `HOSTNAME: 0.0.0.0` (or `HOST: 0.0.0.0`) in the app environment — apps wit
 Prefer injecting `default_network` without making it the first/primary network, or
 set a deterministic `hostname:` per service whose resolution lands on the
 publishing network.
+
+---
+
+
+## [BUG] `app.cap_add` silently dropped — third instance of the unknown-field family
+
+**Severity:** High (wireguard cannot configure interfaces without NET_ADMIN/SYS_MODULE)
+**Date:** 2026-09-29 (wireguard)
+
+`cap_add: [NET_ADMIN, SYS_MODULE]` passes `stacker config validate` but renders to
+nothing: `docker inspect → CapAdd=[]`. The wireguard container starts and immediately
+reports `The wireguard module is not active` (no modprobe capability, no NET_ADMIN for
+`ip link add`) — locally AND on the Linux server. Same root family as `app.platform`
+and `app.privileged`: compose-generator fields the parser accepts and drops.
+
+### Fix Needed (composite)
+Implement `cap_add`/`cap_drop`/`privileged`/`platform`/`devices` etc. in the compose
+generator, and/or add `deny_unknown_fields` to `AppSource`/`ServiceDefinition` so
+unsupported keys fail loudly instead of deploying a broken stack.
