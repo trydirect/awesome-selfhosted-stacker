@@ -2,21 +2,22 @@ name: woodpecker-ci
 
 app:
   type: custom
-  image: woodpeckerci/woodpecker-server:latest
+  image: woodpeckerci/woodpecker-server:v3
   ports:
     - "8000:8000"
   environment:
     WOODPECKER_OPEN: "true"
     WOODPECKER_HOST: http://localhost:8000
     WOODPECKER_AGENT_SECRET: ${AGENT_SECRET}
-    WOODPECKER_GITEA: "false"
+    WOODPECKER_GITEA: "true"
+    WOODPECKER_GITEA_SERVER: https://gitea.example.com
     WOODPECKER_GITHUB: "false"
   volumes:
     - woodpecker_data:/var/lib/woodpecker
 
 services:
   - name: woodpecker-agent
-    image: woodpeckerci/woodpecker-agent:latest
+    image: woodpeckerci/woodpecker-agent:v3
     environment:
       WOODPECKER_SERVER: app:9000
       WOODPECKER_AGENT_SECRET: ${AGENT_SECRET}
@@ -31,6 +32,13 @@ volumes:
 proxy:
   type: none
   auto_detect: false
+
+deploy:
+  target: server
+  server:
+    host: ${EXISTING_SERVER_HOST}
+    user: ${EXISTING_SERVER_USER}
+    ssh_key: ${BASE_PATH}/stacker-project-test
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
