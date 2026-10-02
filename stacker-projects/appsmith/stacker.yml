@@ -12,8 +12,8 @@ app:
   type: custom
   image: appsmith/appsmith-ce:latest
   ports:
-    - "80:80"
-    - "443:443"
+    - "8080:80"
+    - "8443:443"
   volumes:
     - appsmith_data:/appsmith-stacks
 
@@ -23,6 +23,10 @@ proxy:
 
 deploy:
   target: local
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
   cloud:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test
