@@ -474,21 +474,53 @@ and the lock a cache only.
 **Severity:** High (silent directory-creation failure; affects every template with file binds)
 **Date:** 2026-09-28
 **Seen in:** hanko (`./config.yaml`), homer (`./config.yml`)
+**Status:** ✅ FIXED — stacker `809ea905` (dev), e2e verified 2026-10-03
 
 The generated compose lives in `.stacker/`, and Docker resolves relative bind sources
 against the compose file's directory. `./config.yml` therefore looks for
 `.stacker/config.yml`, doesn't find it, and silently creates a **directory** at the
 target (`read …: is a directory` app failures). The config-bundle pipeline handles
-remote deploys fine (`Config file: config.yml -> config.yml`), but nothing stages the
-file for local runs.
+remote deploys fine (`Config file: config.yml -> config.yml`, and the remote compose
+runs from `/home/trydirect/<code>/`, i.e. its project root), but nothing resolved the
+paths for local runs, where compose is executed straight from `.stacker/`.
 
 ### Workaround
 `cp <file> .stacker/` before `stacker deploy --target local`.
 
-### Fix Needed
-Resolve bind sources against the project root (or run compose with
-`--project-directory <project root>`), or stage bind files into `.stacker/` during
-render — one behavior for both local and remote.
+### Fix (stacker `809ea905`, `src/console/commands/cli/deploy.rs`)
+`normalize_generated_compose_paths()` (previously only `version:` removal and
+`build.context`/`dockerfile` rewrites) now also takes the deploy target and
+normalizes relative bind-mount sources and `env_file` entries
+(`normalize_service_bind_sources()` / `restage_relative_path()`):
+
+* **local** — project-authored `./path` becomes `../path`, the same `..`
+  convention the function already used for `build.context`, so Docker resolves it
+  from `.stacker/` back to the project root;
+* **cloud/server** — a `../path` left behind by an earlier local deploy is reverted
+  to `./path`, because the config bundle resolves generated-compose references
+  against the project root (`build_config_bundle(reference_base = project_dir)`)
+  and the remote compose lives at the project root: one effective behavior for both
+  targets;
+* **exemptions** — services labelled `my.stacker.scope: platform` (the synthesized
+  proxy) and references that exist under `.stacker/` but not at the project root
+  stay `./`-relative: `./nginx/conf.d` and `./Caddyfile` are rendered *into*
+  `.stacker/` and must remain compose-directory-relative;
+* named volumes, absolute paths and `..`-escaping paths are untouched.
+
+### Verified (2026-10-03, local e2e, throwaway projects t6/t7)
+* `stacker deploy --target local` with `./config.yml:/etc/nginx/conf.d/conf.yml:ro`
+  → generated compose has `../config.yml:…`; `docker inspect t6-app-1` mount source
+  = `<project>/config.yml` (**not** `<project>/.stacker/config.yml`);
+  `docker exec … cat` returns the real file content; HTTP 200 on `:8896`; no
+  directory created under `.stacker/`.
+* proxy variant (`proxy.domains`, host 80): app mounts rewritten to `../config.yml`
+  and `../data` (docker created `<project>/data`), while the synthesized nginx
+  service kept `./nginx/conf.d` → mount source `<project>/.stacker/nginx/conf.d`.
+* 6 new unit tests in `deploy.rs` (local rewrite, platform-scope exemption, long
+  syntax, `env_file`, cloud/server revert, idempotence) + 2 updated;
+  `cargo test --lib` gate **2180 passed / 0 failed / 6 ignored**; `rustfmt` clean;
+  clippy: no warnings in `deploy.rs`.
+* both stacks destroyed with `destroy --confirm --volumes`, no containers left.
 
 ---
 
@@ -750,3 +782,143 @@ Rename the project Dockerfile (e.g. `Dockerfile.custom`) and set
 ### Fix Needed
 Skip the `dockerfile:` rewrite when `config.app.dockerfile` is set (or rewrite to the
 configured path instead of `.stacker/Dockerfile`).
+
+---
+
+
+## [BUG] Local deploy always ends with "Timeout waiting for containers" even when every container is healthy
+
+**Severity:** Medium (misleading ✗ on a successful deploy; hides real failures)
+**Date:** 2026-10-03
+**Affected:** stacker 0.3.4 (`94d42cd`), `src/console/commands/cli/deploy.rs:5058`
+
+### Symptom
+```
+✓ Local deployment started successfully
+✗ Timeout waiting for containers — check `stacker status
+```
+...while `docker ps` shows the stack Up and the app answering HTTP 200. Exit code
+stays `0`, so the deploy "succeeds" with a red ✗.
+
+### Root Cause
+The post-deploy health wait polls
+
+```rust
+let args = vec!["compose", "-f", &compose_str, "ps", "--format", "json"];
+```
+
+with **no `-p <project>`**, so Compose infers the project name from the compose
+file's directory (`.stacker` → project `stacker`). The containers were created
+with `-p <name>` (`local_compose_project_name(config)` in the `up` path), so
+`ps` returns zero containers, `total > 0` never holds, the spinner spins for the
+full 120 s and reports a timeout. `print_container_summary` (line 5123) repeats
+the same mistake.
+
+### Expected
+`All N/N containers running` (or an accurate error when they are not).
+
+### Actual
+Every local deploy of a generated compose burns 120 s and prints ✗ Timeout.
+
+### Fix Needed
+Pass `-p <same project name as `up`>` (or `--project-directory <project root>`)
+to the `ps`/summary invocations — same project identity as the `up` path.
+
+### Note
+This also masks the proxy crash below: the crash-looping nginx is reported only
+as a generic timeout.
+
+---
+
+
+## [BUG] Local nginx proxy with `ssl: auto` crash-loops — renders letsencrypt paths nothing provisions
+
+**Severity:** Medium (proxy dead on local deploys; app itself is fine)
+**Date:** 2026-10-03
+**Affected:** stacker 0.3.4 (`94d42cd`), `src/cli/proxy_manager.rs:309-316`
+
+### Symptom
+`proxy.type: nginx` + `ssl: auto` on `stacker deploy --target local`:
+
+```
+nginx: [emerg] cannot load certificate "/etc/letsencrypt/live/app.example.com/fullchain.pem":
+BIO_new_file() failed ... No such file or directory
+```
+`t7-nginx-1` restart-loops, ports 80/443 never answer; the app container is Up.
+
+### Root Cause
+`generate_nginx_server_block()` emits `ssl_certificate
+/etc/letsencrypt/live/<domain>/…` for `SslMode::Auto`. On cloud/server the tfa
+proxy role runs certbot and lays those files down; locally `write_local_proxy_config`
+only renders the server block into `.stacker/nginx/conf.d/` and nothing ever
+obtains the certificates, so nginx exits at startup.
+
+### Expected
+Local deploys render HTTP-only (or self-signed) proxy config for `ssl: auto`,
+unless certificates already exist at that path.
+
+### Actual
+Silent crash loop; combined with the health-wait bug above, the deploy report
+says only "Timeout waiting for containers".
+
+### Fix Needed
+In `write_local_proxy_config`, downgrade `SslMode::Auto` → HTTP-only (or
+generate a self-signed cert) when `deploy.target: local`, or mount an existing
+cert directory if the user provides one.
+
+---
+
+
+## [BUG] Private-IP server deploys rsync the whole project tree — `.stacker/deploy/` (bundle with `.env`) and local state land on the host
+
+**Severity:** High (plaintext secrets duplication + local-only state shipped to the server)
+**Date:** 2026-10-03
+**Affected:** stacker 0.3.4 (`809ea905`), `src/cli/install_runner.rs:2439` (`deploy_to_intranet_server`)
+
+### Summary
+`.stacker/` is a **locally generated** output dir (`deploy.rs:38`) and should not
+appear on the remote host. Cloud and public-IP server deploys already satisfy that
+(compose/env/bind files travel inline in the deploy form; the live box
+`46.224.127.228` has **no** `.stacker/`, no `deployment-*.lock`, no `active-target`,
+no `config-bundle*` anywhere under `/home/` or `/root/` — `find` returned empty, and
+`/home/trydirect/project/docker-compose.yml` is the bundle-rewritten compose).
+
+The exception is the **private-IP server path**: `deploy_to_intranet_server` ships
+the entire project tree as a build context, and its exclude list has no `.stacker`
+rules:
+
+```
+rsync -az --progress --exclude=.git --exclude=target --exclude=node_modules \
+      <project_dir>/ <user>@<host>:/home/<user>/stacker/<project>/
+```
+(`install_runner.rs:2584-2588`; tar fallback `:2625-2627` mirrors the same three
+excludes), followed by
+`cd <dir> && docker compose -f .stacker/docker-compose.yml up -d --build`
+(`:2697-2707`).
+
+### What leaks
+* `.stacker/deploy/<env>/config-bundle.tar.zst` — the bundle archive, whose contents
+  include the collected `.env` (`config_bundle.rs:128-134`, archive mode `0644`) → a
+  second plaintext copy of the secrets outside `/home/trydirect/<code>/.env`.
+* `.stacker/deploy/<env>/config-bundle.manifest.json`, `docker-compose.remote.yml`.
+* `deployment-*.lock`, `active-target`, `active-env` — local CLI state whose
+  precedence (flag → `active-target` → locks → `stacker.yml`,
+  `deployment_context.rs:8-12`) is exactly the "stale lock silently redirects the
+  deploy" failure documented above.
+
+### Note — cannot be excluded wholesale
+`.stacker/docker-compose.yml` and `.stacker/Dockerfile` are **required** on that
+path (the remote command runs `-f .stacker/docker-compose.yml` and builds from
+`dockerfile: .stacker/Dockerfile`), so a blanket `--exclude=.stacker` breaks
+private-server deploys. No remote component reads anything else under `.stacker/`
+(`rg '\.stacker' install/ tfa/ status/` → zero path references, only
+`my.stacker.*` **labels**).
+
+### Fix Needed
+In `deploy_to_intranet_server`, add to both the rsync and tar exclude lists:
+`.stacker/deploy`, `.stacker/deployment*.lock`, `.stacker/active-target`,
+`.stacker/active-env`, `.stacker/scenarios`, `.stacker/pipe-scan-cache`
+(tar patterns must be `./`-anchored or use `--no-anchored`, otherwise they
+silently no-op), keeping only the generated compose + Dockerfile.
+Longer term: mirror the API path (inline `config_files` + image, no on-host build)
+so the project tree never needs to be rsynced at all.
