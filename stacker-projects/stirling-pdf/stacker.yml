@@ -33,7 +33,3 @@ deploy:
     public_ports:
       - "8080"
 
-config_contract:
-  services:
-    app:
-      fields: {}

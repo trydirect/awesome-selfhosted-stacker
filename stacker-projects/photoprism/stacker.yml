@@ -7,6 +7,8 @@ project:
 install:
   inputs:
     commonDomain: photoprism.try.direct
+    domain: photoprism.try.direct
+    photoprism-admin-password: ""
 
 app:
   type: custom
@@ -31,17 +33,6 @@ app:
     - "photoprism-storage:/photoprism/storage"
     - "photoprism-originals:/photoprism/originals"
     - "photoprism-import:/photoprism/import"
-
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: photoprism.try.direct
-      description: "Domain name for the application"
-    - name: photoprism-admin-password
-      type: secret
-      default: ""
-      description: "PhotoPrism admin password"
 
 proxy:
   type: caddy

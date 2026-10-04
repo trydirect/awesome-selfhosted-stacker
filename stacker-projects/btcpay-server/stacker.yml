@@ -31,17 +31,11 @@ services:
     volumes:
       - "btcpay-postgres:/var/lib/postgresql/data"
 
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: btc.try.direct
-      description: "Domain name for the application"
-    - name: btcpay-database-password
-      type: secret
-      default: ""
-      description: "PostgreSQL password for BTCPay Server"
 
+install:
+  inputs:
+    domain: btc.try.direct
+    btcpay-database-password: ""
 deploy:
   target: server
   server:

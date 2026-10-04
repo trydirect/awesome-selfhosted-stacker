@@ -56,17 +56,9 @@ services:
     ports:
       - "1080:1080"
 
-config_contract:
+
+install:
   inputs:
-    - name: domain
-      type: string
-      default: projects.try.direct
-      description: "Domain name for the application"
-    - name: openproject-secret-key-base
-      type: secret
-      default: ""
-      description: "Rails secret key base"
-    - name: openproject-database-password
-      type: secret
-      default: ""
-      description: "PostgreSQL password for OpenProject"
+    domain: projects.try.direct
+    openproject-secret-key-base: ""
+    openproject-database-password: ""

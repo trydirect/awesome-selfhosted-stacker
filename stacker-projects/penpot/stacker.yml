@@ -7,6 +7,8 @@ project:
 install:
   inputs:
     commonDomain: penpot.example.com
+    domain: penpot.try.direct
+    penpot-database-password: ""
 
 app:
   type: custom
@@ -69,17 +71,6 @@ services:
     image: sj26/mailcatcher:latest
     ports:
       - "1080:1080"
-
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: penpot.try.direct
-      description: "Domain name for the application"
-    - name: penpot-database-password
-      type: secret
-      default: ""
-      description: "PostgreSQL password for Penpot"
 
 proxy:
   type: caddy

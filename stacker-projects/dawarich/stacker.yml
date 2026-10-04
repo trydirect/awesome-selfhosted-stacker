@@ -7,6 +7,10 @@ project:
 install:
   inputs:
     commonDomain: locations.example.com
+    domain: locations.try.direct
+    dawarich-database-password: ""
+    dawarich-secret-key-base: ""
+    dawarich-encryption-key: ""
 
 app:
   type: custom
@@ -67,25 +71,6 @@ services:
     image: redis:7-alpine
     volumes:
       - "dawarich-redis:/data"
-
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: locations.try.direct
-      description: "Domain name for the application"
-    - name: dawarich-database-password
-      type: secret
-      default: ""
-      description: "PostgreSQL password for Dawarich"
-    - name: dawarich-secret-key-base
-      type: secret
-      default: ""
-      description: "Rails secret key base"
-    - name: dawarich-encryption-key
-      type: secret
-      default: ""
-      description: "Dawarich encryption key"
 
 proxy:
   type: caddy

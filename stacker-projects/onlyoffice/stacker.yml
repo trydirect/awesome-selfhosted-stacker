@@ -18,13 +18,8 @@ app:
     - "onlyoffice-data:/var/www/onlyoffice/Data"
     - "onlyoffice-logs:/var/log/onlyoffice"
 
-config_contract:
+
+install:
   inputs:
-    - name: domain
-      type: string
-      default: docs.try.direct
-      description: "Domain name for the application"
-    - name: onlyoffice-jwt-secret
-      type: secret
-      default: ""
-      description: "OnlyOffice JWT secret"
+    domain: docs.try.direct
+    onlyoffice-jwt-secret: ""
