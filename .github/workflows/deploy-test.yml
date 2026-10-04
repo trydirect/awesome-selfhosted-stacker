@@ -43,7 +43,9 @@ jobs:
 
       - name: Dry run
         working-directory: stacker-projects/${{ inputs.project }}
-        run: stacker deploy --dry-run
+        # Generation-path check only: a server/cloud dry-run requires
+        # `stacker login` and CI has no credentials (see ci.yml).
+        run: stacker deploy --dry-run --target local
 
       - name: Deploy locally
         if: inputs.target == 'local'
