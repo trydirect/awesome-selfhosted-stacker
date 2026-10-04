@@ -15,17 +15,11 @@ app:
   volumes:
     - "searxng-data:/etc/searxng"
 
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: search.try.direct
-      description: "Domain name for the application"
-    - name: searxng-secret
-      type: secret
-      default: ""
-      description: "SearXNG secret key"
 
+install:
+  inputs:
+    domain: search.try.direct
+    searxng-secret: ""
 proxy:
   type: none
   auto_detect: false

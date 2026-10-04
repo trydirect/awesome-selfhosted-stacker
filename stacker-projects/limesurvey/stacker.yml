@@ -7,6 +7,9 @@ project:
 install:
   inputs:
     commonDomain: surveys.example.com
+    domain: surveys.try.direct
+    limesurvey-database-password: ""
+    limesurvey-admin-password: ""
 
 app:
   type: custom
@@ -36,21 +39,6 @@ services:
       MYSQL_ROOT_PASSWORD: ${LIMESURVEY_DATABASE_PASSWORD}
     volumes:
       - "limesurvey-mysql:/var/lib/mysql"
-
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: surveys.try.direct
-      description: "Domain name for the application"
-    - name: limesurvey-database-password
-      type: secret
-      default: ""
-      description: "MariaDB password for LimeSurvey"
-    - name: limesurvey-admin-password
-      type: secret
-      default: ""
-      description: "LimeSurvey admin password"
 
 proxy:
   type: caddy

@@ -7,6 +7,9 @@ project:
 install:
   inputs:
     commonDomain: passwords.example.com
+    domain: passwords.try.direct
+    passbolt-database-password: ""
+    passbolt-gpg-key-fingerprint: ""
 
 app:
   type: custom
@@ -46,21 +49,6 @@ services:
     image: sj26/mailcatcher:latest
     ports:
       - "1080:1080"
-
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: passwords.try.direct
-      description: "Domain name for the application"
-    - name: passbolt-database-password
-      type: secret
-      default: ""
-      description: "MariaDB password for Passbolt"
-    - name: passbolt-gpg-key-fingerprint
-      type: secret
-      default: ""
-      description: "GPG key fingerprint"
 
 proxy:
   type: caddy

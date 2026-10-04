@@ -5,10 +5,6 @@ project:
 install:
   inputs:
     commonDomain: "archivesspace.example.com"
-config_contract:
-  services:
-    app:
-      fields: {}
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:

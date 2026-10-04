@@ -7,6 +7,11 @@ project:
 install:
   inputs:
     commonDomain: librechat.example.com
+    domain: librechat.try.direct
+    creds-key: ""
+    creds-iv: ""
+    jwt-secret: ""
+    jwt-refresh-secret: ""
 
 app:
   type: custom
@@ -32,29 +37,6 @@ services:
     image: mongo:7
     volumes:
       - "librechat-mongo:/data/db"
-
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: librechat.try.direct
-      description: "Domain name for the application"
-    - name: creds-key
-      type: secret
-      default: ""
-      description: "Credentials encryption key"
-    - name: creds-iv
-      type: secret
-      default: ""
-      description: "Credentials initialization vector"
-    - name: jwt-secret
-      type: secret
-      default: ""
-      description: "JWT secret"
-    - name: jwt-refresh-secret
-      type: secret
-      default: ""
-      description: "JWT refresh secret"
 
 proxy:
   type: caddy

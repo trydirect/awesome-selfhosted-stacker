@@ -15,12 +15,10 @@ app:
   - cryptpad-customize:/cryptpad/customize
   - cryptpad-sessions:/cryptpad/sessions
 env_file: .env
-config_contract:
+install:
   inputs:
-  - name: domain
-    type: string
-    default: cryptpad.try.direct
-    description: Domain name for the application
+    domain: cryptpad.try.direct
+
 deploy:
   target: server
   server:

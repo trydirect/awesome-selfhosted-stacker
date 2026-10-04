@@ -15,20 +15,12 @@ app:
   volumes:
   - code-server-config:/config
 env_file: .env
-config_contract:
+install:
   inputs:
-  - name: domain
-    type: string
-    default: code.try.direct
-    description: Domain name for the application
-  - name: code-server-password
-    type: secret
-    default: ''
-    description: code-server password
-  - name: code-server-sudo-password
-    type: secret
-    default: ''
-    description: code-server sudo password
+    domain: code.try.direct
+    code-server-password: ""
+    code-server-sudo-password: ""
+
 deploy:
   target: server
   server:

@@ -5,10 +5,6 @@ project:
 install:
   inputs:
     commonDomain: "socio.localtest.me"
-config_contract:
-  services:
-    app:
-      fields: {}
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:

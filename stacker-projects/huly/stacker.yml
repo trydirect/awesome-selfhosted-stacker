@@ -7,6 +7,10 @@ project:
 install:
   inputs:
     commonDomain: huly.example.com
+    domain: huly.try.direct
+    huly-database-password: ""
+    huly-auth-secret: ""
+    huly-server-secret: ""
 
 app:
   type: custom
@@ -73,25 +77,6 @@ services:
     image: redis:7-alpine
     volumes:
       - "huly-redis:/data"
-
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: huly.try.direct
-      description: "Domain name for the application"
-    - name: huly-database-password
-      type: secret
-      default: ""
-      description: "PostgreSQL password for Huly"
-    - name: huly-auth-secret
-      type: secret
-      default: ""
-      description: "Huly auth secret"
-    - name: huly-server-secret
-      type: secret
-      default: ""
-      description: "Huly server secret"
 
 proxy:
   type: caddy

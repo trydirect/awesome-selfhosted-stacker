@@ -19,7 +19,8 @@ new build with minimal repros (statuses refreshed 2026-10-03 against `dev`
 | `logs`/`status` blind to local deploys | **FIXED** (`97008a55`) | `stacker logs`/`status` work after `stacker target local`; stale active-target now errors with actionable hint |
 | `stacker destroy` cannot tear down local | **FIXED** | `stacker destroy -y` → "✓ Stack destroyed successfully", containers gone |
 | Stale `deployment-server.lock` silently redirects server deploys | **FIXED** | lock with `62.238.110.174` + config `deploy.server.host=46.224.127.228` → SSH check goes to **config** host; missing `deploy.server` + stale lock → E002 instead of silent redirect |
-| Empty `config_contract` `fields: {}` breaks parsing | **INTENTIONAL NOW** | parser refuses with explicit "declares neither fields: nor volumes:" message (post `9ab4f41d`); template-side fix = remove the block (applied to fixtures) |
+| Empty `config_contract` `fields: {}` breaks parsing | **FIXED** (template-side 2026-10-04) | parser refusal kept as-is (`9ab4f41d`); the remaining 23 templates had the empty block removed in the CI-repair batch — validate 246/246 clean on the dev build **and** on v0.3.4 `28a86cd` under exact CI conditions |
+| `config_contract.inputs:` rejected — 20 templates, CI validate red | **FIXED** (template-side 2026-10-04) | inputs migrated to top-level `install.inputs` (the channel `stacker install` actually reads: `marketplace.rs:336` → `resolve_install_inputs` maps `domain`→`commonDomain`), contract block removed; 246/246 on both parsers |
 | Preflight false-positive on range mappings (`8100-8105:...`) | **FIXED** (`0083b56e`) | repro `ports: ["8100-8105:8100-8105"]` now expands the range and probes the endpoint ports only; e2e project t2 deployed with range `8100-8105`, exit 0, `t2-app-1` Up |
 | Preflight cannot parse `${VAR:-default}` ports | **FIXED** (`0083b56e`) | `"${APP_PORT:-7130}:7130"` expands before probing; e2e project t5 bound `0.0.0.0:7130->7130/tcp`, exit 0 |
 | `--target server` false success (remote container `Created`) | **FIXED** (`23735658`, `8c22daf6`) | watch verdict is no longer discarded: failed deploy → exit 1, one `✗ Deployment #N ended as 'paused' [port_conflict]` + remediation; e2e deployments 415/416 on dev.try.direct with container evidence `Bind for 0.0.0.0:8082 failed` |
@@ -267,6 +268,9 @@ All stacker commands that load the config fail at parse time — deploy, validat
 ### Fix Needed
 Remove the empty `config_contract` block (or declare the real fields) in the template. Fixture not modified — awaiting confirmation per repo rules.
 
+**Resolved 2026-10-04:** confirmation given; part of the catalog-wide cleanup (see below) —
+`stacker config validate` passes on both the dev build and v0.3.4.
+
 ---
 
 
@@ -296,6 +300,57 @@ changedetection, insforge, headscale, adguard-home, it-tools, gotify, dashy
 Remove the empty block (stateless services) or declare real `fields:`/`volumes:`
 policy. Note some of these templates have older success files — they were tested
 before the parser rule landed and would now fail validation.
+
+### Resolution (2026-10-04)
+The remaining 23 offenders (activepieces, adguard-home, aptabase, archivesspace,
+baikal, caddy, changedetection, element, filestash, goaccess, goatcounter,
+headscale, hitkeep, hugo, mailu, manticore, memos, middleware, moodist, olivetin,
+restic-rest-server, socioboard, stirling-pdf) had the whole `config_contract:`
+block removed in the CI-repair batch. The rest of the list above was already
+clean. Verified: `stacker config validate` over all 246 templates → **0 failures**
+on the dev build **and** on a local build of tag v0.3.4 (`28a86cd`, the exact
+`STACKER_VERSION` CI installs), with CI's `.env` + `${VAR}` placeholder
+conditions replicated.
+
+---
+
+## [BUG] Catalog-wide: `config_contract.inputs:` is not part of the schema — 20 templates fail CI `config validate`
+
+**Severity:** High (43-template class; CI `validate-stackers` job red in every run of the last 200)
+**Date:** 2026-10-04
+**Affected (20):** btcpay-server, code-server, cryptpad, dawarich, etherpad,
+firefly-iii, huly, librechat, limesurvey, ollama-local, onlyoffice, openproject,
+passbolt, peertube, penpot, photoprism, roundcube, searxng, wikijs, zammad
+
+### Symptom
+```
+Error: Failed to parse stacker.yml: unknown field `inputs`, expected `services`
+```
+
+### Root Cause
+`ConfigContract` (`config_parser.rs:938`) is `{ services }` only, with
+`deny_unknown_fields`. The templates (bulk-added in `f41494d`, 2026-08-09) put
+marketplace install inputs under `config_contract.inputs:` — a container nothing
+reads. The real install-inputs channel is top-level `install.inputs`, consumed by
+`stacker install` (`marketplace.rs:336` → `resolve_install_inputs`, which maps
+`domain`/`base_domain` → `commonDomain` via `or_insert`, so an existing
+`commonDomain` always wins). Two misleading comments (`config_parser.rs:1627`,
+`routes/oneclick_deploy/mod.rs:132` say "config_contract install inputs") and
+`submit.rs:130` serializing the contract through the strict struct contributed to
+the confusion.
+
+### Fix (template-side)
+Every contract input entry migrated verbatim into `install.inputs`
+(name → `default`, secrets with empty defaults included, existing keys such as
+`commonDomain` never overwritten), then the whole `config_contract:` block
+removed (all 20 are inputs-only). 43 files changed total (20 inputs + 23 empty
+blocks), +76 / −348 lines.
+
+### Verification
+- dev build (`cfa9d69f` + working tree): 246/246 pass
+- tag `v0.3.4` (`28a86cd`), the binary CI downloads: 246/246 pass
+- both runs replicate CI exactly: `.env.example` → `.env`, `generate-secrets.sh`,
+  `ci-placeholder` exported for every unset `${VAR}` referenced in `stacker.yml`
 
 ---
 

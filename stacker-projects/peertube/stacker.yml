@@ -48,17 +48,9 @@ services:
     ports:
       - "1080:1080"
 
-config_contract:
+
+install:
   inputs:
-    - name: domain
-      type: string
-      default: peertube.try.direct
-      description: "Domain name for the application"
-    - name: peertube-database-password
-      type: secret
-      default: ""
-      description: "PostgreSQL password for PeerTube"
-    - name: peertube-redis-password
-      type: secret
-      default: ""
-      description: "Redis password for PeerTube"
+    domain: peertube.try.direct
+    peertube-database-password: ""
+    peertube-redis-password: ""

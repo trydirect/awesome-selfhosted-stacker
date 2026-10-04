@@ -25,13 +25,8 @@ services:
     volumes:
       - "wikijs-postgres:/var/lib/postgresql/data"
 
-config_contract:
+
+install:
   inputs:
-    - name: domain
-      type: string
-      default: wiki.try.direct
-      description: "Domain name for the application"
-    - name: wikijs-database-password
-      type: secret
-      default: ""
-      description: "PostgreSQL password for Wiki.js"
+    domain: wiki.try.direct
+    wikijs-database-password: ""

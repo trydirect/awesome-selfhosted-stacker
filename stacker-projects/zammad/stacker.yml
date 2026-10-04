@@ -7,6 +7,8 @@ project:
 install:
   inputs:
     commonDomain: support.example.com
+    domain: support.try.direct
+    zammad-database-password: ""
 
 app:
   type: custom
@@ -84,17 +86,6 @@ services:
   - name: memcached
     image: memcached:1.6-alpine
     command: memcached -m 256M
-
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: support.try.direct
-      description: "Domain name for the application"
-    - name: zammad-database-password
-      type: secret
-      default: ""
-      description: "PostgreSQL password for Zammad"
 
 proxy:
   type: caddy

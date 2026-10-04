@@ -7,6 +7,7 @@ project:
 install:
   inputs:
     commonDomain: ollama.try.direct
+    domain: ollama.try.direct
 
 app:
   type: custom
@@ -21,13 +22,6 @@ app:
     OLLAMA_KEEP_ALIVE: "5m"
   volumes:
     - "ollama-data:/root/.ollama"
-
-config_contract:
-  inputs:
-    - name: domain
-      type: string
-      default: ollama.try.direct
-      description: "Domain name for the application"
 
 proxy:
   type: caddy
