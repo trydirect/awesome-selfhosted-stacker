@@ -28,16 +28,19 @@ new build with minimal repros (statuses refreshed 2026-10-03 against `dev`
 | `app.dockerfile: Dockerfile` rewritten to non-generated `.stacker/Dockerfile` | **FIXED** (`cfa9d69f`) | explicit `app.dockerfile` now survives normalization (and stale `.stacker/Dockerfile` values are repaired); e2e t8: build succeeds, `curl /df.txt` → `from-custom-dockerfile` |
 | `deny_unknown_fields` on `AppSource` | **FIXED** (stacker `8eb30142`) | `app:` now rejects unknown keys with the expected-field list (e2e: `priveleged` → error exit 1); also wired the previously accepted-but-ignored `depends_on`/`shm_size`/`user` into compose generation; 247-sweep: 0 unknown-`app:` failures |
 | CI `deploy --dry-run` fails for server/cloud targets (`Login required`) | **WORKAROUNDED** (ci.yml + deploy-test.yml, 2026-10-04) | remote-target dry-run demands `stacker login`, CI has no credentials — audit confirmed no secret exists and env-var auth is impossible (step was previously masked by the validate failure); all dry-run steps in both workflows pinned `--target local` — 10/10 samples OK on the exact v0.3.4 binary; optional stacker-side fix: let `--dry-run` skip auth |
-| `config validate` exits 0 despite printing error-severity issues | **STILL OPEN** (audit-confirmed genuine 2026-10-04) | `ConfigValidateCommand::call` (`config.rs:1184`) returns `Ok(())` unconditionally — CI/exit-code checks only catch parse failures; audit ruled out misconfiguration (no strict command exists: `ci validate` = pipeline sync, `--strict` only on dead `config-inventory` branch; docs/deploy imply opposite); catalog now prints 0 error-severity issues (mailu fixed) but the exit-code gap remains |
+| `config validate` exits 0 despite printing error-severity issues | **FIXED** (stacker `02d01098`, 2026-10-04) | `run_validate` now returns `ValidateReport { messages, error_count }`; `call()` prints issues then errors when `error_count > 0` — e2e: E001 config → exit 1 + printed issues; warning-only (W001) и raw-path advisory остаются exit 0; mailu `✓ valid` exit 0, nextcloud advisory exit 0; lib 2194/0, `cli_config` 9/9 |
 | mailu dry-run blocked by E001 (`deploy.target: cloud`, no `deploy.cloud`) | **FIXED** (template-side 2026-10-04) | audit confirmed template bug (only 1 of 24 cloud templates without a `deploy.cloud` block; `deployment_hash` = platform linkage, not cloud config); added `cloud:` block mirroring the platform stub in `mailu/another_mailu_test/stacker.yml` — validate prints `✓ Configuration is valid`, dry-run exit 0; related stacker ordering bug logged separately |
+| E001/E002 gate before hydration (`--key`/prompt/`--server-*` unreachable) | **FIXED** (stacker `1c379be3`, 2026-10-04) | E001/E002 filtered out of the early blocking gate; E002 checked right after `--server-*`+lockfile hydration (before SSH/login), E001 after `--key`/credential-prompt (before provisioning) — same message as `config validate`; tests: cloud-no-cloud dry-run → `Login required` (deferral proven), `--target local` → E001 verdict preserved, server-no-server → E002; other error-severity codes still fail at the original early gate |
+| `stacker ci export`'s `STACKER_TOKEN` never read for auth | **FIXED** (stacker `5751f37d`, 2026-10-04) | `credentials_from_env()` fallback in `require_valid_token_with_oauth`: consulted only when the credential file is missing or expired-and-unrefreshable (valid file token always wins, empty env ignored); covers every `CliRuntime` command via the single choke point; 4 new tests, existing login-required tests hardened against the ambient variable |
 
-**Remaining open (as of 2026-10-04):** `config validate` exit-0-on-error
-(High, audit-confirmed), the E001-gate-before-cloud-hydration ordering bug
-(High), `stacker ci export`'s dead `STACKER_TOKEN` (Low) — plus the three
-non-critical findings from 2026-10-03: local health-wait always times out
+**Remaining open (as of 2026-10-04):** the three non-critical findings
+from 2026-10-03: local health-wait always times out
 (`docker compose ps` without `-p`), local nginx proxy `ssl: auto` crash-loops
 without certs, and the private-IP rsync path shipping `.stacker/deploy/` (bundle
-with `.env`) to the host.
+with `.env`) to the host — plus row 30's optional stacker-side fix (let
+`--dry-run` skip auth). The three 2026-10-04 stacker bugs (validate exit-code,
+E001/E002 gate ordering, dead `STACKER_TOKEN`) are fixed on `dev` and take
+effect only after a release newer than the CI-pinned `STACKER_VERSION: v0.3.4`.
 
 ---
 
@@ -1107,6 +1110,31 @@ Have `run_validate` return the issues with severity intact (or a
 (`grep -E '\] error( | \()'`) or dry-run every project instead of a sample.
 Related same-pattern: `config fix` also exits 0 with issues remaining.
 
+### Resolution (2026-10-04, stacker `02d01098`, pushed to `dev`)
+`run_validate` now returns `ValidateReport { messages, error_count }`
+(error_count = `Severity::Error` count from `validate_semantics()`;
+raw-path advisory notes never count). `ConfigValidateCommand::call`
+prints every message as before, then returns
+`Err(ConfigValidation("N error-severity issue(s) found (listed above)"))`
+when `error_count > 0`.
+
+Verified:
+- e2e (dev binary): E001 config → `rc=1` with issues printed; W001-only
+  (two services on host port 8080) → `rc=0` with the warning printed;
+  mailu → `✓ Configuration is valid`, `rc=0`; nextcloud (raw-path
+  advisories only) → printed, `rc=0`.
+- Tests: new unit pair (`test_validate_command_fails_on_error_severity_issue`,
+  `test_validate_command_succeeds_with_warning_only_issues`) + new
+  integration pair (`test_config_validate_error_severity_fails`,
+  `test_config_validate_warning_only_stays_success`); all existing
+  `run_validate` callers updated for the struct return.
+- Gates: lib 2194 passed / 0 failed / 6 ignored; `cli_config` 9/9;
+  rustfmt clean; clippy 0 new warnings.
+
+Not fixed (same-pattern, out of scope): `config fix` still exits 0 with
+issues remaining. CI's `Validate all stacker.yml` step gains real gating
+only after a release newer than the pinned `STACKER_VERSION: v0.3.4`.
+
 ---
 
 ## [BUG] mailu: `deploy.target: cloud` with no `deploy.cloud` block — dry-run hard-fails (E001)
@@ -1212,6 +1240,33 @@ block) before the semantic gate, or exempt E001 from the gate when hydration
 flags/credentials are available. Pin with a test: cloud target + no
 `deploy.cloud` + `--key` → passes validation.
 
+### Resolution (2026-10-04, stacker `1c379be3`, pushed to `dev`)
+Chose the exemption variant: the early blocking gate now filters out
+`E001` **and `E002`** (the same premature-gate bug: `--server-*`
+overrides and the deployment lock hydrate `deploy.server` at
+`deploy.rs:3520-3521`, after the gate); every other error-severity
+issue still fails at the original early position. Two deferred checks:
+- **2a** — right after server hydration: E002 fires if
+  `config.deploy.server` is still `None`, before any SSH check or login.
+- **3c** — after `--key`/credential-prompt hydration: E001 fires if
+  `config.deploy.cloud` is still `None`, before any provisioning.
+
+Both emit the exact `stacker.yml has 1 blocking issue(s): …` message
+the early gate produced, so the "agrees with `stacker config validate`"
+property is preserved (still evaluated on the pre-resolution parse).
+
+Verified: new integration tests
+`test_deploy_cloud_without_cloud_section_defers_e001_past_hydration`
+(cloud-no-cloud dry-run, fresh HOME → `Login required`, and stderr
+contains **no** "blocking issue" — proves hydration/login is now
+reached first), `test_deploy_local_target_preserves_e001_verdict`
+(same E001 message when no hydration path applies),
+`test_deploy_server_without_server_section_fails_with_e002`
+(E002 before login). The `--key`/prompt paths are no longer dead code.
+Note: the 3b credential prompt still runs on `--dry-run` (pre-existing
+behavior, can persist the selection to stacker.yml — logged out of
+scope during the fix). Gates: lib 2194/0, `cli_deploy` 10/10.
+
 ---
 
 ## [BUG] `stacker ci export` recommends a `STACKER_TOKEN` secret that no code reads for auth
@@ -1251,3 +1306,21 @@ and env-var auth is impossible in the current CLI.
 Pick one: honor `STACKER_TOKEN` in `require_valid_token` as a fallback, or
 emit the piped-login pattern (with `STACKER_AUTH_URL`/`STACKER_URL` secrets)
 in exported workflows.
+
+### Resolution (2026-10-04, stacker `5751f37d`, pushed to `dev`)
+Picked the fallback: new `credentials_from_env()` consulted inside
+`require_valid_token_with_oauth` when the credential file is missing
+or expired-and-unrefreshable — a valid file token always wins, an
+empty/whitespace `STACKER_TOKEN` is ignored (cannot mask
+`LoginRequired`/`TokenExpired`), and `STACKER_URL` populates
+`server_url` (else `CliRuntime` falls back to `STACKER_URL` itself).
+Single choke point: every `CliRuntime` command (and `bearer_header`)
+inherits it.
+
+Tests: 4 new (`test_env_token_used_when_no_credentials_file`,
+`test_empty_env_token_is_ignored`, `test_file_credentials_win_over_env_token`,
+`test_expired_file_credentials_fall_back_to_env_token`) under the
+credentials env lock; the 4 pre-existing login-required/expired tests now
+force `STACKER_TOKEN` empty so ambient CI variables can't flip them.
+Still out of scope: `deploy.rs:4258` cosmetic read remains; piped-login
+workflows not added to `ci export`. Gates: lib 2194/0.
