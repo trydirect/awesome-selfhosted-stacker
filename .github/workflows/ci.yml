@@ -161,7 +161,9 @@ jobs:
             dir="stacker-projects/$name"
             [ ! -d "$dir" ] && continue
             cd "$dir"
-            if stacker deploy --dry-run 2>&1; then
+            # Dry-run the generation path locally: a server/cloud dry-run
+            # requires `stacker login` and CI has no credentials.
+            if stacker deploy --dry-run --target local 2>&1; then
               echo "✅ $name dry-run OK"
             else
               echo "❌ $name dry-run failed"
@@ -246,8 +248,8 @@ jobs:
             # Validate
             stacker config validate 2>&1
 
-            # Dry run
-            stacker deploy --dry-run 2>&1
+            # Dry run (local target — remote dry-run needs `stacker login`)
+            stacker deploy --dry-run --target local 2>&1
 
             cd "$GITHUB_WORKSPACE"
             echo "✅ $name"
