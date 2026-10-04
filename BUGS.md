@@ -28,6 +28,8 @@ new build with minimal repros (statuses refreshed 2026-10-03 against `dev`
 | `app.dockerfile: Dockerfile` rewritten to non-generated `.stacker/Dockerfile` | **FIXED** (`cfa9d69f`) | explicit `app.dockerfile` now survives normalization (and stale `.stacker/Dockerfile` values are repaired); e2e t8: build succeeds, `curl /df.txt` → `from-custom-dockerfile` |
 | `deny_unknown_fields` on `AppSource` | **STILL OPEN** | `totally_unknown_key: true` under `app:` validates green; `AppSource` (config_parser.rs:197) has no `deny_unknown_fields` (only `ConfigContract`/contract internals do) |
 | CI `deploy --dry-run` fails for server/cloud targets (`Login required`) | **WORKAROUNDED** (ci.yml 2026-10-04) | remote-target dry-run demands `stacker login`, CI has no credentials (step was previously masked by the validate failure); both dry-run steps pinned `--target local` — 10/10 samples OK on the exact v0.3.4 binary; optional stacker-side fix: let `--dry-run` skip auth |
+| `config validate` exits 0 despite printing error-severity issues | **STILL OPEN** (audit-confirmed genuine 2026-10-04) | `ConfigValidateCommand::call` (`config.rs:1184`) returns `Ok(())` unconditionally — CI/exit-code checks only catch parse failures; audit ruled out misconfiguration (no strict command exists: `ci validate` = pipeline sync, `--strict` only on dead `config-inventory` branch; docs/deploy imply opposite); exactly 1 template currently prints an error (mailu/E001) and passes CI green |
+| mailu dry-run blocked by E001 (`deploy.target: cloud`, no `deploy.cloud`) | **FIXED** (template-side 2026-10-04) | audit confirmed template bug (only 1 of 24 cloud templates without a `deploy.cloud` block; `deployment_hash` = platform linkage, not cloud config); added `cloud:` block mirroring the platform stub in `mailu/another_mailu_test/stacker.yml` — validate prints `✓ Configuration is valid`, dry-run exit 0; related stacker ordering bug logged separately |
 
 **Remaining open (as of 2026-10-03):** `deny_unknown_fields` on `AppSource`, plus
 the three findings logged the same day — local health-wait always times out
@@ -1046,3 +1048,204 @@ CI conditions: 10/10 samples exit 0.
 arguably wrong — allowing remote-target dry-runs without a session would let CI
 exercise the declared target path. Needs a product decision; would only take
 effect after a release newer than the pinned `STACKER_VERSION`.
+
+---
+
+## [BUG] `stacker config validate` exits 0 even when it prints error-severity issues
+
+**Severity:** High (CI's validate step is parse-only; validation codes are invisible to it)
+**Date:** 2026-10-04
+**Affected:** stacker `src/console/commands/cli/config.rs` (`ConfigValidateCommand::call`,
+lines 1184-1193); present in v0.3.4 as well (proven by live CI)
+
+### Symptom
+```
+$ stacker config validate; echo "rc=$?"
+Configuration issues:
+  - [E001] error (deploy.cloud.provider): Cloud provider configuration is required for cloud deployment
+rc=0
+```
+
+### Root Cause
+`ConfigValidateCommand::call` runs `run_validate`, prints the issues, then
+unconditionally returns `Ok(())`. Only parse failures produce a non-zero exit —
+error-severity validation codes (E001…) and warnings are printed but never
+affect the exit status. `deploy --dry-run` treats the same issues as blocking,
+so validate and deploy disagree about whether a config is usable.
+Structurally, `run_validate` (`config.rs:1053`) flattens `ValidationIssue`
+into `Vec<String>`, destroying the severity before the caller can gate on it.
+
+### Audit confirmation (2026-10-04, read-only audit)
+Not misconfiguration — no strict command exists to have used instead:
+- `stacker ci validate` (`ci.rs:164`) checks CI **pipeline sync** (exported
+  pipeline file matches stacker.yml), never calls `run_validate`.
+- `--strict` exists only on `config check`/`config diff`, which are dead code
+  on dev (constructed only on the stale `config-inventory` branch).
+- Never exited non-zero on any branch/tag (`git log -L` → 3 commits, all
+  `Ok(())`); v0.3.4 byte-identical.
+- Docs imply the opposite: `STACKER_YML_REFERENCE.md:1531` ("Errors
+  (deployment will fail)" table → "Run `stacker config validate` to check"),
+  and E007's comment "fails at `stacker config validate`".
+- Deploy's gate says it should "agree exactly with what `stacker config
+  validate` reports" (`deploy.rs:3476-3490`) but fails where validate passes;
+  `secrets validate` and the server `/validate` (HTTP 422) are both strict.
+- Tests only pin the two edges: valid→`.success()`, missing file→`.failure()`;
+  nothing asserts behavior for parseable-but-error configs.
+
+### Impact
+CI's `Validate all stacker.yml` step (and every scripted `config validate`)
+reports success for configs that deploy will refuse. The "246: 0 failures"
+result means "0 parse failures" — a full sweep found exactly 1 template
+printing an error-severity issue (mailu/E001) that sails through CI green.
+
+### Fix Needed
+Have `run_validate` return the issues with severity intact (or a
+`has_error` flag) and `Err` on `Severity::Error` — matching
+`deploy.rs:3476-3490` exactly. Until then CI can gate on output
+(`grep -E '\] error( | \()'`) or dry-run every project instead of a sample.
+Related same-pattern: `config fix` also exits 0 with issues remaining.
+
+---
+
+## [BUG] mailu: `deploy.target: cloud` with no `deploy.cloud` block — dry-run hard-fails (E001)
+
+**Severity:** Medium (template unusable for its declared target; pre-existing, unrelated to the CI-repair batch)
+**Date:** 2026-10-04
+**Affected:** `stacker-projects/mailu/stacker.yml`
+
+### Symptom
+```
+$ stacker deploy --dry-run --target local
+✗ Configuration validation error: stacker.yml has 1 blocking issue(s):
+  - [error] E001: Cloud provider configuration is required for cloud deployment (deploy.cloud.provider)
+```
+
+### Root Cause
+The template declares `deploy: target: cloud` but ships no `deploy.cloud`
+section (no provider/region/size). Deploy-time validation blocks on E001.
+Discovered by the new differential dry-run sweep of all 43 CI-repair templates:
+mailu fails identically on HEAD (pre-edit) and post-edit — the inputs migration
+is not the cause (`rc_diff=0` across all 43).
+
+### Expected
+`stacker config validate` should fail this (it doesn't — see the exit-code bug
+above), and dry-run should either pass or the template should carry cloud
+config / be switched to a target it can satisfy.
+
+### Actual
+Dry-run exit 1; CI never notices because validate exits 0.
+
+### Fix Needed
+Template decision (needs confirmation): add a `deploy.cloud` block, or change
+`deploy.target` to `server`/`local`, or confirm an install-time flow injects
+the cloud config. Fixture not modified — awaiting confirmation per repo rules.
+
+### Resolution (2026-10-04, confirmed with repo owner)
+Audit verdict: **template bug confirmed** — mailu is the only 1 of 24
+`target: cloud` templates without a `deploy.cloud` block; the block never
+existed in any revision; `deployment_hash` proves platform linkage
+(`connect.rs`/`pull.rs`/install response), not cloud config — while
+`.stacker/deployment-cloud.lock` (2026-08-17) proves a CLI deploy succeeded
+only because it predates the E001 gate (`--key` supplied config in-memory).
+Added the block mirroring the platform-generated sibling
+`mailu/another_mailu_test/stacker.yml`:
+
+```yaml
+  cloud:
+    provider: hetzner
+    orchestrator: remote
+    region: fsn1
+    size: cpx12
+    key: htz-0
+```
+
+Verified: `stacker config validate` → `✓ Configuration is valid`;
+`deploy --dry-run --target local` → exit 0, "Local deployment previewed
+successfully". Note for a real deploy: sibling stub carries
+`public_ports: []` — firewall ports (80/443/25/465/587) must be opened via
+`deploy.cloud.public_ports` / `stacker cloud firewall add`.
+
+---
+
+## [BUG] E001 validation gate runs before cloud-config hydration — `--key`/credential-prompt paths are unreachable dead code
+
+**Severity:** High (since v0.3.3 the designed cloud-config flow cannot run; any cloud template without a `deploy.cloud` block is unfixable at deploy time)
+**Date:** 2026-10-04 (found during mailu audit)
+**Affected:** stacker `src/console/commands/cli/deploy.rs`
+
+### Symptom
+A cloud-target config missing `deploy.cloud` fails with E001 before any of the
+code paths designed to supply it can run:
+```
+$ stacker deploy --dry-run --target cloud   # or plain deploy
+✗ [error] E001: Cloud provider configuration is required for cloud deployment
+```
+
+### Root Cause
+Ordering regression introduced by `e2e525f2` (2026-09-04, shipped in
+v0.3.3/v0.3.4):
+1. `deploy.rs:3476-3488` — blocking `validate_semantics()` gate (E001 fires here)
+2. `deploy.rs:3634-3638` — `apply_cloud_cli_override` (`--key`/`--key-id` fetch
+   cloud config from the API and write `config.deploy.cloud`) — **after** the gate
+3. `deploy.rs:3697-3763` — the designed path: *"If cloud target but no cloud
+   section in stacker.yml, prompt to select a saved credential"* and persist it
+   (added `4d0d7488`/`4d0d7487`, 2026-03-09) — **after** the gate
+
+Before `e2e525f2` there was no E001 gate, so `stacker deploy --target cloud
+--key htz-0` worked on configs with no `deploy.cloud` (evidence:
+`.stacker/deployment-cloud.lock` in the mailu fixture — a successful 2026-08-17
+deploy of a file that never contained a cloud block).
+
+### Expected
+Hydration paths run (or validation is deferred) so `--key` and the credential
+prompt can populate `deploy.cloud` before E001 is evaluated.
+
+### Actual
+Both paths are unreachable; the only remaining remediation is interactive
+`stacker config fix`.
+
+### Fix Needed
+Reorder: apply cloud hydration (`apply_cloud_cli_override`, credential-prompt
+block) before the semantic gate, or exempt E001 from the gate when hydration
+flags/credentials are available. Pin with a test: cloud target + no
+`deploy.cloud` + `--key` → passes validation.
+
+---
+
+## [BUG] `stacker ci export` recommends a `STACKER_TOKEN` secret that no code reads for auth
+
+**Severity:** Low (generated workflows fail with "Login required" even when the secret is configured exactly as instructed)
+**Date:** 2026-10-04 (found during CI-login audit)
+**Affected:** stacker `src/console/commands/cli/ci.rs:108`, `src/console/commands/cli/ci_export.rs:39`
+
+### Symptom
+`stacker ci export` generates a GitHub Actions workflow containing:
+```yaml
+env:
+  STACKER_TOKEN: ${{ secrets.STACKER_TOKEN }}
+```
+A repo that provisions that secret still gets `Error: Login required for
+server deploy. Run: stacker login`.
+
+### Root Cause
+`STACKER_TOKEN` is read in exactly one place — `deploy.rs:4258`, a cosmetic
+"you're logged in" message after a **local** deploy — never as a bearer token.
+Real auth (`require_valid_token`, `credentials.rs:227-259`) loads only the
+credential file `~/.config/stacker/credentials.json`; `CliRuntime::new` does
+the same. The only unattended path is piped-stdin `stacker login --user`
+(`login.rs:123-176`) with `STACKER_AUTH_URL`/`STACKER_URL` — never wired into
+generated workflows.
+
+### Expected
+Either generated workflows authenticate for real (piped login, or make
+`STACKER_TOKEN` an actual bearer), or export omits the dead secret.
+
+### Actual
+Following the tool's own advice cannot produce an authenticated CI run.
+Confirmed by audit: no repo/org secret exists, no workflow references one,
+and env-var auth is impossible in the current CLI.
+
+### Fix Needed
+Pick one: honor `STACKER_TOKEN` in `require_valid_token` as a fallback, or
+emit the piped-login pattern (with `STACKER_AUTH_URL`/`STACKER_URL` secrets)
+in exported workflows.

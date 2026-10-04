@@ -2,6 +2,12 @@ name: mailu
 deploy:
   target: cloud
   deployment_hash: deployment_9792c0f8-a242-4771-8b15-0061788a77f1
+  cloud:
+    provider: hetzner
+    orchestrator: remote
+    region: fsn1
+    size: cpx12
+    key: htz-0
 proxy:
   type: none
   auto_detect: false
