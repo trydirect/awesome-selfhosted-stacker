@@ -27,6 +27,7 @@ new build with minimal repros (statuses refreshed 2026-10-03 against `dev`
 | `./file` bind mounts resolved against `.stacker/` | **FIXED** (`809ea905`) | generated compose rewrites `./config.yml` → `../config.yml` for local (proxy/`.stacker`-local refs exempt); e2e t6/t9: mount source = project root file, `docker exec cat` OK, HTTP 200 |
 | `app.dockerfile: Dockerfile` rewritten to non-generated `.stacker/Dockerfile` | **FIXED** (`cfa9d69f`) | explicit `app.dockerfile` now survives normalization (and stale `.stacker/Dockerfile` values are repaired); e2e t8: build succeeds, `curl /df.txt` → `from-custom-dockerfile` |
 | `deny_unknown_fields` on `AppSource` | **STILL OPEN** | `totally_unknown_key: true` under `app:` validates green; `AppSource` (config_parser.rs:197) has no `deny_unknown_fields` (only `ConfigContract`/contract internals do) |
+| CI `deploy --dry-run` fails for server/cloud targets (`Login required`) | **WORKAROUNDED** (ci.yml 2026-10-04) | remote-target dry-run demands `stacker login`, CI has no credentials (step was previously masked by the validate failure); both dry-run steps pinned `--target local` — 10/10 samples OK on the exact v0.3.4 binary; optional stacker-side fix: let `--dry-run` skip auth |
 
 **Remaining open (as of 2026-10-03):** `deny_unknown_fields` on `AppSource`, plus
 the three findings logged the same day — local health-wait always times out
@@ -1007,3 +1008,41 @@ In `deploy_to_intranet_server`, add to both the rsync and tar exclude lists:
 silently no-op), keeping only the generated compose + Dockerfile.
 Longer term: mirror the API path (inline `config_files` + image, no on-host build)
 so the project tree never needs to be rsynced at all.
+
+---
+
+## [BUG] CI dry-run step requires `stacker login` — impossible to pass without credentials
+
+**Severity:** Medium (CI step was guaranteed-red; previously masked by the 43-template validate failure)
+**Date:** 2026-10-04
+**Affected:** `.github/workflows/ci.yml` — `Dry run deploy (sample projects)`
+(and the PR-path dry-run in `Validate changed projects`)
+
+### Symptom
+```
+Hint: run `stacker login` and retry deploy.
+Error: Login required for server deploy. Run: stacker login
+❌ umami dry-run failed
+... (10/10 samples) ...
+10 dry-run failures
+```
+
+### Root Cause
+Both CI dry-run steps ran plain `stacker deploy --dry-run`, which resolves to
+each template's declared `deploy.target` (server/cloud for all 10 samples). On
+v0.3.4 a remote-target dry-run still requires an authenticated session, and the
+workflow has no login step and no credentials secret. The step had never
+actually executed before — the validate step failed first in every run of the
+last 200.
+
+### Fix (workflow-side)
+Both dry-run invocations pinned `--target local`, keeping the step's real value
+(config/Dockerfile/compose generation check) while dropping the unreachable
+remote path. Verified locally with the exact CI binary (v0.3.4 `28a86cd`) under
+CI conditions: 10/10 samples exit 0.
+
+### Deeper fix (stacker-side, optional)
+`--dry-run` does not touch the remote server, so requiring auth for it is
+arguably wrong — allowing remote-target dry-runs without a session would let CI
+exercise the declared target path. Needs a product decision; would only take
+effect after a release newer than the pinned `STACKER_VERSION`.
