@@ -26,16 +26,18 @@ new build with minimal repros (statuses refreshed 2026-10-03 against `dev`
 | `--target server` false success (remote container `Created`) | **FIXED** (`23735658`, `8c22daf6`) | watch verdict is no longer discarded: failed deploy → exit 1, one `✗ Deployment #N ended as 'paused' [port_conflict]` + remediation; e2e deployments 415/416 on dev.try.direct with container evidence `Bind for 0.0.0.0:8082 failed` |
 | `./file` bind mounts resolved against `.stacker/` | **FIXED** (`809ea905`) | generated compose rewrites `./config.yml` → `../config.yml` for local (proxy/`.stacker`-local refs exempt); e2e t6/t9: mount source = project root file, `docker exec cat` OK, HTTP 200 |
 | `app.dockerfile: Dockerfile` rewritten to non-generated `.stacker/Dockerfile` | **FIXED** (`cfa9d69f`) | explicit `app.dockerfile` now survives normalization (and stale `.stacker/Dockerfile` values are repaired); e2e t8: build succeeds, `curl /df.txt` → `from-custom-dockerfile` |
-| `deny_unknown_fields` on `AppSource` | **STILL OPEN** | `totally_unknown_key: true` under `app:` validates green; `AppSource` (config_parser.rs:197) has no `deny_unknown_fields` (only `ConfigContract`/contract internals do) |
-| CI `deploy --dry-run` fails for server/cloud targets (`Login required`) | **WORKAROUNDED** (ci.yml 2026-10-04) | remote-target dry-run demands `stacker login`, CI has no credentials (step was previously masked by the validate failure); both dry-run steps pinned `--target local` — 10/10 samples OK on the exact v0.3.4 binary; optional stacker-side fix: let `--dry-run` skip auth |
-| `config validate` exits 0 despite printing error-severity issues | **STILL OPEN** (audit-confirmed genuine 2026-10-04) | `ConfigValidateCommand::call` (`config.rs:1184`) returns `Ok(())` unconditionally — CI/exit-code checks only catch parse failures; audit ruled out misconfiguration (no strict command exists: `ci validate` = pipeline sync, `--strict` only on dead `config-inventory` branch; docs/deploy imply opposite); exactly 1 template currently prints an error (mailu/E001) and passes CI green |
+| `deny_unknown_fields` on `AppSource` | **FIXED** (stacker `8eb30142`) | `app:` now rejects unknown keys with the expected-field list (e2e: `priveleged` → error exit 1); also wired the previously accepted-but-ignored `depends_on`/`shm_size`/`user` into compose generation; 247-sweep: 0 unknown-`app:` failures |
+| CI `deploy --dry-run` fails for server/cloud targets (`Login required`) | **WORKAROUNDED** (ci.yml + deploy-test.yml, 2026-10-04) | remote-target dry-run demands `stacker login`, CI has no credentials — audit confirmed no secret exists and env-var auth is impossible (step was previously masked by the validate failure); all dry-run steps in both workflows pinned `--target local` — 10/10 samples OK on the exact v0.3.4 binary; optional stacker-side fix: let `--dry-run` skip auth |
+| `config validate` exits 0 despite printing error-severity issues | **STILL OPEN** (audit-confirmed genuine 2026-10-04) | `ConfigValidateCommand::call` (`config.rs:1184`) returns `Ok(())` unconditionally — CI/exit-code checks only catch parse failures; audit ruled out misconfiguration (no strict command exists: `ci validate` = pipeline sync, `--strict` only on dead `config-inventory` branch; docs/deploy imply opposite); catalog now prints 0 error-severity issues (mailu fixed) but the exit-code gap remains |
 | mailu dry-run blocked by E001 (`deploy.target: cloud`, no `deploy.cloud`) | **FIXED** (template-side 2026-10-04) | audit confirmed template bug (only 1 of 24 cloud templates without a `deploy.cloud` block; `deployment_hash` = platform linkage, not cloud config); added `cloud:` block mirroring the platform stub in `mailu/another_mailu_test/stacker.yml` — validate prints `✓ Configuration is valid`, dry-run exit 0; related stacker ordering bug logged separately |
 
-**Remaining open (as of 2026-10-03):** `deny_unknown_fields` on `AppSource`, plus
-the three findings logged the same day — local health-wait always times out
+**Remaining open (as of 2026-10-04):** `config validate` exit-0-on-error
+(High, audit-confirmed), the E001-gate-before-cloud-hydration ordering bug
+(High), `stacker ci export`'s dead `STACKER_TOKEN` (Low) — plus the three
+non-critical findings from 2026-10-03: local health-wait always times out
 (`docker compose ps` without `-p`), local nginx proxy `ssl: auto` crash-loops
 without certs, and the private-IP rsync path shipping `.stacker/deploy/` (bundle
-with `.env`) to the host. All three are judged non-critical and skipped for now.
+with `.env`) to the host.
 
 ---
 
