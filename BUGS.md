@@ -32,6 +32,7 @@ new build with minimal repros (statuses refreshed 2026-10-03 against `dev`
 | mailu dry-run blocked by E001 (`deploy.target: cloud`, no `deploy.cloud`) | **FIXED** (template-side 2026-10-04) | audit confirmed template bug (only 1 of 24 cloud templates without a `deploy.cloud` block; `deployment_hash` = platform linkage, not cloud config); added `cloud:` block mirroring the platform stub in `mailu/another_mailu_test/stacker.yml` — validate prints `✓ Configuration is valid`, dry-run exit 0; related stacker ordering bug logged separately |
 | E001/E002 gate before hydration (`--key`/prompt/`--server-*` unreachable) | **FIXED** (stacker `1c379be3`, 2026-10-04) | E001/E002 filtered out of the early blocking gate; E002 checked right after `--server-*`+lockfile hydration (before SSH/login), E001 after `--key`/credential-prompt (before provisioning) — same message as `config validate`; tests: cloud-no-cloud dry-run → `Login required` (deferral proven), `--target local` → E001 verdict preserved, server-no-server → E002; other error-severity codes still fail at the original early gate |
 | `stacker ci export`'s `STACKER_TOKEN` never read for auth | **FIXED** (stacker `5751f37d`, 2026-10-04) | `credentials_from_env()` fallback in `require_valid_token_with_oauth`: consulted only when the credential file is missing or expired-and-unrefreshable (valid file token always wins, empty env ignored); covers every `CliRuntime` command via the single choke point; 4 new tests, existing login-required tests hardened against the ambient variable |
+| `stacker destroy` false-success — config env-resolution failure swaps `-p` to fallback `stacker`, `down` no-ops | **OPEN** (found 2026-10-04, v0.3.4) | `resolve_local_compose_project_name` swallows `from_file` errors (`${BASE_PATH}` unresolved in AstrBot) → runs `compose -p stacker … down` (PATH-shim proof), exits 0, prints ✓ while `astrbot-app-1` stays Up (3/3 repro); fix: propagate the parse error or resolve project from compose labels; manual `down -p astrbot` verified as workaround |
 
 **Remaining open (as of 2026-10-04):** the three non-critical findings
 from 2026-10-03: local health-wait always times out
@@ -1324,3 +1325,222 @@ credentials env lock; the 4 pre-existing login-required/expired tests now
 force `STACKER_TOKEN` empty so ambient CI variables can't flip them.
 Still out of scope: `deploy.rs:4258` cosmetic read remains; piped-login
 workflows not added to `ci export`. Gates: lib 2194/0.
+
+---
+
+## [BUG] `stacker destroy` false-success: config env-resolution failure silently swaps `-p <project>` to fallback `stacker` — compose down no-ops, containers survive
+
+**Severity:** High (claims "✓ Stack destroyed successfully" while leaving the stack running; silent data/lifecycle lie)
+**Date:** 2026-10-04 (found during local QA of `stacker-projects/AstrBot`)
+**Affected:** stacker `src/console/commands/cli/destroy.rs` + `src/cli/local_compose.rs:25-31` (`resolve_local_compose_project_name`); present in v0.3.4 (2373565)
+
+### Symptom
+```
+$ stacker deploy --target local   # astrbot-app-1 Up, HTTP 200 on :6185
+$ stacker destroy -y
+✓ Stack destroyed successfully
+$ docker ps --format '{{.Names}} {{.Status}}'
+astrbot-app-1 Up 2 minutes        # ← still running
+```
+Reproduced 3/3 times.
+
+### Root Cause
+`resolve_local_compose_project_name` does `StackerConfig::from_file(...)` and
+on **any** parse/env error falls back to `"stacker"`. AstrBot's stacker.yml
+references `${BASE_PATH}` (in `deploy.cloud.ssh_key`) but its `.env` does not
+define it, so `from_file` fails with `Environment variable not found:
+$BASE_PATH` (also reproducible directly: `stacker config show` /
+`stacker config validate` in the project dir print that error).
+Destroy then runs the documented GH-#235-correct shape but with the wrong
+scope — confirmed via a PATH shim:
+
+    DOCKER ARGS: compose -p stacker -f .../AstrBot/.stacker/docker-compose.yml down
+
+`-p stacker` matches no containers → `docker compose down` exits 0 on an
+empty project → `run_destroy` sees success → prints
+"✓ Stack destroyed successfully". The real compose project name is `astrbot`
+(`identity: astrbot`), which `docker compose ls` shows as `running(1)`.
+
+Deploy is unaffected because it uses `from_file_for_target` (tolerates
+unresolved `deploy.*` placeholders, GH #239); destroy uses strict `from_file`.
+
+### Expected
+`stacker destroy -y` removes `astrbot-app-1` (and its network), or fails
+loudly if the project name/config cannot be resolved.
+
+### Actual
+False success; stack keeps running; operator has no signal that cleanup
+didn't happen. (This is also the exact "silent no-op" failure mode the
+GH #235 fix tried to eliminate — the fallback reintroduces it whenever
+config parsing fails.)
+
+### Fix Needed
+- Never fall back to a generic project name for `down`: resolve the project
+  name from the compose file's own labels/`docker compose ls` (or fail with
+  the underlying `from_file` error instead of swallowing it).
+- Surface `from_file`'s error in `resolve_local_compose_project_name`
+  (`unwrap_or_else("stacker")` → `?`-style propagation).
+
+### Workaround (QA, read-only rules noted)
+`docker compose -p astrbot -f .stacker/docker-compose.yml down` — verified
+containers/network removed.
+
+Secondary observation: `stacker config validate` hard-fails on any unresolved
+`${VAR}` anywhere in the file (here: cloud `ssh_key`), while `deploy` is
+tolerant of the same placeholders — validate/destroy should share the tolerant
+resolution for non-active target blocks. Template-side, AstrBot/.env also
+lacks `BASE_PATH` (fixture not modified — needs owner confirmation).
+
+---
+
+## [BUG] `stacker destroy` cannot tear down non-local deployments — "No deployment found" despite a valid `deployment-server.lock`
+
+**Severity:** High (no CLI teardown path exists for `--target server`/`cloud` stacks; server accumulates orphan containers/volumes)
+**Date:** 2026-10-04 (found during AstrBot EXISTING QA; previously noted ad hoc in `stacker-projects/zitadel/EXISTING_DEPLOY_SUCCESS.md`, which references this tracker but the entry was never filed)
+**Affected:** `src/console/commands/cli/destroy.rs` (`run_destroy` is local-only), present in v0.3.4 (2373565)
+
+### Symptom
+```bash
+$ stacker deploy --target server --server-host 46.224.127.228 --server-user root --server-ssh-key ...
+✓ Deployment #417 completed
+Deployment context saved to .../.stacker/deployment-server.lock
+
+$ stacker destroy -y
+Error: Configuration validation error: No deployment found. Nothing to destroy.   # rc=1
+# remote: project-app-1 still Up
+```
+
+### Root Cause
+`run_destroy` only resolves a **local** compose file
+(`resolve_local_compose_path`) and runs `docker compose down`. For a server
+deploy, `.stacker/active-target` is not `local`, the resolver returns
+`ConfigValidation`, and `run_destroy` maps that to the generic
+"No deployment found. Nothing to destroy." — even though
+`.stacker/deployment-server.lock` exists and the remote stack is running.
+There is also no alternative: `stacker deployment` has only
+`state|events|rollback`, and no API/`stacker servers` command deletes a
+deployment's containers.
+
+### Expected
+`stacker destroy -y` for a server/cloud-active project tears down the remote
+stack (via Stacker server API or SSH + `docker compose down` on the host),
+or at minimum offers a distinct message/flag instead of the misleading
+"No deployment found" (which points operators at a local-state problem).
+
+### Actual
+No CLI teardown path; operators must fall back to manual
+`ssh root@<host> 'cd <deploy dir> && docker compose -p project down'`
+(read-only QA rules normally forbid this class of workaround for deploys;
+teardown has no sanctioned CLI alternative).
+
+### Cleanup note (this test)
+AstrBot remote stack removed manually:
+`ssh root@46.224.127.228 'cd /home/trydirect/project && docker compose -p project down'`
+(compose path from container label
+`com.docker.compose.project.config_files=/home/trydirect/project/docker-compose.yml`).
+
+---
+
+## [BUG] Server deploy fails for NPM-proxy projects: Vault TLS cert broken on Stacker backend
+
+**Severity:** High (blocks ALL `--target server` deploys for templates with `proxy: type: nginx-proxy-manager`)
+**Date:** 2026-10-05
+**Affected:** Stacker platform (server-side), not template-specific
+
+### Symptom
+```
+✗ Deployment to server failed: Stacker server POST /project/307/deploy failed (500):
+{"message":"Vault connection failed: error sending request for url
+(https://vault.try.direct:8443/v1/secret/debug/status_panel/hosts/262/npm_credentials):
+error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:
+certificate verify failed: (unable to get local issuer certificate)"}
+```
+
+### Root Cause
+Stacker backend tries to fetch NPM credentials from Vault
+(`vault.try.direct:8443`) during server deploy. Vault's TLS certificate is
+expired, self-signed, or has a broken CA chain → SSL verification fails →
+deploy aborts with 500.
+
+### Scope
+- **Affected:** any template with `proxy: type: nginx-proxy-manager` (triggers
+  Vault credential fetch for `npm_credentials`)
+- **Not affected:** templates with `proxy: type: none` or no proxy section
+  (AstrBot, adguard-home deployed fine)
+
+### Workaround
+None from template side. Platform ops needs to fix Vault TLS cert on Stacker backend.
+
+### Projects blocked by this
+- ai-knowledge-base (existing-server deploy)
+- ai-automation-workflows (existing-server deploy — also has env mismatch bug)
+- Any other NPM-proxy template
+
+---
+
+## [BUG] Compose generator rewrites `${VAR}` to `${KEY}` — local deploys get blank secrets when `.env` uses short names
+
+**Severity:** High (systematic — affects multiple templates)
+**Date:** 2026-10-05
+**Affected:** `src/cli/generator/compose.rs` (contract-aware env substitution)
+
+### Pattern
+When `stacker.yml` has `SOME_KEY: "${SHORT_VAR}"`, the generated compose
+emits `SOME_KEY: ${SOME_KEY}` (canonical name = env key), NOT `${SHORT_VAR}`.
+Local `.env` files (from `.env.example` + `generate-secrets.sh`) typically
+define `SHORT_VAR`, not `SOME_KEY` → compose interpolation finds nothing →
+blank secret → container crash-loops.
+
+### Affected templates
+| Template | stacker.yml | Generated compose | `.env` provides |
+|---|---|---|---|
+| ampache | `MYSQL_PASSWORD: "${DB_PASSWORD}"` | `MYSQL_PASSWORD: ${MYSQL_PASSWORD}` | `DB_PASSWORD` |
+| ampache | `MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"` | `MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}` | `DB_ROOT_PASSWORD` |
+| ai-automation-workflows | `DATABASE_PASSWORD: "${DB_PASSWORD}"` | `DATABASE_PASSWORD: ${DATABASE_PASSWORD}` | `DB_PASSWORD` |
+| ai-automation-workflows | `SECRETKEY_SECRET: "${SECRET_KEY}"` | `SECRETKEY_SECRET: ${SECRETKEY_SECRET}` | `SECRET_KEY` |
+
+### Expected
+For local deploys, the generator should either:
+1. Resolve `${SHORT_VAR}` from local `.env` at compose-generation time, OR
+2. Keep the original reference `${SHORT_VAR}` in the generated compose
+
+### Actual
+Generator rewrites to canonical KEY name → blank interpolation → crash-loop.
+
+### Evidence (ampache)
+```
+docker logs ampache-mysql-1:
+  [ERROR] [Entrypoint]: Database is uninitialized and password option is not specified
+```
+Generated compose: `MYSQL_PASSWORD: ${MYSQL_PASSWORD}` / `MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}`
+`.env` keys: `DB_PASSWORD`, `DB_ROOT_PASSWORD` (no `MYSQL_PASSWORD`/`MYSQL_ROOT_PASSWORD`)
+
+---
+
+## [BUG] Server deploy: Vault 403 Forbidden storing SSH key (platform)
+
+**Severity:** High (blocks `--target server` deploys even for `proxy: type: none` templates)
+**Date:** 2026-10-05
+
+### Symptom
+```
+✗ Deployment to server failed: Stacker server POST /project/308/deploy failed (500):
+{"message":"Could not store the SSH key for server 264 in Vault, so no key would be installed
+on the machine and you would have no SSH access to it. Deploy aborted before creating anything.
+Vault error: HTTP status client error (403 Forbidden) for url
+(https://vault.try.direct:8443/v1/secret/users/hy181TZa4DaabUZWklsrxw/ssh_keys/264)"}
+```
+
+### Root Cause
+Stacker backend cannot write the SSH key to Vault (`403 Forbidden`) — the service
+account / token lacks permission for `users/<id>/ssh_keys/<server_id>` path.
+Different from the TLS cert issue (earlier) — Vault is reachable now but
+rejects the write.
+
+### Scope
+- **Affected:** all `--target server` deploys (even without NPM proxy)
+- **Not affected:** `--target local` (no Vault interaction)
+
+### Projects blocked
+- ampache (existing-server)
+- Any future server deploy until Vault ACL is fixed

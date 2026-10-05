@@ -14,7 +14,7 @@ services:
     labels:
       my.stacker.dns: "app"
       my.stacker.scope: "project"
-      my.stacker.service: "app"
+      my.stacker.service: "astrbot"
 
 networks:
   app-network:
