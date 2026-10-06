@@ -1,0 +1,12 @@
+[global]
+server_name = "localhost"
+port = 6167
+max_upload_size = 20_000_000
+max_concurrent_requests = 100
+allow_registration = true
+allow_federation = false
+log = "warn"
+
+[database]
+backend = "sqlite"
+path = "/var/lib/conduit/conduit.db"

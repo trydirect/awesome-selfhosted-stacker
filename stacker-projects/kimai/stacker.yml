@@ -17,10 +17,12 @@ app:
     APP_SECRET: "${APP_SECRET}"
     TRUSTED_HOSTS: "localhost"
     MAILER_URL: "null://localhost"
+    PHP_MEMORY_LIMIT: "512M"
   command: >-
     sh -c "/opt/kimai/bin/console kimai:install --no-interaction && /opt/kimai/bin/console kimai:user:create admin admin@example.com ROLE_SUPER_ADMIN ${ADMIN_PASSWORD} && apache2-foreground"
   volumes:
     - kimai_data:/opt/kimai/var/data
+    - ./memory-limit.ini:/usr/local/etc/php/conf.d/memory-limit.ini:ro
 
 services:
   - name: mysql
@@ -74,18 +76,14 @@ config_contract:
           length: 32
           display: password
         DATABASE_URL:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
+          mutability: editable
         MAILER_URL:
           mutability: editable
         TRUSTED_HOSTS:
           mutability: editable
-        command:
-          mutability: editable
-        volumes:
-          mutability: editable
+      volumes:
+        kimai_data:
+          mutability: generated
     mysql:
       fields:
         MYSQL_DATABASE:

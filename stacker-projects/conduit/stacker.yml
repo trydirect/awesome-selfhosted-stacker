@@ -13,12 +13,14 @@ app:
   ports:
     - "6167:6167"
   environment:
+    CONDUIT_CONFIG: /var/lib/conduit/conduit.toml
     CONDUIT_SERVER_NAME: localhost
     CONDUIT_PORT: 6167
     CONDUIT_DATABASE_BACKEND: sqlite
     CONDUIT_DATABASE_PATH: /var/lib/conduit/conduit.db
   volumes:
     - conduit_data:/var/lib/conduit
+    - ./conduit.toml:/var/lib/conduit/conduit.toml:ro
 
 proxy:
   type: none
@@ -54,8 +56,9 @@ config_contract:
           display: number
         CONDUIT_SERVER_NAME:
           mutability: editable
-        volumes:
-          mutability: editable
+      volumes:
+        conduit_data:
+          mutability: generated
 env_file: .env
 
 volumes:

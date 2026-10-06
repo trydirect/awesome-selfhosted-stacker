@@ -73,14 +73,12 @@ config_contract:
         BASE_URL:
           mutability: editable
         DATABASE_URL:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
+          mutability: editable
         MODE:
           mutability: editable
-        volumes:
-          mutability: editable
+      volumes:
+        windmill_logs:
+          mutability: generated
     postgres:
       fields:
         POSTGRES_DB:
@@ -92,16 +90,9 @@ config_contract:
           display: password
         POSTGRES_USER:
           mutability: editable
-        healthcheck:
-          mutability: editable
-        interval:
-          mutability: editable
-        retries:
-          mutability: editable
-        test:
-          mutability: editable
-        timeout:
-          mutability: editable
+      volumes:
+        postgres_data:
+          mutability: generated
 env_file: .env
 
 volumes:

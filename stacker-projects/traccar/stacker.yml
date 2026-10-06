@@ -11,25 +11,28 @@ app:
   type: custom
   image: traccar/traccar:latest
   ports:
-    - "8082:8082"
-    - "5000-5150:5000-5150"
+    - "8083:8082"
+    - "5151-5300:5151-5300"
   environment:
-    DATABASE_URL: "jdbc:postgresql://postgres:5432/traccar"
+    CONFIG_USE_ENVIRONMENT_VARIABLES: "true"
+    DATABASE_DRIVER: org.postgresql.Driver
+    DATABASE_URL: "jdbc:postgresql://database:5432/traccar"
     DATABASE_USER: traccar
     DATABASE_PASSWORD: "${DB_PASSWORD}"
   volumes:
-    - traccar_data:/opt/traccar/logs
+    - traccar_logs:/opt/traccar/logs
     - traccar_conf:/opt/traccar/conf
 
 services:
-  - name: postgres
-    image: postgres:16-alpine
+  - name: database
+    image: timescale/timescaledb:latest-pg17
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:5433:5432"
     environment:
       POSTGRES_DB: traccar
       POSTGRES_USER: traccar
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      TIMESCALEDB_TELEMETRY: "off"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -75,9 +78,7 @@ config_contract:
           mutability: editable
         DATABASE_USER:
           mutability: editable
-        volumes:
-          mutability: editable
-    postgres:
+    database:
       fields:
         POSTGRES_DB:
           mutability: editable
@@ -88,19 +89,10 @@ config_contract:
           display: password
         POSTGRES_USER:
           mutability: editable
-        healthcheck:
-          mutability: editable
-        interval:
-          mutability: editable
-        retries:
-          mutability: editable
-        test:
-          mutability: editable
-        timeout:
-          mutability: editable
+
 env_file: .env
 
 volumes:
-  traccar_data: {}
+  traccar_logs: {}
   traccar_conf: {}
   postgres_data: {}

@@ -16,6 +16,7 @@ app:
   command: serve
   volumes:
     - headscale_data:/var/lib/headscale
+    - ./config.yaml:/etc/headscale/config.yaml:ro
 
 proxy:
   type: none
