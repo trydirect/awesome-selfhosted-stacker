@@ -11,7 +11,7 @@ app:
   type: custom
   image: taleshape/shaper:latest
   ports:
-    - "8080:8080"
+    - "8080:5454"
   environment:
     DUCKDB_PATH: /data/shaper.duckdb
   volumes:
