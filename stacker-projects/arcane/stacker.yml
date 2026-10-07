@@ -48,13 +48,8 @@ deploy:
       - "443"
 
 proxy:
-  type: nginx-proxy-manager
-  auto_detect: true
-  domains:
-    - domain: "arcane.try.direct"
-      ssl: auto
-      upstream: "app:3552"
-
+  type: none
+  auto_detect: false
 monitoring:
   status_panel: true
   healthcheck:
