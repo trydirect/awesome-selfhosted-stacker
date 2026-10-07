@@ -41,13 +41,8 @@ deploy:
       - "443"
 
 proxy:
-  type: nginx-proxy-manager
-  auto_detect: true
-  domains:
-    - domain: "dockhand.try.direct"
-      ssl: auto
-      upstream: "app:3000"
-
+  type: none
+  auto_detect: false
 monitoring:
   status_panel: true
   healthcheck:
