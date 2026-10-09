@@ -29,3 +29,10 @@ deploy:
       - "5230"
 
 env_file: .env
+
+config_contract:
+  services:
+    app:
+      volumes:
+        memos_data:
+          mutability: generated

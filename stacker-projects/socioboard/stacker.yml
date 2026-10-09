@@ -127,3 +127,265 @@ volumes:
   socioboard_api_data: {}
   socioboard_mysql: {}
   socioboard_mongo: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        BASE_DOMAIN:
+          mutability: editable
+        HTTPS_PORT:
+          mutability: editable
+        LARAVEL_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    socioboard:
+      fields:
+        ADMIN_EMAIL:
+          mutability: editable
+        ADMIN_PANEL_ENABLED:
+          mutability: editable
+        ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ADMIN_SESSION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ADMIN_SESSION_NAME:
+          mutability: editable
+        AMEMBER_DOMAIN:
+          mutability: editable
+        AMEMBER_ENABLED:
+          mutability: editable
+        AMEMBER_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AUTH_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AUTH_TOKEN_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        BASE_DOMAIN:
+          mutability: editable
+        BITLY_ACCESS_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        BITLY_API_ID:
+          mutability: editable
+        BITLY_API_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        BITLY_REDIRECT_URI:
+          mutability: editable
+        FACEBOOK_API_APP_ID:
+          mutability: editable
+        FACEBOOK_API_APP_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GITHUB_API_ID:
+          mutability: editable
+        GITHUB_API_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GOOGLE_API_ID:
+          mutability: editable
+        GOOGLE_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GOOGLE_API_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GOOGLE_EMAIL:
+          mutability: editable
+        GOOGLE_EMAIL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HTTPS_PORT:
+          mutability: editable
+        HTTP_PORT:
+          mutability: editable
+        IG_API_ID:
+          mutability: editable
+        IG_API_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        IG_BUSINESS_API_ID:
+          mutability: editable
+        IG_BUSINESS_API_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JEST_ACCESS_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        LARAVEL_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        LINKEDIN_API_ID:
+          mutability: editable
+        LINKEDIN_API_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MAIL_HANDLER:
+          mutability: editable
+        MONGO_DB_NAME:
+          mutability: editable
+        MONGO_PASS:
+          mutability: editable
+        MONGO_USER:
+          mutability: editable
+        NODE_ENV:
+          mutability: editable
+        PINTEREST_API_ID:
+          mutability: editable
+        PINTEREST_API_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SENDGRID_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SENDGRID_CC_ADDR:
+          mutability: editable
+        SENDGRID_FROM_MAIL:
+          mutability: editable
+        SENDGRID_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SENDGRID_USERNAME:
+          mutability: editable
+        SESSION_KEY_1:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SESSION_KEY_2:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SESSION_NAME:
+          mutability: editable
+        SOCIOBOARD_TWITTER_HANDLER:
+          mutability: editable
+        SQL_DB_NAME:
+          mutability: editable
+        SQL_DB_PASS:
+          mutability: editable
+        SQL_DB_ROOT_PASS:
+          mutability: editable
+        SQL_DB_USER:
+          mutability: editable
+        TINY_LINK_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TUMBLR_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TUMBLR_API_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TWILIO_ACC_SID:
+          mutability: editable
+        TWILIO_AUTH_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TWILIO_SERVICE_ID:
+          mutability: editable
+        TWITTER_API_APP_NAME:
+          mutability: editable
+        TWITTER_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TWITTER_API_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        socioboard_api_data:
+          mutability: generated
+    socioboard-mysql:
+      fields:
+        MYSQL_DATABASE:
+          mutability: editable
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_USER:
+          mutability: editable
+      volumes:
+        socioboard_mysql:
+          mutability: generated
+    socioboard-mongo:
+      fields:
+        MONGO_INITDB_DATABASE:
+          mutability: editable
+        MONGO_INITDB_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MONGO_INITDB_ROOT_USERNAME:
+          mutability: editable
+      volumes:
+        socioboard_mongo:
+          mutability: generated

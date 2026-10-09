@@ -62,3 +62,84 @@ install:
     domain: projects.try.direct
     openproject-secret-key-base: ""
     openproject-database-password: ""
+
+config_contract:
+  services:
+    app:
+      fields:
+        OPENPROJECT_DB__POSTGRESQL__DATABASE:
+          mutability: editable
+        OPENPROJECT_DB__POSTGRESQL__HOST:
+          mutability: editable
+        OPENPROJECT_DB__POSTGRESQL__PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENPROJECT_DB__POSTGRESQL__PORT:
+          mutability: editable
+        OPENPROJECT_DB__POSTGRESQL__USERNAME:
+          mutability: editable
+        OPENPROJECT_HOST__NAME:
+          mutability: editable
+        OPENPROJECT_HTTPS:
+          mutability: editable
+        OPENPROJECT_MAILER__SMTP__ENABLE__STARTTLS:
+          mutability: editable
+        OPENPROJECT_MAILER__SMTP__HOST:
+          mutability: editable
+        OPENPROJECT_MAILER__SMTP__PORT:
+          mutability: editable
+        OPENPROJECT_RAILS__RELATIVE__URL__ROOT:
+          mutability: editable
+        OPENPROJECT_SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        openproject-assets:
+          mutability: generated
+        openproject-logs:
+          mutability: generated
+    openproject-worker:
+      fields:
+        OPENPROJECT_DB__POSTGRESQL__DATABASE:
+          mutability: editable
+        OPENPROJECT_DB__POSTGRESQL__HOST:
+          mutability: editable
+        OPENPROJECT_DB__POSTGRESQL__PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENPROJECT_DB__POSTGRESQL__PORT:
+          mutability: editable
+        OPENPROJECT_DB__POSTGRESQL__USERNAME:
+          mutability: editable
+        OPENPROJECT_HOST__NAME:
+          mutability: editable
+        OPENPROJECT_HTTPS:
+          mutability: editable
+        OPENPROJECT_SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        openproject-assets:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        openproject-postgres:
+          mutability: generated

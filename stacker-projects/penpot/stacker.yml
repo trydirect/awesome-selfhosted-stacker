@@ -105,3 +105,75 @@ volumes:
   penpot-assets: {}
   penpot-postgres: {}
   penpot-redis: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        PENPOT_FLAGS:
+          mutability: editable
+    penpot-backend:
+      fields:
+        PENPOT_ASSETS_STORAGE_BACKEND:
+          mutability: editable
+        PENPOT_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PENPOT_DATABASE_URI:
+          mutability: editable
+        PENPOT_DATABASE_USERNAME:
+          mutability: editable
+        PENPOT_FLAGS:
+          mutability: editable
+        PENPOT_REDIS_URI:
+          mutability: editable
+        PENPOT_SMTP_DEFAULT_FROM:
+          mutability: editable
+        PENPOT_SMTP_DEFAULT_REPLY_TO:
+          mutability: editable
+        PENPOT_SMTP_HOST:
+          mutability: editable
+        PENPOT_SMTP_PORT:
+          mutability: editable
+        PENPOT_SMTP_SSL:
+          mutability: editable
+        PENPOT_SMTP_TLS:
+          mutability: editable
+        PENPOT_STORAGE_ASSETS_FS_DIRECTORY:
+          mutability: editable
+        PENPOT_TELEMETRY_ENABLED:
+          mutability: editable
+      volumes:
+        penpot-assets:
+          mutability: generated
+    penpot-exporter:
+      fields:
+        PENPOT_ASSETS_STORAGE_BACKEND:
+          mutability: editable
+        PENPOT_REDIS_URI:
+          mutability: editable
+        PENPOT_STORAGE_ASSETS_FS_DIRECTORY:
+          mutability: editable
+      volumes:
+        penpot-assets:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        penpot-postgres:
+          mutability: generated
+    redis:
+      volumes:
+        penpot-redis:
+          mutability: generated

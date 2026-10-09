@@ -54,3 +54,21 @@ env_file: .env
 
 volumes:
   ollama-data: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        OLLAMA_HOST:
+          mutability: editable
+        OLLAMA_KEEP_ALIVE:
+          mutability: editable
+        OLLAMA_MAX_LOADED_MODELS:
+          mutability: editable
+        OLLAMA_NUM_PARALLEL:
+          mutability: editable
+        OLLAMA_ORIGINS:
+          mutability: editable
+      volumes:
+        ollama-data:
+          mutability: generated

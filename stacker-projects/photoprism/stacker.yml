@@ -62,3 +62,47 @@ deploy:
       - "2342"
 
 env_file: .env
+
+config_contract:
+  services:
+    app:
+      fields:
+        PHOTOPRISM_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PHOTOPRISM_ADMIN_USER:
+          mutability: editable
+        PHOTOPRISM_AUTH_MODE:
+          mutability: editable
+        PHOTOPRISM_DATABASE_CONCENTRATION:
+          mutability: editable
+        PHOTOPRISM_DATABASE_DRIVER:
+          mutability: editable
+        PHOTOPRISM_DATABASE_NAME:
+          mutability: editable
+        PHOTOPRISM_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PHOTOPRISM_DATABASE_SERVER:
+          mutability: editable
+        PHOTOPRISM_DATABASE_USER:
+          mutability: editable
+        PHOTOPRISM_IMPORT_PATH:
+          mutability: editable
+        PHOTOPRISM_ORIGINALS_LIMIT:
+          mutability: editable
+        PHOTOPRISM_SITE_TITLE:
+          mutability: editable
+        PHOTOPRISM_SITE_URL:
+          mutability: editable
+      volumes:
+        photoprism-storage:
+          mutability: generated
+        photoprism-originals:
+          mutability: generated
+        photoprism-import:
+          mutability: generated

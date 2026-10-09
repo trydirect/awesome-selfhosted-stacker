@@ -27,3 +27,34 @@ install:
     roundcube-imap-host: ""
     roundcube-smtp-host: ""
     roundcube-secret-key: ""
+
+config_contract:
+  services:
+    app:
+      fields:
+        ROUNDCUBEMAIL_DB_DSN:
+          mutability: editable
+        ROUNDCUBEMAIL_DB_TYPE:
+          mutability: editable
+        ROUNDCUBEMAIL_DEFAULT_HOST:
+          mutability: editable
+        ROUNDCUBEMAIL_DEFAULT_PORT:
+          mutability: editable
+        ROUNDCUBEMAIL_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ROUNDCUBEMAIL_SKIN:
+          mutability: editable
+        ROUNDCUBEMAIL_SMTP_PORT:
+          mutability: editable
+        ROUNDCUBEMAIL_SMTP_SERVER:
+          mutability: editable
+        ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE:
+          mutability: editable
+      volumes:
+        roundcube-db:
+          mutability: generated
+        roundcube-data:
+          mutability: generated

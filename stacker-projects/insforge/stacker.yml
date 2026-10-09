@@ -36,3 +36,6 @@ monitoring:
 env_file: .env
 
 env: {}
+
+config_contract:
+  services: {}

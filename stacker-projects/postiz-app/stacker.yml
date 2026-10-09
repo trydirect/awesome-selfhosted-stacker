@@ -24,6 +24,13 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+    postiz-postgres:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:

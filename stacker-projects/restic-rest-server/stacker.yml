@@ -50,3 +50,10 @@ env_file: .env
 
 volumes:
   restic_repos: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        restic_repos:
+          mutability: generated

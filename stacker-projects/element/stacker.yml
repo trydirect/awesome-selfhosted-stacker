@@ -46,3 +46,10 @@ env_file: .env
 
 volumes:
   element_config: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        element_config:
+          mutability: generated

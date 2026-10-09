@@ -40,3 +40,10 @@ env_file: .env
 
 volumes:
   olivetin_config: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        olivetin_config:
+          mutability: generated

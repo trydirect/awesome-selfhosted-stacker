@@ -42,3 +42,12 @@ env_file: .env
 volumes:
   baikal_config: {}
   baikal_data: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        baikal_config:
+          mutability: generated
+        baikal_data:
+          mutability: generated

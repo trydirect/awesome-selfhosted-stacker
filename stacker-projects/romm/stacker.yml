@@ -76,6 +76,14 @@ config_contract:
       - SCREENSCRAPER_PASSWORD
       - RETROACHIEVEMENTS_API_KEY
       - STEAMGRIDDB_API_KEY
+    app:
+      fields:
+        RETROACHIEVEMENTS_API_KEY:
+          mutability: provided
+        SCREENSCRAPER_PASSWORD:
+          mutability: provided
+        STEAMGRIDDB_API_KEY:
+          mutability: provided
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 proxy:

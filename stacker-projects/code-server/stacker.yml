@@ -28,3 +28,29 @@ deploy:
     user: ${EXISTING_SERVER_USER}
     ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
     port: 22
+
+config_contract:
+  services:
+    app:
+      fields:
+        DEFAULT_WORKSPACE:
+          mutability: editable
+        PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PGID:
+          mutability: editable
+        PUID:
+          mutability: editable
+        SUDO_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TZ:
+          mutability: editable
+      volumes:
+        code-server-config:
+          mutability: generated

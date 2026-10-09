@@ -9,7 +9,19 @@ config_contract:
   services:
     app:
       fields:
+        druid_metadata_storage_connector_password:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    postgres:
+      fields:
+        POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32

@@ -58,6 +58,11 @@ config_contract:
   services:
     app:
       fields:
+        APP_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         APP_URL:
           mutability: editable
         DB_DATABASE:

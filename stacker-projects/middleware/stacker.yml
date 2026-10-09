@@ -50,3 +50,21 @@ env_file: ".env"
 volumes:
   middleware_postgres_data: {}
   middleware_keys: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        ANALYTICS_SERVER_PORT:
+          mutability: editable
+        DEFAULT_SYNC_DAYS:
+          mutability: editable
+        PORT:
+          mutability: editable
+        SYNC_SERVER_PORT:
+          mutability: editable
+      volumes:
+        middleware_postgres_data:
+          mutability: generated
+        middleware_keys:
+          mutability: generated

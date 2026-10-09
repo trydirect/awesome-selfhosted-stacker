@@ -95,6 +95,37 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
+    wp-db:
+      fields:
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    matomo-db:
+      fields:
+        MARIADB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MARIADB_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    matomo:
+      fields:
+        MATOMO_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 env_file: .env
 deploy:
   target: server

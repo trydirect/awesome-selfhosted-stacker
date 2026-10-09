@@ -66,6 +66,8 @@ config_contract:
   services:
     app:
       fields:
+        SHOW_PASSWORD_HINT:
+          mutability: provided
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
@@ -77,6 +79,13 @@ config_contract:
           length: 32
           display: password
 
+    bitwarden_db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

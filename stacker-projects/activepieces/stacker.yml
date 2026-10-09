@@ -97,3 +97,124 @@ volumes:
   activepieces_cache: {}
   activepieces_postgres_data: {}
   activepieces_redis_data: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        AP_CONTAINER_TYPE:
+          mutability: editable
+        AP_ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AP_ENGINE_EXECUTABLE_PATH:
+          mutability: editable
+        AP_ENVIRONMENT:
+          mutability: editable
+        AP_EXECUTION_MODE:
+          mutability: editable
+        AP_FLOW_TIMEOUT_SECONDS:
+          mutability: editable
+        AP_FRONTEND_URL:
+          mutability: editable
+        AP_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AP_POSTGRES_DATABASE:
+          mutability: editable
+        AP_POSTGRES_HOST:
+          mutability: editable
+        AP_POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AP_POSTGRES_PORT:
+          mutability: editable
+        AP_POSTGRES_USERNAME:
+          mutability: editable
+        AP_REDIS_HOST:
+          mutability: editable
+        AP_REDIS_PORT:
+          mutability: editable
+        AP_TELEMETRY_ENABLED:
+          mutability: editable
+        AP_TEMPLATES_SOURCE_URL:
+          mutability: editable
+        AP_TRIGGER_DEFAULT_POLL_INTERVAL:
+          mutability: editable
+        AP_WEBHOOK_TIMEOUT_SECONDS:
+          mutability: editable
+      volumes:
+        activepieces_cache:
+          mutability: generated
+    worker:
+      fields:
+        AP_CONTAINER_TYPE:
+          mutability: editable
+        AP_ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AP_ENGINE_EXECUTABLE_PATH:
+          mutability: editable
+        AP_ENVIRONMENT:
+          mutability: editable
+        AP_EXECUTION_MODE:
+          mutability: editable
+        AP_FLOW_TIMEOUT_SECONDS:
+          mutability: editable
+        AP_FRONTEND_URL:
+          mutability: editable
+        AP_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AP_POSTGRES_DATABASE:
+          mutability: editable
+        AP_POSTGRES_HOST:
+          mutability: editable
+        AP_POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AP_POSTGRES_PORT:
+          mutability: editable
+        AP_POSTGRES_USERNAME:
+          mutability: editable
+        AP_REDIS_HOST:
+          mutability: editable
+        AP_REDIS_PORT:
+          mutability: editable
+        AP_TELEMETRY_ENABLED:
+          mutability: editable
+        AP_TEMPLATES_SOURCE_URL:
+          mutability: editable
+      volumes:
+        activepieces_cache:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        activepieces_postgres_data:
+          mutability: generated
+    redis:
+      volumes:
+        activepieces_redis_data:
+          mutability: generated

@@ -119,3 +119,99 @@ volumes:
   zammad-storage: {}
   zammad-postgres: {}
   zammad-redis: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        MEMCACHED_SERVERS:
+          mutability: editable
+        POSTGRESQL_DB:
+          mutability: editable
+        POSTGRESQL_HOST:
+          mutability: editable
+        POSTGRESQL_PASS:
+          mutability: editable
+        POSTGRESQL_PORT:
+          mutability: editable
+        POSTGRESQL_USER:
+          mutability: editable
+        RAILS_ENV:
+          mutability: editable
+        REDIS_HOST:
+          mutability: editable
+        REDIS_PORT:
+          mutability: editable
+        ZAMMAD_SESSION_HOST:
+          mutability: editable
+        ZAMMAD_SESSION_PORT:
+          mutability: editable
+        ZAMMAD_WEBSOCKET_HOST:
+          mutability: editable
+        ZAMMAD_WEBSOCKET_PORT:
+          mutability: editable
+      volumes:
+        zammad-storage:
+          mutability: generated
+    zammad-websocket:
+      fields:
+        MEMCACHED_SERVERS:
+          mutability: editable
+        POSTGRESQL_DB:
+          mutability: editable
+        POSTGRESQL_HOST:
+          mutability: editable
+        POSTGRESQL_PASS:
+          mutability: editable
+        POSTGRESQL_PORT:
+          mutability: editable
+        POSTGRESQL_USER:
+          mutability: editable
+        RAILS_ENV:
+          mutability: editable
+        REDIS_HOST:
+          mutability: editable
+        REDIS_PORT:
+          mutability: editable
+        ZAMMAD_SESSION_HOST:
+          mutability: editable
+        ZAMMAD_SESSION_PORT:
+          mutability: editable
+    zammad-worker:
+      fields:
+        MEMCACHED_SERVERS:
+          mutability: editable
+        POSTGRESQL_DB:
+          mutability: editable
+        POSTGRESQL_HOST:
+          mutability: editable
+        POSTGRESQL_PASS:
+          mutability: editable
+        POSTGRESQL_PORT:
+          mutability: editable
+        POSTGRESQL_USER:
+          mutability: editable
+        RAILS_ENV:
+          mutability: editable
+        REDIS_HOST:
+          mutability: editable
+        REDIS_PORT:
+          mutability: editable
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        zammad-postgres:
+          mutability: generated
+    redis:
+      volumes:
+        zammad-redis:
+          mutability: generated

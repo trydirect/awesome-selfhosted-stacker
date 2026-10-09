@@ -79,3 +79,99 @@ volumes:
   hitkeep_data: {}
   hitkeep_archive: {}
   hitkeep_backups: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        HITKEEP_AI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HITKEEP_AI_BASE_URL:
+          mutability: editable
+        HITKEEP_AI_BUDGET_WINDOW:
+          mutability: editable
+        HITKEEP_AI_ENABLED:
+          mutability: editable
+        HITKEEP_AI_MODEL:
+          mutability: editable
+        HITKEEP_AI_PROVIDER:
+          mutability: editable
+        HITKEEP_AI_REGION:
+          mutability: editable
+        HITKEEP_AI_REQUEST_LIMIT:
+          mutability: editable
+        HITKEEP_AI_TOKEN_LIMIT:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HITKEEP_ARCHIVE_PATH:
+          mutability: editable
+        HITKEEP_BACKUP_INTERVAL:
+          mutability: editable
+        HITKEEP_BACKUP_PATH:
+          mutability: editable
+        HITKEEP_BACKUP_RETENTION:
+          mutability: editable
+        HITKEEP_DATA_PATH:
+          mutability: editable
+        HITKEEP_DB_PATH:
+          mutability: editable
+        HITKEEP_GOOGLE_SEARCH_CONSOLE_CLIENT_ID:
+          mutability: editable
+        HITKEEP_GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HITKEEP_GOOGLE_SEARCH_CONSOLE_REDIRECT_URL:
+          mutability: editable
+        HITKEEP_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HITKEEP_MAIL_ENCRYPTION:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HITKEEP_MAIL_FROM_ADDRESS:
+          mutability: editable
+        HITKEEP_MAIL_FROM_NAME:
+          mutability: editable
+        HITKEEP_MAIL_HOST:
+          mutability: editable
+        HITKEEP_MAIL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HITKEEP_MAIL_PORT:
+          mutability: editable
+        HITKEEP_MAIL_USERNAME:
+          mutability: editable
+        HITKEEP_MCP_ENABLED:
+          mutability: editable
+        HITKEEP_MCP_MAX_RANGE_DAYS:
+          mutability: editable
+        HITKEEP_MCP_PATH:
+          mutability: editable
+        HITKEEP_PUBLIC_URL:
+          mutability: editable
+        HITKEEP_SPAM_FILTER_AUTO_UPDATE:
+          mutability: editable
+        HITKEEP_SPAM_FILTER_PATH:
+          mutability: editable
+        HITKEEP_SPAM_FILTER_UPDATE_INTERVAL:
+          mutability: editable
+      volumes:
+        hitkeep_data:
+          mutability: generated
+        hitkeep_archive:
+          mutability: generated
+        hitkeep_backups:
+          mutability: generated

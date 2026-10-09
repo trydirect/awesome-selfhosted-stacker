@@ -73,3 +73,49 @@ env_file: ".env"
 volumes:
   aptabase_postgres_data: {}
   aptabase_clickhouse_data: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        ASPNETCORE_URLS:
+          mutability: editable
+        AUTH_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        BASE_URL:
+          mutability: editable
+        CLICKHOUSE_URL:
+          mutability: editable
+        DATABASE_URL:
+          mutability: editable
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        aptabase_postgres_data:
+          mutability: generated
+    clickhouse:
+      fields:
+        CLICKHOUSE_DB:
+          mutability: editable
+        CLICKHOUSE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CLICKHOUSE_USER:
+          mutability: editable
+      volumes:
+        aptabase_clickhouse_data:
+          mutability: generated

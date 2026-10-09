@@ -117,12 +117,30 @@ config_contract:
     redis:
       secret: [REDIS_PASSWORD]
     soketi:
+      fields:
+        SOKETI_DEFAULT_APP_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
       required: [SOKETI_DEFAULT_APP_ID]
       secret: [SOKETI_DEFAULT_APP_SECRET]
     coolify:
       required: [APP_KEY, DB_DATABASE, DB_USERNAME]
       secret: [DB_PASSWORD, REDIS_PASSWORD, PUSHER_APP_SECRET]
 
+    app:
+      fields:
+        APP_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PUSHER_APP_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

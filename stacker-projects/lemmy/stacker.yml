@@ -77,6 +77,16 @@ config_contract:
   services:
     app:
       fields:
+        LEMMY_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        LEMMY_DEFAULT_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
@@ -88,6 +98,13 @@ config_contract:
           length: 32
           display: password
         ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    lemmy_db:
+      fields:
+        POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32

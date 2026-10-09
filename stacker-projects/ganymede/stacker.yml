@@ -9,7 +9,19 @@ config_contract:
   services:
     app:
       fields:
+        TWITCH_CLIENT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    ganymede-db:
+      fields:
+        POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32

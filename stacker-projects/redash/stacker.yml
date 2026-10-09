@@ -71,12 +71,29 @@ config_contract:
   services:
     app:
       fields:
+        REDASH_GOOGLE_CLIENT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        REDASH_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
         SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    redash_db:
+      fields:
+        POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32

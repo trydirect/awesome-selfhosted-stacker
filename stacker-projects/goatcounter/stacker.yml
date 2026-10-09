@@ -43,3 +43,10 @@ monitoring:
 env_file: ".env"
 volumes:
   goatcounter_data: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        goatcounter_data:
+          mutability: generated

@@ -44,3 +44,10 @@ env_file: .env
 
 volumes:
   headscale_data: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        headscale_data:
+          mutability: generated

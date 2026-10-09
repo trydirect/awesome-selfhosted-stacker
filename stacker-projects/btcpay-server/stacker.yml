@@ -51,3 +51,47 @@ deploy:
       - "23000"
 
 env_file: .env
+
+config_contract:
+  services:
+    app:
+      fields:
+        BTCPAY_CHAIN:
+          mutability: editable
+        BTCPAY_EXPLORERURL:
+          mutability: editable
+        BTCPAY_HOST:
+          mutability: editable
+        BTCPAY_LIGHTNING__CHARGEURL:
+          mutability: editable
+        BTCPAY_PORT:
+          mutability: editable
+        BTCPAY_PROTOCOL:
+          mutability: editable
+        BTCPAY_SSHCONNECTION:
+          mutability: editable
+        BTCPAY_SSHKEYFILE:
+          mutability: editable
+        DATABASE:
+          mutability: editable
+        NBITCOIN_NETWORK:
+          mutability: editable
+      volumes:
+        btcpay-data:
+          mutability: generated
+        btcpay-plugins:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        btcpay-postgres:
+          mutability: generated

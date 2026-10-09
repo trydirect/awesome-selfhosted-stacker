@@ -49,3 +49,12 @@ env_file: .env
 volumes:
   manticore_data: {}
   manticore_log: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        manticore_data:
+          mutability: generated
+        manticore_log:
+          mutability: generated

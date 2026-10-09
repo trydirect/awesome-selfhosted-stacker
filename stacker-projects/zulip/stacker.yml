@@ -77,6 +77,16 @@ config_contract:
   services:
     app:
       fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SETTING_EMAIL_HOST_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric

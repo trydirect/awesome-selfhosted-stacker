@@ -105,3 +105,110 @@ volumes:
   dawarich-storage: {}
   dawarich-postgres: {}
   dawarich-redis: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        APPLICATION_HOST:
+          mutability: editable
+        APPLICATION_PROTOCOL:
+          mutability: editable
+        DATABASE_HOST:
+          mutability: editable
+        DATABASE_NAME:
+          mutability: editable
+        DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DATABASE_PORT:
+          mutability: editable
+        DATABASE_USERNAME:
+          mutability: editable
+        DawarichBackgroundJob:
+          mutability: editable
+        ENCRYPTION_DTERMINARY_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ENCRYPTION_PRIMARY_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        RAILS_ENV:
+          mutability: editable
+        REDIS_URL:
+          mutability: editable
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SELF_HOSTED:
+          mutability: editable
+      volumes:
+        dawarich-storage:
+          mutability: generated
+    dawarich-background:
+      fields:
+        APPLICATION_HOST:
+          mutability: editable
+        APPLICATION_PROTOCOL:
+          mutability: editable
+        DATABASE_HOST:
+          mutability: editable
+        DATABASE_NAME:
+          mutability: editable
+        DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DATABASE_PORT:
+          mutability: editable
+        DATABASE_USERNAME:
+          mutability: editable
+        ENCRYPTION_DTERMINARY_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ENCRYPTION_PRIMARY_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        RAILS_ENV:
+          mutability: editable
+        REDIS_URL:
+          mutability: editable
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        dawarich-storage:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        dawarich-postgres:
+          mutability: generated
+    redis:
+      volumes:
+        dawarich-redis:
+          mutability: generated

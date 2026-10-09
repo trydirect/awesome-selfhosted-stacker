@@ -48,3 +48,61 @@ install:
     domain: etherpad.try.direct
     etherpad-admin-password: ""
     etherpad-user-password: ""
+
+config_contract:
+  services:
+    app:
+      fields:
+        ABIWORD:
+          mutability: editable
+        ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ALLOW_UNKNOWN_FILE_ENDS:
+          mutability: editable
+        DB_DIR:
+          mutability: editable
+        DB_TYPE:
+          mutability: editable
+        DISABLE_IPLOGGING:
+          mutability: editable
+        EDIT_ONLY:
+          mutability: editable
+        IP:
+          mutability: editable
+        MAXAge:
+          mutability: editable
+        MINIFY:
+          mutability: editable
+        PORT:
+          mutability: editable
+        REQUIRE_AUTHENTICATION:
+          mutability: editable
+        REQUIRE_AUTHORIZATION:
+          mutability: editable
+        REQUIRE_SESSION:
+          mutability: editable
+        SHOW_SETTINGS_IN_ADMIN_PAGE:
+          mutability: editable
+        SOFFICE:
+          mutability: editable
+        TIDYPAR:
+          mutability: editable
+        TRUST_PROXY:
+          mutability: editable
+        USER_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        automaticReconnectionTimeout:
+          mutability: editable
+        loadTest:
+          mutability: editable
+        loglevel:
+          mutability: editable
+      volumes:
+        etherpad-data:
+          mutability: generated

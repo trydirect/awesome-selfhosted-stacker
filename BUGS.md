@@ -1544,3 +1544,21 @@ rejects the write.
 ### Projects blocked
 - ampache (existing-server)
 - Any future server deploy until Vault ACL is fixed
+
+## [NOTE] Anonymous registry rate limits block bulk template testing (2026-10-09)
+
+During bulk marketplace-submit QA (~45 server deploys in one day) both
+anonymous pull limits exhausted on the test host IP and the local dev IP:
+
+- `docker.io/minio/minio:latest` → `denied: requested access to the resource
+  is denied / unauthorized: authentication required` (manifest inspect fails
+  even for library images afterwards)
+- `ghcr.io/*` → `denied` (hi-events, huly, librebooking, and other ghcr images)
+
+Affected templates (retry after limit reset or with registry creds):
+minio, hi-events, huly, librebooking, comfyui (`ashleykza/comfyui` ~6GB).
+
+**Impact:** server deploys fail with `internal_error` (remote pull) or
+`Compose image preflight failed` (local preflight). Not a stacker bug —
+but bulk test runs should either authenticate (`STACKER_DOCKER_USERNAME` /
+`STACKER_DOCKER_PASSWORD`) or throttle pulls.
