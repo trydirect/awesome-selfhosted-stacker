@@ -1545,18 +1545,23 @@ rejects the write.
 - ampache (existing-server)
 - Any future server deploy until Vault ACL is fixed
 
-## [NOTE] Anonymous registry rate limits block bulk template testing (2026-10-09)
+## [NOTE] Registry access denials + disk limit block 5 templates (2026-10-09)
 
-During bulk marketplace-submit QA (~45 server deploys in one day) both
-anonymous pull limits exhausted on the test host IP and the local dev IP:
+Follow-up verification (after rate-limit windows reset, both from the local
+dev IP and from the test server IP):
 
-- `docker.io/minio/minio:latest` → `denied: requested access to the resource
-  is denied / unauthorized: authentication required` (manifest inspect fails
-  even for library images afterwards)
-- `ghcr.io/*` → `denied` (hi-events, huly, librebooking, and other ghcr images)
+- `docker.io/minio/minio` org → persistent `denied / unauthorized` for
+  anonymous manifest access (whole org; `library/*` images work fine)
+- `ghcr.io/librebooking/librebooking`, `ghcr.io/hidevops/hi-events`,
+  `ghcr.io/hcengineering/platform` → persistent `denied` for anonymous
+  pull (control check `ghcr.io/home-assistant/home-assistant` works)
 
-Affected templates (retry after limit reset or with registry creds):
-minio, hi-events, huly, librebooking, comfyui (`ashleykza/comfyui` ~6GB).
+Blocked templates: **minio, librebooking, hi-events, huly** — need registry
+credentials for those orgs or image-source changes in the templates.
+
+**comfyui** — separate issue: `ashleykza/comfyui` (full nvidia/cudnn) does
+not fit the 38G test server disk (`no space left on device` even after
+full prune with 22G free). Needs ≥50G target. See `comfyui/BUGS.md`.
 
 **Impact:** server deploys fail with `internal_error` (remote pull) or
 `Compose image preflight failed` (local preflight). Not a stacker bug —

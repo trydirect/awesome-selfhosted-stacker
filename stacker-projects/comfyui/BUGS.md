@@ -1,6 +1,22 @@
-~~[BUG] Cloud VM SSH key uses status_panel mode — can't SSH with local key~~
+# BUGS.md — comfyui
 
-~~Cloud VMs (e.g. comfyui-2601 at 167.233.216.242) list KEY STATUS as "active"~~
-~~and MODE as "status_panel". Attempting SSH with the local identity file~~
-~~(`stacker-project-test`) fails with "Permission denied". The status_panel~~
-~~mode uses Stacker's built-in key, not the user-provided one.~~
+## [BLOCKED] Server deploy fails: image does not fit 38G test disk
+
+**Date:** 2026-10-09
+**Deployment:** #1255, #1271, #1275, #1276, #1277 (all `paused [internal_error]`)
+
+### Root cause
+`ashleykza/comfyui:latest` includes full nvidia/cudnn stack. Ansible pull+
+extract on 46.224.127.228 (38G disk) fails mid-layer:
+
+```
+write .../nvidia/cudnn/lib/libcudnn_engines_precompiled.so.9:
+no space left on device
+```
+
+Even after `docker system prune -af --volumes` + `docker builder prune -af`
+(22G free) the image still does not fit.
+
+### Not a stacker bug
+Template is deployable on a server with ≥50G free disk. Test server too small.
+Marketplace template stays `draft` until a bigger target is available.
