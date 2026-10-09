@@ -26,3 +26,21 @@ deploy:
     user: ${EXISTING_SERVER_USER}
     ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
     port: 22
+
+config_contract:
+  services:
+    app:
+      fields:
+        CPAD_CONF:
+          mutability: editable
+        CPAD_MAIN_DOMAIN:
+          mutability: editable
+      volumes:
+        cryptpad-config:
+          mutability: generated
+        cryptpad-data:
+          mutability: generated
+        cryptpad-customize:
+          mutability: generated
+        cryptpad-sessions:
+          mutability: generated

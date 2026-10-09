@@ -9,6 +9,13 @@ config_contract:
   services:
     app:
       fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TMDB_API_KEY:
+          mutability: provided
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric

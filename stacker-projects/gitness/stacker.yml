@@ -43,6 +43,11 @@ config_contract:
   services:
     app:
       fields:
+        GITNESS_PRINCIPAL_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         ADMIN_PASSWORD:
           mutability: generated
           type: alphanumeric

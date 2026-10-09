@@ -44,3 +44,18 @@ env_file: ".env"
 volumes:
   goaccess_logs: {}
   goaccess_public: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        goaccess_logs:
+          mutability: generated
+        goaccess_public:
+          mutability: generated
+    goaccess:
+      volumes:
+        goaccess_logs:
+          mutability: generated
+        goaccess_public:
+          mutability: generated

@@ -51,6 +51,13 @@ config_contract:
           display: password
         NEXT_PUBLIC_WEB_APP_URL:
           mutability: editable
+    calcom-db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 env_file: .env
 deploy:
   target: server

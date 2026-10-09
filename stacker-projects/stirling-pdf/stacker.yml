@@ -33,3 +33,12 @@ deploy:
     public_ports:
       - "8080"
 
+
+config_contract:
+  services:
+    app:
+      volumes:
+        stirling_data:
+          mutability: generated
+        stirling_config:
+          mutability: generated

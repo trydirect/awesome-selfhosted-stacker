@@ -23,3 +23,30 @@ install:
   inputs:
     domain: docs.try.direct
     onlyoffice-jwt-secret: ""
+
+config_contract:
+  services:
+    app:
+      fields:
+        JWT_ENABLED:
+          mutability: editable
+        JWT_HEADER:
+          mutability: editable
+        JWT_HEADER_SCHEMA:
+          mutability: editable
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ONLYOFFICE_EXAMPLE:
+          mutability: editable
+        ONLYOFFICE_SAMPLE:
+          mutability: editable
+        WOPI_ENABLED:
+          mutability: editable
+      volumes:
+        onlyoffice-data:
+          mutability: generated
+        onlyoffice-logs:
+          mutability: generated

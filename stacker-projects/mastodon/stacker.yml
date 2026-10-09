@@ -105,6 +105,23 @@ config_contract:
   services:
     app:
       fields:
+        VAPID_PUBLIC_KEY:
+          mutability: provided
+        ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
@@ -126,6 +143,13 @@ config_contract:
           length: 32
           display: password
 
+    mastodon_db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

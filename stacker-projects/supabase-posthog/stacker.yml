@@ -215,6 +215,16 @@ config_contract:
   services:
     app:
       fields:
+        SUPABASE_ANON_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SUPABASE_SERVICE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
@@ -251,6 +261,68 @@ config_contract:
           length: 32
           display: password
 
+    realtime:
+      fields:
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        METRICS_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_ENC_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    db:
+      fields:
+        DB_INIT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    rest:
+      fields:
+        PGRST_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PGRST_APP_SETTINGS_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    meta:
+      fields:
+        CRYPTO_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PG_META_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    storage:
+      fields:
+        SERVICE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    auth:
+      fields:
+        GOTRUE_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 env_file: .env
 
 volumes:

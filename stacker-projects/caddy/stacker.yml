@@ -23,3 +23,12 @@ deploy:
     user: ${EXISTING_SERVER_USER}
     ssh_key: /Users/vasilipascal/work/stacker-project-examples/stacker-project-test
     port: 22
+
+config_contract:
+  services:
+    app:
+      volumes:
+        caddy_data:
+          mutability: generated
+        caddy_config:
+          mutability: generated

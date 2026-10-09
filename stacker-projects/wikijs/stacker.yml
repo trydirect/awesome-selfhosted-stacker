@@ -30,3 +30,36 @@ install:
   inputs:
     domain: wiki.try.direct
     wikijs-database-password: ""
+
+config_contract:
+  services:
+    app:
+      fields:
+        DB_HOST:
+          mutability: editable
+        DB_NAME:
+          mutability: editable
+        DB_PASS:
+          mutability: editable
+        DB_PORT:
+          mutability: editable
+        DB_TYPE:
+          mutability: editable
+        DB_USER:
+          mutability: editable
+        PGSSLMODE:
+          mutability: editable
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        wikijs-postgres:
+          mutability: generated

@@ -41,3 +41,10 @@ env_file: .env
 
 volumes:
   hugo_data: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        hugo_data:
+          mutability: generated

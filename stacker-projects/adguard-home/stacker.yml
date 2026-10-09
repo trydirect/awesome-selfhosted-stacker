@@ -48,3 +48,12 @@ env_file: .env
 volumes:
   adguard_work: {}
   adguard_conf: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        adguard_work:
+          mutability: generated
+        adguard_conf:
+          mutability: generated

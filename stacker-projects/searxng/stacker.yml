@@ -42,3 +42,24 @@ env_file: .env
 
 volumes:
   searxng-data: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        SEARXNG_BASE_URL:
+          mutability: editable
+        SEARXNG_RATELIMIT:
+          mutability: editable
+        SEARXNG_RATE_LIMIT_IP:
+          mutability: editable
+        SEARXNG_RATE_LIMIT_PER_IP:
+          mutability: editable
+        SEARXNG_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        searxng-data:
+          mutability: generated

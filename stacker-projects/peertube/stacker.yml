@@ -54,3 +54,69 @@ install:
     domain: peertube.try.direct
     peertube-database-password: ""
     peertube-redis-password: ""
+
+config_contract:
+  services:
+    app:
+      fields:
+        NODE_ENV:
+          mutability: editable
+        PEERTUBE_DB_HOST:
+          mutability: editable
+        PEERTUBE_DB_NAME:
+          mutability: editable
+        PEERTUBE_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PEERTUBE_DB_PORT:
+          mutability: editable
+        PEERTUBE_DB_USER:
+          mutability: editable
+        PEERTUBE_REDIS_HOST:
+          mutability: editable
+        PEERTUBE_REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PEERTUBE_REDIS_PORT:
+          mutability: editable
+        PEERTUBE_SMTP_FROM:
+          mutability: editable
+        PEERTUBE_SMTP_HOSTNAME:
+          mutability: editable
+        PEERTUBE_SMTP_PORT:
+          mutability: editable
+        PEERTUBE_TRAFFIC_VIDEO_LIMIT:
+          mutability: editable
+        PEERTUBE_UPLOAD_LIMIT:
+          mutability: editable
+        PEERTUBE_WEBSERVER_HOSTNAME:
+          mutability: editable
+        PEERTUBE_WEBSERVER_PORT:
+          mutability: editable
+      volumes:
+        peertube-data:
+          mutability: generated
+        peertube-config:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        peertube-postgres:
+          mutability: generated
+    redis:
+      volumes:
+        peertube-redis:
+          mutability: generated

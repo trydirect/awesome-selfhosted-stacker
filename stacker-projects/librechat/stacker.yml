@@ -72,3 +72,44 @@ volumes:
   librechat-logs: {}
   librechat-cache: {}
   librechat-mongo: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        CREDS_IV:
+          mutability: editable
+        CREDS_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HOST_URL:
+          mutability: editable
+        JWT_REFRESH_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        LOG_LEVEL:
+          mutability: editable
+        MONGO_URI:
+          mutability: editable
+        NODE_ENV:
+          mutability: editable
+      volumes:
+        librechat-images:
+          mutability: generated
+        librechat-logs:
+          mutability: generated
+        librechat-cache:
+          mutability: generated
+    mongo:
+      volumes:
+        librechat-mongo:
+          mutability: generated

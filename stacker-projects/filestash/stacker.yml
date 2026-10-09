@@ -43,3 +43,10 @@ env_file: .env
 
 volumes:
   filestash_state: {}
+
+config_contract:
+  services:
+    app:
+      volumes:
+        filestash_state:
+          mutability: generated

@@ -82,3 +82,61 @@ volumes:
   passbolt-gpg: {}
   passbolt-images: {}
   passbolt-mysql: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        APP_FULL_BASE_URL:
+          mutability: editable
+        DATASOURCES_DEFAULT_DATABASE:
+          mutability: editable
+        DATASOURCES_DEFAULT_HOST:
+          mutability: editable
+        DATASOURCES_DEFAULT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DATASOURCES_DEFAULT_PORT:
+          mutability: editable
+        DATASOURCES_DEFAULT_USERNAME:
+          mutability: editable
+        JAVA_OPTS:
+          mutability: editable
+        PASSBOLT_EMAIL_DEFAULT_FROM:
+          mutability: editable
+        PASSBOLT_EMAIL_DEFAULT_TRANSPORT:
+          mutability: editable
+        PASSBOLT_EMAIL_TRANSPORT_DEFAULT_HOST:
+          mutability: editable
+        PASSBOLT_EMAIL_TRANSPORT_DEFAULT_PORT:
+          mutability: editable
+        PASSBOLT_GPG_SERVER_KEY_FINGERPRINT:
+          mutability: provided
+        PASSBOLT_GPG_SERVER_KEY_PATH:
+          mutability: provided
+      volumes:
+        passbolt-gpg:
+          mutability: generated
+        passbolt-images:
+          mutability: generated
+    postgres:
+      fields:
+        MYSQL_DATABASE:
+          mutability: editable
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_USER:
+          mutability: editable
+      volumes:
+        passbolt-mysql:
+          mutability: generated

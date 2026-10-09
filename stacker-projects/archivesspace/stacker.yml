@@ -70,3 +70,70 @@ env_file: ".env"
 volumes:
   archivesspace_mysql: {}
   archivesspace_solr: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        APPCONFIG_BACKEND_URL:
+          mutability: editable
+        APPCONFIG_DB_URL:
+          mutability: editable
+        APPCONFIG_FRONTEND_COOKIE_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        APPCONFIG_FRONTEND_PROXY_URL:
+          mutability: editable
+        APPCONFIG_OAI_PROXY_URL:
+          mutability: editable
+        APPCONFIG_PUBLIC_COOKIE_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        APPCONFIG_PUBLIC_PROXY_URL:
+          mutability: editable
+        APPCONFIG_PUBLIC_USER_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        APPCONFIG_SEARCH_USER_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        APPCONFIG_SOLR_URL:
+          mutability: editable
+        APPCONFIG_STAFF_USER_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JAVA_OPTS:
+          mutability: editable
+    db:
+      fields:
+        MYSQL_DATABASE:
+          mutability: editable
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_USER:
+          mutability: editable
+      volumes:
+        archivesspace_mysql:
+          mutability: generated
+    solr:
+      volumes:
+        archivesspace_solr:
+          mutability: generated

@@ -78,12 +78,29 @@ config_contract:
   services:
     app:
       fields:
+        DISCOURSE_SMTP_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DISCOURSE_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
         SMTP_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    discourse_db:
+      fields:
+        POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32

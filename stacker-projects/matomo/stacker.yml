@@ -74,6 +74,11 @@ config_contract:
   services:
     app:
       fields:
+        MATOMO_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
@@ -85,6 +90,18 @@ config_contract:
           length: 32
           display: password
 
+    matomo_db:
+      fields:
+        MARIADB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MARIADB_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

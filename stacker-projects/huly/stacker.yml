@@ -111,3 +111,104 @@ volumes:
   huly-files: {}
   huly-postgres: {}
   huly-redis: {}
+
+config_contract:
+  services:
+    app:
+      fields:
+        ACCOUNTS_URL:
+          mutability: editable
+        AUTH_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_URL:
+          mutability: editable
+        GITHUB_APP_NAME:
+          mutability: editable
+        GITHUB_CLIENT_ID:
+          mutability: editable
+        GITHUB_CLIENT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GITHUB_PRIVATE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GITHUB_WEBHOOK_URL:
+          mutability: editable
+        REDIS_URL:
+          mutability: editable
+        SERVER_PORT:
+          mutability: editable
+        STORAGE_CONFIG:
+          mutability: editable
+        TELEGRAM_API_ID:
+          mutability: editable
+        TELEGRAM_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        UPLOAD_URL:
+          mutability: editable
+      volumes:
+        huly-files:
+          mutability: generated
+    huly-account:
+      fields:
+        ACCOUNTS_PORT:
+          mutability: editable
+        AUTH_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_URL:
+          mutability: editable
+        REDIS_URL:
+          mutability: editable
+        SERVER_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    huly-worker:
+      fields:
+        ACCOUNTS_URL:
+          mutability: editable
+        DB_URL:
+          mutability: editable
+        REDIS_URL:
+          mutability: editable
+        SERVER_PORT:
+          mutability: editable
+        STORAGE_CONFIG:
+          mutability: editable
+        UPLOAD_URL:
+          mutability: editable
+      volumes:
+        huly-files:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        huly-postgres:
+          mutability: generated
+    redis:
+      volumes:
+        huly-redis:
+          mutability: generated
