@@ -3,7 +3,7 @@ version: "14.3.0"
 
 app:
   type: custom
-  image: openproject/community:latest
+  image: openproject/openproject:16
   ports:
     - "8080:80"
   environment:
@@ -26,7 +26,7 @@ app:
 
 services:
   - name: openproject-worker
-    image: openproject/community:latest
+    image: openproject/openproject:16
     command: bundle exec rails jobs:work
     environment:
       OPENPROJECT_HOST__NAME: ${DOMAIN}

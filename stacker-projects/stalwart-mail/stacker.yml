@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: stalwartlabs/mail-server:latest
+  image: stalwartlabs/stalwart:latest
   ports:
     - "25:25"
     - "143:143"
