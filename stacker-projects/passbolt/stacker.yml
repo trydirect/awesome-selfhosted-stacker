@@ -13,7 +13,7 @@ install:
 
 app:
   type: custom
-  image: passbolt/passbolt_api:latest
+  image: passbolt/passbolt:latest
   ports:
     - "8443:443"
   environment:

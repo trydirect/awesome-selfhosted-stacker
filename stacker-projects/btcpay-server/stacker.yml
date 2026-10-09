@@ -3,7 +3,7 @@ version: "2.0.0"
 
 app:
   type: custom
-  image: btcpayserver/btcpayserver:latest
+  image: btcpayserver/btcpayserver:2.4.5
   ports:
     - "23000:23000"
   environment:

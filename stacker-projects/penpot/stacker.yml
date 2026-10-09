@@ -12,7 +12,7 @@ install:
 
 app:
   type: custom
-  image: penpotapp/penpot-frontend:latest
+  image: penpotapp/frontend:latest
   ports:
     - "9001:80"
   environment:
@@ -20,7 +20,7 @@ app:
 
 services:
   - name: penpot-backend
-    image: penpotapp/penpot-backend:latest
+    image: penpotapp/backend:latest
     environment:
       PENPOT_FLAGS: enable-registration enable-login-with-password enable-login-with-oidc enable-login-with-google enable-login-with-github enable-login-with-gitlab
       PENPOT_DATABASE_URI: "postgresql://postgres:5432/penpot"
@@ -43,7 +43,7 @@ services:
       - redis
 
   - name: penpot-exporter
-    image: penpotapp/penpot-exporter:latest
+    image: penpotapp/exporter:latest
     environment:
       PENPOT_REDIS_URI: "redis://redis:6379"
       PENPOT_ASSETS_STORAGE_BACKEND: assets-fs

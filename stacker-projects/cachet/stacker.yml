@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: cachethq/cachet:latest
+  image: cachethq/docker:latest
   ports:
     - "8000:8000"
   environment:

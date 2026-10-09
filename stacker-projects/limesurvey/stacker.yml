@@ -13,7 +13,7 @@ install:
 
 app:
   type: custom
-  image: misterunknown/limesurvey:latest
+  image: acspri/limesurvey:latest
   ports:
     - "8080:80"
   environment:
