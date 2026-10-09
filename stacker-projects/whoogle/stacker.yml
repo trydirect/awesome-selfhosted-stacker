@@ -11,7 +11,7 @@ app:
   type: custom
   image: benbusby/whoogle-search:latest
   ports:
-    - "5000:5000"
+    - "5001:5000"
   environment:
     WHOOGLE_DOTENV: 1
     WHOOGLE_USER: admin
@@ -35,13 +35,13 @@ deploy:
     region: fsn1
     size: cpx22
     public_ports:
-      - "5000"
+      - "5001"
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
 monitoring:
-  status_panel: false
+  status_panel: true
 
 config_contract:
   services:
