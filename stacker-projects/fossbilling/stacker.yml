@@ -1,0 +1,137 @@
+name: fossbilling
+
+app:
+  type: custom
+  image: fossbilling/fossbilling:latest
+  ports:
+    - "8083:80/tcp"
+  environment:
+    APP_URL: http://localhost:8083
+    DB_HOST: db
+    DB_PORT: "5432"
+    DB_NAME: fossbilling
+    DB_USER: fossbilling
+    DB_PASSWORD: ${DB_PASSWORD}
+  volumes:
+    - fossbilling_data:/data
+  healthcheck:
+    test: "CMD curl -fs http://localhost/health"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 60s
+
+services:
+  - name: db
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: fossbilling
+      MARIADB_USER: fossbilling
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - fossbilling_db:/var/lib/mysql
+    healthcheck:
+      test: "CMD healthcheck.sh --connect --innodb_initialized"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  fossbilling_data: {}
+  fossbilling_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8083"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        APP_URL:
+          mutability: editable
+        DB_HOST:
+          mutability: editable
+        DB_NAME:
+          mutability: editable
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        DB_PORT:
+          mutability: editable
+          display: number
+        DB_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        fossbilling_data:
+          mutability: generated
+    db:
+      fields:
+        MARIADB_DATABASE:
+          mutability: editable
+        MARIADB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        MARIADB_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        MARIADB_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        fossbilling_db:
+          mutability: generated

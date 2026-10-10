@@ -1572,3 +1572,55 @@ full prune with 22G free). Needs ≥50G target. See `comfyui/BUGS.md`.
 `Compose image preflight failed` (local preflight). Not a stacker bug —
 but bulk test runs should either authenticate (`STACKER_DOCKER_USERNAME` /
 `STACKER_DOCKER_PASSWORD`) or throttle pulls.
+
+---
+
+## Batch 20 (2026-10-10/11) — 20 new templates (6 awesome-docker + 14 awesome-selfhosted)
+
+**Scaffolded + validated 20 new templates.** Deployed to test server
+`46.224.127.228`. Results:
+
+### SUCCESS (deployed + verified HTTP or daemon confirmed running) — 11
+| Project | Image | Port | Verified | Deploy |
+|---|---|---|---|---|
+| docker-socket-proxy | tecnativa/docker-socket-proxy | 2375 | `/version` returns Docker API JSON | #1289 |
+| ofelia | mcuadros/ofelia | — | daemon Up, cron scheduled | #1290 |
+| docker-volume-backup | offen/docker-volume-backup | — | daemon Up, backup scheduled | #1292 |
+| diun | ghcr.io/crazy-max/diun | — | daemon running restarts=0 | #1296 |
+| netdata | netdata/netdata | 19999 | HTTP 200 | #1298 |
+| fossbilling | fossbilling/fossbilling | 8083 | HTTP 307 (install redirect) | #1305 |
+| actual | actualbudget/actual-server | 3000 | HTTP 200 (fixed port 5006→3000) | #1315 |
+| akaunting | akaunting/akaunting | 8080 | HTTP 302 (install redirect) | #1331 |
+| glpi | glpi/glpi | 8081 | HTTP 200 | #1330 |
+| librenms | librenms/librenms | 8000 | HTTP 302 (install redirect) | #1321 |
+| invoiceninja | invoiceninja/invoiceninja | 8080 | DEPLOYED (db+app Up, migrations run) — image has no web server | #1339 |
+
+### BLOCKED (8) — see per-project `BUGS.md`
+| Project | Root cause |
+|---|---|
+| caprover | port 80 conflicts with Stacker's always-on caddy ingress |
+| apitable | all-in-one image ignores external db (connects as root@localhost) |
+| teable | backend listens on :3002, not :3000 (connection reset) |
+| twenty | entrypoint hardcodes psql to local socket, ignores DB_HOST |
+| plane | AIO requires S3 + AMQP env (DOMAIN_NAME/AMQP_URL/AWS_*) |
+| libredesk | many required LIBREDESK_* vars + service-env interpolation gap |
+| invoiceninja | php-fpm-only image (no nginx) + service-env interpolation gap |
+| freescout | bfren/freescout s6 stack exits after boot (cause unclear) |
+
+### New reusable findings
+- **Service-env interpolation gap (stacker):** top-level `.env` values are NOT
+  interpolated into every service-level env var. Observed for
+  `MARIADB_ROOT_PASSWORD` / `POSTGRES_PASSWORD` in db services
+  (libredesk, invoiceninja). App-service vars get inlined; some db-service vars
+  stay literal `${VAR}`. Not a template bug — stacker gap.
+- **Port 80 always taken:** Stacker's caddy ingress owns 80/443 on every server.
+  Any app that hardcodes :80 for an installer self-check (caprover) cannot deploy.
+- **AIO images (apitable/plane/teable)** bundle their own data stack and ignore
+  external db services — incompatible with the single-app stacker model.
+
+### Fixes applied during batch
+- **diun:** corrected env prefix `DIUN_WATCHING_*` → `DIUN_PROVIDERS_DOCKER*`,
+  added `command: serve`, set `DIUN_WATCH_SCHEDULE=@every 5m`.
+- **actual:** port mapping `3000:3000` → `3000:5006` (image serves on 5006).
+- **invoiceninja:** switched db service `postgres` → `mariadb:11` (image has no
+  pgsql driver), added `DB_CONNECTION=mysql`, fixed contract POSTGRES_*→MARIADB_*.

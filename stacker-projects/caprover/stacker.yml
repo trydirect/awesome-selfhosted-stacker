@@ -1,0 +1,76 @@
+name: caprover
+
+app:
+  type: custom
+  image: caprover/caprover:latest
+  ports:
+    - "3000:3000"
+    - "8080:8080"
+    - "80:80"
+  environment:
+    ACCEPTED_TERMS: "true"
+  volumes:
+    - caprover_data:/captain
+    - /var/run/docker.sock:/var/run/docker.sock
+  healthcheck:
+    test: "CMD curl -fs http://localhost:3000"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 30s
+
+volumes:
+  caprover_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "80"
+      - "443"
+      - "3000"
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        ACCEPTED_TERMS:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        caprover_data:
+          mutability: generated

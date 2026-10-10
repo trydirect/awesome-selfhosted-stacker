@@ -1,0 +1,131 @@
+name: twenty
+
+app:
+  type: custom
+  image: twentycrm/twenty:latest
+  ports:
+    - "3000:3000/tcp"
+  environment:
+    DB_PASSWORD: ${DB_PASSWORD}
+    DB_HOST: db
+    DB_PORT: "5432"
+    DB_NAME: twenty
+    DB_USER: twenty
+    DATABASE_URL: postgres://twenty:${DB_PASSWORD}@db:5432/twenty
+  volumes:
+    - twenty_data:/data
+  depends_on:
+    - db
+  healthcheck:
+    test: "CMD curl -fs http://localhost:3000"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 90s
+
+services:
+  - name: db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: twenty
+      POSTGRES_USER: twenty
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - twenty_db:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U twenty -d twenty"
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+volumes:
+  twenty_data: {}
+  twenty_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        DB_HOST:
+          mutability: editable
+        DB_NAME:
+          mutability: editable
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        DB_PORT:
+          mutability: editable
+          display: number
+        DB_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        twenty_data:
+          mutability: generated
+    db:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        twenty_db:
+          mutability: generated

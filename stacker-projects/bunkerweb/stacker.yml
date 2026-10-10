@@ -1,0 +1,111 @@
+name: bunkerweb
+
+app:
+  type: custom
+  image: bunkerity/bunkerweb:latest
+  ports:
+    - "80:80/tcp"
+    - "443:443/tcp"
+    - "7000:7000/tcp"
+  environment:
+    API_HOST: "0.0.0.0"
+    API_PORT: "7000"
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+  volumes:
+    - bunkerweb_data:/var/cache/bunkerweb
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+  healthcheck:
+    test: "CMD curl -fs http://localhost:7000/health"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 30s
+
+services:
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  bunkerweb_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "80"
+      - "443"
+      - "7000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        API_HOST:
+          mutability: editable
+        API_PORT:
+          mutability: editable
+          display: number
+        REDIS_HOST:
+          mutability: editable
+        REDIS_PORT:
+          mutability: editable
+          display: number
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        bunkerweb_data:
+          mutability: generated
+    redis:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
