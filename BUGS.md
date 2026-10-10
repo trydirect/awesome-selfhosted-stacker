@@ -1559,6 +1559,11 @@ dev IP and from the test server IP):
 Blocked templates: **minio, librebooking, hi-events, huly** — need registry
 credentials for those orgs or image-source changes in the templates.
 
+**Decision 2026-10-10:** huly, hi-events, librebooking are skipped (stays
+`draft` in the marketplace) — no image replacement, no registry creds.
+minio was fixed: image switched to `pgsty/silo:latest`, deployed and
+submitted.
+
 **comfyui** — separate issue: `ashleykza/comfyui` (full nvidia/cudnn) does
 not fit the 38G test server disk (`no space left on device` even after
 full prune with 22G free). Needs ≥50G target. See `comfyui/BUGS.md`.
