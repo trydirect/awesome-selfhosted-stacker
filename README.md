@@ -1,12 +1,12 @@
 # awesome-selfhosted-stacker
 
-> **244 self-hostable apps, each deployable with a single `stacker.yml`.**
+> **266 self-hostable apps, each deployable with a single `stacker.yml`.**
 > Deploy to your laptop, your own server, or the cloud with one command —
 > database setup, health checks, secrets, and remote monitoring included.
 
 <p>
-  <img alt="Projects" src="https://img.shields.io/badge/projects-248-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-155-brightgreen">
+  <img alt="Projects" src="https://img.shields.io/badge/projects-266-blue">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-166-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -523,7 +523,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (110)
+### Tested and verified (121)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -531,6 +531,8 @@ server target. Start here for production.
 | Project             | Type             | Port  | Proxy      | Image Fix / Notes |
 |---------------------|------------------|-------|------------|--------------------|
 | Activepieces        | Automation       | 8080  | —          | Zapier alternative |
+| Actual Budget       | Finance          | 3000  | —          | Local-first budgeting; image serves on :5006, mapped to :3000 |
+| Akaunting            | Accounting       | 8080  | —          | Self-hosted accounting + MariaDB |
 | AnythingLLM         | AI chat          | 3001  | caddy      | LLM chat with vector DB |
 | AnyCable           | Websocket        | 8080  | caddy      | Real-time websocket server |
 | Apache Airflow      | Automation       | 8080  | caddy      | Workflow automation + postgres |
@@ -552,6 +554,9 @@ server target. Start here for production.
 | Directus            | Headless CMS     | 8055  | —          | REST + GraphQL API |
 | Discourse           | Forum            | 80    | —          | needs pgvector/pgvector instead of plain postgres |
 | Docmost             | Wiki             | 3000  | —          | needs Redis service |
+| Diun                 | Monitoring       | —     | —          | Update notifier daemon; `DIUN_PROVIDERS_DOCKER=true` + `@every 5m` |
+| Docker Socket Proxy  | Security         | 2375  | —          | Restricted Docker API proxy |
+| Docker Volume Backup | Backup           | —     | —          | Scheduled volume backup daemon |
 | Druid               | Analytics        | 8888  | —          | pinned apache/druid:31.0.0; removed broken druid_extensions_loadList env var |
 | Duplicati           | Backup           | 8200  | caddy      | Encrypted backup to cloud/local |
 | Dittofeed          | Automation       | 3000  | caddy      | Marketing automation + postgres + clickhouse + kafka |
@@ -559,9 +564,11 @@ server target. Start here for production.
 | Focalboard         | Kanban           | 8000  | caddy      | Kanban board + postgres |
 | Element            | Matrix chat      | 8080  | caddy      | Matrix chat client |
 | Floci               | Local cloud      | 4500  | —          | TLS disabled; FLOCI_BASE_URL must match external IP |
-| Ganymede           | Video archive    | 4000  | —          | |
+| FossBilling         | Billing          | 8083  | —          | Hosting billing + MariaDB; port 8083 (80 taken by caddy) |
+| Ganymede            | Video archive    | 4000  | —          | |
 | Gitea              | Git hosting      | 3000  | —          | |
 | Gitness            | Git hosting      | 3000  | —          | needs GITNESS_PRINCIPAL_ADMIN_EMAIL |
+| GLPI               | ITSM             | 8081  | —          | IT asset / helpdesk + MariaDB |
 | Ghost              | Blogging         | 2368  | —          | |
 | Glances            | System monitor   | 61208 | —          | |
 | Gotify             | Notifications    | 8080  | —          | |
@@ -576,6 +583,7 @@ server target. Start here for production.
 | Huginn             | Automation       | 3000  | caddy      | Task automation + postgres |
 | Immich             | Photos           | 2283  | —          | Google Photos alternative |
 | InfluxDB           | Time-series DB   | 8086  | caddy      | Time-series database |
+| Invoice Ninja      | Invoicing        | 8080  | —          | php-fpm only, no web server in image |
 | IT-Tools           | Developer tools  | 8083  | —          | container listens on 80, not 8080 |
 | Jellyfin           | Media server     | 8096  | —          | |
 | Jitsi Meet         | Video conf       | 80/443| —          | uses :unstable tags; nginx permission bug |
@@ -588,6 +596,7 @@ server target. Start here for production.
 | Khoj               | AI assistant     | 42110 | caddy      | AI assistant + postgres |
 | Langflow           | AI workflows     | 7860  | caddy      | AI workflow builder + postgres |
 | Lemmy              | Link aggregator  | 1234  | —          | pinned dessalines/lemmy:0.19.11 |
+| LibreNMS           | Monitoring       | 8000  | —          | Network monitoring + MariaDB + redis |
 | LibreChat          | AI chat          | 3080  | caddy      | ChatGPT alternative + MongoDB |
 | Linkding           | Bookmarks        | 9090  | —          | |
 | Linkwarden         | Bookmarks        | 3000  | —          | |
@@ -613,12 +622,14 @@ server target. Start here for production.
 | NocoDB             | Database         | 8080  | —          | Airtable alternative + postgres |
 | Navidrome          | Music            | 4533  | caddy      | music streaming server |
 | Ntfy               | Notifications    | 8080  | caddy      | Push notification server |
+| Netdata            | Monitoring       | 19999 | —          | Real-time metrics dashboard |
 | Offen              | Analytics        | 3000  | caddy      | single container, privacy-first |
 | Ombi               | Media requests   | 3579  | —          | Plex/Jellyfin requests |
 | OneTimeSecret      | Secret sharing   | 3000  | caddy      | Self-destructing secret links |
 | Organizr           | Dashboard        | 9983  | —          | HTPC dashboard |
 | Open-WebUI         | AI chat          | 3000  | —          | |
 | Outline            | Knowledge base   | 3000  | —          | |
+| Ofelia             | Scheduler        | —     | —          | Docker job scheduler daemon |
 | Paperless-ngx      | Document mgmt    | 8000  | —          | |
 | PhotoPrism         | Photos           | 2342  | caddy      | Google Photos alternative |
 | Pi-hole            | DNS ad-block     | 8080  | —          | |

@@ -1,22 +1,35 @@
-name: calcom
+name: libredesk
 
 app:
   type: custom
-  image: calcom/cal.com:latest
+  image: libredesk/libredesk:latest
   ports:
-    - "3000:3000/tcp"
+    - "9000:9000/tcp"
   environment:
-    DATABASE_URL: postgresql://calcom:${DB_PASSWORD}@db:5432/calcom
-    NEXT_PUBLIC_WEBAPP_URL: http://localhost:3000
-    NEXT_PUBLIC_API_URL: http://localhost:3000
-    CALCOM_ENCRYPTION_KEY: ${ENCRYPTION_KEY}
-    CALCOM_TIMEZONE: UTC
+    LIBREDESK_SYSTEM_USER_PASSWORD: ${ADMIN_PASSWORD}
+    LIBREDESK_DB__HOST: db
+    LIBREDESK_DB__PORT: "5432"
+    LIBREDESK_DB__USER: libredesk
+    LIBREDESK_DB__PASSWORD: ${DB_PASSWORD}
+    LIBREDESK_DB__DATABASE: libredesk
+    LIBREDESK_DB__SSL_MODE: disable
+    LIBREDESK_DB__MAX_OPEN: "25"
+    LIBREDESK_DB__MAX_IDLE: "5"
+    LIBREDESK_DB__MAX_LIFETIME: "1h"
+    LIBREDESK_DB__MAX_IDLE_TIME: "15m"
+    LIBREDESK_APP__ENV: prod
+    LIBREDESK_APP__LOG_LEVEL: info
+    LIBREDESK_REDIS__HOST: redis
+    LIBREDESK_REDIS__PORT: "6379"
+    LIBREDESK_REDIS__PASSWORD: ""
+  command: sh -c "./libredesk --install --idempotent-install --yes --config '' && ./libredesk --upgrade --yes --config '' && ./libredesk --config ''"
   volumes:
-    - calcom_data:/data
+    - libredesk_uploads:/libredesk/uploads
   depends_on:
     - db
+    - redis
   healthcheck:
-    test: "CMD curl -fs http://localhost:3000/api/health"
+    test: "CMD curl -fs http://localhost:9000/health"
     interval: 30s
     timeout: 5s
     retries: 3
@@ -24,22 +37,29 @@ app:
 
 services:
   - name: db
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     environment:
-      POSTGRES_DB: calcom
-      POSTGRES_USER: calcom
+      POSTGRES_DB: libredesk
+      POSTGRES_USER: libredesk
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - calcom_db:/var/lib/postgresql/data
+      - libredesk_db:/var/lib/postgresql/data
     healthcheck:
-      test: "CMD-SHELL pg_isready -U calcom -d calcom"
+      test: "CMD-SHELL pg_isready -U libredesk -d libredesk"
       interval: 10s
       timeout: 5s
       retries: 6
+  - name: redis
+    image: redis:7-alpine
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  calcom_data: {}
-  calcom_db: {}
+  libredesk_uploads: {}
+  libredesk_db: {}
 
 proxy:
   type: none
@@ -59,7 +79,7 @@ deploy:
     region: fsn1
     size: cpx22
     public_ports:
-      - "3000"
+      - "9000"
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -71,19 +91,11 @@ config_contract:
   services:
     app:
       fields:
-        CALCOM_ENCRYPTION_KEY:
+        LIBREDESK_SYSTEM_USER_PASSWORD:
           mutability: generated
           type: alphanumeric
-          length: 32
+          length: 24
           display: password
-        CALCOM_TIMEZONE:
-          mutability: editable
-        DATABASE_URL:
-          mutability: editable
-        NEXT_PUBLIC_API_URL:
-          mutability: editable
-        NEXT_PUBLIC_WEBAPP_URL:
-          mutability: editable
         healthcheck:
           mutability: editable
         interval:
@@ -99,7 +111,7 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_data:
+        libredesk_uploads:
           mutability: generated
     db:
       fields:
@@ -125,5 +137,5 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_db:
+        libredesk_db:
           mutability: generated

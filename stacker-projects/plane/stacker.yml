@@ -1,22 +1,22 @@
-name: calcom
+name: plane
 
 app:
   type: custom
-  image: calcom/cal.com:latest
+  image: makeplane/plane-aio-community:stable
   ports:
-    - "3000:3000/tcp"
+    - "8000:8000/tcp"
   environment:
-    DATABASE_URL: postgresql://calcom:${DB_PASSWORD}@db:5432/calcom
-    NEXT_PUBLIC_WEBAPP_URL: http://localhost:3000
-    NEXT_PUBLIC_API_URL: http://localhost:3000
-    CALCOM_ENCRYPTION_KEY: ${ENCRYPTION_KEY}
-    CALCOM_TIMEZONE: UTC
+    DATABASE_URL: postgresql://plane:${DB_PASSWORD}@db:5432/plane
+    REDIS_URL: redis://redis:6379
+    WEB_BASE_URL: http://localhost:8000
+    SECRET_KEY: ${SECRET_KEY}
   volumes:
-    - calcom_data:/data
+    - plane_data:/app
   depends_on:
     - db
+    - redis
   healthcheck:
-    test: "CMD curl -fs http://localhost:3000/api/health"
+    test: "CMD curl -fs http://localhost:8000"
     interval: 30s
     timeout: 5s
     retries: 3
@@ -24,22 +24,29 @@ app:
 
 services:
   - name: db
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     environment:
-      POSTGRES_DB: calcom
-      POSTGRES_USER: calcom
+      POSTGRES_DB: plane
+      POSTGRES_USER: plane
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - calcom_db:/var/lib/postgresql/data
+      - plane_db:/var/lib/postgresql/data
     healthcheck:
-      test: "CMD-SHELL pg_isready -U calcom -d calcom"
+      test: "CMD-SHELL pg_isready -U plane -d plane"
       interval: 10s
       timeout: 5s
       retries: 6
+  - name: redis
+    image: redis:7-alpine
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  calcom_data: {}
-  calcom_db: {}
+  plane_data: {}
+  plane_db: {}
 
 proxy:
   type: none
@@ -59,7 +66,7 @@ deploy:
     region: fsn1
     size: cpx22
     public_ports:
-      - "3000"
+      - "8000"
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -71,18 +78,16 @@ config_contract:
   services:
     app:
       fields:
-        CALCOM_ENCRYPTION_KEY:
+        DATABASE_URL:
+          mutability: editable
+        REDIS_URL:
+          mutability: editable
+        SECRET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        CALCOM_TIMEZONE:
-          mutability: editable
-        DATABASE_URL:
-          mutability: editable
-        NEXT_PUBLIC_API_URL:
-          mutability: editable
-        NEXT_PUBLIC_WEBAPP_URL:
+        WEB_BASE_URL:
           mutability: editable
         healthcheck:
           mutability: editable
@@ -99,7 +104,7 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_data:
+        plane_data:
           mutability: generated
     db:
       fields:
@@ -125,5 +130,5 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_db:
+        plane_db:
           mutability: generated

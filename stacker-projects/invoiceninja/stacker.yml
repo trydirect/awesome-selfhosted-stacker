@@ -1,45 +1,48 @@
-name: calcom
+name: invoiceninja
 
 app:
   type: custom
-  image: calcom/cal.com:latest
+  image: invoiceninja/invoiceninja:latest
   ports:
-    - "3000:3000/tcp"
+    - "8080:80/tcp"
   environment:
-    DATABASE_URL: postgresql://calcom:${DB_PASSWORD}@db:5432/calcom
-    NEXT_PUBLIC_WEBAPP_URL: http://localhost:3000
-    NEXT_PUBLIC_API_URL: http://localhost:3000
-    CALCOM_ENCRYPTION_KEY: ${ENCRYPTION_KEY}
-    CALCOM_TIMEZONE: UTC
+    DB_PASSWORD: ${DB_PASSWORD}
+    DB_CONNECTION: mysql
+    DB_HOST: db
+    DB_PORT: "3306"
+    DB_DATABASE: invoiceninja
+    DB_USERNAME: invoiceninja
+    APP_URL: http://localhost:8080
   volumes:
-    - calcom_data:/data
+    - invoiceninja_data:/data
   depends_on:
     - db
   healthcheck:
-    test: "CMD curl -fs http://localhost:3000/api/health"
+    test: "CMD curl -fs http://localhost:80"
     interval: 30s
     timeout: 5s
     retries: 3
-    start_period: 120s
+    start_period: 90s
 
 services:
   - name: db
-    image: postgres:16-alpine
+    image: mariadb:11
     environment:
-      POSTGRES_DB: calcom
-      POSTGRES_USER: calcom
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: invoiceninja
+      MARIADB_USER: invoiceninja
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
-      - calcom_db:/var/lib/postgresql/data
+      - invoiceninja_db:/var/lib/mysql
     healthcheck:
-      test: "CMD-SHELL pg_isready -U calcom -d calcom"
+      test: "CMD healthcheck.sh --connect --innodb_initialized"
       interval: 10s
       timeout: 5s
       retries: 6
 
 volumes:
-  calcom_data: {}
-  calcom_db: {}
+  invoiceninja_data: {}
+  invoiceninja_db: {}
 
 proxy:
   type: none
@@ -59,7 +62,7 @@ deploy:
     region: fsn1
     size: cpx22
     public_ports:
-      - "3000"
+      - "8080"
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -71,18 +74,19 @@ config_contract:
   services:
     app:
       fields:
-        CALCOM_ENCRYPTION_KEY:
+        DB_HOST:
+          mutability: editable
+        DB_NAME:
+          mutability: editable
+        DB_PASSWORD:
           mutability: generated
           type: alphanumeric
-          length: 32
+          length: 24
           display: password
-        CALCOM_TIMEZONE:
+        DB_PORT:
           mutability: editable
-        DATABASE_URL:
-          mutability: editable
-        NEXT_PUBLIC_API_URL:
-          mutability: editable
-        NEXT_PUBLIC_WEBAPP_URL:
+          display: number
+        DB_USER:
           mutability: editable
         healthcheck:
           mutability: editable
@@ -99,18 +103,23 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_data:
+        invoiceninja_data:
           mutability: generated
     db:
       fields:
-        POSTGRES_DB:
+        MARIADB_DATABASE:
           mutability: editable
-        POSTGRES_PASSWORD:
+        MARIADB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 24
           display: password
-        POSTGRES_USER:
+        MARIADB_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        MARIADB_USER:
           mutability: editable
         healthcheck:
           mutability: editable
@@ -125,5 +134,5 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_db:
+        invoiceninja_db:
           mutability: generated

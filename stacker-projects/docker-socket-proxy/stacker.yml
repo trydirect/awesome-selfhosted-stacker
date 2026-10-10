@@ -1,0 +1,50 @@
+name: docker-socket-proxy
+
+app:
+  type: custom
+  image: tecnativa/docker-socket-proxy:latest
+  ports:
+    - "2375:2375"
+  environment:
+    CONTAINERS: "1"
+    SERVICES: "1"
+    POST: "0"
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "2375"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        CONTAINERS:
+          mutability: editable
+        POST:
+          mutability: editable
+        SERVICES:
+          mutability: editable

@@ -1,45 +1,40 @@
-name: calcom
+name: bunkerweb
 
 app:
   type: custom
-  image: calcom/cal.com:latest
+  image: bunkerity/bunkerweb:latest
   ports:
-    - "3000:3000/tcp"
+    - "80:80/tcp"
+    - "443:443/tcp"
+    - "7000:7000/tcp"
   environment:
-    DATABASE_URL: postgresql://calcom:${DB_PASSWORD}@db:5432/calcom
-    NEXT_PUBLIC_WEBAPP_URL: http://localhost:3000
-    NEXT_PUBLIC_API_URL: http://localhost:3000
-    CALCOM_ENCRYPTION_KEY: ${ENCRYPTION_KEY}
-    CALCOM_TIMEZONE: UTC
+    API_HOST: "0.0.0.0"
+    API_PORT: "7000"
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
   volumes:
-    - calcom_data:/data
-  depends_on:
-    - db
+    - bunkerweb_data:/var/cache/bunkerweb
+    - /var/run/docker.sock:/var/run/docker.sock:ro
   healthcheck:
-    test: "CMD curl -fs http://localhost:3000/api/health"
+    test: "CMD curl -fs http://localhost:7000/health"
     interval: 30s
     timeout: 5s
     retries: 3
-    start_period: 120s
+    start_period: 30s
 
 services:
-  - name: db
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: calcom
-      POSTGRES_USER: calcom
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - calcom_db:/var/lib/postgresql/data
+  - name: redis
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
     healthcheck:
-      test: "CMD-SHELL pg_isready -U calcom -d calcom"
+      test: "CMD redis-cli ping"
       interval: 10s
       timeout: 5s
-      retries: 6
+      retries: 5
 
 volumes:
-  calcom_data: {}
-  calcom_db: {}
+  bunkerweb_data: {}
 
 proxy:
   type: none
@@ -59,7 +54,9 @@ deploy:
     region: fsn1
     size: cpx22
     public_ports:
-      - "3000"
+      - "80"
+      - "443"
+      - "7000"
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -71,19 +68,16 @@ config_contract:
   services:
     app:
       fields:
-        CALCOM_ENCRYPTION_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        CALCOM_TIMEZONE:
+        API_HOST:
           mutability: editable
-        DATABASE_URL:
+        API_PORT:
           mutability: editable
-        NEXT_PUBLIC_API_URL:
+          display: number
+        REDIS_HOST:
           mutability: editable
-        NEXT_PUBLIC_WEBAPP_URL:
+        REDIS_PORT:
           mutability: editable
+          display: number
         healthcheck:
           mutability: editable
         interval:
@@ -99,18 +93,11 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_data:
+        bunkerweb_data:
           mutability: generated
-    db:
+    redis:
       fields:
         POSTGRES_DB:
-          mutability: editable
-        POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 24
-          display: password
-        POSTGRES_USER:
           mutability: editable
         healthcheck:
           mutability: editable
@@ -122,8 +109,3 @@ config_contract:
           mutability: editable
         timeout:
           mutability: editable
-        volumes:
-          mutability: editable
-      volumes:
-        calcom_db:
-          mutability: generated

@@ -1,22 +1,23 @@
-name: calcom
+name: apitable
 
 app:
   type: custom
-  image: calcom/cal.com:latest
+  image: apitable/all-in-one:latest
   ports:
-    - "3000:3000/tcp"
+    - "8084:80/tcp"
   environment:
-    DATABASE_URL: postgresql://calcom:${DB_PASSWORD}@db:5432/calcom
-    NEXT_PUBLIC_WEBAPP_URL: http://localhost:3000
-    NEXT_PUBLIC_API_URL: http://localhost:3000
-    CALCOM_ENCRYPTION_KEY: ${ENCRYPTION_KEY}
-    CALCOM_TIMEZONE: UTC
+    SERVER_PORT: "80"
+    MYSQL_HOST: db
+    MYSQL_PORT: "3306"
+    MYSQL_USER: apitable
+    MYSQL_PASSWORD: ${DB_PASSWORD}
+    MYSQL_DATABASE: apitable
   volumes:
-    - calcom_data:/data
+    - apitable_data:/var/lib/mysql
   depends_on:
     - db
   healthcheck:
-    test: "CMD curl -fs http://localhost:3000/api/health"
+    test: "CMD curl -fs http://localhost/80"
     interval: 30s
     timeout: 5s
     retries: 3
@@ -24,22 +25,23 @@ app:
 
 services:
   - name: db
-    image: postgres:16-alpine
+    image: mysql:8.0
     environment:
-      POSTGRES_DB: calcom
-      POSTGRES_USER: calcom
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: apitable
+      MYSQL_USER: apitable
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - calcom_db:/var/lib/postgresql/data
+      - apitable_db:/var/lib/mysql
     healthcheck:
-      test: "CMD-SHELL pg_isready -U calcom -d calcom"
+      test: "CMD mysqladmin ping -h localhost -u root -p${DB_ROOT_PASSWORD}"
       interval: 10s
       timeout: 5s
       retries: 6
 
 volumes:
-  calcom_data: {}
-  calcom_db: {}
+  apitable_data: {}
+  apitable_db: {}
 
 proxy:
   type: none
@@ -59,7 +61,7 @@ deploy:
     region: fsn1
     size: cpx22
     public_ports:
-      - "3000"
+      - "8084"
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -71,19 +73,23 @@ config_contract:
   services:
     app:
       fields:
-        CALCOM_ENCRYPTION_KEY:
+        MYSQL_DATABASE:
+          mutability: editable
+        MYSQL_HOST:
+          mutability: editable
+        MYSQL_PASSWORD:
           mutability: generated
           type: alphanumeric
-          length: 32
+          length: 24
           display: password
-        CALCOM_TIMEZONE:
+        MYSQL_PORT:
           mutability: editable
-        DATABASE_URL:
+          display: number
+        MYSQL_USER:
           mutability: editable
-        NEXT_PUBLIC_API_URL:
+        SERVER_PORT:
           mutability: editable
-        NEXT_PUBLIC_WEBAPP_URL:
-          mutability: editable
+          display: number
         healthcheck:
           mutability: editable
         interval:
@@ -99,18 +105,23 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_data:
+        apitable_data:
           mutability: generated
     db:
       fields:
-        POSTGRES_DB:
+        MYSQL_DATABASE:
           mutability: editable
-        POSTGRES_PASSWORD:
+        MYSQL_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 24
           display: password
-        POSTGRES_USER:
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        MYSQL_USER:
           mutability: editable
         healthcheck:
           mutability: editable
@@ -125,5 +136,5 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_db:
+        apitable_db:
           mutability: generated

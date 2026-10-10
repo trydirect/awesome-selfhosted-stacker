@@ -1,45 +1,58 @@
-name: calcom
+name: librenms
 
 app:
   type: custom
-  image: calcom/cal.com:latest
+  image: librenms/librenms:latest
   ports:
-    - "3000:3000/tcp"
+    - "8000:8000/tcp"
   environment:
-    DATABASE_URL: postgresql://calcom:${DB_PASSWORD}@db:5432/calcom
-    NEXT_PUBLIC_WEBAPP_URL: http://localhost:3000
-    NEXT_PUBLIC_API_URL: http://localhost:3000
-    CALCOM_ENCRYPTION_KEY: ${ENCRYPTION_KEY}
-    CALCOM_TIMEZONE: UTC
+    APP_URL: http://localhost:8000
+    DB_HOST: db
+    DB_PORT: "3306"
+    DB_DATABASE: librenms
+    DB_USERNAME: librenms
+    DB_PASSWORD: ${DB_PASSWORD}
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+    MAIL_FROM: librenms@localhost
   volumes:
-    - calcom_data:/data
+    - librenms_data:/data
   depends_on:
     - db
+    - redis
   healthcheck:
-    test: "CMD curl -fs http://localhost:3000/api/health"
+    test: "CMD curl -fs http://localhost:8000/health"
     interval: 30s
     timeout: 5s
     retries: 3
-    start_period: 120s
+    start_period: 180s
 
 services:
   - name: db
-    image: postgres:16-alpine
+    image: mariadb:11
     environment:
-      POSTGRES_DB: calcom
-      POSTGRES_USER: calcom
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: librenms
+      MARIADB_USER: librenms
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
-      - calcom_db:/var/lib/postgresql/data
+      - librenms_db:/var/lib/mysql
     healthcheck:
-      test: "CMD-SHELL pg_isready -U calcom -d calcom"
+      test: "CMD healthcheck.sh --connect --innodb_initialized"
       interval: 10s
       timeout: 5s
       retries: 6
+  - name: redis
+    image: redis:7-alpine
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  calcom_data: {}
-  calcom_db: {}
+  librenms_data: {}
+  librenms_db: {}
 
 proxy:
   type: none
@@ -59,7 +72,7 @@ deploy:
     region: fsn1
     size: cpx22
     public_ports:
-      - "3000"
+      - "8000"
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -71,19 +84,29 @@ config_contract:
   services:
     app:
       fields:
-        CALCOM_ENCRYPTION_KEY:
+        APP_URL:
+          mutability: editable
+        DB_DATABASE:
+          mutability: editable
+        DB_HOST:
+          mutability: editable
+        DB_PASSWORD:
           mutability: generated
           type: alphanumeric
-          length: 32
+          length: 24
           display: password
-        CALCOM_TIMEZONE:
+        DB_PORT:
           mutability: editable
-        DATABASE_URL:
+          display: number
+        DB_USERNAME:
           mutability: editable
-        NEXT_PUBLIC_API_URL:
+        MAIL_FROM:
           mutability: editable
-        NEXT_PUBLIC_WEBAPP_URL:
+        REDIS_HOST:
           mutability: editable
+        REDIS_PORT:
+          mutability: editable
+          display: number
         healthcheck:
           mutability: editable
         interval:
@@ -99,18 +122,23 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_data:
+        librenms_data:
           mutability: generated
     db:
       fields:
-        POSTGRES_DB:
+        MARIADB_DATABASE:
           mutability: editable
-        POSTGRES_PASSWORD:
+        MARIADB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 24
           display: password
-        POSTGRES_USER:
+        MARIADB_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        MARIADB_USER:
           mutability: editable
         healthcheck:
           mutability: editable
@@ -125,5 +153,5 @@ config_contract:
         volumes:
           mutability: editable
       volumes:
-        calcom_db:
+        librenms_db:
           mutability: generated

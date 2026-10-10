@@ -1,0 +1,63 @@
+name: diun
+
+app:
+  type: custom
+  image: ghcr.io/crazy-max/diun:latest
+  command: serve
+  environment:
+    DIUN_PROVIDERS_DOCKER: "true"
+    DIUN_PROVIDERS_DOCKER_WATCHBYDEFAULT: "true"
+    DIUN_PROVIDERS_DOCKER_ENDPOINT: "unix:///var/run/docker.sock"
+    DIUN_WATCH_RUNONSTARTUP: "true"
+    DIUN_WATCH_SCHEDULE: "@every 5m"
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - diun_data:/data
+
+volumes:
+  diun_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports: []
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        DIUN_PROVIDERS_DOCKER:
+          mutability: editable
+        DIUN_PROVIDERS_DOCKER_ENDPOINT:
+          mutability: editable
+        DIUN_PROVIDERS_DOCKER_WATCHBYDEFAULT:
+          mutability: editable
+        DIUN_WATCH_RUNONSTARTUP:
+          mutability: editable
+        DIUN_WATCH_SCHEDULE:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        diun_data:
+          mutability: generated
