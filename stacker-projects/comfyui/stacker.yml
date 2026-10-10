@@ -9,9 +9,9 @@ app:
   path: .
   image: ashleykza/comfyui:latest
   ports:
-    - "8188:8188"
+    - "8188:3001"
   environment:
-    CLI_ARGS: ""
+    EXTRA_ARGS: "--cpu"
     PRELOAD_MODELS: "[]"
 
 services: []
@@ -26,7 +26,7 @@ deploy:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test
     region: fsn1
-    size: cpx22
+    size: cpx42
     public_ports:
       - "8188"
 
@@ -38,6 +38,8 @@ config_contract:
     app:
       fields:
         CLI_ARGS:
+          mutability: editable
+        EXTRA_ARGS:
           mutability: editable
         PRELOAD_MODELS:
           mutability: editable
