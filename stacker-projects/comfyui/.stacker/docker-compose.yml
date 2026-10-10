@@ -2,9 +2,9 @@ services:
   app:
     image: ashleykza/comfyui:latest
     ports:
-      - "8188:8188"
+      - "8188:3001"
     environment:
-      CLI_ARGS: ""
+      EXTRA_ARGS: "--cpu"
       PRELOAD_MODELS: "[]"
     restart: unless-stopped
     networks:

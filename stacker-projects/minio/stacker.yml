@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: minio/minio:latest
+  image: pgsty/silo:latest
   ports:
     - "9000:9000"
     - "9001:9001"

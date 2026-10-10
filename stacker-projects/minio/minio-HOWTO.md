@@ -1,6 +1,7 @@
 # MinIO — Stacker Deploy HOWTO
 
-Single container: `minio/minio:latest`. S3-compatible object storage.
+Single container: `pgsty/silo:latest` (MinIO-compatible fork — the upstream
+`minio/minio` image is no longer anonymously pullable). S3-compatible object storage.
 
 ## Setup
 
