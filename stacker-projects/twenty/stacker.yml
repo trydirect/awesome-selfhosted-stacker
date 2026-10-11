@@ -6,22 +6,22 @@ app:
   ports:
     - "3000:3000/tcp"
   environment:
-    DB_PASSWORD: ${DB_PASSWORD}
-    DB_HOST: db
-    DB_PORT: "5432"
-    DB_NAME: twenty
-    DB_USER: twenty
-    DATABASE_URL: postgres://twenty:${DB_PASSWORD}@db:5432/twenty
+    NODE_PORT: "3000"
+    PG_DATABASE_URL: postgres://twenty:${DB_PASSWORD}@db:5432/twenty
+    SERVER_URL: http://localhost:3000
+    REDIS_URL: redis://redis:6379
+    ENCRYPTION_KEY: ${ENCRYPTION_KEY}
   volumes:
-    - twenty_data:/data
+    - twenty_data:/app/packages/twenty-server/.local-storage
   depends_on:
     - db
+    - redis
   healthcheck:
-    test: "CMD curl -fs http://localhost:3000"
+    test: "CMD curl -fs http://localhost:3000/health"
     interval: 30s
     timeout: 5s
-    retries: 3
-    start_period: 90s
+    retries: 5
+    start_period: 120s
 
 services:
   - name: db
@@ -37,6 +37,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 6
+  - name: redis
+    image: redis:7-alpine
+    command: redis-server --maxmemory-policy noeviction
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   twenty_data: {}
@@ -72,19 +80,19 @@ config_contract:
   services:
     app:
       fields:
-        DB_HOST:
-          mutability: editable
-        DB_NAME:
-          mutability: editable
-        DB_PASSWORD:
+        ENCRYPTION_KEY:
           mutability: generated
           type: alphanumeric
-          length: 24
+          length: 32
           display: password
-        DB_PORT:
+        NODE_PORT:
           mutability: editable
           display: number
-        DB_USER:
+        PG_DATABASE_URL:
+          mutability: editable
+        REDIS_URL:
+          mutability: editable
+        SERVER_URL:
           mutability: editable
         healthcheck:
           mutability: editable

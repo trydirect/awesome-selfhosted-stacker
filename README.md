@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Projects" src="https://img.shields.io/badge/projects-266-blue">
-  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-166-brightgreen">
+  <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-172-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
@@ -523,7 +523,7 @@ project-name/
   scripts/generate-secrets.sh
 ```
 
-### Tested and verified (121)
+### Tested and verified (127)
 
 Deployed and confirmed working on a clean Ubuntu 26.04 server via the Stacker
 server target. Start here for production.
@@ -677,6 +677,12 @@ server target. Start here for production.
 | Zipline           | File sharing     | 3000  | caddy      | File sharing + postgres |
 | Zammad            | Ticketing        | 80    | caddy      | Ticketing + postgres + redis + memcached |
 | Zulip             | Team chat        | 80    | caddy      | Team chat + postgresql |
+| CapRover          | PaaS             | 3000  | —          | fixed :80 conflict via BY_PASS_PROXY_CHECK |
+| Teable            | Database         | 3000  | —          | ghcr all-in-one + redis |
+| Twenty            | CRM              | 3000  | —          | PG_DATABASE_URL + redis |
+| Plane             | Project mgmt     | 8000  | —          | rabbitmq + minio + full env |
+| LibreDesk         | Helpdesk         | 9000  | —          | full config.toml bind-mount |
+| FreeScout         | Helpdesk         | 8082  | —          | mysql:8 (no pdo_pgsql in image) |
 
 ### Pre-existing (configured, not re-deployed)
 
@@ -742,6 +748,8 @@ server target. Start here for production.
 | druid        | `apache/druid:38.0.0` doesn't exist | Use `apache/druid:31.0.0` |
 | lemmy        | `dessalines/lemmy:latest` never existed | Use `dessalines/lemmy:0.19.11` |
 | mysql:8-alpine | No such image | Use `mysql:8.0` or `postgres:16-alpine` |
+| apitable      | Upstream liquibase bug (leaked JVM flag in changeset SQL) breaks migration | None — wait for upstream fix |
+| bfren/freescout | Ships only `pdo_mysql`, no `pdo_pgsql` | Use `mysql:8`, not postgres |
 
 ### Common stacker.yml issues
 
@@ -812,7 +820,7 @@ official image is the whole point.
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-09-18 — 248 projects configured, 155 tested and verified on
+Last updated: 2026-10-11 — 266 projects configured, 172 tested and verified on
 Ubuntu 26.04. Proxy support: traefik, caddy, nginx-proxy-manager.
 
 ---

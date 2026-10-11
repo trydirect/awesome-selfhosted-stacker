@@ -1,25 +1,42 @@
-# [BUG] apitable all-in-one ignores external DB (connects as root@localhost)
+# [BUG] apitable all-in-one: broken liquibase migration in image (upstream)
 
-## Status: BLOCKED
+## Status: BLOCKED (upstream image bug)
 
 ## Summary
-apitable/all-in-one bundles its own MySQL/rabbitmq/minio and ignores the
-external \`db\` service. Its databus-server connects as \`root\` to a local
-MySQL that isn't the stacker \`db\` service, panicking with auth errors.
+`apitable/all-in-one:latest` bundles its own MySQL/Redis/RabbitMQ/MinIO and is
+architecturally the right single-container fit for Stacker (no external db).
+However the image's bundled Liquibase migration fails out of the box with a SQL
+syntax error, so backend-server never starts.
 
 ## Root cause
-The all-in-one image expects to own the entire data stack. Stackers external-db
-pattern (app + db service) is incompatible.
+The image ships a changeset (`db/changelog/0.3/20200407_changeset.xml`) whose
+SQL has a JVM system-property flag (`-DDB_ENGINE=mysqlclient_release_version`)
+leaked into the ALTER TABLE statement:
+
+```
+... near '-DDB_ENGINE=mysqlclient_release_version change `describe` ...'
+```
+
+backend-server (Liquibase) exits with SIGINT after `Migration failed`. This is
+an internal image bug, not fixable from `stacker.yml`.
 
 ## Expected
-App connects to the stacker \`db\` postgres/mysql service.
+Liquibase migrates the bundled MySQL and the web UI serves on :80.
 
 ## Actual
-\`databus-server\` panics: \`Access denied for user 'root'@'...'\`.
+`liquibase.exception.DatabaseException: You have an error in your SQL syntax`
+→ `PM2 App [backend-server] exited with code [1] via signal [SIGINT]`, container
+unhealthy, HTTP 000 on :8084.
 
 ## Workaround
-Use a compose-based APITable deployment (not the all-in-one) with explicit
-backend/frontend/databus services. Not supported by the single-app stacker model.
+None from the template. Options: pin a pre-regression `all-in-one` tag, or use
+the full multi-service compose deployment (backend/room/databus + external
+MySQL) which is far heavier than a single-app template. Documented as blocked.
+
+## Notes
+- Architecture confirmed correct: all-in-one self-manages data in `/apitable`
+  volume; external `db` service is ignored (previous external-db attempt failed
+  with `Access denied for user 'root'`).
 
 ## Reproduction
 ```bash
@@ -30,4 +47,4 @@ stacker deploy --target server --server-host 46.224.127.228 --server-user root -
 
 ## Environment
 - Test server: 46.224.127.228
-- Logged: 2026-10-10
+- Logged: 2026-10-11

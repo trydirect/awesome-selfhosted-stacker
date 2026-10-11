@@ -1594,29 +1594,35 @@ but bulk test runs should either authenticate (`STACKER_DOCKER_USERNAME` /
 | glpi | glpi/glpi | 8081 | HTTP 200 | #1330 |
 | librenms | librenms/librenms | 8000 | HTTP 302 (install redirect) | #1321 |
 | invoiceninja | invoiceninja/invoiceninja | 8080 | DEPLOYED (db+app Up, migrations run) — image has no web server | #1339 |
+| caprover | caprover/cap | 3000 | HTTP 200 (fixed :80 conflict via BY_PASS_PROXY_CHECK) | #1343 |
+| teable | ghcr.io/teableio/teable (all-in-one) | 3000 | HTTP 307→200 /auth/signup | #1346 |
+| twenty | twentycrm/twenty | 3000 | HTTP 200 | #1347 |
+| plane | makeplane/plane-aio-community | 8000 | HTTP 200, 5/5 healthy | #1348 |
+| libredesk | libredesk/libredesk | 9000 | HTTP 200 /health | #1352 |
+| freescout | bfren/freescout | 8082 | HTTP 302→/login→200 | #1356 |
 
-### BLOCKED (8) — see per-project `BUGS.md`
+### BLOCKED (2) — see per-project `BUGS.md`
 | Project | Root cause |
 |---|---|
-| caprover | port 80 conflicts with Stacker's always-on caddy ingress |
-| apitable | all-in-one image ignores external db (connects as root@localhost) |
-| teable | backend listens on :3002, not :3000 (connection reset) |
-| twenty | entrypoint hardcodes psql to local socket, ignores DB_HOST |
-| plane | AIO requires S3 + AMQP env (DOMAIN_NAME/AMQP_URL/AWS_*) |
-| libredesk | many required LIBREDESK_* vars + service-env interpolation gap |
-| invoiceninja | php-fpm-only image (no nginx) + service-env interpolation gap |
-| freescout | bfren/freescout s6 stack exits after boot (cause unclear) |
+| apitable | upstream liquibase bug: leaked JVM flag in changeset SQL breaks migration |
+| invoiceninja | php-fpm-only image (no nginx web server) + service-env interpolation gap |
 
 ### New reusable findings
 - **Service-env interpolation gap (stacker):** top-level `.env` values are NOT
   interpolated into every service-level env var. Observed for
   `MARIADB_ROOT_PASSWORD` / `POSTGRES_PASSWORD` in db services
-  (libredesk, invoiceninja). App-service vars get inlined; some db-service vars
-  stay literal `${VAR}`. Not a template bug — stacker gap.
+  (invoiceninja). App-service vars get inlined; some db-service vars stay
+  literal `${VAR}`. Worked around for libredesk by bind-mounting a full
+  `config.toml`. Not a template bug — stacker gap.
 - **Port 80 always taken:** Stacker's caddy ingress owns 80/443 on every server.
-  Any app that hardcodes :80 for an installer self-check (caprover) cannot deploy.
+  Fixed caprover by removing host :80 and setting `BY_PASS_PROXY_CHECK=TRUE`.
 - **AIO images (apitable/plane/teable)** bundle their own data stack and ignore
-  external db services — incompatible with the single-app stacker model.
+  external db services. teable/plane work once their required sidecar services
+  (redis/rabbitmq/minio) and full env are provided; apitable is blocked by an
+  upstream liquibase bug.
+- **bfren/freescout ships only pdo_mysql, not pdo_pgsql** — must use mysql:8,
+  not postgres. Also needs a clean `/data` volume and a healthcheck that
+  follows the 302→/login redirect (`curl -fsL`).
 
 ### Fixes applied during batch
 - **diun:** corrected env prefix `DIUN_WATCHING_*` → `DIUN_PROVIDERS_DOCKER*`,
@@ -1624,3 +1630,14 @@ but bulk test runs should either authenticate (`STACKER_DOCKER_USERNAME` /
 - **actual:** port mapping `3000:3000` → `3000:5006` (image serves on 5006).
 - **invoiceninja:** switched db service `postgres` → `mariadb:11` (image has no
   pgsql driver), added `DB_CONNECTION=mysql`, fixed contract POSTGRES_*→MARIADB_*.
+- **caprover:** removed host :80, added `BY_PASS_PROXY_CHECK=TRUE` +
+  `MAIN_NODE_IP_ADDRESS=127.0.0.1`.
+- **teable:** switched to `ghcr.io/teableio/teable` all-in-one (3000:3000) +
+  redis; db `postgres:16-alpine`.
+- **twenty:** set `PG_DATABASE_URL` (not DATABASE_URL/DB_HOST) + added redis.
+- **plane:** added rabbitmq + `bitnamilegacy/minio` (minio/minio removed from
+  Docker Hub) + full env; port `8000:80`.
+- **libredesk:** bind-mount full `config.toml` generated at pre_build with real
+  DB password + required `app.encryption_key`.
+- **freescout:** switched db `postgres` → `mysql:8.0` (no pdo_pgsql in image),
+  clean `/data` volume, healthcheck `curl -fsL`.

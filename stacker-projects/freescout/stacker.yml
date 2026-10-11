@@ -6,32 +6,45 @@ app:
   ports:
     - "8082:80/tcp"
   environment:
-    DB_PASSWORD: ${DB_PASSWORD}
+    FREESCOUT_URL: http://localhost:8082
+    FREESCOUT_HTTPS: "false"
+    FREESCOUT_DB_CONN: mysql
+    FREESCOUT_DB_HOST: db
+    FREESCOUT_DB_PORT: "3306"
+    FREESCOUT_DB_NAME: freescout
+    FREESCOUT_DB_USER: freescout
+    FREESCOUT_DB_PASS: ${DB_PASSWORD}
+    FREESCOUT_ADMIN_FIRSTNAME: Admin
+    FREESCOUT_ADMIN_LASTNAME: User
+    FREESCOUT_ADMIN_EMAIL: ${ADMIN_EMAIL}
+    FREESCOUT_ADMIN_PASS: ${ADMIN_PASSWORD}
   volumes:
     - freescout_data:/data
   depends_on:
     - db
   healthcheck:
-    test: "CMD curl -fs http://localhost:80"
+    test: "CMD curl -fsL http://localhost:80/"
     interval: 30s
     timeout: 5s
-    retries: 3
-    start_period: 90s
+    retries: 5
+    start_period: 120s
 
 services:
   - name: db
-    image: postgres:16-alpine
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
     environment:
-      POSTGRES_DB: freescout
-      POSTGRES_USER: freescout
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: freescout
+      MYSQL_USER: freescout
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
     volumes:
-      - freescout_db:/var/lib/postgresql/data
+      - freescout_db:/var/lib/mysql
     healthcheck:
-      test: "CMD-SHELL pg_isready -U freescout -d freescout"
+      test: "CMD mysqladmin ping -h localhost -u root -p${ROOT_PASSWORD}"
       interval: 10s
       timeout: 5s
-      retries: 6
+      retries: 12
 
 volumes:
   freescout_data: {}
@@ -67,19 +80,31 @@ config_contract:
   services:
     app:
       fields:
-        DB_HOST:
+        FREESCOUT_ADMIN_EMAIL:
           mutability: editable
-        DB_NAME:
+          display: string
+        FREESCOUT_ADMIN_FIRSTNAME:
           mutability: editable
-        DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 24
+        FREESCOUT_ADMIN_LASTNAME:
+          mutability: editable
+        FREESCOUT_ADMIN_PASS:
+          mutability: editable
           display: password
-        DB_PORT:
+        FREESCOUT_DB_CONN:
+          mutability: editable
+        FREESCOUT_DB_HOST:
+          mutability: editable
+        FREESCOUT_DB_NAME:
+          mutability: editable
+        FREESCOUT_DB_PASS:
+          mutability: editable
+          display: password
+        FREESCOUT_DB_PORT:
           mutability: editable
           display: number
-        DB_USER:
+        FREESCOUT_DB_USER:
+          mutability: editable
+        FREESCOUT_URL:
           mutability: editable
         healthcheck:
           mutability: editable
@@ -100,14 +125,19 @@ config_contract:
           mutability: generated
     db:
       fields:
-        POSTGRES_DB:
+        MYSQL_DATABASE:
           mutability: editable
-        POSTGRES_PASSWORD:
+        MYSQL_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 24
           display: password
-        POSTGRES_USER:
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        MYSQL_USER:
           mutability: editable
         healthcheck:
           mutability: editable

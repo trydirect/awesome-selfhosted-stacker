@@ -4,23 +4,32 @@ app:
   type: custom
   image: makeplane/plane-aio-community:stable
   ports:
-    - "8000:8000/tcp"
+    - "8000:80/tcp"
   environment:
+    DOMAIN_NAME: localhost
     DATABASE_URL: postgresql://plane:${DB_PASSWORD}@db:5432/plane
     REDIS_URL: redis://redis:6379
-    WEB_BASE_URL: http://localhost:8000
+    AMQP_URL: amqp://plane:${MQ_PASSWORD}@mq:5672/plane
+    AWS_REGION: us-east-1
+    AWS_ACCESS_KEY_ID: plane
+    AWS_SECRET_ACCESS_KEY: plane123secret
+    AWS_S3_ENDPOINT_URL: http://minio:9000
+    AWS_S3_BUCKET_NAME: uploads
+    USE_MINIO: "1"
     SECRET_KEY: ${SECRET_KEY}
   volumes:
     - plane_data:/app
   depends_on:
     - db
     - redis
+    - mq
+    - minio
   healthcheck:
-    test: "CMD curl -fs http://localhost:8000"
+    test: "CMD curl -fs http://localhost:80"
     interval: 30s
     timeout: 5s
-    retries: 3
-    start_period: 120s
+    retries: 5
+    start_period: 180s
 
 services:
   - name: db
@@ -43,10 +52,38 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  - name: mq
+    image: rabbitmq:3.13-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: plane
+      RABBITMQ_DEFAULT_PASS: ${MQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: plane
+    volumes:
+      - plane_mq:/var/lib/rabbitmq
+    healthcheck:
+      test: "CMD rabbitmq-diagnostics -q ping"
+      interval: 10s
+      timeout: 10s
+      retries: 8
+  - name: minio
+    image: bitnamilegacy/minio:latest
+    environment:
+      MINIO_ROOT_USER: plane
+      MINIO_ROOT_PASSWORD: plane123secret
+      MINIO_DEFAULT_BUCKETS: uploads
+    volumes:
+      - plane_minio:/bitnami/minio
+    healthcheck:
+      test: "CMD curl -f http://localhost:9000/minio/health/live"
+      interval: 15s
+      timeout: 10s
+      retries: 10
 
 volumes:
   plane_data: {}
   plane_db: {}
+  plane_mq: {}
+  plane_minio: {}
 
 proxy:
   type: none
@@ -78,16 +115,29 @@ config_contract:
   services:
     app:
       fields:
+        AWS_ACCESS_KEY_ID:
+          mutability: editable
+        AWS_REGION:
+          mutability: editable
+        AWS_S3_BUCKET_NAME:
+          mutability: editable
+        AWS_S3_ENDPOINT_URL:
+          mutability: editable
+        AWS_SECRET_ACCESS_KEY:
+          mutability: editable
+        AMQP_URL:
+          mutability: editable
         DATABASE_URL:
+          mutability: editable
+        DOMAIN_NAME:
           mutability: editable
         REDIS_URL:
           mutability: editable
         SECRET_KEY:
           mutability: generated
           type: alphanumeric
-          length: 32
           display: password
-        WEB_BASE_URL:
+        USE_MINIO:
           mutability: editable
         healthcheck:
           mutability: editable
@@ -131,4 +181,44 @@ config_contract:
           mutability: editable
       volumes:
         plane_db:
+          mutability: generated
+    mq:
+      fields:
+        environment:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        plane_mq:
+          mutability: generated
+    minio:
+      fields:
+        command:
+          mutability: editable
+        environment:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        plane_minio:
           mutability: generated
