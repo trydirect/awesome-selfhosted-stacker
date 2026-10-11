@@ -1,33 +1,25 @@
-# [BUG] plane AIO requires S3 + AMQP env (DOMAIN_NAME/AMQP_URL/AWS_*)
+# [FIXED] plane AIO requires S3 + AMQP env (DOMAIN_NAME/AMQP_URL/AWS_*)
 
-## Status: BLOCKED
+## Status: FIXED / VERIFIED
 
 ## Summary
-makeplane/plane-aio-community requires a long list of env vars at boot:
-DOMAIN_NAME, AMQP_URL, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
-AWS_S3_BUCKET_NAME. Missing any causes an immediate exit.
+`makeplane/plane-aio-community` requires a long list of env vars at boot
+(DOMAIN_NAME, AMQP_URL, AWS_REGION/KEY/SECRET/BUCKET). Missing any causes an
+immediate exit.
 
-## Root cause
-Plane's AIO image assumes an external S3-compatible store and an AMQP broker.
-There is no embedded/minio-only mode.
+## Resolution (2026-10-11)
+Deployed the full multi-service stack plane needs:
+- `mq` — `rabbitmq:3.13-alpine` (user `plane`, vhost `plane`).
+- `minio` — `bitnamilegacy/minio:latest` (note: `minio/minio` was removed from
+  Docker Hub), fixed creds, `MINIO_DEFAULT_BUCKETS=uploads`, `/bitnami/minio`
+  volume, healthcheck on `:9000/minio/health/live`.
+- Env: `DOMAIN_NAME=localhost`, `DATABASE_URL`, `AMQP_URL`,
+  `AWS_S3_ENDPOINT_URL=http://minio:9000`, `SECRET_KEY`.
+- Port `8000:80` (AIO listens on :80).
 
-## Expected
-App boots with minimal config.
-
-## Actual
-\`❌ 'DOMAIN_NAME' is not set or is empty\` (and 5 more), container restarts.
-
-## Workaround
-Deploy with a full MinIO + RabbitMQ stack and all AWS_* env vars. Too many
-moving parts for a single stacker.yml; needs a multi-service compose.
-
-## Reproduction
-```bash
-cd stacker-projects/plane
-./scripts/generate-secrets.sh
-stacker deploy --target server --server-host 46.224.127.228 --server-user root --server-ssh-key ../../stacker-project-test
-```
+Result: HTTP 200 on :8000, 5/5 containers healthy. See
+`LOCAL_DEPLOY_SUCCESS.md`.
 
 ## Environment
 - Test server: 46.224.127.228
-- Logged: 2026-10-10
+- Deployment: #1348

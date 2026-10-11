@@ -1,36 +1,29 @@
-# [BUG] freescout (bfren/freescout) s6 stack exits after boot
+# [FIXED] freescout (bfren/freescout) s6 stack exits after boot
 
-## Status: BLOCKED
+## Status: FIXED / VERIFIED
 
 ## Summary
-bfren/freescout:latest starts its s6 overlay services (nginx, php) but then
-shuts them all down cleanly and the container enters a restart loop. No clear
-error in the forwarded logs.
+bfren/freescout:latest started its s6 overlay services then shut them down,
+entering a restart loop. Root causes (three, layered):
 
-## Root cause
-Unclear from logs. The s6 \`init\` service stops, cascading nginx/php shutdown.
-Likely a missing required env (e.g. DB creds for the embedded installer) that
-the image treats as fatal without logging.
+1. **No postgres driver.** The image ships only `pdo_mysql`, not `pdo_pgsql`,
+   so a postgres db gave `could not find driver` and the installer could not
+   run migrations.
+2. **Stale `/data` volume.** Init failed at
+   `mv: can't remove '/data/Modules': Is a directory` when leftover dirs from
+   a prior partial run were present.
+3. **Healthcheck false-negative.** `curl -fs` fails on the 302 → `/login`
+   redirect.
 
-## Expected
-nginx stays up and serves the FreeScout installer.
+## Resolution (2026-10-11)
+- Switched db service to `mysql:8.0` (`FREESCOUT_DB_CONN=mysql`, `MYSQL_*`
+  env, `ROOT_PASSWORD` for healthcheck).
+- Use a clean `/data` volume (wipe before deploy).
+- Healthcheck changed to `curl -fsL` (follow redirect).
 
-## Actual
-\`status=restarting\`, s6-rc reports services \"successfully stopped\" then the
-container exits.
-
-## Workaround
-Use the official \`freescout/freescout\` image (if published) or provide the
-full set of DB_* env vars the bfren image expects. Not diagnosable from the
-image's own logs alone.
-
-## Reproduction
-```bash
-cd stacker-projects/freescout
-./scripts/generate-secrets.sh
-stacker deploy --target server --server-host 46.224.127.228 --server-user root --server-ssh-key ../../stacker-project-test
-```
+Result: HTTP 302 on `/`, follows to `/login` → `200`. See
+`LOCAL_DEPLOY_SUCCESS.md`.
 
 ## Environment
 - Test server: 46.224.127.228
-- Logged: 2026-10-10
+- Deployments: #1353, #1354, #1355, #1356

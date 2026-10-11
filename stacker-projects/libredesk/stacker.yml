@@ -7,23 +7,9 @@ app:
     - "9000:9000/tcp"
   environment:
     LIBREDESK_SYSTEM_USER_PASSWORD: ${ADMIN_PASSWORD}
-    LIBREDESK_DB__HOST: db
-    LIBREDESK_DB__PORT: "5432"
-    LIBREDESK_DB__USER: libredesk
-    LIBREDESK_DB__PASSWORD: ${DB_PASSWORD}
-    LIBREDESK_DB__DATABASE: libredesk
-    LIBREDESK_DB__SSL_MODE: disable
-    LIBREDESK_DB__MAX_OPEN: "25"
-    LIBREDESK_DB__MAX_IDLE: "5"
-    LIBREDESK_DB__MAX_LIFETIME: "1h"
-    LIBREDESK_DB__MAX_IDLE_TIME: "15m"
-    LIBREDESK_APP__ENV: prod
-    LIBREDESK_APP__LOG_LEVEL: info
-    LIBREDESK_REDIS__HOST: redis
-    LIBREDESK_REDIS__PORT: "6379"
-    LIBREDESK_REDIS__PASSWORD: ""
-  command: sh -c "./libredesk --install --idempotent-install --yes --config '' && ./libredesk --upgrade --yes --config '' && ./libredesk --config ''"
+  command: sh -c "./libredesk --install --idempotent-install --yes --config /libredesk/config.toml && ./libredesk --upgrade --yes --config /libredesk/config.toml && ./libredesk --config /libredesk/config.toml"
   volumes:
+    - ./config.toml:/libredesk/config.toml
     - libredesk_uploads:/libredesk/uploads
   depends_on:
     - db
@@ -32,7 +18,7 @@ app:
     test: "CMD curl -fs http://localhost:9000/health"
     interval: 30s
     timeout: 5s
-    retries: 3
+    retries: 5
     start_period: 120s
 
 services:
@@ -92,9 +78,7 @@ config_contract:
     app:
       fields:
         LIBREDESK_SYSTEM_USER_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 24
+          mutability: editable
           display: password
         healthcheck:
           mutability: editable

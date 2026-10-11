@@ -8,9 +8,9 @@ deployment notes. Generated alongside `README.md`.
 | Metric | Count |
 |---|---|
 | Total project templates | 266 |
-| Deployed & verified (`LOCAL_DEPLOY_SUCCESS.md`) | 112 |
-| Blocked / known-issue (`BUGS.md`) | 73 |
-| Ready-to-deploy (no success file yet, scaffolded) | 81 |
+| Deployed & verified (`LOCAL_DEPLOY_SUCCESS.md`) | 118 |
+| Blocked / known-issue (`BUGS.md`) | 67 |
+| Ready-to-deploy (no success file yet, scaffolded) | 75 |
 
 > **Verified** = deployed to a clean server via `stacker deploy --target server`
 > and confirmed (HTTP 200/30x or daemon running). **Blocked** = template exists
@@ -38,15 +38,17 @@ deployment notes. Generated alongside `README.md`.
 | LibreNMS | Monitoring | 8000 | ✅ | + MariaDB + redis |
 | Netdata | Monitoring | 19999 | ✅ | real-time metrics dashboard |
 | Ofelia | Scheduler | — | ✅ | Docker job scheduler daemon |
-| CapRover | PaaS | 3000 | ⚠️ | port 80 conflicts with caddy ingress |
-| APITable | Database | 8084 | ⚠️ | AIO ignores external db |
-| Teable | Database | 3000 | ⚠️ | backend on :3002, connection reset |
-| Twenty | CRM | 3000 | ⚠️ | entrypoint hardcodes psql to socket |
-| Plane | Project mgmt | 8000 | ⚠️ | AIO requires S3 + AMQP env |
-| LibreDesk | Helpdesk | 9000 | ⚠️ | many required vars + interpolation gap |
-| FreeScout | Helpdesk | 8082 | ⚠️ | bfren image s6 exits after boot |
+| CapRover | PaaS | 3000 | ✅ | fixed :80 conflict via BY_PASS_PROXY_CHECK |
+| APITable | Database | 8084 | ⚠️ | upstream liquibase bug in image |
+| Teable | Database | 3000 | ✅ | ghcr all-in-one + redis |
+| Twenty | CRM | 3000 | ✅ | PG_DATABASE_URL + redis |
+| Plane | Project mgmt | 8000 | ✅ | rabbitmq + minio + full env |
+| LibreDesk | Helpdesk | 9000 | ✅ | full config.toml bind-mount |
+| FreeScout | Helpdesk | 8082 | ✅ | mysql:8 (no pdo_pgsql in image) |
 
-See the root `BUGS.md` for the full root-cause table of all 8 blocked projects.
+See the root `BUGS.md` for the full root-cause table. 6 of 7 batch-20 blocked
+projects are now fixed & verified; only APITable remains blocked (upstream
+liquibase bug).
 
 ---
 

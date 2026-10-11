@@ -6,9 +6,10 @@ app:
   ports:
     - "3000:3000"
     - "8080:8080"
-    - "80:80"
   environment:
     ACCEPTED_TERMS: "true"
+    BY_PASS_PROXY_CHECK: "TRUE"
+    MAIN_NODE_IP_ADDRESS: "127.0.0.1"
   volumes:
     - caprover_data:/captain
     - /var/run/docker.sock:/var/run/docker.sock

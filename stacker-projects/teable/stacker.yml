@@ -2,23 +2,27 @@ name: teable
 
 app:
   type: custom
-  image: teableio/teable:latest
+  image: ghcr.io/teableio/teable:latest
   ports:
     - "3000:3000/tcp"
   environment:
-    DB_PASSWORD: ${DB_PASSWORD}
     NODE_ENV: production
+    PORT: "3000"
     PRISMA_DATABASE_URL: postgresql://teable:${DB_PASSWORD}@db:5432/teable
+    BACKEND_CACHE_PROVIDER: redis
+    BACKEND_CACHE_REDIS_URI: redis://default:${REDIS_PASSWORD}@redis:6379/0
+    PUBLIC_ORIGIN: http://localhost:3000
   volumes:
-    - teable_data:/data
+    - teable_data:/app/.assets
   depends_on:
     - db
+    - redis
   healthcheck:
-    test: "CMD curl -fs http://localhost:3000"
+    test: "CMD curl -fs http://localhost:3000/health"
     interval: 30s
     timeout: 5s
-    retries: 3
-    start_period: 90s
+    retries: 5
+    start_period: 120s
 
 services:
   - name: db
@@ -34,10 +38,21 @@ services:
       interval: 10s
       timeout: 5s
       retries: 6
+  - name: redis
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - teable_cache:/data
+    healthcheck:
+      test: "CMD-SHELL redis-cli -a ${REDIS_PASSWORD} ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   teable_data: {}
   teable_db: {}
+  teable_cache: {}
 
 proxy:
   type: none
@@ -69,19 +84,18 @@ config_contract:
   services:
     app:
       fields:
-        DB_HOST:
+        BACKEND_CACHE_PROVIDER:
           mutability: editable
-        DB_NAME:
+        BACKEND_CACHE_REDIS_URI:
           mutability: editable
-        DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 24
-          display: password
-        DB_PORT:
+        NODE_ENV:
+          mutability: editable
+        PORT:
           mutability: editable
           display: number
-        DB_USER:
+        PRISMA_DATABASE_URL:
+          mutability: editable
+        PUBLIC_ORIGIN:
           mutability: editable
         healthcheck:
           mutability: editable
@@ -125,4 +139,23 @@ config_contract:
           mutability: editable
       volumes:
         teable_db:
+          mutability: generated
+    redis:
+      fields:
+        command:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        teable_cache:
           mutability: generated
