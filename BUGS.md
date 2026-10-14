@@ -1641,3 +1641,132 @@ but bulk test runs should either authenticate (`STACKER_DOCKER_USERNAME` /
   DB password + required `app.encryption_key`.
 - **freescout:** switched db `postgres` → `mysql:8.0` (no pdo_pgsql in image),
   clean `/data` volume, healthcheck `curl -fsL`.
+
+---
+
+## [BUG] Cloud firewall + compose expose loopback-bound service ports — CLI strips `127.0.0.1` from port mappings
+
+**Severity:** High (security)
+**Date:** 2026-10-14
+**Affected:** Any cloud-deployed stack with `127.0.0.1:C:C` service bindings (funkwhale, discourse — anything with loopback-bound DB/Redis/mail ports)
+
+### Symptom
+`stacker-projects/funkwhale/stacker.yml` declares only `public_ports: ["5000"]`
+and binds its DB/Redis to loopback:
+
+```yaml
+- "127.0.0.1:5432:5432"   # postgres service
+- "127.0.0.1:6379:6379"   # redis service
+```
+
+Despite that, the Hetzner server created for the funkwhale cloud deploy
+(`funkwhale-ctzrdkgp`, id 170309897, 49.13.155.170, created 2026-10-14T10:09:19Z)
+got firewall `frw-funkwhale-ctzrdkgp` (Hetzner 11801088) with **5432 and 6379
+open to `0.0.0.0/0`** alongside 22 and 5000 — and an external probe from
+46.224.127.228 confirmed **postgres (5432) and redis (6379) were actually
+reachable from the internet** (TCP handshake succeeded; 5000 was closed because
+the app publishes host port 5001, a separate mismatch).
+
+### Root Cause
+Two-stage loopback loss:
+
+1. **CLI** — `parse_port_mapping` (`src/cli/stacker_client.rs:3818`) parses
+   `"127.0.0.1:5432:5432"` into `("5432", "5432")`, dropping the host IP (the
+   unit test `test_parse_port_mapping_accepts_host_ip_bindings` at :5506 asserts
+   exactly this: `"127.0.0.1:1025:25"` → `("1025", "25")`).
+   `service_to_app_json` (:3846) then writes `shared_ports` entries with no
+   host-IP information, so the loopback binding is gone from project metadata.
+2. **Server** — `derive_public_ports_from_metadata`
+   (`src/routes/project/deploy.rs:752`) only excludes a port when
+   `dc_port.host_ip == Some("127.0.0.1")` (parsed from an embedded
+   `container_port`, `src/forms/project/port.rs`); with the host IP lost at
+   step 1 it treats 5432/6379 as public and adds them to the auto-firewall
+   rules (`publish_public_firewall_rules`, deploy.rs:1555). The compose file
+   regenerated from the same metadata publishes the ports without the loopback
+   bind, which is why the probe succeeded, not just the firewall rule.
+
+The same pattern is present on `frw-discourse-sb8xq4ax` (Hetzner 11694371):
+5432/6379 open to `0.0.0.0/0` from a `stacker.yml` with identical
+`127.0.0.1` bindings.
+
+### Current exposure
+**None at time of writing.** The funkwhale server was deleted during the
+investigation (not by this QA session — only read-only calls were made), both
+risky firewalls now have `applied_to: []` (detached), and all 4 currently
+running servers probe **closed** on 5432/6379. The bug remains live in the
+code: the next cloud deploy of any loopback-bound stack will re-expose it.
+
+### Expected
+`127.0.0.1:C:C` service bindings never reach `public_ports`/firewall rules, and
+the deployed compose keeps the loopback bind.
+
+### Actual
+Ports opened `0.0.0.0/0` on the cloud firewall and published on all interfaces.
+
+### Fix
+Preserve the host IP through `parse_port_mapping`/`service_to_app_json` (e.g.
+emit `container_port: "127.0.0.1:5432:5432"` so the server-side
+`Port` parser restores `host_ip`), or carry `host_ip` as a first-class field in
+`shared_ports`. Not yet fixed; stacker-side (`try.direct/stacker`, branch `dev`).
+
+---
+
+## [BUG] `strip_generated_field_values` erases `${VAR}` references on protected keys — coupled cross-service secrets cannot survive a marketplace install
+
+**Severity:** Medium (design; suspected — code analysis, not yet reproduced end-to-end)
+**Date:** 2026-10-14
+**Affected:** Marketplace templates whose secret must be identical under two
+different env names (app `AWS_SECRET_ACCESS_KEY` ↔ minio `MINIO_ROOT_PASSWORD`,
+etc.). Triggered while submitting `plane`.
+
+### Symptom
+Submitting `plane` to the marketplace fails with
+`MARKETPLACE_CONFIG_CONTRACT_SECRET_POLICY_REQUIRED` for `AWS_ACCESS_KEY_ID`,
+`AWS_SECRET_ACCESS_KEY`, `MINIO_ROOT_PASSWORD` — the gate
+(`ensure_contract_declares_generated_secrets`, `src/routes/marketplace/creator.rs:1355`)
+requires every secret-shaped env key to carry `mutability: generated|provided`.
+But declaring a policy makes things worse (below), so the template cannot be
+published correctly without a stacker-side change.
+
+### Root Cause (code analysis)
+1. At template persist, `strip_generated_field_values` (`creator.rs:1362`)
+   blanks **every string value** under a protected key
+   (`src/helpers/redact.rs:227`) — including whole-value `${VAR}` references
+   such as `MINIO_ROOT_PASSWORD: "${S3_SECRET}"`.
+2. Cross-service single-secret feeding works by alias: the compose generator
+   keeps the author's raw reference so differently-named container envs resolve
+   from one canonical `/etc/stacker/env` entry
+   (`env_reference_aliases` + `parameterize_compose_env_vars`,
+   `src/cli/generator/compose.rs:837-876`, documented as
+   `MYSQL_PASSWORD: "${DB_PASSWORD}"`).
+3. Once step 1 blanks the reference in the stored template, the alias is gone:
+   compose falls back to per-key `${KEY}` references, and
+   `regen_commands`/`generator_shell_expression`
+   (`src/routes/oneclick_deploy/clone.rs:786`, `init.rs:1987`) mints an
+   **independent** random value per key (no dedup/linking except `derived_jwt`).
+
+Net effect for `plane`: with `generated` on both `AWS_SECRET_ACCESS_KEY` and
+`MINIO_ROOT_PASSWORD`, app and minio get different passwords → S3 uploads fail
+for every buyer. With `provided`, the buyer must type the same value into two
+unguidable fields (no `description` attribute exists on `FieldPolicy` —
+`deny_unknown_fields`), and `AWS_ACCESS_KEY_ID` must equal the non-protected
+literal `MINIO_ROOT_USER: plane`.
+
+### Expected
+A template author can declare one canonical secret and reference it from both
+services; the marketplace gate is satisfiable without breaking the coupling.
+
+### Suspected fix
+- `strip_yaml_values_for_keys`/`strip_json_values_for_keys`: preserve values
+  that are exactly `${VAR}` (they carry no author secret), so
+  `env_reference_aliases` keeps working after persist; and/or
+- regen: derive values for keys whose stored value was an alias from the
+  canonical key instead of minting independently.
+
+### Repro (partial)
+```bash
+cd stacker-projects/plane
+stacker marketplace submit --slug plane --version 1.0.0 \
+  --category project-management --plan-type free --description "..."
+# → 400 MARKETPLACE_CONFIG_CONTRACT_SECRET_POLICY_REQUIRED
+```
