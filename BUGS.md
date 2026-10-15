@@ -1813,3 +1813,47 @@ coupling working after a marketplace persist). Included in built CLI
 Workaround used for the plane template (pre-fix) remains valid and was
 submitted: `AWS_SECRET_ACCESS_KEY`/`MINIO_ROOT_PASSWORD` as
 `mutability: provided`, `MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}` alias.
+
+---
+
+## [BUG] GPU stacks cannot be expressed in stacker.yml — no gpus/ulimits/stop_grace_period fields, and marketplace submit ships only stacker.yml
+
+**Severity:** Medium (design gap — blocks clean GPU templates, e.g. Strata)
+**Date:** 2026-10-15
+**Affected:** Any template needing `--gpus`, a custom runtime, `ulimits`
+(Strata/NVIDIA inference, GPU Ollama, llama.cpp server, vLLM, ...)
+
+### Steps
+1. Implement `stacker-projects/strata` (Strata inference engine,
+   https://github.com/Niko1221/Strata): its documented Docker run requires
+   `--gpus all`, `--ulimit memlock=-1` and `stop_grace_period: 60s`
+   (upstream `docs/INSTALL.md#docker`, `Dockerfile` header).
+2. The compose generator (`src/cli/generator/compose.rs`) has no schema fields
+   for any of the three: `ComposeService.runtime` exists but is never
+   populated from `stacker.yml` (only tests set it); no `gpus`/`ulimits`
+   parsing at all.
+3. Workaround: hand-written `docker-compose.yml` + `deploy.compose_file`
+   (the deploy command prefers a user-supplied compose file,
+   `src/console/commands/cli/deploy.rs:3857`).
+
+### Actual
+1. Local/server deploy works through the workaround.
+2. The marketplace path does not: `stacker marketplace submit` sends **only
+   the stacker.yml file content** as `stack_definition`
+   (`src/console/commands/cli/submit.rs:81`), and install embeds a
+   StackerConfig-shaped definition as `stacker.yml`
+   (`src/routes/marketplace/install.rs:176-183`) — the sibling
+   `docker-compose.yml` is never packaged. A marketplace install of the
+   strata template therefore fails with `Compose file not found: ...`.
+
+### Expected
+`stacker.yml` can declare `app.gpus` / `app.ulimits` /
+`app.stop_grace_period` and the generator emits them (making the template
+pure stacker.yml and marketplace-installable); and/or submit packages
+`deploy.compose_file` next to the definition when set.
+
+### Current state
+`stacker-projects/strata` is deployable from this repo
+(`stacker deploy` → pre_build hook clones the upstream source into
+`strata-src/`, compose builds the CUDA image) but is **not
+marketplace-installable** until one of the two expected fixes lands.
