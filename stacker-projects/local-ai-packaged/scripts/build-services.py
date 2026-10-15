@@ -48,7 +48,8 @@ SUPABASE = ("https://github.com/supabase/supabase", "1d9808ab8b10f137a867488baf8
 LANGFUSE = ("https://github.com/langfuse/langfuse", "3ef11ab9f937fc0e8ee58bde1d06b10ca575de73")
 
 IMAGES = {
-    "flowise": "flowiseai/flowise:3.1.4",
+    # 3.1.4 exits after start-up: "TypeError: this.db.exec is not a function".
+    "flowise": "flowiseai/flowise:3.1.3",
     "open-webui": "ghcr.io/open-webui/open-webui:v0.12.2",
     "n8n": "n8nio/n8n:2.43.6",
     "qdrant": "qdrant/qdrant:v1.19.2",
@@ -76,7 +77,10 @@ LANGFUSE_SECRETS = {
     "SALT": "${LANGFUSE_SALT}",
     "ENCRYPTION_KEY": "${LANGFUSE_ENCRYPTION_KEY}",
     "NEXTAUTH_SECRET": "${NEXTAUTH_SECRET}",
-    "DATABASE_URL": "postgresql://postgres:${LANGFUSE_POSTGRES_PASSWORD}@postgres:5432/postgres",
+    # One POSTGRES_PASSWORD for both databases, as upstream: stacker maps an env
+    # name to one reference for the whole file (see BUGS.md), so Langfuse's
+    # POSTGRES_PASSWORD cannot point at a different key than Supabase's.
+    "DATABASE_URL": "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres",
     "CLICKHOUSE_PASSWORD": "${CLICKHOUSE_PASSWORD}",
     "LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY": "${MINIO_ROOT_PASSWORD}",
     "LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY": "${MINIO_ROOT_PASSWORD}",
@@ -123,7 +127,6 @@ POLICIES = {
     "MINIO_ROOT_USER": GEN(type="alphanumeric", min_length=16),
     "LANGFUSE_SALT": ALNUM,
     "LANGFUSE_ENCRYPTION_KEY": GEN(type="hex", length=64),
-    "LANGFUSE_POSTGRES_PASSWORD": ALNUM,
     "NEXTAUTH_SECRET": ALNUM,
     "REDIS_AUTH": ALNUM,
     "SEARXNG_SECRET": ALNUM,
@@ -266,6 +269,10 @@ def langfuse_services(src):
             if key in env or (key == "NEXTAUTH_SECRET" and name == "langfuse-web"):
                 env[key] = value
         env["TELEMETRY_ENABLED"] = "false"
+        # Next.js otherwise listens on the container hostname's address only,
+        # which is on one of the two networks stacker attaches - Caddy, on the
+        # other, gets "connection refused".
+        env["HOSTNAME"] = "0.0.0.0"
         # Redis runs without TLS here; these are certificate paths it ignores.
         for unused in ("REDIS_TLS_CA", "REDIS_TLS_CERT", "REDIS_TLS_KEY"):
             env.pop(unused, None)
@@ -281,7 +288,7 @@ def langfuse_services(src):
     s["redis"]["environment"] = ["REDIS_AUTH=${REDIS_AUTH}"]
     s["postgres"]["environment"].update({
         "POSTGRES_USER": "postgres", "POSTGRES_DB": "postgres",
-        "POSTGRES_PASSWORD": "${LANGFUSE_POSTGRES_PASSWORD}"})
+        "POSTGRES_PASSWORD": "${POSTGRES_PASSWORD}"})
     return s
 
 
@@ -496,6 +503,7 @@ def build():
     stacker_services = [secrets_through_environment(to_stacker(name, svc, keys))
                         for name, svc in services.items()]
     secrets_outside_environment(stacker_services)
+    one_reference_per_name(stacker_services)
     volumes = sorted({v.split(":")[0] for s in stacker_services for v in s.get("volumes", [])
                       if not v.startswith((".", "/"))})
     block = yaml.dump({"services": stacker_services, "volumes": {v: {} for v in volumes},
@@ -579,6 +587,20 @@ def secrets_through_environment(svc):
         if names:
             svc[key] = yaml.safe_load(text)
     return svc
+
+
+def one_reference_per_name(services):
+    """stacker restores `${VAR}` references by env name for the whole file, so
+    an env name must reference the same key in every service (see BUGS.md)."""
+    seen = {}
+    for svc in services:
+        for name, value in svc.get("environment", {}).items():
+            ref = PLAIN.fullmatch(value)
+            if ref:
+                seen.setdefault(name, {}).setdefault(ref.group(1), []).append(svc["name"])
+    clashes = {n: refs for n, refs in seen.items() if len(refs) > 1}
+    if clashes:
+        sys.exit("env names referencing different keys across services: " + str(clashes))
 
 
 def secrets_outside_environment(services):
