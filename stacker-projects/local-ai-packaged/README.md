@@ -21,7 +21,7 @@ Caddy serves every UI on its own port:
 | 8003 | Flowise |
 | 8005 | Supabase Studio (login `DASHBOARD_USERNAME` / `DASHBOARD_PASSWORD` from `.env`) |
 | 8007 | Langfuse |
-| 8008 | Neo4j Browser |
+| 8008 | Neo4j Browser - open `/browser/` |
 
 Plan for 16 GB of RAM: the 7B model alone takes 5-6 GB while loaded.
 
@@ -69,6 +69,9 @@ Ollama model volume survives into a baked image; every other volume starts
 empty, so no database keeps the author's credentials.
 
 ## Known limits
+
+- Neo4j Browser loads from `:8008/browser/`, but connecting it to the
+  database needs Bolt on port 7687, which Caddy does not publish (as upstream).
 
 - Supabase, Langfuse and n8n are configured for `http://localhost` URLs
   (`SITE_URL`, `API_EXTERNAL_URL`, `SUPABASE_PUBLIC_URL`). Set them to your
