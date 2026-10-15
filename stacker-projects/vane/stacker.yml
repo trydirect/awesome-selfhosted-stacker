@@ -1,0 +1,65 @@
+name: vane
+version: "v1.12.2"
+
+project:
+  identity: vane
+
+install:
+  inputs:
+    commonDomain: vane.example.com
+
+app:
+  type: custom
+  image: itzcrazykns1337/vane:v1.12.2
+  ports:
+    - "3000:3000"
+  environment:
+    OPENAI_API_KEY: ${OPENAI_API_KEY}
+    OPENAI_BASE_URL: ${OPENAI_BASE_URL}
+  volumes:
+    - vane_data:/home/vane/data
+  healthcheck:
+    test: "CMD curl -fs http://localhost:3000/"
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    start_period: 120s
+
+volumes:
+  vane_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        OPENAI_API_KEY:
+          mutability: provided
+          display: password
+        OPENAI_BASE_URL:
+          mutability: editable
+      volumes:
+        vane_data:
+          mutability: generated

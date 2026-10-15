@@ -6,6 +6,7 @@ project:
 
 app:
   type: custom
+  image: trydirect/strata:latest
   path: strata-src
   dockerfile: Dockerfile
   environment:

@@ -1,0 +1,167 @@
+name: localagi
+version: "v2.9.0"
+
+project:
+  identity: localagi
+
+install:
+  inputs:
+    commonDomain: localagi.example.com
+
+app:
+  type: custom
+  image: quay.io/mudler/localagi:main-20261005225430
+  ports:
+    - "8080:3000"
+  environment:
+    LOCALAGI_LLM_API_URL: http://localai:8080
+    LOCALAGI_LLM_API_KEY: ${LOCALAGI_LLM_API_KEY}
+    LOCALAGI_API_KEYS: ${LOCALAGI_API_KEYS}
+    LOCALAGI_STATE_DIR: /pool
+    VECTOR_ENGINE: postgres
+    DATABASE_URL: postgresql://localrecall:${POSTGRES_PASSWORD}@postgres:5432/localrecall?sslmode=disable
+    EMBEDDING_MODEL: granite-embedding-107m-multilingual
+    LOCALAGI_TIMEOUT: 5m
+    LOCALAGI_ENABLE_CONVERSATIONS_LOGGING: "false"
+  volumes:
+    - localagi_pool:/pool
+  depends_on:
+    - localai
+    - postgres
+  healthcheck:
+    test: "CMD curl -fs http://localhost:3000/"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 60s
+
+services:
+  - name: localai
+    image: localai/localai:v2.29.0
+    command: "gemma-3-4b-it-qat gemma-3-4b-it-qat granite-embedding-107m-multilingual"
+    environment:
+      DEBUG: "true"
+    volumes:
+      - models:/models
+      - backends:/backends
+      - images:/tmp/generated/images
+    healthcheck:
+      test: "CMD curl -f http://localhost:8080/readyz"
+      interval: 60s
+      timeout: 10s
+      retries: 60
+  - name: postgres
+    image: quay.io/mudler/localrecall:v0.5.2-postgresql
+    environment:
+      POSTGRES_DB: localrecall
+      POSTGRES_USER: localrecall
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U localrecall"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  localagi_pool: {}
+  models: {}
+  backends: {}
+  images: {}
+  postgres_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        LOCALAGI_API_KEYS:
+          mutability: editable
+        LOCALAGI_LLM_API_KEY:
+          mutability: editable
+          display: password
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        localagi_pool:
+          mutability: generated
+    localai:
+      fields:
+        DEBUG:
+          mutability: editable
+        command:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        backends:
+          mutability: generated
+        images:
+          mutability: generated
+        models:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        postgres_data:
+          mutability: generated

@@ -1,0 +1,188 @@
+name: local-ai-packaged
+version: "management-ui-v1"
+
+project:
+  identity: local-ai-packaged
+
+install:
+  inputs:
+    commonDomain: local-ai-packaged.example.com
+
+app:
+  type: custom
+  image: n8nio/n8n:2.43.6
+  ports:
+    - "5678:5678"
+  environment:
+    DB_TYPE: postgresdb
+    DB_POSTGRESDB_HOST: db
+    DB_POSTGRESDB_USER: postgres
+    DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+    DB_POSTGRESDB_DATABASE: postgres
+    N8N_DIAGNOSTICS_ENABLED: "false"
+    N8N_PERSONALIZATION_ENABLED: "false"
+    N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+    N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
+    WEBHOOK_URL: "http://${DEPLOY_HOST}:5678"
+  volumes:
+    - n8n_storage:/home/node/.n8n
+    - n8n_shared:/data/shared
+  depends_on:
+    - db
+  healthcheck:
+    test: 'CMD-SHELL node -e "require(''http'').get(''http://localhost:5678/healthz'',r=>process.exit(r.statusCode===200?0:1)).on(''error'',()=>process.exit(1))"'
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    start_period: 90s
+
+services:
+  - name: db
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - n8n_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U postgres -d postgres"
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  - name: open-webui
+    image: ghcr.io/open-webui/open-webui:v0.12.2
+    environment:
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY}
+      OPENAI_API_BASE_URLS: ${OPENAI_API_BASE_URLS}
+      OPENAI_API_KEYS: ${OPENAI_API_KEYS}
+      ENABLE_OLLAMA_API: "false"
+      ANONYMIZED_TELEMETRY: "false"
+    volumes:
+      - open_webui_data:/app/backend/data
+
+  - name: flowise
+    image: flowiseai/flowise:3.1.4
+    environment:
+      PORT: "3001"
+      FLOWISE_USERNAME: ${FLOWISE_USERNAME}
+      FLOWISE_PASSWORD: ${FLOWISE_PASSWORD}
+    volumes:
+      - flowise_data:/root/.flowise
+
+  - name: qdrant
+    image: qdrant/qdrant:v1.19.2
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+  - name: searxng
+    image: searxng/searxng:2026.10.13-22c64b8d3
+    environment:
+      SEARXNG_BASE_URL: "http://searxng:8080/"
+    volumes:
+      - searxng_config:/etc/searxng
+
+volumes:
+  n8n_storage: {}
+  n8n_shared: {}
+  n8n_pgdata: {}
+  open_webui_data: {}
+  flowise_data: {}
+  qdrant_storage: {}
+  searxng_config: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "5678"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        N8N_ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        N8N_USER_MANAGEMENT_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        n8n_storage:
+          mutability: generated
+        n8n_shared:
+          mutability: generated
+    db:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_USER:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        n8n_pgdata:
+          mutability: generated
+    open-webui:
+      fields:
+        WEBUI_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENAI_API_BASE_URLS:
+          mutability: editable
+        OPENAI_API_KEYS:
+          mutability: provided
+          display: password
+      volumes:
+        open_webui_data:
+          mutability: generated
+    flowise:
+      fields:
+        FLOWISE_USERNAME:
+          mutability: editable
+        FLOWISE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        flowise_data:
+          mutability: generated
+    qdrant:
+      volumes:
+        qdrant_storage:
+          mutability: generated
+    searxng:
+      volumes:
+        searxng_config:
+          mutability: generated

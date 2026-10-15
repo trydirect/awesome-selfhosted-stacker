@@ -1,0 +1,168 @@
+name: evolution-api
+version: "2.3.7"
+
+project:
+  identity: evolution-api
+
+install:
+  inputs:
+    commonDomain: evolution-api.example.com
+
+app:
+  type: custom
+  image: evoapicloud/evolution-api:v2.3.7
+  ports:
+    - "8080:8080"
+  environment:
+    DATABASE_PROVIDER: postgresql
+    DATABASE_CONNECTION_URI: postgresql://evolution:${DB_PASSWORD}@postgres:5432/evolution?schema=evolution_api
+    CACHE_REDIS_ENABLED: "true"
+    CACHE_REDIS_URI: redis://redis:6379/6
+    AUTHENTICATION_API_KEY: ${AUTHENTICATION_API_KEY}
+  volumes:
+    - evolution_instances:/evolution/instances
+  depends_on:
+    - postgres
+    - redis
+  healthcheck:
+    test: "CMD-SHELL node -e \"require('net').connect(8080,'127.0.0.1',function(){process.exit(0)}).on('error',function(){process.exit(1)})\""
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    start_period: 120s
+
+services:
+  - name: postgres
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: evolution
+      POSTGRES_USER: evolution
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - evolution_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U evolution"
+      interval: 10s
+      timeout: 5s
+      retries: 6
+  - name: redis
+    image: redis:7-alpine
+    command: "redis-server --appendonly yes"
+    volumes:
+      - evolution_redis:/data
+    healthcheck:
+      test: "CMD-SHELL redis-cli ping || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  evolution_instances: {}
+  evolution_pgdata: {}
+  evolution_redis: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        AUTHENTICATION_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CACHE_REDIS_ENABLED:
+          mutability: editable
+        CACHE_REDIS_URI:
+          mutability: editable
+        DATABASE_CONNECTION_URI:
+          mutability: editable
+        DATABASE_PROVIDER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        evolution_instances:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        evolution_pgdata:
+          mutability: generated
+    redis:
+      fields:
+        command:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        evolution_redis:
+          mutability: generated

@@ -1,0 +1,14 @@
+# Secrets
+.env
+.env.local
+.env.production
+
+# Stacker generated files
+.stacker/
+
+# Docker
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
