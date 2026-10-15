@@ -1,6 +1,6 @@
 # Supabase
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabasequick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabase&ref=mainref=e68926c)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabase&ref=206881a13b81ab43aaeca1316403e1343763f261)
 
 **Self-hosted Firebase alternative** — Postgres, Auth, Realtime, Storage, Edge Functions.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabasequick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabase&ref=mainref=e68926c
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/supabase&ref=206881a13b81ab43aaeca1316403e1343763f261
 ```
 
 ## Manual deploy
