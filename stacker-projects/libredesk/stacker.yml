@@ -78,7 +78,7 @@ config_contract:
     app:
       fields:
         LIBREDESK_SYSTEM_USER_PASSWORD:
-          mutability: editable
+          mutability: provided
           display: password
         healthcheck:
           mutability: editable
