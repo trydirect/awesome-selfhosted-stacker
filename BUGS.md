@@ -115,6 +115,68 @@ for user "authenticator"`, the three services restart forever.
 (as upstream does); build-services.py refuses an env name that references
 different keys in different services.
 
+### [BUG] An optional `provided` field makes a baked snapshot impossible to clone
+
+**Status:** confirmed (clone of local-ai-packaged 1.0.0, snapshot #22, image 444002406, 2026-10-15)
+
+**Steps:** contract fields `mutability: provided, required: false` (Supabase's
+opt-in `SUPABASE_PUBLISHABLE_KEY` / `SUPABASE_SECRET_KEY`, Studio's
+`OPENAI_API_KEY`), left empty on the build box; bake; `POST /api/v1/deploy/clone`.
+
+**Expected:** an optional field may stay empty on the clone, as it was on the
+build box.
+
+**Actual:** 422 `Incomplete environment for this snapshot ... references 3
+environment variable(s) that this deploy would not set (OPENAI_API_KEY,
+SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY)`. The bake records every
+provided field in `required_env_keys` regardless of `required: false`, and
+`src/routes/oneclick_deploy/clone.rs:216-225` counts a key as supplied only
+when its value is non-empty - so the clone can never satisfy it.
+
+**Not a workaround:** a non-empty placeholder. Kong accepts
+SUPABASE_PUBLISHABLE_KEY / SUPABASE_SECRET_KEY as API keys, so a known value
+would grant anon / service_role access.
+
+### [BUG] Clone defaults to cpx11 in fsn1, whatever the snapshot was baked on
+
+**Status:** confirmed (2026-10-15)
+
+**Where:** `src/routes/oneclick_deploy/clone.rs` `default_server_type()` =
+`cpx11`, `default_region()` = `fsn1`.
+
+**Seen:** `POST /api/v1/deploy/clone` without `server_type` for
+local-ai-packaged (baked on a cpx42, 320 GB disk) -> 502 `Hetzner
+create-server-from-image failed: HTTP 422 unsupported location for server
+type`. With `"server_type": "cpx42", "region": "fsn1"` the clone was created.
+
+**Expected:** the clone uses the snapshot's server type (or at least one that
+can hold its disk and is offered in the region); a snapshot of a bigger disk
+cannot boot on a cpx11 at all.
+
+### [BUG] Baked snapshots ship without stacker-compose.service; a direct clone never starts the stack
+
+**Status:** confirmed (clone of local-ai-packaged 1.0.0, Hetzner 170618826, 2026-10-15)
+
+**Seen:** `POST /api/v1/deploy/clone` succeeded; on the clone the project
+files, all 26 images and a fresh `/etc/stacker/env` are there, but cloud-init
+logs `Failed to restart stacker-compose.service: Unit stacker-compose.service
+not found` and no project container runs.
+
+**Cause (by reading):** the boot contract
+(`shared-fixtures/immutable-deploy/boot-contract.json`) says the snapshot
+carries `stacker-compose.service`. The tfa role that installs it
+(`roles/stacker_compose_unit`, `setup_stack.yml:140`) runs only under the
+`stacker_compose_unit` tag, and nothing adds that tag: not stacker, not the
+install service, not tools. Neither does the bake (`POST /api/admin/bake` ->
+`finalize_build_box`). The only other installer is `post_clone_setup.yml`,
+run by the install service on `post_deploy_clone` - which only the User
+Service's Quick Deploy flow publishes (`user/app/oneclick_deploy/views.py:418`).
+So a clone made through stacker's own endpoint, including the smoke clone in
+`scripts/bake_pipeline.py`, boots with the stack stopped.
+
+**Expected:** the bake installs the unit (the BAKE side of the boot
+contract), so any clone of the image starts the stack from cloud-init alone.
+
 ### [LIMIT] Config files of a cloud deploy capped at 128 KB - possibly stale
 
 **Status:** limit confirmed (server answered 500 on 2026-10-15); reason not confirmed
