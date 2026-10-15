@@ -1707,7 +1707,38 @@ Ports opened `0.0.0.0/0` on the cloud firewall and published on all interfaces.
 Preserve the host IP through `parse_port_mapping`/`service_to_app_json` (e.g.
 emit `container_port: "127.0.0.1:5432:5432"` so the server-side
 `Port` parser restores `host_ip`), or carry `host_ip` as a first-class field in
-`shared_ports`. Not yet fixed; stacker-side (`try.direct/stacker`, branch `dev`).
+`shared_ports`.
+
+### Resolution (2026-10-15)
+Fixed in `try.direct/stacker` dev: PR #284 (`85d380f9` — new
+`port_mapping_json` sends the whole `127.0.0.1:5432:5432` mapping in
+`container_port`, the form the server-side `normalize_port_mapping` already
+parses for firewall + compose), with regression test `e0a31a77`
+(`loopback_ports_contract`). Built CLI `0.3.4 (5cc1cac)` verified.
+
+**Template audit (this repo):** 69 of 135 projects carry loopback port
+mappings (111 bindings: 5432/6379/3306/27017 DBs, plus 8086/9000/9001/7700/
+7890/9696/9697/6969/8123/9092/5984/3000/5433/7233/3333 app services).
+
+**Marketplace:** 0 of 28 submitted templates have loopback bindings → no
+resubmit needed.
+
+**Server projects synced** with the fixed CLI (`stacker sync`, metadata
+spot-verified to now contain `"container_port": "127.0.0.1:5432:5432"`):
+docmost(410), wordpress(393), vikunja(396), listmonk(404), semaphore(407),
+linkwarden(408), hedgedoc(409), maybe-finance(411), writefreely(412),
+tandoor(413), windmill(586), langflow(591), khoj(594), lobechat(595),
+matomo(599), middleware(600) — 16 projects.
+
+Not synced: `supabase` (server-side record is a one-click project
+`oneclick-supabase-631215e2`, id 550, name mismatch), wordpress id 394
+(stale duplicate, empty metadata), projects 325 (wordpress) / 662
+(funkwhale) — belong to the `info@optimum-web.com` account, 404 for this
+token.
+
+**Caveat:** the released CLI `v0.3.4 (26742fb)` predates the fix — until a
+release ships `5cc1cac+`, buyer deploys of loopback-bound templates remain
+exposed.
 
 ---
 
@@ -1770,3 +1801,15 @@ stacker marketplace submit --slug plane --version 1.0.0 \
   --category project-management --plan-type free --description "..."
 # → 400 MARKETPLACE_CONFIG_CONTRACT_SECRET_POLICY_REQUIRED
 ```
+
+### Resolution (2026-10-15)
+Fixed in `try.direct/stacker` dev: PR #285 (`052b89ba` —
+`strip_yaml_values_for_keys`/`strip_json_values_for_keys` in
+`src/helpers/redact.rs` now preserve values that are exactly `${VAR}`
+references, so `env_reference_aliases` keeps cross-service single-secret
+coupling working after a marketplace persist). Included in built CLI
+`0.3.4 (5cc1cac)`.
+
+Workaround used for the plane template (pre-fix) remains valid and was
+submitted: `AWS_SECRET_ACCESS_KEY`/`MINIO_ROOT_PASSWORD` as
+`mutability: provided`, `MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}` alias.
