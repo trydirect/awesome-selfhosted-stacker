@@ -216,6 +216,8 @@ jobs:
     if: needs.changes.outputs.projects != ''
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Quick Deploy links pin older commits
 
       - name: Install Stacker
         run: |
@@ -226,6 +228,13 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           export PATH="$HOME/.local/bin:$PATH"
           stacker --version
+
+      # A changed stack's Quick Deploy links must carry one source, repo, path
+      # and ref, and its ref must hold the stack's stacker.yml (40b0da6 broke
+      # every link with a duplicated query).
+      - name: Check Quick Deploy links of changed projects
+        run: |
+          python3 scripts/quick_deploy_links.py --check $(echo "${{ needs.changes.outputs.projects }}")
 
       - name: Validate changed projects
         run: |
