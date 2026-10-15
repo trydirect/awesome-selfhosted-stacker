@@ -1,0 +1,63 @@
+name: bolt-diy
+version: "v1.0.1"
+
+project:
+  identity: bolt-diy
+
+install:
+  inputs:
+    commonDomain: bolt-diy.example.com
+
+app:
+  type: custom
+  image: ghcr.io/stackblitz-labs/bolt.diy:latest
+  ports:
+    - "5173:5173"
+  environment:
+    ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    OPENAI_API_KEY: ${OPENAI_API_KEY}
+    OPEN_ROUTER_API_KEY: ${OPEN_ROUTER_API_KEY}
+    GOOGLE_GENERATIVE_AI_API_KEY: ${GOOGLE_GENERATIVE_AI_API_KEY}
+    GROQ_API_KEY: ${GROQ_API_KEY}
+    XAI_API_KEY: ${XAI_API_KEY}
+    TOGETHER_API_KEY: ${TOGETHER_API_KEY}
+    HuggingFace_API_KEY: ${HuggingFace_API_KEY}
+    OLLAMA_API_BASE_URL: ${OLLAMA_API_BASE_URL}
+    TOGETHER_API_BASE_URL: ${TOGETHER_API_BASE_URL}
+    AWS_BEDROCK_CONFIG: ${AWS_BEDROCK_CONFIG}
+    VITE_LOG_LEVEL: ${VITE_LOG_LEVEL}
+    DEFAULT_NUM_CTX: ${DEFAULT_NUM_CTX}
+  volumes:
+    - bolt_diy_data:/app/run
+  healthcheck:
+    test: "CMD curl -fsS http://localhost:5173/api/health"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 30s
+
+volumes:
+  bolt_diy_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "5173"
+
+monitoring:
+  status_panel: true

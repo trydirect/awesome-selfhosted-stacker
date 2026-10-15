@@ -1,0 +1,105 @@
+name: archon
+
+version: "0.11.1"
+
+project:
+  identity: archon
+
+install:
+  inputs:
+    commonDomain: archon.example.com
+
+app:
+  type: custom
+  image: ghcr.io/coleam00/archon:0.11.1
+  ports:
+    - "3000:3000/tcp"
+  environment:
+    ARCHON_DOCKER: "true"
+    PORT: "3000"
+    WEBHOOK_SECRET: ${WEBHOOK_SECRET}
+    TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY}
+    CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN}
+    CLAUDE_API_KEY: ${CLAUDE_API_KEY}
+  volumes:
+    - archon_data:/.archon
+    - archon_user_home:/home/appuser
+  healthcheck:
+    test: "CMD curl -fs http://localhost:3000/api/health"
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 15s
+
+volumes:
+  archon_data: {}
+  archon_user_home: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        ARCHON_DOCKER:
+          mutability: editable
+        PORT:
+          mutability: editable
+          display: number
+        WEBHOOK_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TOKEN_ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CLAUDE_CODE_OAUTH_TOKEN:
+          mutability: editable
+        CLAUDE_API_KEY:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        archon_data:
+          mutability: generated
+        archon_user_home:
+          mutability: generated

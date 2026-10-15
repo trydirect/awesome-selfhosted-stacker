@@ -1,0 +1,182 @@
+name: paperless-gpt
+version: "v0.31.0"
+
+project:
+  identity: paperless-gpt
+
+install:
+  inputs:
+    commonDomain: paperless-gpt.example.com
+
+app:
+  type: custom
+  image: icereed/paperless-gpt:v0.31.0
+  ports:
+    - "8080:8080"
+  environment:
+    PAPERLESS_BASE_URL: http://paperless:8000
+    PAPERLESS_API_TOKEN: ${PAPERLESS_API_TOKEN}
+    PAPERLESS_PUBLIC_URL: ${PAPERLESS_PUBLIC_URL}
+    LLM_PROVIDER: ${LLM_PROVIDER}
+    LLM_MODEL: ${LLM_MODEL}
+    OPENAI_API_KEY: ${OPENAI_API_KEY}
+    LLM_LANGUAGE: ${LLM_LANGUAGE}
+    OCR_PROVIDER: ${OCR_PROVIDER}
+    VISION_LLM_PROVIDER: ${VISION_LLM_PROVIDER}
+    VISION_LLM_MODEL: ${VISION_LLM_MODEL}
+  volumes:
+    - paperless_gpt_prompts:/app/prompts
+    - paperless_gpt_config:/app/config
+    - paperless_gpt_db:/app/db
+  depends_on:
+    - paperless
+  healthcheck:
+    test: "CMD wget -q -O /dev/null http://localhost:8080/api/version"
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    start_period: 30s
+
+services:
+  - name: paperless
+    image: ghcr.io/paperless-ngx/paperless-ngx:v3.3.1
+    ports:
+      - "8000:8000"
+    environment:
+      PAPERLESS_URL: ${PAPERLESS_URL}
+      PAPERLESS_DBENGINE: postgresql
+      PAPERLESS_DBHOST: paperless_db
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBPASS: ${DB_PASSWORD}
+      PAPERLESS_SECRET_KEY: ${SECRET_KEY}
+      PAPERLESS_REDIS: redis://redis:6379
+      PAPERLESS_ADMIN_USER: admin
+      PAPERLESS_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      PAPERLESS_ADMIN_MAIL: admin@example.com
+      PAPERLESS_OCR_LANGUAGE: ${OCR_LANGUAGE}
+    volumes:
+      - paperless_data:/usr/src/paperless/data
+      - paperless_media:/usr/src/paperless/media
+      - paperless_export:/usr/src/paperless/export
+      - paperless_consume:/usr/src/paperless/consume
+    depends_on:
+      - paperless_db
+      - redis
+    healthcheck:
+      test: "CMD curl -fs http://localhost:8000"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  - name: paperless_db
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: paperless
+    volumes:
+      - paperless_db:/var/lib/postgresql
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U paperless -d paperless"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  - name: redis
+    image: redis:7-alpine
+    volumes:
+      - paperless_redis:/data
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  paperless_gpt_prompts: {}
+  paperless_gpt_config: {}
+  paperless_gpt_db: {}
+  paperless_data: {}
+  paperless_media: {}
+  paperless_export: {}
+  paperless_consume: {}
+  paperless_db: {}
+  paperless_redis: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        PAPERLESS_API_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        paperless_gpt_prompts:
+          mutability: generated
+        paperless_gpt_config:
+          mutability: generated
+        paperless_gpt_db:
+          mutability: generated
+    paperless:
+      fields:
+        PAPERLESS_DBPASS:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PAPERLESS_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PAPERLESS_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        paperless_data:
+          mutability: generated
+        paperless_media:
+          mutability: generated
+        paperless_export:
+          mutability: generated
+        paperless_consume:
+          mutability: generated
+    paperless_db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        paperless_db:
+          mutability: generated

@@ -1,0 +1,70 @@
+name: agent-zero
+version: "v2.14"
+
+project:
+  identity: agent-zero
+
+install:
+  inputs:
+    commonDomain: agent-zero.example.com
+
+app:
+  type: custom
+  image: agent0ai/agent-zero:v2.14
+  ports:
+    - "50080:80"
+  environment:
+    AUTH_LOGIN: "${AUTH_LOGIN}"
+    AUTH_PASSWORD: "${AUTH_PASSWORD}"
+  volumes:
+    - agent_zero_usr:/a0/usr
+  healthcheck:
+    test: "CMD curl -fsI http://localhost:80/"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 60s
+
+volumes:
+  agent_zero_usr: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "50080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        AUTH_LOGIN:
+          mutability: editable
+        AUTH_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        agent_zero_usr:
+          mutability: generated

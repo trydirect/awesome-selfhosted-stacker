@@ -1,0 +1,238 @@
+name: lightrag
+version: v1.5.7
+
+project:
+  identity: lightrag
+
+install:
+  inputs:
+    commonDomain: lightrag.example.com
+
+app:
+  type: custom
+  image: ghcr.io/hkuds/lightrag:v1.5.7
+  ports:
+    - "9621:9621"
+  environment:
+    HOST: "0.0.0.0"
+    PORT: "9621"
+    WORKING_DIR: /app/data/rag_storage
+    INPUT_DIR: /app/data/inputs
+    PROMPT_DIR: /app/data/prompts
+    LIGHTRAG_KV_STORAGE: PGKVStorage
+    LIGHTRAG_DOC_STATUS_STORAGE: PGDocStatusStorage
+    LIGHTRAG_GRAPH_STORAGE: PGTableGraphStorage
+    LIGHTRAG_VECTOR_STORAGE: QdrantVectorDBStorage
+    POSTGRES_HOST: postgres
+    POSTGRES_PORT: "5432"
+    POSTGRES_USER: lightrag
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    POSTGRES_DATABASE: lightrag
+    QDRANT_URL: http://qdrant:6333
+    LLM_BINDING: openai
+    LLM_BINDING_HOST: ${LLM_BINDING_HOST}
+    LLM_BINDING_API_KEY: ${LLM_BINDING_API_KEY}
+    LLM_MODEL: ${LLM_MODEL}
+    EMBEDDING_BINDING: openai
+    EMBEDDING_BINDING_HOST: ${EMBEDDING_BINDING_HOST}
+    EMBEDDING_BINDING_API_KEY: ${EMBEDDING_BINDING_API_KEY}
+    EMBEDDING_MODEL: ${EMBEDDING_MODEL}
+    EMBEDDING_DIM: ${EMBEDDING_DIM}
+  volumes:
+    - lightrag_data:/app/data/rag_storage
+    - lightrag_inputs:/app/data/inputs
+    - lightrag_prompts:/app/data/prompts
+  depends_on:
+    - postgres
+    - qdrant
+  healthcheck:
+    test: 'CMD-SHELL python -c ''import urllib.request as u; u.urlopen("http://localhost:9621/health")'''
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    start_period: 60s
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: lightrag
+      POSTGRES_USER: lightrag
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - lightrag_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -U lightrag -d lightrag"
+      interval: 10s
+      timeout: 5s
+      retries: 6
+  - name: qdrant
+    image: qdrant/qdrant:v1.19.2
+    volumes:
+      - lightrag_qdrant:/qdrant/storage
+    healthcheck:
+      test: 'CMD-SHELL cat /proc/net/tcp /proc/net/tcp6 2>/dev/null | grep -q ":$(printf ''%04X'' 6333) "'
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+volumes:
+  lightrag_data: {}
+  lightrag_inputs: {}
+  lightrag_prompts: {}
+  lightrag_pgdata: {}
+  lightrag_qdrant: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "9621"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        HOST:
+          mutability: editable
+        PORT:
+          mutability: editable
+          display: number
+        WORKING_DIR:
+          mutability: editable
+        INPUT_DIR:
+          mutability: editable
+        PROMPT_DIR:
+          mutability: editable
+        LIGHTRAG_KV_STORAGE:
+          mutability: editable
+        LIGHTRAG_DOC_STATUS_STORAGE:
+          mutability: editable
+        LIGHTRAG_GRAPH_STORAGE:
+          mutability: editable
+        LIGHTRAG_VECTOR_STORAGE:
+          mutability: editable
+        POSTGRES_HOST:
+          mutability: editable
+        POSTGRES_PORT:
+          mutability: editable
+          display: number
+        POSTGRES_USER:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_DATABASE:
+          mutability: editable
+        QDRANT_URL:
+          mutability: editable
+        LLM_BINDING:
+          mutability: editable
+        LLM_BINDING_HOST:
+          mutability: editable
+        LLM_BINDING_API_KEY:
+          mutability: provided
+          display: password
+        LLM_MODEL:
+          mutability: editable
+        EMBEDDING_BINDING:
+          mutability: editable
+        EMBEDDING_BINDING_HOST:
+          mutability: editable
+        EMBEDDING_BINDING_API_KEY:
+          mutability: provided
+          display: password
+        EMBEDDING_MODEL:
+          mutability: editable
+        EMBEDDING_DIM:
+          mutability: editable
+          display: number
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        lightrag_data:
+          mutability: generated
+        lightrag_inputs:
+          mutability: generated
+        lightrag_prompts:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_USER:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        lightrag_pgdata:
+          mutability: generated
+    qdrant:
+      fields:
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        lightrag_qdrant:
+          mutability: generated

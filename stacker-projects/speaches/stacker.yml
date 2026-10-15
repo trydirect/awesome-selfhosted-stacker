@@ -1,0 +1,81 @@
+name: speaches
+version: "0.8.3"
+
+project:
+  identity: speaches
+
+install:
+  inputs:
+    commonDomain: speaches.example.com
+
+app:
+  type: custom
+  image: ghcr.io/speaches-ai/speaches:0.8.3-cpu
+  ports:
+    - "8000:8000"
+  environment:
+    API_KEY: ${API_KEY}
+  volumes:
+    - speaches_hf_cache:/home/ubuntu/.cache/huggingface/hub
+  healthcheck:
+    test: "CMD-SHELL curl -fs -H 'Authorization: Bearer ${API_KEY}' http://localhost:8000/health"
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 10s
+
+volumes:
+  speaches_hf_cache: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        speaches_hf_cache:
+          mutability: generated
