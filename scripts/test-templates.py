@@ -16,6 +16,12 @@ Usage:
   python3 scripts/test-templates.py --template ghost    # test single template
   python3 scripts/test-templates.py --list              # list all templates
   python3 scripts/test-templates.py --dry-run           # show what would run
+
+Bake mode (scripts/bake_pipeline.py): after a successful verify, bake the
+build box into a Quick Deploy snapshot, smoke-clone it, check the clone's
+generated values and SSH host key differ, and record the result and the
+servers to remove in BAKES.md. Nothing is destroyed in this mode.
+  uv run --with pyyaml python3 scripts/test-templates.py --template n8n --bake
 """
 
 import argparse
@@ -36,6 +42,7 @@ ENV_FILE = ROOT / ".env"
 TEMPLATES_FILE = ROOT / "scripts" / "templates.txt"
 BUGS_FILE = ROOT / "BUGS.md"
 HOWTO_FILE = ROOT / "HOWTO.md"
+BAKES_FILE = ROOT / "BAKES.md"
 WORK_DIR = ROOT / "test-workdir"
 
 # ---------------------------------------------------------------------------
@@ -333,7 +340,7 @@ def record_failure(template, provider, error, logs=""):
 # ---------------------------------------------------------------------------
 # Main test flow
 # ---------------------------------------------------------------------------
-def test_template(template, provider_config, dry_run=False):
+def test_template(template, provider_config, dry_run=False, bake=False):
     """Test a single template. Returns True on success."""
     provider = [k for k, v in PROVIDERS.items() if v == provider_config][0]
     key_name = provider_config["key_name"]
@@ -351,7 +358,10 @@ def test_template(template, provider_config, dry_run=False):
         print(f"    stacker install {template} --domain {template}.try.direct --key {key_name} --region {region}")
         print(f"    stacker deploy --target cloud --key {key_name} --force-new --no-hooks")
         print(f"    stacker agent health")
-        print(f"    stacker destroy -y")
+        if bake:
+            print("    POST /api/admin/bake, smoke clone, reset check, BAKES.md (no destroy)")
+        else:
+            print(f"    stacker destroy -y")
         return True
 
     # Ensure work directory exists
@@ -381,7 +391,10 @@ def test_template(template, provider_config, dry_run=False):
         # Step 2: Inject NPM
         print("\n  [2/5] Checking NPM...")
         has_npm = False
-        if template not in NPM_SKIP:
+        if bake:
+            # The snapshot must be the approved stack, not the stack plus a test proxy.
+            print("  SKIP: bake mode bakes the template as approved")
+        elif template not in NPM_SKIP:
             has_npm = inject_npm(str(stacker_yml))
             if has_npm:
                 print(f"  OK: NPM injected")
@@ -416,6 +429,15 @@ def test_template(template, provider_config, dry_run=False):
 
         # Step 5: Record and destroy
         duration = int(time.time() - start_time)
+
+        if bake:
+            if not success:
+                print("\n  [5/5] Verification failed - not baking. Server left running.")
+                record_failure(template, provider, "Verification issues: " + "; ".join(details))
+                return False
+            print("\n  [5/5] Baking (the build box is not destroyed)...")
+            import bake_pipeline
+            return bake_pipeline.bake(template, WORK_DIR, BAKES_FILE)
 
         if success:
             # Get app port
@@ -469,6 +491,8 @@ def main():
     parser.add_argument("--list", action="store_true", help="List all templates")
     parser.add_argument("--dry-run", action="store_true", help="Show what would run without executing")
     parser.add_argument("--all", action="store_true", help="Run all batches sequentially")
+    parser.add_argument("--bake", action="store_true",
+                        help="After a green verify, bake + smoke clone instead of destroy (see BAKES.md)")
     args = parser.parse_args()
 
     load_env()
@@ -488,7 +512,7 @@ def main():
         # Single template test
         provider_name = args.provider or "hetzner"
         provider_config = PROVIDERS[provider_name]
-        test_template(args.template, provider_config, dry_run=args.dry_run)
+        test_template(args.template, provider_config, dry_run=args.dry_run, bake=args.bake)
         return
 
     if args.all:
@@ -503,7 +527,7 @@ def main():
             print(f"  BATCH {batch_num} - {provider_name} ({len(batch)} templates)")
             print(f"{'#'*60}")
             for template in batch:
-                test_template(template, provider_config, dry_run=args.dry_run)
+                test_template(template, provider_config, dry_run=args.dry_run, bake=args.bake)
         return
 
     # Default: run specified batch
@@ -528,7 +552,7 @@ def main():
             return
 
     for template in batch:
-        test_template(template, provider_config, dry_run=args.dry_run)
+        test_template(template, provider_config, dry_run=args.dry_run, bake=args.bake)
 
 if __name__ == "__main__":
     main()
