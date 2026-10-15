@@ -50,6 +50,46 @@ name, not a secret).
 **Actual (by reading):** the name matches `_key`, so publishing demands a
 `generated` or `provided` policy for a user name.
 
+### [BUG] A project service named `caddy` gets the platform Caddy role too - port 80 conflict
+
+**Status:** confirmed by the install service log of deployment #1362
+(2026-10-15): `ansible-playbook ... --tags 'statuspanel,setup,postrole,custom,n8n,caddy,authorize_stacker_key'`.
+The CLI sent `integrated_features: ["statuspanel"]`, `extended_features: []`
+and `custom.feature: []` (checked with `build_deploy_form` on the same
+stacker.yml) - `n8n` and `caddy` were added downstream, from the codes of the
+project's own `n8n` and `caddy` services. Both platform roles ran.
+
+**Seen:** `stacker deploy --target cloud --key htz-0 --force-new` of
+local-ai-packaged (`proxy: type: none`, one of its services is `caddy`, ports
+80/443/8001-8008). The project compose came up; then Ansible ran the platform
+role: `docker compose -f /home/trydirect/caddy/docker-compose.yml up -d` ->
+`Bind for 0.0.0.0:80 failed: port is already allocated`. Deployment paused
+after ~22 minutes, Terraform removed the server.
+
+**Cause (by reading):** a project service's code becomes a "selected feature",
+and a selected feature whose code matches a catalog feature runs that
+feature's platform role:
+
+1. stacker CLI registers every `services:` entry under `custom.service` with
+   `code` = its name (`src/cli/stacker_client.rs` `service_to_app_json`).
+2. tools `custom_stack_mapper.py` (`6369e71`): `by_prop = "code"` (line 942);
+   every `service` app's code is appended to `integrated_features` (999),
+   which goes out as `output["integrated_features"]` (1299).
+3. install `app/ProviderServerBase.py` `get_features_roles` (777-825): for each
+   feature defined for the stack, `if f["code"] in selected_extended +
+   selected_integrated: yield f["role"]`.
+4. `app/Ansible.py:286` turns those roles into `--tags`; `tfa/setup_stack.yml:104`
+   runs `{role: caddy, tags: caddy}`.
+
+So any user service named like a catalog feature that has a role (caddy here;
+likely traefik, nginx_proxy_manager and others) also gets the platform
+install of it, next to the user's own container - the same double-ownership
+class as SKILL.md section 10. The CLI's `proxy.type` check
+(`stacker_client.rs:4413`) is not involved: `proxy.type` was `none`.
+
+**Expected:** a user's own service never selects a platform role; only an
+explicit feature (`proxy:` block, statuspanel, ...) does.
+
 ### [LIMIT] Config files of a cloud deploy capped at 128 KB - possibly stale
 
 **Status:** limit confirmed (server answered 500 on 2026-10-15); reason not confirmed
@@ -63,9 +103,11 @@ comment: the Install Service passes config files inline as Ansible
 (130.1 KB)` for local-ai-packaged with Supabase's Envoy gateway (66 KB of
 config). Switched the stack to Supabase's Kong override (19 KB); it now fits.
 
-**Why possibly stale:** `install/app/Ansible.py:195` now passes extra vars
-from a file (`-e @{fname}`), not inline. If config_files travel that way, the
-ARG_MAX reason no longer holds and the cap could be raised. Not checked.
+**Why likely stale:** `install/app/Ansible.py:195` passes extra vars from a
+file, and the install service log of deployment #1362 shows the config going
+that way: `--extra-vars '@/tmp/stacker_config_0.json'`. The ARG_MAX reason no
+longer holds for config files; the cap could be raised after checking the
+rest of the path (AMQP message size).
 
 ### [BUG] Unknown keys in a `services:` entry are silently ignored
 
