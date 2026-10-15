@@ -68,7 +68,7 @@ services:
   - name: minio
     image: bitnamilegacy/minio:latest
     environment:
-      MINIO_ROOT_USER: plane
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: plane123secret
       MINIO_DEFAULT_BUCKETS: uploads
     volumes:
@@ -116,7 +116,8 @@ config_contract:
     app:
       fields:
         AWS_ACCESS_KEY_ID:
-          mutability: editable
+          mutability: provided
+          display: string
         AWS_REGION:
           mutability: editable
         AWS_S3_BUCKET_NAME:
@@ -124,7 +125,8 @@ config_contract:
         AWS_S3_ENDPOINT_URL:
           mutability: editable
         AWS_SECRET_ACCESS_KEY:
-          mutability: editable
+          mutability: provided
+          display: password
         AMQP_URL:
           mutability: editable
         DATABASE_URL:
@@ -203,6 +205,12 @@ config_contract:
           mutability: generated
     minio:
       fields:
+        MINIO_ROOT_PASSWORD:
+          mutability: provided
+          display: password
+        MINIO_ROOT_USER:
+          mutability: provided
+          display: string
         command:
           mutability: editable
         environment:
