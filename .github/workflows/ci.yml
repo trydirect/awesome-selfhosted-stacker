@@ -235,6 +235,18 @@ jobs:
       - name: Check Quick Deploy links of changed projects
         run: |
           python3 scripts/quick_deploy_links.py --check $(echo "${{ needs.changes.outputs.projects }}")
+      # Only for a changed stack that is built from upstream sources by its own
+      # scripts/build-services.py: the committed block must match what the
+      # script generates. Other stacks are not affected.
+      - name: Check generated services of changed projects
+        run: |
+          pip install --quiet pyyaml
+          echo "${{ needs.changes.outputs.projects }}" | while read -r name; do
+            script="stacker-projects/$name/scripts/build-services.py"
+            [ -n "$name" ] && [ -f "$script" ] || continue
+            echo "=== $name: generated services ==="
+            python3 "$script" --check
+          done
 
       - name: Validate changed projects
         run: |
