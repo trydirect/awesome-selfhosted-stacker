@@ -69,30 +69,6 @@ services:
   volumes:
   - open-webui:/app/backend/data
   restart: unless-stopped
-- name: n8n
-  image: n8nio/n8n:2.43.6
-  environment:
-    DB_TYPE: postgresdb
-    DB_POSTGRESDB_HOST: db
-    DB_POSTGRESDB_USER: postgres
-    DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
-    DB_POSTGRESDB_DATABASE: postgres
-    N8N_DIAGNOSTICS_ENABLED: 'false'
-    N8N_PERSONALIZATION_ENABLED: 'false'
-    N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
-    N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
-    N8N_SECURE_COOKIE: 'false'
-  volumes:
-  - n8n_storage:/home/node/.n8n
-  - n8n_shared:/data/shared
-  depends_on:
-  - db
-  healthcheck:
-    test: CMD-SHELL wget -qO- http://127.0.0.1:5678/healthz >/dev/null || exit 1
-    interval: 15s
-    timeout: 5s
-    retries: 10
-  restart: unless-stopped
 - name: qdrant
   image: qdrant/qdrant:v1.19.2
   volumes:
@@ -106,36 +82,6 @@ services:
   - neo4j_data:/data
   - neo4j_logs:/logs
   restart: always
-- name: caddy
-  image: caddy:2.11.7-alpine
-  ports:
-  - 80:80
-  - 443:443
-  - 8001:8001
-  - 8002:8002
-  - 8003:8003
-  - 8005:8005
-  - 8007:8007
-  - 8008:8008
-  environment:
-    N8N_HOSTNAME: '":8001"'
-    WEBUI_HOSTNAME: '":8002"'
-    FLOWISE_HOSTNAME: '":8003"'
-    OLLAMA_HOSTNAME: '":8004"'
-    SUPABASE_HOSTNAME: '":8005"'
-    SEARXNG_HOSTNAME: '":8006"'
-    LANGFUSE_HOSTNAME: '":8007"'
-    NEO4J_HOSTNAME: '":8008"'
-    LETSENCRYPT_EMAIL: internal
-  volumes:
-  - ./Caddyfile:/etc/caddy/Caddyfile:ro
-  - caddy-data:/data
-  - caddy-config:/config
-  restart: unless-stopped
-  cap_add:
-  - NET_BIND_SERVICE
-  cap_drop:
-  - ALL
 - name: searxng
   image: searxng/searxng:2026.10.13-22c64b8d3
   environment:
@@ -691,6 +637,64 @@ services:
     timeout: 5s
     retries: 13
   restart: unless-stopped
+- name: lap-caddy
+  image: caddy:2.11.7-alpine
+  ports:
+  - 80:80
+  - 443:443
+  - 8001:8001
+  - 8002:8002
+  - 8003:8003
+  - 8005:8005
+  - 8007:8007
+  - 8008:8008
+  environment:
+    N8N_HOSTNAME: '":8001"'
+    WEBUI_HOSTNAME: '":8002"'
+    FLOWISE_HOSTNAME: '":8003"'
+    OLLAMA_HOSTNAME: '":8004"'
+    SUPABASE_HOSTNAME: '":8005"'
+    SEARXNG_HOSTNAME: '":8006"'
+    LANGFUSE_HOSTNAME: '":8007"'
+    NEO4J_HOSTNAME: '":8008"'
+    LETSENCRYPT_EMAIL: internal
+  volumes:
+  - ./Caddyfile:/etc/caddy/Caddyfile:ro
+  - caddy-data:/data
+  - caddy-config:/config
+  restart: unless-stopped
+  cap_add:
+  - NET_BIND_SERVICE
+  cap_drop:
+  - ALL
+  aliases:
+  - caddy
+- name: lap-n8n
+  image: n8nio/n8n:2.43.6
+  environment:
+    DB_TYPE: postgresdb
+    DB_POSTGRESDB_HOST: db
+    DB_POSTGRESDB_USER: postgres
+    DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+    DB_POSTGRESDB_DATABASE: postgres
+    N8N_DIAGNOSTICS_ENABLED: 'false'
+    N8N_PERSONALIZATION_ENABLED: 'false'
+    N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+    N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
+    N8N_SECURE_COOKIE: 'false'
+  volumes:
+  - n8n_storage:/home/node/.n8n
+  - n8n_shared:/data/shared
+  depends_on:
+  - db
+  healthcheck:
+    test: CMD-SHELL wget -qO- http://127.0.0.1:5678/healthz >/dev/null || exit 1
+    interval: 15s
+    timeout: 5s
+    retries: 10
+  restart: unless-stopped
+  aliases:
+  - n8n
 volumes:
   caddy-config: {}
   caddy-data: {}
@@ -724,23 +728,6 @@ config_contract:
     open-webui:
       fields:
         WEBUI_SECRET_KEY:
-          mutability: generated
-          display: password
-          type: alphanumeric
-          min_length: 32
-    n8n:
-      fields:
-        DB_POSTGRESDB_PASSWORD:
-          mutability: generated
-          display: password
-          type: alphanumeric
-          min_length: 32
-        N8N_ENCRYPTION_KEY:
-          mutability: generated
-          display: password
-          type: alphanumeric
-          min_length: 32
-        N8N_USER_MANAGEMENT_JWT_SECRET:
           mutability: generated
           display: password
           type: alphanumeric
@@ -1132,6 +1119,23 @@ config_contract:
           type: alphanumeric
           min_length: 32
         METRICS_JWT_SECRET:
+          mutability: generated
+          display: password
+          type: alphanumeric
+          min_length: 32
+    lap-n8n:
+      fields:
+        DB_POSTGRESDB_PASSWORD:
+          mutability: generated
+          display: password
+          type: alphanumeric
+          min_length: 32
+        N8N_ENCRYPTION_KEY:
+          mutability: generated
+          display: password
+          type: alphanumeric
+          min_length: 32
+        N8N_USER_MANAGEMENT_JWT_SECRET:
           mutability: generated
           display: password
           type: alphanumeric

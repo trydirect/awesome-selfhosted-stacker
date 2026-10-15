@@ -135,6 +135,12 @@ POLICIES = {
 # volume is dropped before the snapshot and starts empty on the buyer's box.
 KEPT_VOLUMES = {"ollama-cpu": ["ollama_storage"]}
 
+# Services renamed, keeping their upstream name as a network alias. A cloud
+# deploy of a custom stack also runs the platform's own role for any service
+# whose name matches a platform feature with a role (see BUGS.md): `caddy` and
+# `n8n` would get a second, platform-installed caddy (port 80 taken) and n8n.
+RENAMED = {"caddy": "lap-caddy", "n8n": "lap-n8n"}
+
 # Compose keys stacker.yml has no field for, dropped on purpose:
 #   container_name - stacker names containers itself
 #   user           - clickhouse's image drops privileges on its own
@@ -472,6 +478,15 @@ def build():
         if clash:
             sys.exit(f"service names used twice: {sorted(clash)}")
         services.update(sb)
+        for old, new in RENAMED.items():
+            svc = services.pop(old)
+            svc["aliases"] = [old] + list(svc.get("aliases", []))
+            services[new] = svc
+        for svc in services.values():
+            if svc.get("depends_on"):
+                deps = svc["depends_on"]
+                deps = list(deps) if isinstance(deps, (list, dict)) else [deps]
+                svc["depends_on"] = [RENAMED.get(d, d) for d in deps]
 
         files = supabase_files(supabase, services)
         files["Caddyfile"] = (local_ai / "Caddyfile").read_bytes().replace(
