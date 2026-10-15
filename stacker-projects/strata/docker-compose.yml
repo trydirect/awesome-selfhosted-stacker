@@ -1,0 +1,35 @@
+# Hand-written compose: the stacker generator has no gpus/ulimits fields, and
+# Strata needs --gpus all and memlock=-1 (see upstream docs/INSTALL.md#docker).
+# deploy.compose_file points stacker deploy at this file instead of the
+# generated one (src/console/commands/cli/deploy.rs:3857).
+services:
+  app:
+    image: strata:local
+    build:
+      context: ./strata-src
+      dockerfile: Dockerfile
+    gpus: all
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    stop_grace_period: 60s
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      MODEL: ${MODEL:-IQ2_XS}
+      FAMILY: ${FAMILY:-qwen}
+      CONTEXT: ${CONTEXT:-32768}
+      VISION: ${VISION:-no}
+      LOW_RAM: ${LOW_RAM:-auto}
+      GPU: ${GPU:-}
+      API_KEY: ${API_KEY:-}
+      HOST: 0.0.0.0
+      PORT: "8080"
+    volumes:
+      - strata-data:/data
+    # Healthcheck comes from the image (HEALTHCHECK /health,
+    # start-period 600s): the first start downloads ~70 GB of model.
+
+volumes:
+  strata-data:

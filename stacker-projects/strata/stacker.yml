@@ -1,0 +1,61 @@
+name: strata
+version: 0.1.44
+
+project:
+  identity: strata
+
+app:
+  type: custom
+  path: strata-src
+  dockerfile: Dockerfile
+  environment:
+    MODEL: IQ2_XS
+    FAMILY: qwen
+    CONTEXT: "32768"
+    VISION: "no"
+    LOW_RAM: auto
+  healthcheck:
+    test: CMD curl -fs http://localhost:8080/health
+    interval: 30s
+    timeout: 5s
+    retries: 3
+
+proxy:
+  type: none
+  auto_detect: false
+
+deploy:
+  target: local
+  compose_file: docker-compose.yml
+
+config_contract:
+  services:
+    app:
+      fields:
+        API_KEY:
+          mutability: provided
+          display: password
+        CONTEXT:
+          mutability: editable
+          display: number
+        FAMILY:
+          mutability: editable
+        GPU:
+          mutability: editable
+        LOW_RAM:
+          mutability: editable
+        MODEL:
+          mutability: editable
+        VISION:
+          mutability: editable
+
+hooks:
+  pre_build: ./scripts/pre-build.sh
+
+monitoring:
+  status_panel: true
+
+env_file: .env
+
+volumes:
+  strata-data: {}
