@@ -90,6 +90,31 @@ class as SKILL.md section 10. The CLI's `proxy.type` check
 **Expected:** a user's own service never selects a platform role; only an
 explicit feature (`proxy:` block, statuspanel, ...) does.
 
+### [BUG] One env name referencing different variables in two services gets one reference everywhere
+
+**Status:** confirmed (deployment #1363, 2026-10-15, compose on the server)
+
+**Where:** `src/cli/generator/compose.rs` `env_reference_aliases` collects
+`KEY -> VAR` from the raw stacker.yml into one map for the whole file, and
+`parameterize_compose_env_vars` applies it to every service.
+
+**Steps:** two services declare the same env name with different references,
+e.g. Supabase `db: POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"` and Langfuse
+`postgres: POSTGRES_PASSWORD: "${LANGFUSE_POSTGRES_PASSWORD}"`.
+
+**Expected:** each service keeps its own reference.
+
+**Actual:** the deployed compose has `POSTGRES_PASSWORD:
+${LANGFUSE_POSTGRES_PASSWORD}` in Supabase's `db` too (lines 820, 871 of
+`/home/trydirect/project/docker-compose.yml`). Supabase initialised its roles
+with the Langfuse password while auth/rest/storage connect with
+POSTGRES_PASSWORD (literal in their DSNs) - `password authentication failed
+for user "authenticator"`, the three services restart forever.
+
+**Workaround in local-ai-packaged:** one POSTGRES_PASSWORD for both databases
+(as upstream does); build-services.py refuses an env name that references
+different keys in different services.
+
 ### [LIMIT] Config files of a cloud deploy capped at 128 KB - possibly stale
 
 **Status:** limit confirmed (server answered 500 on 2026-10-15); reason not confirmed
