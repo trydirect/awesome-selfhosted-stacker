@@ -279,10 +279,34 @@ def langfuse_services(src):
     return s
 
 
+class OverrideLoader(yaml.SafeLoader):
+    """Reads Supabase's compose overrides: `!override` marks a value that
+    replaces the base one instead of merging into it."""
+
+
+OverrideLoader.add_constructor("!override", lambda loader, node: (
+    loader.construct_sequence(node, deep=True) if isinstance(node, yaml.SequenceNode)
+    else loader.construct_mapping(node, deep=True)))
+
+
 def supabase_services(src):
-    """Supabase as shipped, its paths under ./supabase/ and its directory mounts
-    replaced by volumes or by the files the service reads."""
+    """Supabase as shipped, with Kong as its gateway, its paths under
+    ./supabase/ and its directory mounts replaced by volumes or by the files
+    the service reads."""
     compose = load(src / "docker/docker-compose.yml")["services"]
+    # Kong, Supabase's own gateway override, instead of the default Envoy:
+    # Envoy's config is 66 KB and stacker uploads at most 128 KB of config
+    # files per deploy (see BUGS.md); Kong's is 19 KB. Same `kong`/`envoy`
+    # aliases, so nothing that calls the gateway changes.
+    kong = yaml.load((src / "docker/docker-compose.kong.yml").read_text(),
+                     Loader=OverrideLoader)["services"]["api-gw"]
+    gateway = dict(compose["api-gw"])
+    for key, value in kong.items():
+        if key == "healthcheck":
+            gateway[key] = {**gateway.get(key, {}), **value}
+        else:
+            gateway[key] = value
+    compose["api-gw"] = gateway
     functions = ["./supabase/volumes/functions/main/index.ts:{}/main/index.ts:ro",
                  "./supabase/volumes/functions/hello/index.ts:{}/hello/index.ts:ro"]
     named = {"./volumes/snippets": "supabase_snippets", "./volumes/storage": "supabase_storage",

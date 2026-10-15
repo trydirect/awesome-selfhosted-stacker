@@ -50,6 +50,23 @@ name, not a secret).
 **Actual (by reading):** the name matches `_key`, so publishing demands a
 `generated` or `provided` policy for a user name.
 
+### [LIMIT] Config files of a cloud deploy capped at 128 KB - possibly stale
+
+**Status:** limit confirmed (server answered 500 on 2026-10-15); reason not confirmed
+
+**Where:** `src/connectors/install_service/client.rs:204`
+`MAX_CONFIG_FILES_BYTES = 128 * 1024`, added in `04415394` (2026-09-02). Its
+comment: the Install Service passes config files inline as Ansible
+`--extra-vars`, which hits shell ARG_MAX.
+
+**Seen:** `POST /project/755/deploy/11` -> 500 `Config files payload too large
+(130.1 KB)` for local-ai-packaged with Supabase's Envoy gateway (66 KB of
+config). Switched the stack to Supabase's Kong override (19 KB); it now fits.
+
+**Why possibly stale:** `install/app/Ansible.py:195` now passes extra vars
+from a file (`-e @{fname}`), not inline. If config_files travel that way, the
+ARG_MAX reason no longer holds and the cap could be raised. Not checked.
+
 ### [BUG] Unknown keys in a `services:` entry are silently ignored
 
 **Status:** not confirmed (seen in a unit test on 2026-10-15)

@@ -422,28 +422,35 @@ services:
     retries: 7
   restart: unless-stopped
 - name: api-gw
-  image: envoyproxy/envoy:v1.39.1
+  image: kong/kong:3.9.3
   environment:
-    ANON_KEY: ${ANON_KEY}
-    SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+    KONG_DATABASE: 'off'
+    KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
+    KONG_ROUTER_FLAVOR: expressions
+    KONG_DNS_ORDER: LAST,A,CNAME
+    KONG_DNS_NOT_FOUND_TTL: '1'
+    KONG_DNS_VALID_TTL: '5'
+    KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function
+    KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+    KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+    KONG_PROXY_ACCESS_LOG: /dev/stdout combined
+    SUPABASE_ANON_KEY: ${ANON_KEY}
+    SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
     SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY}
     SUPABASE_SECRET_KEY: ${SUPABASE_SECRET_KEY}
-    SUPABASE_PUBLIC_URL: ${SUPABASE_PUBLIC_URL}
     DASHBOARD_USERNAME: ${DASHBOARD_USERNAME}
     DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
   volumes:
-  - ./supabase/volumes/api/envoy/envoy.yaml:/etc/envoy/envoy.yaml:ro
-  - ./supabase/volumes/api/envoy/cds.yaml:/etc/envoy/cds.yaml:ro
-  - ./supabase/volumes/api/envoy/lds.template.yaml:/etc/envoy/lds.template.yaml:ro
-  - ./supabase/volumes/api/envoy/docker-entrypoint.sh:/docker-entrypoint.sh:ro
+  - ./supabase/volumes/api/kong.yml:/home/kong/temp.yml:ro
+  - ./supabase/volumes/api/kong-entrypoint.sh:/home/kong/kong-entrypoint.sh:ro
   depends_on:
   - studio
-  entrypoint: /bin/sh /docker-entrypoint.sh
+  entrypoint: /bin/sh /home/kong/kong-entrypoint.sh
   healthcheck:
-    test: CMD-SHELL timeout 1 bash -c '</dev/tcp/127.0.0.1/8000'
-    interval: 10s
+    test: CMD kong health
+    interval: 5s
     timeout: 5s
-    retries: 3
+    retries: 5
   restart: unless-stopped
   aliases:
   - envoy
@@ -935,19 +942,6 @@ config_contract:
           mutability: provided
           required: false
           display: password
-    api-gw:
-      fields:
-        ANON_KEY:
-          mutability: generated
-          type: derived_jwt
-          signing_key: functions.JWT_SECRET
-          claims:
-            exp: 1918252800
-            iat: 1760486400
-            iss: supabase
-            role: anon
-          alg: HS256
-          display: password
         SERVICE_ROLE_KEY:
           mutability: generated
           type: derived_jwt
@@ -959,6 +953,18 @@ config_contract:
             role: service_role
           alg: HS256
           display: password
+    api-gw:
+      fields:
+        SUPABASE_ANON_KEY:
+          mutability: generated
+          display: password
+          type: alphanumeric
+          min_length: 32
+        SUPABASE_SERVICE_KEY:
+          mutability: generated
+          display: password
+          type: alphanumeric
+          min_length: 32
         SUPABASE_PUBLISHABLE_KEY:
           mutability: provided
           required: false
