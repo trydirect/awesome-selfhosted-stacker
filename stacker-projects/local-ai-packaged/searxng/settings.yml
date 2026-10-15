@@ -1,0 +1,11 @@
+# Built by scripts/build-services.py from local-ai-packaged searxng/settings-base.yml
+use_default_settings: true
+server:
+  limiter: false
+  image_proxy: true
+ui:
+  static_use_hash: true
+search:
+  formats:
+  - html
+  - json
