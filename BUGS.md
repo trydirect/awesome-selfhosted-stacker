@@ -50,45 +50,29 @@ name, not a secret).
 **Actual (by reading):** the name matches `_key`, so publishing demands a
 `generated` or `provided` policy for a user name.
 
-### [BUG] A project service named `caddy` gets the platform Caddy role too - port 80 conflict
+### [BUG] A project service named `caddy` or `n8n` also gets the platform's own install of it - port 80 conflict
 
-**Status:** confirmed by the install service log of deployment #1362
-(2026-10-15): `ansible-playbook ... --tags 'statuspanel,setup,postrole,custom,n8n,caddy,authorize_stacker_key'`.
-The CLI sent `integrated_features: ["statuspanel"]`, `extended_features: []`
-and `custom.feature: []` (checked with `build_deploy_form` on the same
-stacker.yml) - `n8n` and `caddy` were added downstream, from the codes of the
-project's own `n8n` and `caddy` services. Both platform roles ran.
+**Status:** confirmed (deployment #1362, 2026-10-15); cause is in the platform
+backend and analysed internally
 
 **Seen:** `stacker deploy --target cloud --key htz-0 --force-new` of
-local-ai-packaged (`proxy: type: none`, one of its services is `caddy`, ports
-80/443/8001-8008). The project compose came up; then Ansible ran the platform
-role: `docker compose -f /home/trydirect/caddy/docker-compose.yml up -d` ->
-`Bind for 0.0.0.0:80 failed: port is already allocated`. Deployment paused
-after ~22 minutes, Terraform removed the server.
+local-ai-packaged (`proxy: type: none`; two of its services are named `caddy`
+and `n8n`). The project compose came up, then the platform installed its own
+Caddy and n8n next to them and the deploy failed: `Bind for 0.0.0.0:80
+failed: port is already allocated`. The server was removed after ~22 minutes.
 
-**Cause (by reading):** a project service's code becomes a "selected feature",
-and a selected feature whose code matches a catalog feature runs that
-feature's platform role:
+**Checked in the public CLI:** the deploy request carried
+`integrated_features: ["statuspanel"]`, `extended_features: []` and
+`custom.feature: []` (`build_deploy_form` on the same stacker.yml); the CLI
+adds a proxy feature only for `proxy.type: caddy`
+(`src/cli/stacker_client.rs:4413`). The extra installs are chosen after the
+request leaves stacker, from the services' names.
 
-1. stacker CLI registers every `services:` entry under `custom.service` with
-   `code` = its name (`src/cli/stacker_client.rs` `service_to_app_json`).
-2. tools `custom_stack_mapper.py` (`6369e71`): `by_prop = "code"` (line 942);
-   every `service` app's code is appended to `integrated_features` (999),
-   which goes out as `output["integrated_features"]` (1299).
-3. install `app/ProviderServerBase.py` `get_features_roles` (777-825): for each
-   feature defined for the stack, `if f["code"] in selected_extended +
-   selected_integrated: yield f["role"]`.
-4. `app/Ansible.py:286` turns those roles into `--tags`; `tfa/setup_stack.yml:104`
-   runs `{role: caddy, tags: caddy}`.
+**Expected:** a user's own service never brings in a platform component;
+only an explicit `proxy:` block or feature does.
 
-So any user service named like a catalog feature that has a role (caddy here;
-likely traefik, nginx_proxy_manager and others) also gets the platform
-install of it, next to the user's own container - the same double-ownership
-class as SKILL.md section 10. The CLI's `proxy.type` check
-(`stacker_client.rs:4413`) is not involved: `proxy.type` was `none`.
-
-**Expected:** a user's own service never selects a platform role; only an
-explicit feature (`proxy:` block, statuspanel, ...) does.
+**Workaround in local-ai-packaged:** the services are `lap-caddy` and
+`lap-n8n`, with `caddy` and `n8n` kept as network aliases.
 
 ### [BUG] One env name referencing different variables in two services gets one reference everywhere
 
@@ -153,48 +137,39 @@ type`. With `"server_type": "cpx42", "region": "fsn1"` the clone was created.
 can hold its disk and is offered in the region); a snapshot of a bigger disk
 cannot boot on a cpx11 at all.
 
-### [BUG] Baked snapshots ship without stacker-compose.service; a direct clone never starts the stack
+### [BUG] A clone made through `POST /api/v1/deploy/clone` boots with the stack stopped
 
-**Status:** confirmed (clone of local-ai-packaged 1.0.0, Hetzner 170618826, 2026-10-15)
+**Status:** confirmed (clone of local-ai-packaged 1.0.0, Hetzner 170618826,
+2026-10-15); cause analysed internally
 
-**Seen:** `POST /api/v1/deploy/clone` succeeded; on the clone the project
-files, all 26 images and a fresh `/etc/stacker/env` are there, but cloud-init
-logs `Failed to restart stacker-compose.service: Unit stacker-compose.service
-not found` and no project container runs.
+**Seen:** the clone was created; on it the project files, all 26 images and a
+fresh `/etc/stacker/env` are there, but cloud-init logs `Failed to restart
+stacker-compose.service: Unit stacker-compose.service not found` and no
+project container runs.
 
-**Cause (by reading):** the boot contract
-(`shared-fixtures/immutable-deploy/boot-contract.json`) says the snapshot
-carries `stacker-compose.service`. The tfa role that installs it
-(`roles/stacker_compose_unit`, `setup_stack.yml:140`) runs only under the
-`stacker_compose_unit` tag, and nothing adds that tag: not stacker, not the
-install service, not tools. Neither does the bake (`POST /api/admin/bake` ->
-`finalize_build_box`). The only other installer is `post_clone_setup.yml`,
-run by the install service on `post_deploy_clone` - which only the User
-Service's Quick Deploy flow publishes (`user/app/oneclick_deploy/views.py:418`).
-So a clone made through stacker's own endpoint, including the smoke clone in
-`scripts/bake_pipeline.py`, boots with the stack stopped.
-
-**Expected:** the bake installs the unit (the BAKE side of the boot
-contract), so any clone of the image starts the stack from cloud-init alone.
+**Expected:** the baked image carries `stacker-compose.service`, so any clone
+of it starts the stack from cloud-init alone (the restart cloud-init issues is
+in `src/helpers/cloud_init.rs:154`). Today the unit is added only on the
+try.direct Quick Deploy path, after the clone; a clone requested from
+stacker's own endpoint - including the smoke clone in
+`scripts/bake_pipeline.py` - never gets it.
 
 ### [LIMIT] Config files of a cloud deploy capped at 128 KB - possibly stale
 
-**Status:** limit confirmed (server answered 500 on 2026-10-15); reason not confirmed
+**Status:** limit confirmed (server answered 500 on 2026-10-15); whether it is
+still needed is not confirmed
 
 **Where:** `src/connectors/install_service/client.rs:204`
-`MAX_CONFIG_FILES_BYTES = 128 * 1024`, added in `04415394` (2026-09-02). Its
-comment: the Install Service passes config files inline as Ansible
-`--extra-vars`, which hits shell ARG_MAX.
+`MAX_CONFIG_FILES_BYTES = 128 * 1024`, added in `04415394` (2026-09-02); its
+comment gives a command-line length limit downstream as the reason.
 
 **Seen:** `POST /project/755/deploy/11` -> 500 `Config files payload too large
 (130.1 KB)` for local-ai-packaged with Supabase's Envoy gateway (66 KB of
 config). Switched the stack to Supabase's Kong override (19 KB); it now fits.
 
-**Why likely stale:** `install/app/Ansible.py:195` passes extra vars from a
-file, and the install service log of deployment #1362 shows the config going
-that way: `--extra-vars '@/tmp/stacker_config_0.json'`. The ARG_MAX reason no
-longer holds for config files; the cap could be raised after checking the
-rest of the path (AMQP message size).
+**Possibly stale:** the downstream side no longer passes the config on the
+command line (checked internally), so the cap could be raised once the rest
+of the path is confirmed.
 
 ### [BUG] Unknown keys in a `services:` entry are silently ignored
 
