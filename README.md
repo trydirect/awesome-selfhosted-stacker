@@ -82,9 +82,7 @@ stacker deploy --target cloud --force-rebuild
 ```
 
 ![Stacker deploy](gifs/stacker-plausible.gif)
-
 ![Stacker status](gifs/stacker-status.gif)
-
 ## Deployment Targets
 
 ### Local
@@ -163,62 +161,6 @@ Hetzner server sizes:
 | `cx23`  | 2    | 4 GB  | ~5.49 EUR | Most apps                      |
 | `cpx32` | 4    | 8 GB  | ~35 EUR   | Heavy / multiple apps          |
 | `cpx42` | 4    | 8 GB  | ~50 EUR   | AI stacks                      |
-
----
-
-## PIPE — Connect Apps Together
-
-Stacker PIPE lets you connect applications on the same server so data flows
-automatically between them. Pipes are created at runtime via the CLI — no
-stacker.yml changes needed.
-
-**Basic workflow:**
-
-```bash
-# 1. Deploy two apps on the same server (one at a time)
-stacker deploy --target server --force-rebuild
-
-# 2. Discover available endpoints from running containers
-stacker pipe scan
-
-# 3. Create a pipe between source and target
-stacker pipe create <source-app> <target-app>
-
-# 3b. Create a pipe with manual endpoints (no discovery)
-stacker pipe create <source> <target> \
-  --source-endpoint "METHOD /path" \
-  --target-endpoint "METHOD /path" \
-  --source-fields field1,field2 \
-  --target-fields field1,field2 \
-  --name "my-pipe"
-
-# 4. Activate the pipe (use --trigger manual for one-shot testing)
-stacker pipe activate <pipe-id> --trigger manual
-
-# 5. Trigger a one-shot test
-stacker pipe trigger <pipe-id> --data '{"key":"value"}'
-```
-
-**Trigger types:**
-
-| Type | Behavior | Use Case |
-|------|----------|---------|
-| webhook | Fires instantly when data arrives | Real-time notifications |
-| poll | Checks for new data every N seconds | Periodic syncs, batch jobs |
-| manual | Only runs on explicit `pipe trigger` | Testing, one-off transfers |
-
-**Built-in adapters:** SMTP (target), IMAP/POP3 (source), WebhookBridge,
-HttpEndpoint, HtmlForm.
-
-**Example: Contact form → Telegram**
-
-```bash
-stacker pipe scan --app website
-stacker pipe create website telegram --name "contact-to-telegram"
-stacker pipe activate <telegram-pipe-id>
-```
-
-See the PIPE HOWTO at `docs/pipe-howto.md` for a complete walkthrough.
 
 ---
 
@@ -391,7 +333,61 @@ stacker pipe history <id>          # view execution log
 
 
 ---
+## PIPE — Connect Apps Together
 
+Stacker PIPE lets you connect applications on the same server so data flows
+automatically between them. Pipes are created at runtime via the CLI — no
+stacker.yml changes needed.
+
+**Basic workflow:**
+
+```bash
+# 1. Deploy two apps on the same server (one at a time)
+stacker deploy --target server --force-rebuild
+
+# 2. Discover available endpoints from running containers
+stacker pipe scan
+
+# 3. Create a pipe between source and target
+stacker pipe create <source-app> <target-app>
+
+# 3b. Create a pipe with manual endpoints (no discovery)
+stacker pipe create <source> <target> \
+  --source-endpoint "METHOD /path" \
+  --target-endpoint "METHOD /path" \
+  --source-fields field1,field2 \
+  --target-fields field1,field2 \
+  --name "my-pipe"
+
+# 4. Activate the pipe (use --trigger manual for one-shot testing)
+stacker pipe activate <pipe-id> --trigger manual
+
+# 5. Trigger a one-shot test
+stacker pipe trigger <pipe-id> --data '{"key":"value"}'
+```
+
+**Trigger types:**
+
+| Type | Behavior | Use Case |
+|------|----------|---------|
+| webhook | Fires instantly when data arrives | Real-time notifications |
+| poll | Checks for new data every N seconds | Periodic syncs, batch jobs |
+| manual | Only runs on explicit `pipe trigger` | Testing, one-off transfers |
+
+**Built-in adapters:** SMTP (target), IMAP/POP3 (source), WebhookBridge,
+HttpEndpoint, HtmlForm.
+
+**Example: Contact form → Telegram**
+
+```bash
+stacker pipe scan --app website
+stacker pipe create website telegram --name "contact-to-telegram"
+stacker pipe activate <telegram-pipe-id>
+```
+
+See the PIPE HOWTO at `docs/pipe-howto.md` for a complete walkthrough.
+
+---
 ## Customization
 
 Edit the project's `stacker.yml`.
