@@ -41,6 +41,12 @@ jobs:
           fi
           echo "✅ All projects have required files"
 
+      # Quick Deploy finds a baked snapshot by this version.
+      - name: Check stack versions are semver
+        run: |
+          python3 -m unittest scripts/test_stack_versions.py
+          python3 scripts/stack_versions.py
+
       - name: Check generate-secrets.sh is executable
         run: |
           errors=0
