@@ -1,6 +1,6 @@
 # local-ai-packaged
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/local-ai-packaged&ref=7716c46b425a74f33ec8010bbec644057dd80635)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/local-ai-packaged&ref=fe92a7327b3b08d0d2a56c23459346967b986b35)
 
 [coleam00/local-ai-packaged](https://github.com/coleam00/local-ai-packaged) as one
 stacker project: n8n, Supabase, Ollama, Open WebUI, Flowise, Qdrant, Neo4j,
@@ -11,7 +11,7 @@ SearXNG, Langfuse and Caddy (28 services).
 One click, from the baked image (all images and the Ollama models already on
 the server, fresh secrets per install):
 
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/local-ai-packaged&ref=7716c46b425a74f33ec8010bbec644057dd80635
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/local-ai-packaged&ref=fe92a7327b3b08d0d2a56c23459346967b986b35
 
 Or with the stacker CLI:
 

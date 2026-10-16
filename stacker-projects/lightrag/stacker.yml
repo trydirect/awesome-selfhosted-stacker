@@ -1,5 +1,5 @@
 name: lightrag
-version: v1.5.7
+version: "1.0.0"
 
 project:
   identity: lightrag
