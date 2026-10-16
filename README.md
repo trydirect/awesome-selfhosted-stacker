@@ -613,7 +613,7 @@ it, and notes when the author changes only stacks they maintain. A change to a
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-10-11 — 266 projects configured, 172 tested and verified on
+Last updated: 2026-10-16 — 287 projects configured, 178 tested and verified on
 Ubuntu 26.04. Proxy support: traefik, caddy, nginx-proxy-manager.
 
 ---
