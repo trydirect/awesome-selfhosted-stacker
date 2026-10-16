@@ -19,7 +19,7 @@ profile»), чтобы не было расхождения с видео.
 Ollama уже на сервере, свежие секреты при каждой установке):
 
 ```
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/local-ai-packaged
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/local-ai-packaged&ref=fe92a7327b3b08d0d2a56c23459346967b986b35
 ```
 
 ## Этап 0 — подготовка (до записи)
