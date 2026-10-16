@@ -10,11 +10,12 @@ install:
 
 app:
   type: custom
-  image: quay.io/mudler/localagi:main-20261005225430
+  image: quay.io/mudler/localagi:latest
   ports:
     - "8080:3000"
   environment:
     LOCALAGI_LLM_API_URL: http://localai:8080
+    LOCALAGI_MODEL: "gemma-3-4b-it-qat"
     LOCALAGI_LLM_API_KEY: ${LOCALAGI_LLM_API_KEY}
     LOCALAGI_API_KEYS: ${LOCALAGI_API_KEYS}
     LOCALAGI_STATE_DIR: /pool
@@ -87,7 +88,7 @@ deploy:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test
     region: fsn1
-    size: cpx22
+    size: cpx42
     public_ports:
       - "8080"
 

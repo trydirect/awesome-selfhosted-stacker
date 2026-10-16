@@ -51,7 +51,7 @@ deploy:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test
     region: fsn1
-    size: cpx22
+    size: cpx42
     public_ports:
       - "8080"
 
