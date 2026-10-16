@@ -6,17 +6,14 @@
 Do **not** submit this template to the marketplace until upstream fixes
 https://github.com/Cinnamon/kotaemon/issues/844 and related IDOR #846.
 
-## [NOTE] Not deployable on the 2 GB test server — Elasticsearch-heavy
+## [NOTE] Resource note corrected — this template is the single-container build
 
-**Severity:** Low (template itself is plausible; test infra too small)
-**Date:** 2026-10-16
+**Status:** verified working on cpx42 (2026-10-16).
 
-### Finding
-The stack includes Elasticsearch (RAM-hungry, ~1 GB+ at startup) — exceeds
-the shared 2 GB test server (~1.3 GB free); deploying would OOM unrelated
-platform services on the host.
+Earlier note ("ES-heavy, needs ≥6 GB") referred to the full upstream compose
+with Elasticsearch. **This template ships the `main-lite` single-container
+build** (ES not included) — it is light: one healthy container, HTTP 200 on
+7860, ~1.3 GiB RAM for the whole host at idle. Runs on small servers fine.
 
-### Resource floor (test result)
-- RAM: ≥6 GB (ES + app + models), disk: ≥20 GB
-- Untested; retest on a larger host when available — and only after the
-  upstream security fixes.
+Deployed and verified on 2026-10-16 — see CLOUD/EXISTING deploy success
+file. The security caveat above still applies.

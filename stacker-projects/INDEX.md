@@ -56,11 +56,11 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | archon | ghcr.io/coleam00/archon | 3000 | — | ✅ |
 | agent-zero | agent0ai/agent-zero | 50080 | — | ✅ |
 | openagent | casbin/openagent | 14000 | mysql | ✅ |
-| localagi | quay.io/mudler/localagi | 8080 | postgres, localai | |
+| localagi | quay.io/mudler/localagi | 8080 | postgres, localai | ✅ |
 | speaches | ghcr.io/speaches-ai/speaches | 8000 | — | ✅ |
-| kotaemon | ghcr.io/cinnamon/kotaemon | 7860 | — | |
-| pipeshub-ai | pipeshubai/pipeshub-ai | 3000 | mongo, redis, qdrant, neo4j | |
-| langchain-chatchat | chatimage/chatchat | 8501 | — | |
+| kotaemon | ghcr.io/cinnamon/kotaemon | 7860 | — | ✅ |
+| pipeshub-ai | pipeshubai/pipeshub-ai | 3000 | mongo, redis, qdrant, neo4j | ✅ |
+| langchain-chatchat | chatimage/chatchat | 8501 | — | ✅ |
 | self-hosted-ai-starter-kit | n8nio/n8n | 5678 | postgres, ollama, qdrant | ✅ |
 | strata | (Dockerfile build) | 8080 | — | |
 
@@ -271,7 +271,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | sonarr | linuxserver/sonarr | 8989 | — | | |
 | radarr | linuxserver/radarr | 7878 | — | | |
 | lidarr | linuxserver/lidarr | 8686 | — | | |
-| scriberr | ghcr.io/rishikanthc/scriberr | 8080 | — | | WhisperX transcription |
+| scriberr | ghcr.io/rishikanthc/scriberr | 8080 | — | ✅ | WhisperX transcription |
 
 ## Booking & Scheduling (2)
 
