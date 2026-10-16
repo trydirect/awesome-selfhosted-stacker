@@ -1,35 +1,41 @@
 # paperless-gpt — known issues
 
-## [BUG] Image tag `ghcr.io/paperless-ngx/paperless-ngx:v3.3.1` does not exist (404)
+## [BUG] Image tag `ghcr.io/paperless-ngx/paperless-ngx:v3.3.1` did not exist (404)
 
-**Severity:** High (deploy fails at image pull — stack cannot start)
+**Severity:** High (deploy failed at image pull)
 **Date:** 2026-10-16
-**Status:** suggested fix, NOT applied (pending approval)
+**Status:** FIXED 2026-10-16 — pinned `ghcr.io/paperless-ngx/paperless-ngx:3.3.1`
 
-### Steps
-1. `stacker deploy --target local` in this directory.
+paperless-ngx publishes GHCR tags **without** the `v` prefix
+(`3.3.1` exists, `v3.3.1` / `v3.3.0` do not). The other template images were
+already correct (`icereed/paperless-gpt:v0.31.0` uses the `v` prefix).
+
+## [BUG] Empty OPENAI_API_KEY crash-loops the app at startup
+
+**Severity:** Medium (deploy "succeeds" but the app is unusable)
+**Date:** 2026-10-16
+**Status:** workaround documented; no template change
 
 ### Actual
 ```
-Error response from daemon: failed to resolve reference
-"ghcr.io/paperless-ngx/paperless-ngx:v3.3.1": not found
+level=fatal msg="Please set the OPENAI_API_KEY environment variable for OpenAI provider."
 ```
-`docker manifest inspect` results:
-- `ghcr.io/paperless-ngx/paperless-ngx:v3.3.1` → missing
-- `ghcr.io/paperless-ngx/paperless-ngx:3.3.1` → EXISTS
-- `ghcr.io/paperless-ngx/paperless-ngx:v3.3.0` → missing
-- `ghcr.io/paperless-ngx/paperless-ngx:2.13.5` / `:latest` → EXISTS
-- Other template images are fine: `icereed/paperless-gpt:v0.31.0` (with `v`
-  prefix — correct for this repo), `postgres:18-alpine`, `redis:7-alpine`
+`.env.example` documents `OPENAI_API_KEY` as "LLM configuration
+(user-supplied)", but nothing validates it before deploy — an empty value
+passes compose generation and the app restart-loops after the deploy reports
+success.
 
-### Root cause
-paperless-ngx publishes GHCR tags **without** the `v` prefix; the template
-uses `v3.3.1`.
+### Workaround
+Set `OPENAI_API_KEY` in `.env` before `stacker deploy` (a placeholder satisfies
+the startup check; a real key is needed for actual LLM calls).
 
-### Suggested fix (template)
-```yaml
-  - name: paperless
-    image: ghcr.io/paperless-ngx/paperless-ngx:3.3.1
-```
-Not applied — template left unmodified pending approval. Local deploy not
-performed (aborted at pull).
+### Suggested improvements
+- `generate-secrets.sh`: warn (or fail) when `OPENAI_API_KEY` is empty and
+  `LLM_PROVIDER=openai`.
+- Or document in the project README that the stack requires a user-supplied
+  key to start.
+
+## Related CLI issue (root BUGS.md)
+Redeploy reuses the cached `.stacker/docker-compose.yml` — env changes in
+`.env` do not propagate until `.stacker/` is removed (`rm -rf .stacker` before
+redeploy). This cost deployments #1368/#1369 before #1370 succeeded.
