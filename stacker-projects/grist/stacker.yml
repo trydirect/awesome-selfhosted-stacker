@@ -1,5 +1,5 @@
 name: grist
-version: "latest"
+version: "1.0.0"
 
 project:
   identity: grist

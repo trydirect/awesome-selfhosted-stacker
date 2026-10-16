@@ -1,5 +1,5 @@
 name: jitsi
-version: stable-9191-1
+version: "1.0.0"
 project:
   identity: jitsi
 install:

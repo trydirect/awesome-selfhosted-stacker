@@ -1,5 +1,5 @@
 name: ollama-local
-version: "latest"
+version: "1.0.0"
 
 project:
   identity: ollama-local

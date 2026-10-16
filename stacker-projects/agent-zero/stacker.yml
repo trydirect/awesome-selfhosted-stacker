@@ -1,5 +1,5 @@
 name: agent-zero
-version: "v2.14"
+version: "1.0.0"
 
 project:
   identity: agent-zero
