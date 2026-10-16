@@ -52,16 +52,16 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | khoj | ghcr.io/khoj-ai/khoj | 42110 | postgres | ✅ |
 | lobechat | lobehub/lobe-chat | 3210 | postgres | ✅ |
 | local-ai-packaged | n8nio/n8n (+27 services) | 8001 | postgres, qdrant, neo4j, ollama | ✅ |
-| lightrag | ghcr.io/hkuds/lightrag | 9621 | postgres, qdrant | |
-| archon | ghcr.io/coleam00/archon | 3000 | — | |
-| agent-zero | agent0ai/agent-zero | 50080 | — | |
-| openagent | casbin/openagent | 14000 | mysql | |
+| lightrag | ghcr.io/hkuds/lightrag | 9621 | postgres, qdrant | ✅ |
+| archon | ghcr.io/coleam00/archon | 3000 | — | ✅ |
+| agent-zero | agent0ai/agent-zero | 50080 | — | ✅ |
+| openagent | casbin/openagent | 14000 | mysql | ✅ |
 | localagi | quay.io/mudler/localagi | 8080 | postgres, localai | |
-| speaches | ghcr.io/speaches-ai/speaches | 8000 | — | |
+| speaches | ghcr.io/speaches-ai/speaches | 8000 | — | ✅ |
 | kotaemon | ghcr.io/cinnamon/kotaemon | 7860 | — | |
 | pipeshub-ai | pipeshubai/pipeshub-ai | 3000 | mongo, redis, qdrant, neo4j | |
 | langchain-chatchat | chatimage/chatchat | 8501 | — | |
-| self-hosted-ai-starter-kit | n8nio/n8n | 5678 | postgres, ollama, qdrant | |
+| self-hosted-ai-starter-kit | n8nio/n8n | 5678 | postgres, ollama, qdrant | ✅ |
 | strata | (Dockerfile build) | 8080 | — | |
 
 ## Analytics (21)
@@ -111,7 +111,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | kestra | kestra/kestra | 8080 | postgres | ✅ | |
 | windmill | ghcr.io/windmill-labs/windmill | 8000 | postgres | ✅ | |
 | cronicle | cronicle/cronicle | 3012 | — | ✅ | |
-| mautic | mautic/mautic | 8080 | mysql | | web+worker+cron; install wizard |
+| mautic | mautic/mautic | 8080 | mysql | ✅ | web+worker+cron; install wizard |
 
 ## Backup (2)
 
@@ -166,7 +166,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | anycable | anycable/anycable-go | 8080 | — | ✅ | |
 | centrifugo | centrifugo/centrifugo | 8000 | — | ✅ | |
 | apprise | caronc/apprise | 8000 | — | ✅ | |
-| evolution-api | evoapicloud/evolution-api | 8080 | postgres, redis | | WhatsApp API for n8n |
+| evolution-api | evoapicloud/evolution-api | 8080 | postgres, redis | ✅ | WhatsApp API for n8n |
 | waha | devlikeapro/waha | 3000 | — | | WhatsApp HTTP API |
 
 ## Design (1)
@@ -225,8 +225,8 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | outline | outlinewiki/outline | 3000 | postgres, redis | ✅ |
 | wikijs | ghcr.io/requarks/wiki | 3000 | postgres | ✅ |
 | kopia | kopia/kopia | 51515 | — | ✅ |
-| paperless-gpt | icereed/paperless-gpt | 8080 | postgres, redis | |
-| docling-serve | ghcr.io/docling-project/docling-serve-cpu | 5001 | — | |
+| paperless-gpt | icereed/paperless-gpt | 8080 | postgres, redis | ✅ |
+| docling-serve | ghcr.io/docling-project/docling-serve-cpu | 5001 | — | ✅ |
 
 ## File Management (11)
 
@@ -332,7 +332,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | trilium | zadam/trilium | 8081 | — | ✅ | |
 | standard-notes | standardnotes/server | 3000 | postgres, redis | | Auto-migrate |
 | appflowy | appflowyinc/appflowy_cloud | 8000 | postgres, redis | | Auto-migrate |
-| open-notebook | lfnovo/open_notebook | 8502 | surrealdb | | API on 5055 |
+| open-notebook | lfnovo/open_notebook | 8502 | surrealdb | ✅ | API on 5055 |
 
 ## Password Management (13)
 
@@ -406,7 +406,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | typesense | typesense/typesense:27.1 | 8108 | — | ✅ | |
 | opensearch | opensearchproject/opensearch | 9200 | — | ✅ | |
 | manticore | manticoresearch/manticore | 9306 | — | ✅ | |
-| vane | itzcrazykns1337/vane | 3000 | — | | Perplexica successor |
+| vane | itzcrazykns1337/vane | 3000 | — | ✅ | Perplexica successor |
 
 ## Databases (4)
 
