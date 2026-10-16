@@ -579,6 +579,13 @@ keep real secrets out of the PR (only `.env.example` is committed).
 **deployment configs**, not application code. A `stacker.yml` that references the
 official image is the whole point.
 
+**Maintain a stack:** an app's upstream author can maintain its stack here. List
+your GitHub login in `stacker-projects/<app>/MAINTAINERS`, one per line, and keep
+sending pull requests from your fork; no write access is needed. CI names the
+maintainers of every stack a pull request changes, so they are asked to review
+it, and notes when the author changes only stacks they maintain. A change to a
+`MAINTAINERS` file is reviewed like any other.
+
 **Status badges** used in the catalog:
 
 | Badge | Meaning |
