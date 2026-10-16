@@ -1,5 +1,5 @@
 name: paperless-gpt
-version: "v0.31.0"
+version: "1.0.0"
 
 project:
   identity: paperless-gpt
