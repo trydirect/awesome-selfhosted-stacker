@@ -1,5 +1,5 @@
 name: gitness
-version: "latest"
+version: "1.0.0"
 
 project:
   identity: gitness

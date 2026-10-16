@@ -1,5 +1,5 @@
 name: docling-serve
-version: "v1.37.0"
+version: "1.0.0"
 
 project:
   identity: docling-serve

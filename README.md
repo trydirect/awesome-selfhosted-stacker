@@ -571,6 +571,11 @@ Contributions are welcome — **one app per pull request** keeps reviews fast.
 4. Add a row to the [Project Catalog](#project-catalog) with the correct status
    badge (see legend below).
 
+**Versions:** `version:` in `stacker.yml` is the stack's own version in semver,
+`MAJOR.MINOR.PATCH`, starting at `1.0.0`. It is not the app's image tag or an
+upstream commit: Quick Deploy finds the stack's baked snapshot by this version.
+Leave it out to always use the latest snapshot. CI refuses any other value.
+
 **Please do:** pin image tags to a specific version (avoid `:latest` — see
 [Known image issues](#known-image-issues)); bind database ports to `127.0.0.1`;
 keep real secrets out of the PR (only `.env.example` is committed).
