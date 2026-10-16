@@ -177,6 +177,25 @@ jobs:
             exit 1
           fi
 
+  maintainers:
+    name: Stack maintainers
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Test the check
+        run: python3 -m unittest scripts/test_stack_maintainers.py
+
+      # Informational: never fails the pull request. MAINTAINERS is read
+      # from the base branch, so a pull request cannot add its own author.
+      - name: Who maintains the changed stacks
+        env:
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: python3 scripts/stack_maintainers.py --author "$AUTHOR" --base origin/main
+
   changes:
     name: Detect changed projects
     runs-on: ubuntu-latest
