@@ -2079,3 +2079,68 @@ the web UI and a server can be picked there later.
 Deploy for real to a reachable server with `app.image` set (project creation
 happens as a side effect), or create the project via the web UI if it offers
 project creation.
+
+## [BUG] Redeploy reuses cached .stacker/docker-compose.yml — .env changes do not propagate
+
+**Severity:** Medium (silent misconfiguration: old env values keep deploying)
+**Date:** 2026-10-16
+**Affected:** `stacker deploy` (local and server targets)
+
+### Steps
+1. Deploy a project once (`.stacker/docker-compose.yml` generated; env values
+   resolved from `.env` at that moment).
+2. Change a value in `.env` (e.g. fill in a previously empty `OPENAI_API_KEY`).
+3. Run `stacker deploy` again — no `--force-rebuild`.
+
+### Actual
+The deploy succeeds but keeps the OLD generated compose (mtime unchanged) —
+the new `.env` value never reaches the container. Observed with paperless-gpt
+deployments #1368/#1369 (empty `OPENAI_API_KEY` stayed baked as `""` even
+after the `.env` edit) until `rm -rf .stacker` forced regeneration (#1370
+worked).
+
+### Expected
+Deploy regenerates the compose (or at least re-resolves env) when `stacker.yml`
+or `.env` changed — otherwise `env_file: .env` semantics are misleading.
+
+### Workaround
+`rm -rf .stacker` before redeploying after any `.env` change.
+
+### Notes
+Values referenced as `${VAR}` inside `environment:` can be baked as literals
+at generation time (e.g. `OPENAI_API_KEY: ""`), so this affects more than
+secret rotation.
+
+## [BUG] Server deploy ends `paused [internal_error]` while the stack is fully healthy
+
+**Severity:** Medium (false failure — success criteria never met even though
+the deployment worked)
+**Date:** 2026-10-16
+**Affected:** `stacker deploy --target server` (via Stacker server watch)
+
+### Steps
+1. Deploy self-hosted-ai-starter-kit to an existing server
+   (deployments #1372 / #1373 on 2026-10-16).
+
+### Actual
+Both deployments ended:
+```
+✗ Deployment #N ended as 'paused' [internal_error]
+  An unclassified internal error occurred. Redeploying will retry...
+```
+Server-side state after the second deployment: **all four containers
+`Up (healthy)`** (n8n, postgres, ollama, qdrant), `curl localhost:5678/healthz`
+→ `{"status":"ok"}`. After the first deployment the side services were up but
+the app container was still missing — the retry completed the stack, yet the
+verdict stayed `paused`.
+
+### Expected
+Watch verdict reflects container health: healthy stack → success.
+
+### Notes
+- Same family as the fixed "false success" watch bug (see the fixed entries
+  around `--target server` watch verdicts) — this is the inverse
+  (false failure).
+- Reproduced twice in a row (not transient); no third retry made per the
+  re-evaluate-before-retry rule.
+- Deployment hashes for support: #1372, #1373 (project `self-hosted-ai-starter-kit`).
