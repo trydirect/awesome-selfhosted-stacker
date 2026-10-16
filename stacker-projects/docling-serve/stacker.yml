@@ -1,0 +1,84 @@
+name: docling-serve
+version: "v1.37.0"
+
+project:
+  identity: docling-serve
+
+install:
+  inputs:
+    commonDomain: docling-serve.example.com
+
+app:
+  type: custom
+  image: ghcr.io/docling-project/docling-serve-cpu:v1.37.0
+  ports:
+    - "5001:5001"
+  environment:
+    DOCLING_SERVE_API_KEY: ${DOCLING_SERVE_API_KEY}
+    DOCLING_SERVE_ENABLE_UI: "1"
+  volumes:
+    - docling_cache:/opt/app-root/src/.cache
+  healthcheck:
+    test: "CMD curl -fs http://localhost:5001/health"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 120s
+
+volumes:
+  docling_cache: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "5001"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        DOCLING_SERVE_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DOCLING_SERVE_ENABLE_UI:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        docling_cache:
+          mutability: generated

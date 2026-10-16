@@ -1,0 +1,69 @@
+name: langchain-chatchat
+version: "v0.3.1"
+
+project:
+  identity: langchain-chatchat
+
+install:
+  inputs:
+    commonDomain: langchain-chatchat.example.com
+
+app:
+  type: custom
+  image: chatimage/chatchat:0.3.1.3-93e2c87-20240829
+  ports:
+    - "8501:8501"
+    - "7861:7861"
+  environment:
+    CHATCHAT_ROOT: "/root/chatchat_data"
+  volumes:
+    - chatchat_data:/root/chatchat_data
+  depends_on:
+    - xinference
+  healthcheck:
+    test: "CMD curl -fs http://localhost:8501/_stcore/health"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 90s
+
+services:
+  - name: xinference
+    image: xprobe/xinference:v0.12.3
+    command: "xinference-local -H 0.0.0.0"
+    volumes:
+      - xinference_data:/root/.xinference
+    healthcheck:
+      test: "CMD curl -fs http://localhost:9997/status"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  chatchat_data: {}
+  xinference_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8501"
+      - "7861"
+
+monitoring:
+  status_panel: true

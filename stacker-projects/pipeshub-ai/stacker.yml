@@ -1,0 +1,332 @@
+name: pipeshub-ai
+version: "0.10.0"
+
+project:
+  identity: pipeshub-ai
+
+install:
+  inputs:
+    commonDomain: pipeshub-ai.example.com
+
+app:
+  type: custom
+  image: pipeshubai/pipeshub-ai:0.10.0
+  ports:
+    - "3000:3000"
+  environment:
+    NODE_ENV: production
+    LOG_LEVEL: info
+    ALLOWED_ORIGINS: "${ALLOWED_ORIGINS}"
+    FRONTEND_PUBLIC_URL: "${FRONTEND_PUBLIC_URL}"
+    SECRET_KEY: "${SECRET_KEY}"
+    JWT_SECRET: "${JWT_SECRET}"
+    SCOPED_JWT_SECRET: "${SCOPED_JWT_SECRET}"
+    COOKIE_SECRET: "${COOKIE_SECRET}"
+    TELEMETRY_COLLECTION_FLAG: "${TELEMETRY_COLLECTION_FLAG}"
+    DATA_STORE: neo4j
+    NEO4J_URI: bolt://neo4j:7687
+    NEO4J_USERNAME: neo4j
+    NEO4J_PASSWORD: "${NEO4J_PASSWORD}"
+    NEO4J_DATABASE: neo4j
+    KV_STORE_TYPE: redis
+    MESSAGE_BROKER: redis
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+    REDIS_PASSWORD: "${REDIS_PASSWORD}"
+    REDIS_URL: "redis://:${REDIS_PASSWORD}@redis:6379"
+    MONGO_URI: "mongodb://admin:${MONGO_PASSWORD}@mongodb:27017/?authSource=admin"
+    MONGO_DB_NAME: es
+    QDRANT_HOST: qdrant
+    QDRANT_PORT: "6333"
+    QDRANT_GRPC_PORT: "6334"
+    QDRANT_API_KEY: "${QDRANT_API_KEY}"
+    QUERY_BACKEND: http://localhost:8000
+    CONNECTOR_BACKEND: http://localhost:8088
+    INDEXING_BACKEND: http://localhost:8091
+    EMBEDDING_SERVER_URL: http://localhost:8002
+    AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+    AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+    AWS_REGION: "${AWS_REGION}"
+  volumes:
+    - pipeshub_data:/data/pipeshub
+    - pipeshub_root_local:/root/.local
+    - pipeshub_hf_cache:/root/.cache/huggingface
+  depends_on:
+    - mongodb
+    - redis
+    - qdrant
+    - neo4j
+  healthcheck:
+    test: "CMD-SHELL curl -sf http://localhost:3000/api/v1/health/services | grep -q 'status.:.healthy'"
+    interval: 15s
+    timeout: 10s
+    retries: 5
+    start_period: 300s
+
+services:
+  - name: mongodb
+    image: mongo:8.0.17
+    command: "mongod --bind_ip_all --wiredTigerCacheSizeGB 1"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+      GLIBC_TUNABLES: glibc.pthread.rseq=0
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: CMD mongosh --eval 'db.adminCommand("ping")'
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  - name: redis
+    image: redis:7.4-bookworm
+    command: "redis-server --appendonly yes --appendfsync everysec --requirepass ${REDIS_PASSWORD}"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: "CMD-SHELL redis-cli -a ${REDIS_PASSWORD} --no-auth-warning ping | grep -q PONG"
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  - name: qdrant
+    image: qdrant/qdrant:v1.15
+    environment:
+      QDRANT__SERVICE__API_KEY: "${QDRANT_API_KEY}"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    healthcheck:
+      test: "CMD-SHELL bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  - name: neo4j
+    image: neo4j:5.26.0
+    environment:
+      NEO4J_AUTH: "neo4j/${NEO4J_PASSWORD}"
+      NEO4J_dbms_memory_heap_initial__size: 1G
+      NEO4J_dbms_memory_heap_max__size: 2G
+      NEO4J_dbms_memory_pagecache_size: 1G
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    healthcheck:
+      test: "CMD-SHELL wget --no-verbose --tries=1 --spider http://localhost:7474 || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  pipeshub_data: {}
+  pipeshub_root_local: {}
+  pipeshub_hf_cache: {}
+  mongodb_data: {}
+  redis_data: {}
+  qdrant_storage: {}
+  neo4j_data: {}
+  neo4j_logs: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        ALLOWED_ORIGINS:
+          mutability: editable
+        AWS_ACCESS_KEY_ID:
+          mutability: provided
+        AWS_REGION:
+          mutability: provided
+        AWS_SECRET_ACCESS_KEY:
+          mutability: provided
+          display: password
+        COOKIE_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        FRONTEND_PUBLIC_URL:
+          mutability: editable
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MONGO_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        NEO4J_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        QDRANT_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SCOPED_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TELEMETRY_COLLECTION_FLAG:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        pipeshub_data:
+          mutability: generated
+        pipeshub_root_local:
+          mutability: generated
+        pipeshub_hf_cache:
+          mutability: generated
+    mongodb:
+      fields:
+        MONGO_INITDB_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MONGO_INITDB_ROOT_USERNAME:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        mongodb_data:
+          mutability: generated
+    redis:
+      fields:
+        REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        redis_data:
+          mutability: generated
+    qdrant:
+      fields:
+        QDRANT_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        qdrant_storage:
+          mutability: generated
+    neo4j:
+      fields:
+        NEO4J_AUTH:
+          mutability: editable
+          display: password
+        NEO4J_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        neo4j_data:
+          mutability: generated
+        neo4j_logs:
+          mutability: generated

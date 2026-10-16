@@ -513,6 +513,32 @@ server target. Start here for production.
 
 [Project Index](stacker-projects/INDEX.md)
 
+### New templates (config-validated 2026-10-15)
+
+| Project             | Type             | Port  | Proxy      | Image Fix / Notes |
+|---------------------|------------------|-------|------------|--------------------|
+| Agent Zero          | AI agent         | 50080 | —          | autonomous agent; generated auth password |
+| Archon              | AI assistant     | 3000  | —          | coleam00 stack; needs Claude/OpenAI key at first run |
+| Bolt.diy            | AI codegen       | 5173  | —          | stackblitz-labs; 9 LLM providers via env |
+| Docling Serve       | Doc AI           | 5001  | —          | IBM doc→markdown/chunks API; API-key auth |
+| Evolution API       | WhatsApp API     | 8080  | —          | + postgres + redis; n8n-agency backend |
+| kotaemon            | RAG chat         | 7860  | —          | ⚠ open RCE #844 / IDOR #846 — self-host only, never expose publicly |
+| Langchain-Chatchat  | AI RAG           | 8501  | —          | stale 2024 images; FAISS + xinference |
+| LightRAG            | AI RAG           | 9621  | —          | + postgres + qdrant; no auth by default (upstream) |
+| Local AI Packaged   | AI stack         | 8001  | caddy      | full 28-service upstream stack; deployed (#1363) + baked; Quick Deploy in its README |
+| LocalAGI            | AI agent         | 8080  | —          | + LocalAI (CPU) + localrecall postgres |
+| Mautic              | Marketing        | 8080  | —          | web+worker+cron + mysql; first-run wizard |
+| Open Notebook       | Notes            | 8502  | —          | + SurrealDB; default root:root replaced; API on 5055 |
+| OpenAgent           | AI knowledge     | 14000 | —          | ex-Casibase; + mysql |
+| Paperless GPT       | Doc AI           | 8080  | —          | + paperless-ngx + postgres + redis; LLM labels |
+| PipeShub            | AI knowledge     | 3000  | —          | slim: mongo + redis + qdrant + neo4j |
+| Scriberr            | Transcription    | 8080  | —          | WhisperX; heavy first boot (model download) |
+| Self-hosted AI Kit  | AI stack         | 5678  | —          | official n8n starter: n8n + postgres + ollama + qdrant |
+| Speaches            | Speech API       | 8000  | —          | OpenAI-compatible STT/TTS; API-key auth |
+| Strata              | AI inference     | 8080  | —          | CUDA build from source; needs stacker gpus support (hand-written compose) |
+| Vane                | AI search        | 3000  | —          | Perplexica successor; bundled SearXNG |
+| WAHA                | WhatsApp API     | 3000  | —          | WhatsApp HTTP API; sessions volume |
+
 
 
 ---

@@ -2037,3 +2037,45 @@ pure stacker.yml and marketplace-installable); and/or submit packages
 (`stacker deploy` → pre_build hook clones the upstream source into
 `strata-src/`, compose builds the CUDA image) but is **not
 marketplace-installable** until one of the two expected fixes lands.
+
+## [BUG] No CLI path to register a project on the Stacker server without a real deploy
+
+**Severity:** Medium (missing feature — blocks "register the project now, pick
+a server later in the web UI")
+**Date:** 2026-10-15
+**Affected:** any new local-only template that must exist server-side before a
+user-selected server deploy (reproduced with `strata`)
+
+### Steps
+1. `stacker-projects/strata` exists only locally (`deploy.target: local`); no
+   server project yet.
+2. `stacker sync` → `✗ Project 'strata' was not found on the Stacker server.
+   Run 'stacker deploy' first.` — sync only does `find_project_by_name` +
+   `PUT /project/{id}/sync` (`src/console/commands/cli/sync.rs`); it never
+   creates.
+3. Fallback: `stacker deploy --target server --server-host <ip>
+   --server-ssh-key /nonexistent/key` — intended to reach `create_project`
+   and then fail locally before any platform-side deploy.
+
+### Actual
+1. The deploy aborts even earlier: `Validating SSH connectivity to <host>
+   before bootstrap deploy... Cannot read SSH key...` — the SSH precheck runs
+   **before** `create_project` in the server flow (`src/cli/install_runner.rs`
+   ~2800), so no project is created. A reachable host would then trigger a
+   real platform deployment instead of a clean no-op.
+2. Independently, `require_app_image_for_remote_deploy`
+   (`src/cli/stacker_client.rs:3948`) hard-fails dockerfile-only apps before
+   project creation: "app.image is required for cloud/server deploys".
+3. There is no standalone CLI command that POSTs `/project`
+   (`create_project` is called only from the deploy flows; the MCP
+   `create_project` tool is not reachable from the CLI).
+
+### Expected
+`stacker project create` (or `stacker sync --create`) registers the project
+from stacker.yml without SSH checks or a deployment, so it becomes visible in
+the web UI and a server can be picked there later.
+
+### Workaround
+Deploy for real to a reachable server with `app.image` set (project creation
+happens as a side effect), or create the project via the web UI if it offers
+project creation.
