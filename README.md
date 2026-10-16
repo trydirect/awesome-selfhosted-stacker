@@ -1,7 +1,7 @@
 # awesome-selfhosted-stacker
 
 > **266 self-hostable apps, each deployable with a single `stacker.yml`.**
-> Deploy to your laptop, your own server, or the cloud with one command —
+> Deploy to your laptop, your own server, or the cloud with one command -
 > database setup, health checks, secrets, and remote monitoring included.
 
 <p>
@@ -11,13 +11,11 @@
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">
 </p>
 
-Unlike a typical [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted)
-list of links, every entry here is a **ready-to-run deployment**: pick a
-directory, generate secrets, and `stacker deploy`. Same layout, same commands,
-every app — from analytics and CMS to chat, password managers, and AI tools.
+Eevery entry here is a **ready-to-run deployment**: 
+Pick a directory, generate secrets, and `stacker deploy`. Same layout, same commands.
 
 ```bash
-cd umami                          # pick any project
+cd stacker-projects/umami         # pick any project, for instance umami
 ./scripts/generate-secrets.sh     # generate .env from .env.example
 stacker deploy                    # → running locally in minutes
 ```
@@ -26,7 +24,6 @@ stacker deploy                    # → running locally in minutes
 
 ```bash
 export HETZNER_API_TOKEN=your_token
-cd umami
 stacker deploy --target cloud --force-rebuild
 ```
 
@@ -88,8 +85,6 @@ stacker deploy --target cloud --force-rebuild
 
 ![Stacker status](gifs/stacker-status.gif)
 
----
-
 ## Deployment Targets
 
 ### Local
@@ -130,7 +125,7 @@ SSH key registered with the provider.
 export HETZNER_API_TOKEN=your_token_here
 
 # First deploy — creates a new server (5-10 minutes)
-stacker deploy --target cloud --force-rebuild --force-new
+stacker deploy --target cloud --force-new
 
 stacker status           # get the server IP, then point DNS at it
 
@@ -167,6 +162,7 @@ Hetzner server sizes:
 | `cpx12` | 1    | 2 GB  | ~11.49 EUR| Small apps, testing            |
 | `cx23`  | 2    | 4 GB  | ~5.49 EUR | Most apps                      |
 | `cpx32` | 4    | 8 GB  | ~35 EUR   | Heavy / multiple apps          |
+| `cpx42` | 4    | 8 GB  | ~50 EUR   | AI stacks                      |
 
 ---
 
