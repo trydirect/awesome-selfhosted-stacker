@@ -1,35 +1,28 @@
 # scriberr — known issues
 
-## [BUG] First boot fills the disk with whisperX env/models; SQLite crash-loops
+## [BUG] First boot fills small disks with whisperX env/models; SQLite crash-loops
 
-**Severity:** High (deploy "succeeds" but the app never starts)
+**Severity:** High on small hosts (deploy "succeeds" but the app never starts)
 **Date:** 2026-10-16
+**Status:** verified working on cpx42 (301 GB disk) — see CLOUD_DEPLOY_SUCCESS.md
 
-### Steps
-1. `stacker deploy --target server` to the 2 GB / 38 GB-disk test server
-   (26 GB free before deploy) — deployment #1374 reported **completed**.
-2. `project-app-1` restart-loops.
+### Summary
+On the 2 GB / 38 GB shared test server first boot filled the disk
+(26 GB free → 100%) with whisperX env/model downloads into the
+`scriberr_data` / `scriberr_env` volumes, then SQLite failed:
 
-### Actual
 ```
 level=ERROR msg="Failed to connect to database"
 error="failed to connect to database: database or disk is full (13)"
 ```
-Server disk went 26 GB free → **100% full** during first boot: the image
-(whisperX-based) plus first-run downloads into the `scriberr_data` /
-`scriberr_env` volumes consume tens of GB. Once the disk filled, SQLite
-failed and the app crash-looped.
-
-### Additional finding
-Deployment #1374 was marked `✓ completed` by the platform while the app was
-restart-looping — the deploy watch did not catch the failure (same family as
-the watch-verdict bugs in root BUGS.md).
+and the app crash-looped. Deployment #1374 was also marked `✓ completed` by
+the platform while the app was restart-looping (watch-verdict gap).
 
 ### Resource floor (test result)
-- Needs a large disk: **≥40 GB free recommended** (observed 26 GB insufficient).
-- After cleanup (`compose down --volumes`, image prune) the disk stayed at
-  81% until further pruning.
+- Disk: **≥40 GB free recommended** (26 GB insufficient) — cpx42 (301 GB)
+  completes first boot and reports healthy.
+- Template `deploy.cloud.size` raised `cpx22` → `cpx42` accordingly.
 
-### Status
-Not verified working — skipped on this test server; retest on a large-disk
-host (or local Docker once sorted) and report.
+### Verified (2026-10-16, cpx42)
+`curl http://<server>:8080/health` → `{"status":"healthy","version":"1.0.0"}`,
+root → 200, container `Up (healthy)`.

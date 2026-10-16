@@ -29,7 +29,7 @@ app:
 
 services:
   - name: xinference
-    image: xprobe/xinference:v0.12.3
+    image: xprobe/xinference:v0.12.3-cpu
     command: "xinference-local -H 0.0.0.0"
     volumes:
       - xinference_data:/root/.xinference
@@ -60,7 +60,7 @@ deploy:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test
     region: fsn1
-    size: cpx22
+    size: cpx42
     public_ports:
       - "8501"
       - "7861"

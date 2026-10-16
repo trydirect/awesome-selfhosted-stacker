@@ -1,24 +1,31 @@
 # langchain-chatchat — known issues
 
-## [NOTE] Not deployable on the 2 GB test server — xinference image is ~14 GB
+## [BUG] xinference image was GPU-built — `libcuda.so.1` crash-loop on CPU hosts
 
-**Severity:** Low (template itself is plausible; test infra too small)
+**Severity:** High (service unusable on any CPU-only host)
 **Date:** 2026-10-16
+**Status:** FIXED 2026-10-16 — pinned `xprobe/xinference:v0.12.3-cpu`
 
-### Finding
-The previously suspected "stale 2024 images" are **still published**:
-- `chatimage/chatchat:0.3.1.3-93e2c87-20240829` → EXISTS (~1.9 GB compressed)
-- `xprobe/xinference:v0.12.3` → EXISTS (~13.8 GB compressed, ~28 GB unpacked)
+### Summary
+`xprobe/xinference:v0.12.3` imports `llama_cpp` → loads `libllama.so` →
+requires `libcuda.so.1` at startup and crash-loops on hosts without NVIDIA:
 
-Deploy was **not attempted** on the shared 2 GB / 38 GB-disk test server: the
-xinference image alone exceeds the available disk (7 GB free at decision
-time), and xinference also loads models into RAM.
+```
+RuntimeError: Failed to load shared library '.../libllama.so':
+libcuda.so.1: cannot open shared object file: No such file or directory
+```
 
-### Resource floor (test result)
-- Disk: ≥60 GB free (images + models)
-- RAM: ≥8 GB (xinference model serving)
-- Untested; images pullable. Retest on a larger host when available.
+### Fix
+```yaml
+  - name: xinference
+    image: xprobe/xinference:v0.12.3-cpu   # same version, CPU variant
+```
+Verified on a CPU cpx42: `project-xinference-1 Up (healthy)`,
+`curl localhost:9997/status` → worker JSON, and chatchat → xinference
+network call returns 200.
 
-### Note
-Being 2024-era builds, expect possible runtime incompatibilities even on a
-large host — record results when retested.
+## [NOTE] Earlier resource-floor note is superseded
+
+The previous "not deployable — 14 GB image" note applied to the 2 GB shared
+test server. On cpx42 (16 GB RAM / 300 GB disk) the stack deploys and runs
+fine (see EXISTING_DEPLOY_SUCCESS.md). The 2024-era images work.
