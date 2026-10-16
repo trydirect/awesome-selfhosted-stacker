@@ -22,7 +22,7 @@ cd umami                          # pick any project
 stacker deploy                    # → running locally in minutes
 ```
 
-### Quick deploy to cloud
+### Quick deploy to cloud and remote control
 
 ```bash
 export HETZNER_API_TOKEN=your_token
@@ -393,15 +393,6 @@ stacker pipe trigger <id>          # one-shot execution
 stacker pipe history <id>          # view execution log
 ```
 
-**Docker (local / on-server)**
-
-```bash
-docker compose ps                  # list containers
-docker compose logs -f app_name    # live logs
-docker compose restart db          # restart a service
-docker compose down                # stop (add -v to also delete data)
-docker exec -it app_name sh        # shell into a container
-```
 
 ---
 
@@ -530,28 +521,7 @@ server target. Start here for production.
 
 [Project Index](stacker-projects/INDEX.md)
 
-### Known image issues
 
-| Project      | Issue | Workaround |
-|-------------|-------|-----------|
-| discourse    | `discourse/base` doesn't exist | Use `discourse/discourse:latest` |
-| jitsi/web    | `:latest` tag doesn't exist | Use `jitsi/web:unstable` (and prosody, jicofo, jvb) |
-| strapi       | `strapi:latest` doesn't exist | Use `naskio/strapi:latest` |
-| wordpress    | `wordpress:latest` exists as `wordpress` | Use `wordpress` (no tag) |
-| druid        | `apache/druid:38.0.0` doesn't exist | Use `apache/druid:31.0.0` |
-| lemmy        | `dessalines/lemmy:latest` never existed | Use `dessalines/lemmy:0.19.11` |
-| mysql:8-alpine | No such image | Use `mysql:8.0` or `postgres:16-alpine` |
-| apitable      | Upstream liquibase bug (leaked JVM flag in changeset SQL) breaks migration | None — wait for upstream fix |
-| bfren/freescout | Ships only `pdo_mysql`, no `pdo_pgsql` | Use `mysql:8`, not postgres |
-
-### Common stacker.yml issues
-
-| Issue | Cause | Fix |
-|-------|-------|-----|
-| Service labels stripped | Stacker doesn't pass `services[].labels` to compose | Use app.env vars or nginx proxy instead |
-| serde_yaml 0.9 quoting | Round-trip strips quotes, adds `null`/`[]` | No fix yet; PR pending |
-| Bind mount files not found | File paths resolve relative to compose location on remote | Use Dockerfile COPY instead of bind mounts |
-| `:latest` images not found | Many projects have no `latest` tag | Pin to specific version or tag |
 
 ---
 
