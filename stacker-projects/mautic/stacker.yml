@@ -1,0 +1,306 @@
+name: mautic
+version: "6.0.6"
+
+project:
+  identity: mautic
+
+install:
+  inputs:
+    commonDomain: mautic.example.com
+
+app:
+  type: custom
+  image: mautic/mautic:6.0.6-apache
+  ports:
+    - "8080:80"
+  environment:
+    DOCKER_MAUTIC_ROLE: mautic_web
+    MAUTIC_DB_HOST: db
+    MAUTIC_DB_PORT: "3306"
+    MAUTIC_DB_DATABASE: mautic_db
+    MAUTIC_DB_USER: mautic_db_user
+    MAUTIC_DB_PASSWORD: ${DB_PASSWORD}
+    MAUTIC_MESSENGER_DSN_EMAIL: doctrine://default
+    MAUTIC_MESSENGER_DSN_HIT: doctrine://default
+  volumes:
+    - mautic_config:/var/www/html/config
+    - mautic_logs:/var/www/html/var/logs
+    - mautic_files:/var/www/html/docroot/media/files
+    - mautic_images:/var/www/html/docroot/media/images
+  depends_on:
+    - db
+  healthcheck:
+    test: "CMD curl -fs http://localhost/"
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    start_period: 180s
+
+services:
+  - name: db
+    image: mysql:lts
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: mautic_db
+      MYSQL_USER: mautic_db_user
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mautic_db:/var/lib/mysql
+    healthcheck:
+      test: "CMD-SHELL mysqladmin ping -h localhost --user=mautic_db_user --password=${DB_PASSWORD}"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+  - name: worker
+    image: mautic/mautic:6.0.6-apache
+    environment:
+      DOCKER_MAUTIC_ROLE: mautic_worker
+      MAUTIC_DB_HOST: db
+      MAUTIC_DB_PORT: "3306"
+      MAUTIC_DB_DATABASE: mautic_db
+      MAUTIC_DB_USER: mautic_db_user
+      MAUTIC_DB_PASSWORD: ${DB_PASSWORD}
+      MAUTIC_MESSENGER_DSN_EMAIL: doctrine://default
+      MAUTIC_MESSENGER_DSN_HIT: doctrine://default
+    volumes:
+      - mautic_config:/var/www/html/config
+      - mautic_logs:/var/www/html/var/logs
+      - mautic_files:/var/www/html/docroot/media/files
+      - mautic_images:/var/www/html/docroot/media/images
+    depends_on:
+      - db
+    healthcheck:
+      test: "CMD pgrep -f supervisord"
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 600s
+  - name: cron
+    image: mautic/mautic:6.0.6-apache
+    environment:
+      DOCKER_MAUTIC_ROLE: mautic_cron
+      MAUTIC_DB_HOST: db
+      MAUTIC_DB_PORT: "3306"
+      MAUTIC_DB_DATABASE: mautic_db
+      MAUTIC_DB_USER: mautic_db_user
+      MAUTIC_DB_PASSWORD: ${DB_PASSWORD}
+      MAUTIC_MESSENGER_DSN_EMAIL: doctrine://default
+      MAUTIC_MESSENGER_DSN_HIT: doctrine://default
+    volumes:
+      - mautic_config:/var/www/html/config
+      - mautic_logs:/var/www/html/var/logs
+      - mautic_files:/var/www/html/docroot/media/files
+      - mautic_images:/var/www/html/docroot/media/images
+    depends_on:
+      - db
+    healthcheck:
+      test: "CMD pgrep -x cron"
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 600s
+
+volumes:
+  mautic_config: {}
+  mautic_logs: {}
+  mautic_files: {}
+  mautic_images: {}
+  mautic_db: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        DOCKER_MAUTIC_ROLE:
+          mutability: editable
+        MAUTIC_DB_HOST:
+          mutability: editable
+        MAUTIC_DB_PORT:
+          mutability: editable
+          display: number
+        MAUTIC_DB_DATABASE:
+          mutability: editable
+        MAUTIC_DB_USER:
+          mutability: editable
+        MAUTIC_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MAUTIC_MESSENGER_DSN_EMAIL:
+          mutability: editable
+        MAUTIC_MESSENGER_DSN_HIT:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        mautic_config:
+          mutability: generated
+        mautic_logs:
+          mutability: generated
+        mautic_files:
+          mutability: generated
+        mautic_images:
+          mutability: generated
+    db:
+      fields:
+        MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_DATABASE:
+          mutability: editable
+        MYSQL_USER:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        mautic_db:
+          mutability: generated
+    worker:
+      fields:
+        DOCKER_MAUTIC_ROLE:
+          mutability: editable
+        MAUTIC_DB_HOST:
+          mutability: editable
+        MAUTIC_DB_PORT:
+          mutability: editable
+          display: number
+        MAUTIC_DB_DATABASE:
+          mutability: editable
+        MAUTIC_DB_USER:
+          mutability: editable
+        MAUTIC_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MAUTIC_MESSENGER_DSN_EMAIL:
+          mutability: editable
+        MAUTIC_MESSENGER_DSN_HIT:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        mautic_config:
+          mutability: generated
+        mautic_logs:
+          mutability: generated
+        mautic_files:
+          mutability: generated
+        mautic_images:
+          mutability: generated
+    cron:
+      fields:
+        DOCKER_MAUTIC_ROLE:
+          mutability: editable
+        MAUTIC_DB_HOST:
+          mutability: editable
+        MAUTIC_DB_PORT:
+          mutability: editable
+          display: number
+        MAUTIC_DB_DATABASE:
+          mutability: editable
+        MAUTIC_DB_USER:
+          mutability: editable
+        MAUTIC_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MAUTIC_MESSENGER_DSN_EMAIL:
+          mutability: editable
+        MAUTIC_MESSENGER_DSN_HIT:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        mautic_config:
+          mutability: generated
+        mautic_logs:
+          mutability: generated
+        mautic_files:
+          mutability: generated
+        mautic_images:
+          mutability: generated

@@ -1,0 +1,227 @@
+name: self-hosted-ai-starter-kit
+version: "2.43.6"
+
+project:
+  identity: self-hosted-ai-starter-kit
+
+install:
+  inputs:
+    commonDomain: self-hosted-ai-starter-kit.example.com
+
+app:
+  type: custom
+  image: n8nio/n8n:2.43.6
+  ports:
+    - "5678:5678"
+  environment:
+    DB_TYPE: postgresdb
+    DB_POSTGRESDB_HOST: postgres
+    DB_POSTGRESDB_USER: ${POSTGRES_USER}
+    DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+    DB_POSTGRESDB_DATABASE: ${POSTGRES_DB}
+    N8N_DIAGNOSTICS_ENABLED: "false"
+    N8N_PERSONALIZATION_ENABLED: "false"
+    N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+    N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_USER_MANAGEMENT_JWT_SECRET}
+    N8N_DEFAULT_BINARY_DATA_MODE: ${N8N_DEFAULT_BINARY_DATA_MODE}
+    OLLAMA_HOST: "ollama:11434"
+  volumes:
+    - n8n_storage:/home/node/.n8n
+    - n8n_shared:/data/shared
+  depends_on:
+    - postgres
+  healthcheck:
+    test: "CMD wget -qO- http://localhost:5678/healthz"
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    start_period: 60s
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_storage:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD-SHELL pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  - name: ollama
+    image: ollama/ollama:0.40.5
+    volumes:
+      - ollama_storage:/root/.ollama
+    healthcheck:
+      test: "CMD-SHELL OLLAMA_HOST=127.0.0.1:11434 ollama list"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  - name: qdrant
+    image: qdrant/qdrant:v1.19.2
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    healthcheck:
+      test: 'CMD-SHELL bash -c ''exec 3<>/dev/tcp/127.0.0.1/6333; echo -ne GET\ /healthz\ HTTP/1.0\\r\\n\\r\\n >&3; head -n1 <&3 | grep -q 200'''
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  n8n_storage: {}
+  n8n_shared: {}
+  postgres_storage: {}
+  ollama_storage: {}
+  qdrant_storage: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "5678"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        DB_TYPE:
+          mutability: editable
+        DB_POSTGRESDB_HOST:
+          mutability: editable
+        DB_POSTGRESDB_USER:
+          mutability: editable
+        DB_POSTGRESDB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_POSTGRESDB_DATABASE:
+          mutability: editable
+        N8N_DIAGNOSTICS_ENABLED:
+          mutability: editable
+        N8N_PERSONALIZATION_ENABLED:
+          mutability: editable
+        N8N_ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        N8N_USER_MANAGEMENT_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        N8N_DEFAULT_BINARY_DATA_MODE:
+          mutability: editable
+        OLLAMA_HOST:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        n8n_storage:
+          mutability: generated
+        n8n_shared:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_USER:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_DB:
+          mutability: editable
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        postgres_storage:
+          mutability: generated
+    ollama:
+      fields:
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        ollama_storage:
+          mutability: generated
+    qdrant:
+      fields:
+        healthcheck:
+          mutability: editable
+        interval:
+          mutability: editable
+        retries:
+          mutability: editable
+        start_period:
+          mutability: editable
+        test:
+          mutability: editable
+        timeout:
+          mutability: editable
+        volumes:
+          mutability: editable
+      volumes:
+        qdrant_storage:
+          mutability: generated

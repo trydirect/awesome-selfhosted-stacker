@@ -38,7 +38,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 
 ---
 
-## AI & LLM (9)
+## AI & LLM (21)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -51,6 +51,18 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | localai | localai/localai | 8080 | — | ✅ |
 | khoj | ghcr.io/khoj-ai/khoj | 42110 | postgres | ✅ |
 | lobechat | lobehub/lobe-chat | 3210 | postgres | ✅ |
+| local-ai-packaged | n8nio/n8n (+27 services) | 8001 | postgres, qdrant, neo4j, ollama | ✅ |
+| lightrag | ghcr.io/hkuds/lightrag | 9621 | postgres, qdrant | |
+| archon | ghcr.io/coleam00/archon | 3000 | — | |
+| agent-zero | agent0ai/agent-zero | 50080 | — | |
+| openagent | casbin/openagent | 14000 | mysql | |
+| localagi | quay.io/mudler/localagi | 8080 | postgres, localai | |
+| speaches | ghcr.io/speaches-ai/speaches | 8000 | — | |
+| kotaemon | ghcr.io/cinnamon/kotaemon | 7860 | — | |
+| pipeshub-ai | pipeshubai/pipeshub-ai | 3000 | mongo, redis, qdrant, neo4j | |
+| langchain-chatchat | chatimage/chatchat | 8501 | — | |
+| self-hosted-ai-starter-kit | n8nio/n8n | 5678 | postgres, ollama, qdrant | |
+| strata | (Dockerfile build) | 8080 | — | |
 
 ## Analytics (21)
 
@@ -78,7 +90,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | umami | ghcr.io/umami-software/umami | 3000 | postgres | ✅ |
 | shaper | taleshape/shaper | 8080 | — | ✅ |
 
-## Automation (19)
+## Automation (20)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -99,6 +111,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | kestra | kestra/kestra | 8080 | postgres | ✅ | |
 | windmill | ghcr.io/windmill-labs/windmill | 8000 | postgres | ✅ | |
 | cronicle | cronicle/cronicle | 3012 | — | ✅ | |
+| mautic | mautic/mautic | 8080 | mysql | | web+worker+cron; install wizard |
 
 ## Backup (2)
 
@@ -132,7 +145,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | wordpress-matomo | wordpress | 8080 | mysql, mariadb | |
 | writefreely | writeas/writefreely | 8080 | mysql | ✅ |
 
-## Communication (16)
+## Communication (18)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -153,6 +166,8 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | anycable | anycable/anycable-go | 8080 | — | ✅ | |
 | centrifugo | centrifugo/centrifugo | 8000 | — | ✅ | |
 | apprise | caronc/apprise | 8000 | — | ✅ | |
+| evolution-api | evoapicloud/evolution-api | 8080 | postgres, redis | | WhatsApp API for n8n |
+| waha | devlikeapro/waha | 3000 | — | | WhatsApp HTTP API |
 
 ## Design (1)
 
@@ -170,7 +185,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | homer | b4bz/homer | 8080 | — | ✅ |
 | organizr | organizr/organizr | 9983 | — | |
 
-## Developer & DevOps Tools (20)
+## Developer & DevOps Tools (21)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -194,8 +209,9 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | appwrite | appwrite/appwrite | 80 | mariadb, redis | | Auto-migrate |
 | budibase | budibase/budibase | 80 | couchdb, redis | | |
 | prowlarr | linuxserver/prowlarr | 9696 | — | ✅ | |
+| bolt-diy | ghcr.io/stackblitz-labs/bolt.diy | 5173 | — | | AI code builder |
 
-## Document Management (10)
+## Document Management (12)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -209,6 +225,8 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | outline | outlinewiki/outline | 3000 | postgres, redis | ✅ |
 | wikijs | ghcr.io/requarks/wiki | 3000 | postgres | ✅ |
 | kopia | kopia/kopia | 51515 | — | ✅ |
+| paperless-gpt | icereed/paperless-gpt | 8080 | postgres, redis | |
+| docling-serve | ghcr.io/docling-project/docling-serve-cpu | 5001 | — | |
 
 ## File Management (11)
 
@@ -224,7 +242,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | syncthing | lscr.io/linuxserver/syncthing | 8384 | — | | |
 | zipline | ghcr.io/diced/zipline | 3000 | postgres | ✅ | Auto-migrate |
 
-## Media (25)
+## Media (26)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -253,6 +271,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | sonarr | linuxserver/sonarr | 8989 | — | | |
 | radarr | linuxserver/radarr | 7878 | — | | |
 | lidarr | linuxserver/lidarr | 8686 | — | | |
+| scriberr | ghcr.io/rishikanthc/scriberr | 8080 | — | | WhisperX transcription |
 
 ## Booking & Scheduling (2)
 
@@ -304,7 +323,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | firefly-iii | fireflyiii/core | 8080 | postgres | ✅ | |
 | ghostfolio | ghostfolio/ghostfolio | 3333 | postgres, redis | | |
 
-## Note-taking (5)
+## Note-taking (6)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -313,6 +332,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | trilium | zadam/trilium | 8081 | — | ✅ | |
 | standard-notes | standardnotes/server | 3000 | postgres, redis | | Auto-migrate |
 | appflowy | appflowyinc/appflowy_cloud | 8000 | postgres, redis | | Auto-migrate |
+| open-notebook | lfnovo/open_notebook | 8502 | surrealdb | | API on 5055 |
 
 ## Password Management (13)
 
@@ -376,7 +396,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | mealie | ghcr.io/mealie-recipes/mealie | 9925 | — | ✅ |
 | tandoor | vabene1111/recipes | 8080 | postgres | ✅ |
 
-## Search (6)
+## Search (7)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -386,6 +406,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | typesense | typesense/typesense:27.1 | 8108 | — | ✅ | |
 | opensearch | opensearchproject/opensearch | 9200 | — | ✅ | |
 | manticore | manticoresearch/manticore | 9306 | — | ✅ | |
+| vane | itzcrazykns1337/vane | 3000 | — | | Perplexica successor |
 
 ## Databases (4)
 
