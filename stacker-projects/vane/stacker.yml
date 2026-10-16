@@ -19,7 +19,7 @@ app:
   volumes:
     - vane_data:/home/vane/data
   healthcheck:
-    test: "CMD curl -fs http://localhost:3000/"
+    test: "CMD-SHELL curl -fs http://$(hostname):3000/"
     interval: 30s
     timeout: 5s
     retries: 5

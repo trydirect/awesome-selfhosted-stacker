@@ -38,11 +38,11 @@ app:
 services:
   - name: surrealdb
     image: surrealdb/surrealdb:v2
-    command: start --log info --user ${SURREAL_USER} --pass ${SURREAL_PASSWORD} rocksdb:/mydata/mydatabase.db
+    command: start --log info --user ${SURREAL_USER} --pass ${SURREAL_PASSWORD} rocksdb:/home/nonroot/mydatabase.db
     environment:
       SURREAL_EXPERIMENTAL_GRAPHQL: "true"
     volumes:
-      - open_notebook_surreal:/mydata
+      - open_notebook_surreal:/home/nonroot
 
 volumes:
   open_notebook_data: {}
