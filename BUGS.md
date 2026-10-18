@@ -2144,3 +2144,38 @@ Watch verdict reflects container health: healthy stack → success.
 - Reproduced twice in a row (not transient); no third retry made per the
   re-evaluate-before-retry rule.
 - Deployment hashes for support: #1372, #1373 (project `self-hosted-ai-starter-kit`).
+
+## [AUDIT] config_contract gaps: 8 new stacks would fail the marketplace secret-policy gate
+
+**Severity:** Medium (blocks marketplace publishing of these templates)
+**Date:** 2026-10-16
+**Status:** report only — contract edits pending approval
+
+Checked against the actual publish-time gate
+(`MARKETPLACE_CONFIG_CONTRACT_SECRET_POLICY_REQUIRED`): every secret-shaped env
+key (`is_secret_env_key` = name contains `password`/`secret`/`_key`/`token`)
+must have `mutability: generated` or `provided` declared in `config_contract`.
+Matching is by exact env-key name.
+
+### Missing policies
+
+| Stack | Undeclared secret-shaped keys | Suggested policy |
+|---|---|---|
+| open-notebook | OPENAI_API_KEY, ANTHROPIC_API_KEY | provided (user LLM keys) |
+| waha | WHATSAPP_API_KEY_EXCLUDE_PATH | provided (heuristic false positive — it's a path list `"ping,health"`, but `_key` matches) |
+| archon | CLAUDE_API_KEY, CLAUDE_CODE_OAUTH_TOKEN | provided |
+| bolt-diy | 8 provider keys (ANTHROPIC/OPENAI/GROQ/XAI/TOGETHER/HuggingFace/GOOGLE_GENERATIVE_AI/OPEN_ROUTER `_API_KEY`) — no `config_contract` at all | create contract, provided |
+| paperless-gpt | OPENAI_API_KEY | provided |
+| localagi | LOCALAGI_API_KEYS, LOCALAGI_LLM_API_KEY | generated (auth) + provided (LLM) |
+| kotaemon | KH_FEATURE_USER_MANAGEMENT_PASSWORD | provided |
+| pipeshub-ai | QDRANT__SERVICE__API_KEY | generated (name mismatch with the declared `QDRANT_API_KEY`) |
+
+### Secondary finding (not gate-blocking)
+Several contracts declare `mutability: generated` for container-side aliases
+(`POSTGRES_PASSWORD`, `MYSQL_ROOT_PASSWORD`, `MAUTIC_DB_PASSWORD`,
+`MONGO_INITDB_ROOT_PASSWORD`, `DB_POSTGRESDB_PASSWORD`, local-ai-packaged's
+`DB_PASSWORD`/`PGPASSWORD`/Supabase alias set) that `generate-secrets.sh` does
+not generate under those names — local installs can leave them empty unless
+the name-mapping sync (`Synced … contract keys`) rewrites them. Marketplace
+installers generate per contract field name; app/db alias pairs must end up
+with the same value or the stack cannot connect to its database.
