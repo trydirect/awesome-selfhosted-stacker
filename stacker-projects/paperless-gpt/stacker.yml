@@ -137,6 +137,9 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        OPENAI_API_KEY:
+          mutability: provided
+          display: password
       volumes:
         paperless_gpt_prompts:
           mutability: generated
