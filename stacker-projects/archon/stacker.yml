@@ -81,9 +81,9 @@ config_contract:
           length: 32
           display: password
         CLAUDE_CODE_OAUTH_TOKEN:
-          mutability: editable
+          mutability: provided
         CLAUDE_API_KEY:
-          mutability: editable
+          mutability: provided
         healthcheck:
           mutability: editable
         interval:

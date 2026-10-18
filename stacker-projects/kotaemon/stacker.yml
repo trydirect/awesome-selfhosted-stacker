@@ -62,6 +62,9 @@ config_contract:
         OPENAI_API_KEY:
           mutability: provided
           display: password
+        KH_FEATURE_USER_MANAGEMENT_PASSWORD:
+          mutability: provided
+          display: password
         ADMIN_USERNAME:
           mutability: generated
           type: alphanumeric

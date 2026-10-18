@@ -65,7 +65,7 @@ config_contract:
           length: 32
           display: password
         WHATSAPP_API_KEY_EXCLUDE_PATH:
-          mutability: editable
+          mutability: provided
         WHATSAPP_DEFAULT_ENGINE:
           mutability: editable
         healthcheck:

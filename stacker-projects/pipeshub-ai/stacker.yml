@@ -284,6 +284,11 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        QDRANT__SERVICE__API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         healthcheck:
           mutability: editable
         interval:

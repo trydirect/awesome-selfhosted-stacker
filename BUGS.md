@@ -2147,9 +2147,11 @@ Watch verdict reflects container health: healthy stack → success.
 
 ## [AUDIT] config_contract gaps: 8 new stacks would fail the marketplace secret-policy gate
 
-**Severity:** Medium (blocks marketplace publishing of these templates)
+**Severity:** Medium (blocked marketplace publishing of these templates)
 **Date:** 2026-10-16
-**Status:** report only — contract edits pending approval
+**Status:** FIXED 2026-10-16 — missing policies added to all 8 stacks;
+gate re-check: all 21 stacks clear. (The secondary alias/generated note below
+still stands as a marketplace-readiness item.)
 
 Checked against the actual publish-time gate
 (`MARKETPLACE_CONFIG_CONTRACT_SECRET_POLICY_REQUIRED`): every secret-shaped env
