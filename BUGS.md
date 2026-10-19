@@ -2181,3 +2181,54 @@ not generate under those names — local installs can leave them empty unless
 the name-mapping sync (`Synced … contract keys`) rewrites them. Marketplace
 installers generate per contract field name; app/db alias pairs must end up
 with the same value or the stack cannot connect to its database.
+
+## [BUG] Cloud deploy of stacks publishing 80/443 dies in provisioning: `paused [local_exec_provisioner_error]`
+
+**Severity:** High (cloud deploy impossible for proxy-fronted stacks)
+**Date:** 2026-10-16
+**Affected:** `stacker deploy --target cloud --force-new` of local-ai-packaged
+(deployments #1382, #1383 — servers 861, 862)
+
+### Steps
+1. `stacker deploy --target cloud --key htz-0 --force-new` for
+   local-ai-packaged (publishes host ports 80, 443, 8001-8008 via `lap-caddy`).
+2. Wait through provisioning (~18 min).
+
+### Actual (reproduced twice, identical)
+```
+✗ Deployment #N ended as 'paused' [local_exec_provisioner_error]
+  A local command run during provisioning failed (Docker/Ansible step). ...
+  a common cause is a host port already in use by another stack.
+...
+✗ Your SSH key was not authorized for server NNN.
+  Reason: ... https://try.direct/stacker/server/NNN/ssh-key/authorize-public-key:
+  operation timed out
+```
+Both created servers end up **unreachable on port 22** (TCP timeout) and
+`stacker ssh-key inject` cannot connect either — the provisioner failure
+apparently happens before SSH access is established. The project's service
+names are already de-conflicted (`lap-caddy`, `lap-n8n` — the earlier
+platform-role naming bug is fixed), so this is NOT the name-collision issue.
+
+### Hypothesis (refined 2026-10-19)
+Not a port conflict: the same `docker compose up` failure seen on the server
+path (deployment #1385) aborts provisioning — the `ollama-gpu-amd` service
+declares `devices: [/dev/kfd]` (AMD ROCm) which does not exist on CPU hosts,
+and one failing service aborts the whole compose up. See
+`stacker-projects/local-ai-packaged/BUGS.md` for the full root cause and fix
+options. The "host port already in use" text is only the generic hint; the
+SSH-authorize API timeouts are secondary fallout of the paused deploy.
+
+### Expected
+Provisioning should either skip platform-owned ingress for user stacks that
+publish 80/443, or report a precise `port_conflict` verdict instead of an
+unclassified provisioner error + dead host.
+
+### Notes
+- Deployment hashes for support: #1382, #1383 (servers 861, 862, both
+  registration-active but unreachable — they can be deleted).
+- Deployment log for the failing Docker/Ansible command is not retrievable
+  via CLI (`stacker agent history --deployment=…` → "No commands found").
+- No third identical attempt made (re-evaluate-before-retry rule). Awaiting
+  platform-side diagnosis or an approved workaround (e.g. deploying the
+  stack with non-conflicting host ports).
