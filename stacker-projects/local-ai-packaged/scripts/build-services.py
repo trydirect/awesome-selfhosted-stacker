@@ -110,10 +110,11 @@ POLICIES = {
     "SERVICE_ROLE_KEY": JWT("service_role"),
     "DASHBOARD_PASSWORD": ALNUM,
     "SECRET_KEY_BASE": GEN(type="hex", length=64),
-    # Realtime encrypts with AES-128: exactly 16 characters. Upstream falls
-    # back to the same literal for every install.
-    "REALTIME_DB_ENC_KEY": GEN(type="alphanumeric", min_length=16),
-    "VAULT_ENC_KEY": ALNUM,
+    # Realtime encrypts with AES-128 and supavisor with AES-256-GCM: exactly
+    # 16 and 32 characters (`length`; `min_length` would accept longer keys
+    # that crash them). Upstream falls back to the same literal for every install.
+    "REALTIME_DB_ENC_KEY": GEN(type="alphanumeric", length=16),
+    "VAULT_ENC_KEY": GEN(type="alphanumeric", length=32),
     "PG_META_CRYPTO_KEY": ALNUM,
     "S3_PROTOCOL_ACCESS_KEY_ID": GEN(type="hex", length=32),
     "S3_PROTOCOL_ACCESS_KEY_SECRET": GEN(type="hex", length=64),
@@ -130,9 +131,15 @@ POLICIES = {
     "NEXTAUTH_SECRET": ALNUM,
     "REDIS_AUTH": ALNUM,
     "SEARXNG_SECRET": ALNUM,
-    "SUPABASE_PUBLISHABLE_KEY": OPTIONAL,
-    "SUPABASE_SECRET_KEY": OPTIONAL,
-    "OPENAI_API_KEY": OPTIONAL,
+    # Formats the platform checks in the Quick Deploy form and /deploy/start.
+    # Supabase: sb_publishable_... / sb_secret_... (supabase.com/docs/guides/api/api-keys).
+    # OpenAI: sk-... (legacy 51 characters, sk-proj- 56 then 164).
+    "SUPABASE_PUBLISHABLE_KEY": {**OPTIONAL, "pattern": "^sb_publishable_[A-Za-z0-9_-]+$",
+                                 "max_length": 256},
+    "SUPABASE_SECRET_KEY": {**OPTIONAL, "pattern": "^sb_secret_[A-Za-z0-9_-]+$",
+                            "max_length": 256},
+    "OPENAI_API_KEY": {**OPTIONAL, "pattern": "^sk-[A-Za-z0-9_-]+$", "min_length": 40,
+                       "max_length": 256},
 }
 # Data a clone keeps: the model weights (they hold no secret). Every other
 # volume is dropped before the snapshot and starts empty on the buyer's box.

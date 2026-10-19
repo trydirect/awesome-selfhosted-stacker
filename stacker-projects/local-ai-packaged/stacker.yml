@@ -903,6 +903,9 @@ config_contract:
           mutability: provided
           required: false
           display: password
+          pattern: ^sk-[A-Za-z0-9_-]+$
+          min_length: 40
+          max_length: 256
         SUPABASE_ANON_KEY:
           mutability: generated
           display: password
@@ -922,10 +925,14 @@ config_contract:
           mutability: provided
           required: false
           display: password
+          pattern: ^sb_publishable_[A-Za-z0-9_-]+$
+          max_length: 256
         SUPABASE_SECRET_KEY:
           mutability: provided
           required: false
           display: password
+          pattern: ^sb_secret_[A-Za-z0-9_-]+$
+          max_length: 256
         SERVICE_ROLE_KEY:
           mutability: generated
           type: derived_jwt
@@ -953,10 +960,14 @@ config_contract:
           mutability: provided
           required: false
           display: password
+          pattern: ^sb_publishable_[A-Za-z0-9_-]+$
+          max_length: 256
         SUPABASE_SECRET_KEY:
           mutability: provided
           required: false
           display: password
+          pattern: ^sb_secret_[A-Za-z0-9_-]+$
+          max_length: 256
         DASHBOARD_PASSWORD:
           mutability: generated
           display: password
@@ -1018,7 +1029,7 @@ config_contract:
           mutability: generated
           display: password
           type: alphanumeric
-          min_length: 16
+          length: 16
     storage:
       fields:
         ANON_KEY:
@@ -1109,7 +1120,7 @@ config_contract:
           mutability: generated
           display: password
           type: alphanumeric
-          min_length: 32
+          length: 32
         API_JWT_SECRET:
           mutability: generated
           display: password
