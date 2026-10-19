@@ -21,6 +21,8 @@ account; the smoke clone needs a plan that can clone.
 import json
 import os
 import re
+import secrets
+import string
 import subprocess
 import tempfile
 import time
@@ -66,6 +68,41 @@ def generated_keys(stacker_yml_text):
                 keys.add(name)
         keys.update(target.get("secret") or [])
     return keys
+
+
+_SIMPLE_PATTERN = re.compile(r"^\^([A-Za-z0-9_-]*)\[A-Za-z0-9_-\]\+\$$")
+
+
+def buyer_env(stacker_yml_text, overrides):
+    """What the smoke clone enters for the keys the buyer provides on Quick
+    Deploy (`mutability: provided`): `overrides["SMOKE_ENV_<KEY>"]` when set,
+    else a random value of the key's shape for a `^prefix[A-Za-z0-9_-]+$`
+    pattern (random, never a known value: a known key would open the clone).
+    A required key of any other shape needs SMOKE_ENV_<KEY>; an optional one
+    is left out, as a buyer may leave it."""
+    doc = _yaml().safe_load(stacker_yml_text) or {}
+    services = ((doc.get("config_contract") or {}).get("services")) or {}
+    env, missing = {}, []
+    for target in services.values():
+        for name, policy in ((target or {}).get("fields") or {}).items():
+            if not isinstance(policy, dict) or policy.get("mutability") != "provided":
+                continue
+            override = overrides.get(f"SMOKE_ENV_{name}")
+            shape = _SIMPLE_PATTERN.match(policy.get("pattern") or "")
+            if override:
+                env[name] = override
+            elif shape:
+                prefix = shape.group(1)
+                size = max(policy.get("min_length") or 0, len(prefix) + 32)
+                size = min(size, policy.get("max_length") or size)
+                alphabet = string.ascii_letters + string.digits
+                env[name] = prefix + "".join(
+                    secrets.choice(alphabet) for _ in range(size - len(prefix)))
+            elif policy.get("required", True):
+                missing.append(name)
+    if missing:
+        raise RuntimeError("set SMOKE_ENV_<KEY> for the buyer keys " + ", ".join(sorted(set(missing))))
+    return env
 
 
 def _published_port(mapping):
@@ -282,12 +319,20 @@ def bake(template, work_dir, bakes_file, log=print):
         log(f"  FAIL: bake {job['status']}: {job.get('error')}")
         return False
     image_id = job["image_id"]
+    return smoke(template, version, image_id, stacker_yml, build_env, build_host_key,
+                 keys, servers, bakes_file, log)
 
+
+def smoke(template, version, image_id, stacker_yml, build_env, build_host_key,
+          keys, servers, bakes_file, log=print):
+    """Smoke-clone a baked image as a buyer would, check it, record it.
+    Callable on its own to repeat the smoke of an image already baked."""
     log(f"  [bake 4/5] Smoke clone of image {image_id} ...")
     status, clone = api("POST", "/api/v1/deploy/clone", {
         "stack": template,
         "version": version,
         "domain": f"{template}-smoke.try.direct",
+        "env": buyer_env(stacker_yml, os.environ),
     }, timeout=300)
     if status != 200:
         append_bakes_row(bakes_file, bakes_row(template, version, image_id, f"clone refused {status}: {clone}", servers))

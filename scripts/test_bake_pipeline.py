@@ -63,6 +63,46 @@ class GeneratedKeys(unittest.TestCase):
         self.assertEqual(bp.generated_keys("name: x\napp: {type: static}\n"), set())
 
 
+BUYER_YML = """
+name: demo
+config_contract:
+  services:
+    studio:
+      fields:
+        OPENAI_API_KEY: {mutability: provided, pattern: "^sk-[A-Za-z0-9_-]+$", min_length: 40, max_length: 256}
+        SUPABASE_SECRET_KEY: {mutability: provided, required: false, pattern: "^sb_secret_[A-Za-z0-9_-]+$"}
+        PASSWORD: {mutability: generated, type: alphanumeric, min_length: 32}
+        NOTE: {mutability: provided, required: false}
+"""
+
+
+class BuyerEnv(unittest.TestCase):
+    """The smoke clone enters the buyer's keys, as a buyer does on Quick Deploy
+    (2026-10-19: the clone of local-ai-packaged was refused with 422 because
+    it sent none)."""
+
+    def test_keys_with_a_pattern_get_a_random_value_of_that_shape(self):
+        env = bp.buyer_env(BUYER_YML, overrides={})
+        self.assertRegex(env["OPENAI_API_KEY"], r"^sk-[A-Za-z0-9]+$")
+        self.assertTrue(40 <= len(env["OPENAI_API_KEY"]) <= 256)
+        self.assertRegex(env["SUPABASE_SECRET_KEY"], r"^sb_secret_[A-Za-z0-9]+$")
+        self.assertNotEqual(env, bp.buyer_env(BUYER_YML, overrides={}))
+
+    def test_generated_and_optional_free_form_fields_are_left_alone(self):
+        env = bp.buyer_env(BUYER_YML, overrides={})
+        self.assertNotIn("PASSWORD", env)
+        self.assertNotIn("NOTE", env)
+
+    def test_an_override_wins(self):
+        env = bp.buyer_env(BUYER_YML, overrides={"SMOKE_ENV_NOTE": "hello"})
+        self.assertEqual(env["NOTE"], "hello")
+
+    def test_a_required_key_with_no_known_shape_needs_an_override(self):
+        yml = BUYER_YML + "        API_TOKEN: {mutability: provided}\n"
+        with self.assertRaisesRegex(RuntimeError, "API_TOKEN"):
+            bp.buyer_env(yml, overrides={})
+
+
 class HealthUrl(unittest.TestCase):
     def test_app_port_and_declared_endpoint(self):
         self.assertEqual(
