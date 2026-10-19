@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  STACKER_VERSION: v0.3.4
+  STACKER_VERSION: v0.3.5
 
 jobs:
   structure:
@@ -130,8 +130,14 @@ jobs:
 
             total=$((total + 1))
             cd "$dir"
+            placed=""
             while IFS= read -r key; do
-              [ -z "$key" ] || [ -n "${!key:-}" ] || export "$key=ci-placeholder"
+              [ -z "$key" ] || [ -n "${!key:-}" ] && continue
+              # The project's .env value when it has one, else a placeholder: a
+              # placeholder over a .env value broke typed fields
+              # (OLLAMA_CPU_REPLICAS=1 became "ci-placeholder" for replicas).
+              value=$(grep -m1 "^$key=" .env 2>/dev/null | cut -d= -f2-)
+              export "$key=${value:-ci-placeholder}"; placed="$placed $key"
             done < <(grep -Eo '\$\{?[A-Za-z_][A-Za-z0-9_]*\}?' stacker.yml | tr -d '${}' | sort -u)
             if stacker config validate 2>&1; then
               echo "✅ $name"
@@ -139,6 +145,8 @@ jobs:
               echo "❌ $name"
               errors=$((errors + 1))
             fi
+            # Placeholders of this project must not shadow the next one's .env.
+            for key in $placed; do unset "$key"; done
             cd "$GITHUB_WORKSPACE"
           done
           echo ""
@@ -287,8 +295,14 @@ jobs:
             [ -f .env ] || [ ! -f .env.example ] || cp .env.example .env
             [ -f scripts/generate-secrets.sh ] && bash scripts/generate-secrets.sh || true
 
+            placed=""
             while IFS= read -r key; do
-              [ -z "$key" ] || [ -n "${!key:-}" ] || export "$key=ci-placeholder"
+              [ -z "$key" ] || [ -n "${!key:-}" ] && continue
+              # The project's .env value when it has one, else a placeholder: a
+              # placeholder over a .env value broke typed fields
+              # (OLLAMA_CPU_REPLICAS=1 became "ci-placeholder" for replicas).
+              value=$(grep -m1 "^$key=" .env 2>/dev/null | cut -d= -f2-)
+              export "$key=${value:-ci-placeholder}"; placed="$placed $key"
             done < <(grep -Eo '\$\{?[A-Za-z_][A-Za-z0-9_]*\}?' stacker.yml | tr -d '${}' | sort -u)
 
             # Validate
@@ -297,6 +311,8 @@ jobs:
             # Dry run (local target — remote dry-run needs `stacker login`)
             stacker deploy --dry-run --target local 2>&1
 
+            # Placeholders of this project must not shadow the next one's .env.
+            for key in $placed; do unset "$key"; done
             cd "$GITHUB_WORKSPACE"
             echo "✅ $name"
           done
