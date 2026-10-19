@@ -132,10 +132,12 @@ jobs:
             cd "$dir"
             placed=""
             while IFS= read -r key; do
-              # A value in the project's .env wins: a placeholder in the process env
-              # would shadow it (OLLAMA_CPU_REPLICAS=1 became "ci-placeholder").
-              [ -z "$key" ] || [ -n "${!key:-}" ] || grep -q "^$key=" .env 2>/dev/null && continue
-              export "$key=ci-placeholder"; placed="$placed $key"
+              [ -z "$key" ] || [ -n "${!key:-}" ] && continue
+              # The project's .env value when it has one, else a placeholder: a
+              # placeholder over a .env value broke typed fields
+              # (OLLAMA_CPU_REPLICAS=1 became "ci-placeholder" for replicas).
+              value=$(grep -m1 "^$key=" .env 2>/dev/null | cut -d= -f2-)
+              export "$key=${value:-ci-placeholder}"; placed="$placed $key"
             done < <(grep -Eo '\$\{?[A-Za-z_][A-Za-z0-9_]*\}?' stacker.yml | tr -d '${}' | sort -u)
             if stacker config validate 2>&1; then
               echo "✅ $name"
@@ -295,10 +297,12 @@ jobs:
 
             placed=""
             while IFS= read -r key; do
-              # A value in the project's .env wins: a placeholder in the process env
-              # would shadow it (OLLAMA_CPU_REPLICAS=1 became "ci-placeholder").
-              [ -z "$key" ] || [ -n "${!key:-}" ] || grep -q "^$key=" .env 2>/dev/null && continue
-              export "$key=ci-placeholder"; placed="$placed $key"
+              [ -z "$key" ] || [ -n "${!key:-}" ] && continue
+              # The project's .env value when it has one, else a placeholder: a
+              # placeholder over a .env value broke typed fields
+              # (OLLAMA_CPU_REPLICAS=1 became "ci-placeholder" for replicas).
+              value=$(grep -m1 "^$key=" .env 2>/dev/null | cut -d= -f2-)
+              export "$key=${value:-ci-placeholder}"; placed="$placed $key"
             done < <(grep -Eo '\$\{?[A-Za-z_][A-Za-z0-9_]*\}?' stacker.yml | tr -d '${}' | sort -u)
 
             # Validate
