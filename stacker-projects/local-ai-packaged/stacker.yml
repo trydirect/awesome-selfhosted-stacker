@@ -901,7 +901,6 @@ config_contract:
           min_length: 32
         OPENAI_API_KEY:
           mutability: provided
-          required: false
           display: password
           pattern: ^sk-[A-Za-z0-9_-]+$
           min_length: 40
@@ -923,13 +922,11 @@ config_contract:
           min_length: 32
         SUPABASE_PUBLISHABLE_KEY:
           mutability: provided
-          required: false
           display: password
           pattern: ^sb_publishable_[A-Za-z0-9_-]+$
           max_length: 256
         SUPABASE_SECRET_KEY:
           mutability: provided
-          required: false
           display: password
           pattern: ^sb_secret_[A-Za-z0-9_-]+$
           max_length: 256
@@ -958,13 +955,11 @@ config_contract:
           min_length: 32
         SUPABASE_PUBLISHABLE_KEY:
           mutability: provided
-          required: false
           display: password
           pattern: ^sb_publishable_[A-Za-z0-9_-]+$
           max_length: 256
         SUPABASE_SECRET_KEY:
           mutability: provided
-          required: false
           display: password
           pattern: ^sb_secret_[A-Za-z0-9_-]+$
           max_length: 256
