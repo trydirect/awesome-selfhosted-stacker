@@ -4,8 +4,10 @@
 
 **Severity:** High (deploy impossible on any CPU-only host — cloud and server)
 **Date:** 2026-10-19
-**Status:** documented only (fix options listed below; not applied by user
-choice — needs `profiles` support in stacker or an agreed template change)
+**Status:** FIXED 2026-10-19 — root cause was the old CLI silently dropping
+`profiles`; with CLI `1cd524e` (profiles support, PRs #288/#298) and a re-baked
+snapshot the deploy completes on CPU hosts (deployment #1392, all 28 services
+healthy). See also stacker#303 (warn on unknown keys).
 
 ### Steps
 1. `stacker deploy --target server --server-host <cpu-host>` (deployment
