@@ -1,0 +1,143 @@
+name: tradingagents
+version: "1.0.0"
+
+project:
+  identity: tradingagents
+
+install:
+  inputs:
+    commonDomain: tradingagents.example.com
+
+app:
+  type: custom
+  dockerfile: Dockerfile
+  environment:
+    OPENAI_API_KEY: ${OPENAI_API_KEY}
+    ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+    XAI_API_KEY: ${XAI_API_KEY}
+    DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+    OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+    GROQ_API_KEY: ${GROQ_API_KEY}
+    MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+    MOONSHOT_API_KEY: ${MOONSHOT_API_KEY}
+    NVIDIA_API_KEY: ${NVIDIA_API_KEY}
+    MINIMAX_API_KEY: ${MINIMAX_API_KEY}
+    DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
+    ZHIPU_API_KEY: ${ZHIPU_API_KEY}
+    OPENAI_COMPATIBLE_API_KEY: ${OPENAI_COMPATIBLE_API_KEY}
+    FRED_API_KEY: ${FRED_API_KEY}
+    TYPESAFE_API_KEY: ${TYPESAFE_API_KEY}
+    TYPESAFE_DEFAULT_MODEL: ${TYPESAFE_DEFAULT_MODEL}
+    TYPESAFE_BASE_URL: ${TYPESAFE_BASE_URL}
+    AWS_BEARER_TOKEN_BEDROCK: ${AWS_BEARER_TOKEN_BEDROCK}
+    AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+    AWS_PROFILE: ${AWS_PROFILE}
+    SEC_EDGAR_USER_AGENT: ${SEC_EDGAR_USER_AGENT}
+    TRADINGAGENTS_LLM_PROVIDER: ${TRADINGAGENTS_LLM_PROVIDER}
+  volumes:
+    - tradingagents_data:/home/appuser/.tradingagents
+  healthcheck:
+    test: "CMD-SHELL tradingagents --help >/dev/null 2>&1"
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 30s
+
+volumes:
+  tradingagents_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        OPENAI_API_KEY:
+          mutability: provided
+          display: password
+        ANTHROPIC_API_KEY:
+          mutability: provided
+          display: password
+        GOOGLE_API_KEY:
+          mutability: provided
+          display: password
+        XAI_API_KEY:
+          mutability: provided
+          display: password
+        DEEPSEEK_API_KEY:
+          mutability: provided
+          display: password
+        OPENROUTER_API_KEY:
+          mutability: provided
+          display: password
+        GROQ_API_KEY:
+          mutability: provided
+          display: password
+        MISTRAL_API_KEY:
+          mutability: provided
+          display: password
+        MOONSHOT_API_KEY:
+          mutability: provided
+          display: password
+        NVIDIA_API_KEY:
+          mutability: provided
+          display: password
+        MINIMAX_API_KEY:
+          mutability: provided
+          display: password
+        DASHSCOPE_API_KEY:
+          mutability: provided
+          display: password
+        ZHIPU_API_KEY:
+          mutability: provided
+          display: password
+        OPENAI_COMPATIBLE_API_KEY:
+          mutability: provided
+          display: password
+        FRED_API_KEY:
+          mutability: provided
+          display: password
+        TYPESAFE_API_KEY:
+          mutability: provided
+          display: password
+        AWS_BEARER_TOKEN_BEDROCK:
+          mutability: provided
+          display: password
+        SEC_EDGAR_USER_AGENT:
+          mutability: editable
+        TYPESAFE_DEFAULT_MODEL:
+          mutability: editable
+        TYPESAFE_BASE_URL:
+          mutability: editable
+        AWS_DEFAULT_REGION:
+          mutability: editable
+        AWS_PROFILE:
+          mutability: editable
+        TRADINGAGENTS_LLM_PROVIDER:
+          mutability: editable
+      volumes:
+        tradingagents_data:
+          mutability: generated

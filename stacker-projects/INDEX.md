@@ -315,13 +315,14 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | healthchecks | healthchecks/healthchecks | 8000 | postgres | ✅ | Auto-migrate |
 | cachet | cachethq/cachet | 8000 | postgres, redis | | DB migrate |
 
-## Money & Budgeting (3)
+## Money & Budgeting (4)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | btcpay-server | btcpayserver/btcpayserver | 23000 | postgres | | |
 | firefly-iii | fireflyiii/core | 8080 | postgres | ✅ | |
 | ghostfolio | ghostfolio/ghostfolio | 3333 | postgres, redis | | |
+| tradingagents | tradingagents (built from source) | — | — | | CLI multi-agent trading framework (pinned upstream commit) |
 
 ## Note-taking (6)
 

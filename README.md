@@ -536,6 +536,7 @@ server target. Start here for production.
 | Self-hosted AI Kit  | AI stack         | 5678  | —          | official n8n starter: n8n + postgres + ollama + qdrant |
 | Speaches            | Speech API       | 8000  | —          | OpenAI-compatible STT/TTS; API-key auth |
 | Strata              | AI inference     | 8080  | —          | CUDA build from source; needs stacker gpus support (hand-written compose) |
+| TradingAgents       | Trading          | —     | —          | multi-agent LLM trading framework (CLI); built from pinned upstream commit |
 | Vane                | AI search        | 3000  | —          | Perplexica successor; bundled SearXNG |
 | WAHA                | WhatsApp API     | 3000  | —          | WhatsApp HTTP API; sessions volume |
 
@@ -613,7 +614,7 @@ it, and notes when the author changes only stacks they maintain. A change to a
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-10-16 — 287 projects configured, 273 tested and verified on
+Last updated: 2026-10-16 — 288 projects configured, 273 tested and verified on
 Ubuntu 26.04. Proxy support: traefik, caddy, nginx-proxy-manager.
 
 ---
