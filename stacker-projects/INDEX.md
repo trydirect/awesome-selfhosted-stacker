@@ -38,7 +38,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 
 ---
 
-## AI & LLM (21)
+## AI & LLM (24)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -64,6 +64,9 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | self-hosted-ai-starter-kit | n8nio/n8n | 5678 | postgres, ollama, qdrant | ✅ |
 | strata | (Dockerfile build) | 8080 | — | |
 
+| ai-mcp-app-builder | built from source | 3000 | — | | describe an MCP app, get a live sandboxed instance |
+| local-chatgpt-with-memory | built from source | 8501 | qdrant, ollama | | per-user memory chat, fully local |
+| rag-as-a-service | built from source | 8501 | — | | streamlit RAG demo; keys entered in UI |
 ## Analytics (21)
 
 | Project | Image | Port | DB | Tested |
@@ -90,7 +93,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | umami | ghcr.io/umami-software/umami | 3000 | postgres | ✅ |
 | shaper | taleshape/shaper | 8080 | — | ✅ |
 
-## Automation (20)
+## Automation (21)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -113,6 +116,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | cronicle | cronicle/cronicle | 3012 | — | ✅ | |
 | mautic | mautic/mautic | 8080 | mysql | ✅ | web+worker+cron; install wizard |
 
+| hn-briefing-agent | built from source | 8000 | — | | scheduled HN briefing API (Gemini/ADK) |
 ## Backup (2)
 
 | Project | Image | Port | DB | Tested | Notes |
@@ -169,12 +173,13 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | evolution-api | evoapicloud/evolution-api | 8080 | postgres, redis | ✅ | WhatsApp API for n8n |
 | waha | devlikeapro/waha | 3000 | — | | WhatsApp HTTP API |
 
-## Design (1)
+## Design (2)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
 | penpot | penpotapp/penpot-frontend | 9001 | postgres, redis | |
 
+| excaliflow | built from source | 3000 | — | | diagrams with live animated flows |
 ## Dashboard (5)
 
 | Project | Image | Port | DB | Tested |
