@@ -518,19 +518,24 @@ server target. Start here for production.
 | Project             | Type             | Port  | Proxy      | Image Fix / Notes |
 |---------------------|------------------|-------|------------|--------------------|
 | Agent Zero          | AI agent         | 50080 | —          | autonomous agent; generated auth password |
+| ai-mcp-app-builder  | AI app builder   | 3000  | —          | describe an MCP app, get a live sandboxed instance; built from pinned upstream |
 | Archon              | AI assistant     | 3000  | —          | coleam00 stack; needs Claude/OpenAI key at first run |
 | Bolt.diy            | AI codegen       | 5173  | —          | stackblitz-labs; 9 LLM providers via env |
 | Docling Serve       | Doc AI           | 5001  | —          | IBM doc→markdown/chunks API; API-key auth |
 | Evolution API       | WhatsApp API     | 8080  | —          | + postgres + redis; n8n-agency backend |
+| Excaliflow          | Diagrams         | 3000  | —          | Excalidraw-style diagrams with live animated flows |
+| hn-briefing-agent   | AI agent         | 8000  | —          | scheduled HN briefing API (Gemini/ADK); built from pinned upstream |
 | kotaemon            | RAG chat         | 7860  | —          | ⚠ open RCE #844 / IDOR #846 — self-host only, never expose publicly |
 | Langchain-Chatchat  | AI RAG           | 8501  | —          | stale 2024 images; FAISS + xinference |
 | LightRAG            | AI RAG           | 9621  | —          | + postgres + qdrant; no auth by default (upstream) |
 | Local AI Packaged   | AI stack         | 8001  | caddy      | full 28-service upstream stack; deployed (#1363) + baked; Quick Deploy in its README |
+| Local ChatGPT       | AI chat          | 8501  | —          | per-user memory chat (mem0 + qdrant + ollama), fully local |
 | LocalAGI            | AI agent         | 8080  | —          | + LocalAI (CPU) + localrecall postgres |
 | Mautic              | Marketing        | 8080  | —          | web+worker+cron + mysql; first-run wizard |
 | Open Notebook       | Notes            | 8502  | —          | + SurrealDB; default root:root replaced; API on 5055 |
 | OpenAgent           | AI knowledge     | 14000 | —          | ex-Casibase; + mysql |
 | Paperless GPT       | Doc AI           | 8080  | —          | + paperless-ngx + postgres + redis; LLM labels |
+| RAG-as-a-Service    | AI RAG           | 8501  | —          | streamlit RAG demo; API keys entered in UI |
 | PipeShub            | AI knowledge     | 3000  | —          | slim: mongo + redis + qdrant + neo4j |
 | Scriberr            | Transcription    | 8080  | —          | WhisperX; heavy first boot (model download) |
 | Self-hosted AI Kit  | AI stack         | 5678  | —          | official n8n starter: n8n + postgres + ollama + qdrant |
@@ -614,7 +619,7 @@ it, and notes when the author changes only stacks they maintain. A change to a
 | Jitsi Docker guide | https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker/ |
 | Zitadel compose    | https://zitadel.com/docs/self-hosting/deploy/compose     |
 
-Last updated: 2026-10-16 — 288 projects configured, 273 tested and verified on
+Last updated: 2026-10-16 — 293 projects configured, 273 tested and verified on
 Ubuntu 26.04. Proxy support: traefik, caddy, nginx-proxy-manager.
 
 ---

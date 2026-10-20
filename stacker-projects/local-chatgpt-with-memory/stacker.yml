@@ -1,0 +1,97 @@
+name: local-chatgpt-with-memory
+version: "1.0.0"
+
+project:
+  identity: local-chatgpt-with-memory
+
+install:
+  inputs:
+    commonDomain: local-chatgpt.example.com
+
+app:
+  type: custom
+  dockerfile: Dockerfile
+  ports:
+    - "8501:8501"
+  environment:
+    QDRANT_HOST: qdrant
+    OLLAMA_BASE_URL: http://ollama:11434
+  volumes:
+    - chat_memory:/home/appuser/data
+  depends_on:
+    - qdrant
+    - ollama
+  healthcheck:
+    test: "CMD python -c \"import urllib.request as u; u.urlopen('http://localhost:8501/')\""
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    start_period: 30s
+
+services:
+  - name: qdrant
+    image: qdrant/qdrant:v1.19.2
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    healthcheck:
+      test: "CMD-SHELL bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  - name: ollama
+    image: ollama/ollama:0.40.5
+    volumes:
+      - ollama_models:/root/.ollama
+
+volumes:
+  chat_memory: {}
+  qdrant_storage: {}
+  ollama_models: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8501"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        QDRANT_HOST:
+          mutability: editable
+          required: false
+        OLLAMA_BASE_URL:
+          mutability: editable
+          required: false
+      volumes:
+        chat_memory:
+          mutability: generated
+    qdrant:
+      volumes:
+        qdrant_storage:
+          mutability: generated
+    ollama:
+      volumes:
+        ollama_models:
+          mutability: generated
