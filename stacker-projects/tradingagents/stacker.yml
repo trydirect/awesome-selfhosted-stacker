@@ -59,10 +59,6 @@ deploy:
     host: ${DEPLOY_HOST}
     user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
-  registry:
-    username: ${STACKER_DOCKER_USERNAME}
-    password: ${STACKER_DOCKER_PASSWORD}
-    server: docker.io
   cloud:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test
