@@ -35,4 +35,8 @@ RUN useradd --create-home appuser \
 USER appuser
 WORKDIR /home/appuser/app
 
-ENTRYPOINT ["tradingagents"]
+# tradingagents is a one-shot CLI (analysis runs and exits). Keep the
+# container alive so analyses can be launched with:
+#   docker exec -it <container> tradingagents --ticker NVDA --date 2026-10-20 ...
+ENTRYPOINT []
+CMD ["sleep", "infinity"]
