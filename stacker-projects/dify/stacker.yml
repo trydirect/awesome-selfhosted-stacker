@@ -1,17 +1,41 @@
 name: dify
-version: null
+version: "1.0.0"
 organization: null
 project:
   identity: dify
 app:
-  type: static
-  path: ''
+  type: custom
+  image: langgenius/dify-web:latest
+  ports:
+    - "3000:80"
   environment: {}
-  image: null
-  build: null
-  ports: []
   volumes: []
-services: []
+services:
+  - name: api
+    image: langgenius/dify-api:latest
+    ports:
+      - "5001:5001"
+    environment:
+      SECRET_KEY: "${SECRET_KEY}"
+      CONSOLE_API_URL: "https://${commonDomain}"
+      APP_API_URL: "https://${commonDomain}"
+    volumes:
+      - api_storage:/app/api/storage
+    depends_on:
+      - db
+      - redis
+  - name: db
+    image: postgres:15
+    environment:
+      POSTGRES_DB: dify
+      POSTGRES_USER: dify
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  - name: redis
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
 proxy:
   type: none
   auto_detect: false
@@ -51,5 +75,30 @@ monitoring:
   metrics: null
 hooks: {}
 config_contract:
-  services: {}
+  services:
+    app:
+      fields:
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    api:
+      fields:
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 env: {}
+volumes:
+  api_storage: {}
+  db_data: {}
+  redis_data: {}

@@ -88,4 +88,9 @@ hooks:
 env_file: null
 env: {}
 config_contract:
-  services: {}
+  services:
+    stackdog:
+      fields:
+        STACKDOG_AI_API_KEY:
+          mutability: provided
+          display: password

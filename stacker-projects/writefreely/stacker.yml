@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  dockerfile: Dockerfile.custom
+  image: writeas/writefreely:latest
   ports:
     - "8082:8080"
   environment:
@@ -66,6 +66,23 @@ config_contract:
     app:
       fields:
         DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        WF_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    mysql:
+      fields:
+        MYSQL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MYSQL_ROOT_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
