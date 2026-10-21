@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  dockerfile: Dockerfile
+  image: optimum/hn-briefing-agent:1.0.0
   ports:
     - "8000:8000"
   environment:
