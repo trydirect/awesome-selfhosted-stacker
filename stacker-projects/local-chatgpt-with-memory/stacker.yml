@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  dockerfile: Dockerfile
+  image: optimum/local-chatgpt-with-memory:1.0.0
   ports:
     - "8501:8501"
   environment:

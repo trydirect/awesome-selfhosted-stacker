@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  dockerfile: Dockerfile
+  image: optimum/rag-as-a-service:1.0.0
   ports:
     - "8501:8501"
   healthcheck:

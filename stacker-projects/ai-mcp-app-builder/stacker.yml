@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  dockerfile: Dockerfile
+  image: optimum/ai-mcp-app-builder:1.0.0
   ports:
     - "3000:3000"
   environment:
