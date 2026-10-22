@@ -34,7 +34,7 @@ app:
 
 services:
   - name: mysql
-    image: mysql:8
+    image: mysql:8.4
     ports:
       - "127.0.0.1:3306:3306"
     environment:

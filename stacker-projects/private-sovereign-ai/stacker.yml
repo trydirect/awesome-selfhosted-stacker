@@ -83,7 +83,7 @@ services:
   # Ollama — the local LLM runtime. Internal-only, reached from Open WebUI
   # via the docker DNS alias sovereign-ai-ollama:11434.
   - name: sovereign-ai-ollama
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.3.12
     environment: {}
     volumes:
       - sovereign_ai_ollama:/root/.ollama

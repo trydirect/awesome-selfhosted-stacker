@@ -27,7 +27,7 @@ app:
   healthcheck: null
 services:
 - name: strapi_db
-  image: postgres:16-alpine
+  image: postgres:16.4-alpine
   ports:
   - "127.0.0.1:5432:5432"
   environment:

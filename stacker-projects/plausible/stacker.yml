@@ -22,7 +22,7 @@ app:
   healthcheck: null
 services:
 - name: plausible_db
-  image: postgres:16-alpine
+  image: postgres:16.4-alpine
   ports: []
   environment:
     POSTGRES_PASSWORD: ${DB_PASSWORD}

@@ -13,7 +13,7 @@ install:
 # rather than hardcoded. See SECRETS.md.
 app:
   type: custom
-  image: vaultwarden/server:latest
+  image: vaultwarden/server:1.32.0
   ports:
     - "8080:80"
   environment:

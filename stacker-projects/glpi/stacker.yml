@@ -20,7 +20,7 @@ app:
 
 services:
   - name: db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: glpi
       POSTGRES_USER: glpi

@@ -30,7 +30,7 @@ services:
   volumes:
   - postgres_data:/var/lib/postgresql/data
 - name: redis
-  image: redis:7-alpine
+  image: redis:7.4-alpine
   ports:
   - "127.0.0.1:6380:6379"
   environment: {}

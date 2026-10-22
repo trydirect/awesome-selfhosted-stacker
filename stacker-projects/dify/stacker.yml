@@ -33,7 +33,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     volumes:
       - redis_data:/data
 proxy:

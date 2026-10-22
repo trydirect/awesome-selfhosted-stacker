@@ -113,7 +113,7 @@ app:
 
 services:
   - name: ai-workflows-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: flowise
       POSTGRES_USER: flowise
@@ -127,7 +127,7 @@ services:
       retries: 10
 
   - name: ai-workflows-redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     healthcheck:
       test: CMD redis-cli ping
       interval: 10s
@@ -135,14 +135,14 @@ services:
       retries: 10
 
   - name: ai-workflows-ollama
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.3.12
     ports:
       - "11435:11434"
     volumes:
       - ai_workflows_ollama:/root/.ollama
 
   - name: ai-workflows-n8n
-    image: n8nio/n8n:latest
+    image: n8nio/n8n:1.64.0
     ports:
       - "5679:5678"
     environment:

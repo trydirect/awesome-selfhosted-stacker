@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: vaultwarden/server:latest
+  image: vaultwarden/server:1.32.0
   ports:
     - "80:80"
     - "3012:3012"
@@ -28,7 +28,7 @@ app:
 
 services:
   - name: bitwarden_db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: bitwarden
       POSTGRES_USER: bitwarden

@@ -12,7 +12,7 @@ app:
 
 services:
   - name: nocodb-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: nocodb
       POSTGRES_USER: nocodb

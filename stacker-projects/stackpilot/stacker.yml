@@ -89,7 +89,7 @@ services:
       retries: 10
 
   - name: stackpilot-redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     healthcheck:
       test: CMD redis-cli ping
       interval: 10s
@@ -97,14 +97,14 @@ services:
       retries: 10
 
   - name: stackpilot-ollama
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.3.12
     volumes:
       - stackpilot_ollama:/root/.ollama
     ports:
       - "11434:11434"
 
   - name: stackpilot-n8n
-    image: n8nio/n8n:latest
+    image: n8nio/n8n:1.64.0
     ports:
       - "5678:5678"
     environment:

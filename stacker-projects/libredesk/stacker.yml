@@ -36,7 +36,7 @@ services:
       timeout: 5s
       retries: 6
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     healthcheck:
       test: "CMD redis-cli ping"
       interval: 10s

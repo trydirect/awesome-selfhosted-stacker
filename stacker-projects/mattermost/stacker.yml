@@ -18,7 +18,7 @@ app:
 
 services:
   - name: mattermost-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: mattermost
       POSTGRES_USER: mattermost

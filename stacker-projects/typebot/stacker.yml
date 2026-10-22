@@ -23,7 +23,7 @@ app:
 
 services:
   - name: typebot-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: typebot
       POSTGRES_USER: typebot

@@ -82,7 +82,7 @@ services:
       timeout: 5s
       retries: 10
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     volumes:
       - paperless_redis:/data
     healthcheck:

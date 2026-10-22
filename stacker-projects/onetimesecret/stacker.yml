@@ -17,7 +17,7 @@ app:
 
 services:
   - name: onetimesecret-redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     volumes:
       - ots_redis:/data
     healthcheck:
