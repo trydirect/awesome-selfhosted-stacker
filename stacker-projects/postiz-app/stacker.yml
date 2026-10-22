@@ -67,7 +67,7 @@ app:
     NX_ADD_PLUGINS: 'false'
 services:
 - name: postiz-postgres
-  image: postgres:17-alpine
+  image: postgres:17.0-alpine
   environment:
     POSTGRES_DB: postiz-db-local
     POSTGRES_USER: postiz-user

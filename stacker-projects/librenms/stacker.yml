@@ -29,7 +29,7 @@ app:
 
 services:
   - name: db
-    image: mariadb:11
+    image: mariadb:11.4
     environment:
       MARIADB_DATABASE: librenms
       MARIADB_USER: librenms

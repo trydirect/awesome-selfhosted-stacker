@@ -10,7 +10,7 @@ install:
 
 app:
   type: php
-  image: matomo:latest
+  image: matomo:5.1:5.1
   ports:
     - "8080:80"
   environment:
@@ -25,7 +25,7 @@ app:
 
 services:
   - name: matomo_db
-    image: mariadb:11.4
+    image: mariadb:11.4.4
     environment:
       MARIADB_DATABASE: matomo
       MARIADB_USER: matomo

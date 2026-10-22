@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: pihole/pihole:latest
+  image: pihole/pihole:2024.07.0
   build: null
   ports:
   - "8080:80"

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: appwrite/appwrite:latest
+  image: appwrite/appwrite:1.6.0
   ports:
     - "80:80"
     - "443:443"
@@ -32,7 +32,7 @@ app:
 
 services:
   - name: mariadb
-    image: mariadb:11
+    image: mariadb:11.4
     ports:
       - "127.0.0.1:3306:3306"
     environment:

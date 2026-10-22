@@ -38,7 +38,7 @@ app:
 
 services:
   - name: db
-    image: mysql:lts
+    image: mysql:8.4
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: mautic_db

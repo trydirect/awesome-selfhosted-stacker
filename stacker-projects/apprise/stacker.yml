@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: caronc/apprise:latest
+  image: caronc/apprise:1.8.0
   ports:
     - "8000:8000"
   environment:

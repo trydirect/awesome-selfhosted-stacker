@@ -2,7 +2,7 @@ name: mattermost
 
 app:
   type: custom
-  image: mattermost/mattermost-enterprise-edition:latest
+  image: mattermost/mattermost-enterprise-edition:9.11
   ports:
     - "8065:8065"
   environment:

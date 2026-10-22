@@ -25,7 +25,7 @@ app:
   healthcheck: null
 services:
 - name: nextcloud_db
-  image: mariadb:11.4
+  image: mariadb:11.4.4
   ports:
   - "127.0.0.1:3306:3306"
   environment:

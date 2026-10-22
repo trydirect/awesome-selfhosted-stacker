@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: apache/airflow:latest
+  image: apache/airflow:2.10.2
   ports:
     - "8080:8080"
   environment:

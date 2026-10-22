@@ -21,7 +21,7 @@ app:
   healthcheck: null
 services:
   - name: proxy-manager
-    image: jc21/nginx-proxy-manager:latest
+    image: jc21/nginx-proxy-manager:2.11.3
     ports:
       - "80:80"
       - "443:443"

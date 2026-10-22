@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: emby/embyserver:latest
+  image: emby/embyserver:4.8.10
   ports:
     - "8096:8096"
     - "8920:8920"

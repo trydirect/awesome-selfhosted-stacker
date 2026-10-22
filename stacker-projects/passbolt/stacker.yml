@@ -13,7 +13,7 @@ install:
 
 app:
   type: custom
-  image: passbolt/passbolt:latest
+  image: passbolt/passbolt:4.8.0
   ports:
     - "8443:443"
   environment:
@@ -36,7 +36,7 @@ app:
 
 services:
   - name: postgres
-    image: mariadb:11
+    image: mariadb:11.4
     environment:
       MYSQL_DATABASE: passbolt
       MYSQL_USER: passbolt
@@ -46,7 +46,7 @@ services:
       - "passbolt-mysql:/var/lib/mysql"
 
   - name: mailcatcher
-    image: sj26/mailcatcher:latest
+    image: sj26/mailcatcher:0.9.0
     ports:
       - "1080:1080"
 

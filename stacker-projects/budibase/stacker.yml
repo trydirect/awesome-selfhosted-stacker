@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: budibase/budibase:latest
+  image: budibase/budibase:v3.1.1
   ports:
     - "80:80"
   environment:

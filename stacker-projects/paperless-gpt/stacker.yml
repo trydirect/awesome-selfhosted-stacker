@@ -69,7 +69,7 @@ services:
       timeout: 10s
       retries: 5
   - name: paperless_db
-    image: postgres:18-alpine
+    image: postgres:18.0-alpine
     environment:
       POSTGRES_USER: paperless
       POSTGRES_PASSWORD: ${DB_PASSWORD}

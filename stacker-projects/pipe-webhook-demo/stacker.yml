@@ -19,7 +19,7 @@ install:
 # SOURCE — apprise notification gateway (REST API on :8000)
 app:
   type: custom
-  image: caronc/apprise:latest
+  image: caronc/apprise:1.8.0
   ports:
     - "8000:8000"
   environment:
@@ -31,7 +31,7 @@ app:
 services:
   # TARGET — ntfy webhook sink (POST /{topic} publishes; GET /{topic}/json reads)
   - name: ntfy
-    image: binwiederhier/ntfy:latest
+    image: binwiederhier/ntfy:v2.8
     command: serve
     ports:
       - "8080:80"

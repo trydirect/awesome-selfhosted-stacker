@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: baserow/baserow:latest
+  image: baserow/baserow:1.28.2
   ports:
     - "80:80"
     - "443:443"

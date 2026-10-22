@@ -68,7 +68,7 @@ hooks:
 
 app:
   type: custom
-  image: flowiseai/flowise:latest
+  image: flowiseai/flowise:2.1.3
   ports:
     - "3001:3000"
   environment:

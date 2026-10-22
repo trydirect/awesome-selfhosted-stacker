@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: appsmith/appsmith-ce:latest
+  image: appsmith/appsmith-ce:v1.50
   ports:
     - "8080:80"
     - "8443:443"

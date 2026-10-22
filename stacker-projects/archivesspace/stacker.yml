@@ -9,7 +9,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "archivesspace/archivesspace:latest"
+  image: "archivesspace/archivesspace:3.5.1"
   command: >-
     sh -c "/archivesspace/scripts/setup-database.sh && exec /archivesspace/archivesspace.sh"
   ports:
@@ -44,7 +44,7 @@ services:
       timeout: "5s"
       retries: 10
   - name: "solr"
-    image: "archivesspace/solr:latest"
+    image: "archivesspace/solr:3.5.1"
     command: "solr-create -p 8983 -c archivesspace -d archivesspace"
     volumes:
       - "archivesspace_solr:/var/solr"

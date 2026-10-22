@@ -35,7 +35,7 @@ hooks:
 
 app:
   type: custom
-  image: ghcr.io/open-webui/open-webui:main
+  image: ghcr.io/open-webui/open-webui:v0.3.32
   # No host port publish — traffic reaches this container only via
   # the NPM reverse proxy on 443. Internal docker port stays 8080.
   environment:

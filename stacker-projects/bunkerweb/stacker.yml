@@ -2,7 +2,7 @@ name: bunkerweb
 
 app:
   type: custom
-  image: bunkerity/bunkerweb:latest
+  image: bunkerity/bunkerweb:1.5.13
   ports:
     - "80:80/tcp"
     - "443:443/tcp"

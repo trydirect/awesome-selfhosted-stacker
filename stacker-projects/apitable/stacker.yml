@@ -2,7 +2,7 @@ name: apitable
 
 app:
   type: custom
-  image: apitable/all-in-one:latest
+  image: apitable/all-in-one:1.2.3
   ports:
     - "8084:80/tcp"
   environment:
