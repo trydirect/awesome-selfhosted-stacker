@@ -104,13 +104,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
     synapse_db:
       fields:
         POSTGRES_PASSWORD:

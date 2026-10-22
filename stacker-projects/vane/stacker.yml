@@ -60,13 +60,5 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        OPENAI_API_KEY:
-          mutability: provided
-          display: password
         OPENAI_BASE_URL:
           mutability: editable
-      volumes:
-        vane_data:
-          mutability: generated

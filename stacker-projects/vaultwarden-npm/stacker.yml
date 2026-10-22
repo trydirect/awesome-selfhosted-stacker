@@ -56,13 +56,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        ADMIN_TOKEN:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DOMAIN:
           mutability: editable
         SIGNUPS_ALLOWED:

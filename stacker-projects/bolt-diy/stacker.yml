@@ -106,32 +106,3 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        ANTHROPIC_API_KEY:
-          mutability: provided
-          display: password
-        GOOGLE_GENERATIVE_AI_API_KEY:
-          mutability: provided
-          display: password
-        GROQ_API_KEY:
-          mutability: provided
-          display: password
-        HuggingFace_API_KEY:
-          mutability: provided
-          display: password
-        OPENAI_API_KEY:
-          mutability: provided
-          display: password
-        OPEN_ROUTER_API_KEY:
-          mutability: provided
-          display: password
-        TOGETHER_API_KEY:
-          mutability: provided
-          display: password
-        XAI_API_KEY:
-          mutability: provided
-          display: password
-      volumes:
-        bolt_diy_data:
-          mutability: generated

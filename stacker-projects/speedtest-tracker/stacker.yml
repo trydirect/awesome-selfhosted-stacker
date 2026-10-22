@@ -36,13 +36,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        APP_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         PGID:
           mutability: editable
         PUID:

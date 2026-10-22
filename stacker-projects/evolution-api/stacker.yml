@@ -96,13 +96,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        AUTHENTICATION_API_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         CACHE_REDIS_ENABLED:
           mutability: editable
         CACHE_REDIS_URI:
@@ -125,9 +118,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        evolution_instances:
-          mutability: generated
     postgres:
       fields:
         POSTGRES_DB:

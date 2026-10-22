@@ -79,13 +79,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        MATOMO_DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
@@ -96,7 +89,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
     matomo_db:
       fields:
         MARIADB_PASSWORD:

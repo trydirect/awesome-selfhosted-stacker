@@ -34,40 +34,13 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    postgres:
-      fields:
-        POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-    app:
-      fields:
         MEILI_MASTER_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        ENCRYPTION_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        REDIS_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        STORAGE_ENCRYPTION_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
+    postgres:
+      fields:
         POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric

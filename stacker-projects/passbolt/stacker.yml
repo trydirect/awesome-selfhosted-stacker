@@ -92,19 +92,12 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         APP_FULL_BASE_URL:
           mutability: editable
         DATASOURCES_DEFAULT_DATABASE:
           mutability: editable
         DATASOURCES_DEFAULT_HOST:
           mutability: editable
-        DATASOURCES_DEFAULT_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DATASOURCES_DEFAULT_PORT:
           mutability: editable
         DATASOURCES_DEFAULT_USERNAME:
@@ -123,11 +116,6 @@ config_contract:
           mutability: provided
         PASSBOLT_GPG_SERVER_KEY_PATH:
           mutability: provided
-      volumes:
-        passbolt-gpg:
-          mutability: generated
-        passbolt-images:
-          mutability: generated
     postgres:
       fields:
         MYSQL_DATABASE:

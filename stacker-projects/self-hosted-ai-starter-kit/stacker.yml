@@ -126,35 +126,18 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         DB_TYPE:
           mutability: editable
         DB_POSTGRESDB_HOST:
           mutability: editable
         DB_POSTGRESDB_USER:
           mutability: editable
-        DB_POSTGRESDB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DB_POSTGRESDB_DATABASE:
           mutability: editable
         N8N_DIAGNOSTICS_ENABLED:
           mutability: editable
         N8N_PERSONALIZATION_ENABLED:
           mutability: editable
-        N8N_ENCRYPTION_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        N8N_USER_MANAGEMENT_JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         N8N_DEFAULT_BINARY_DATA_MODE:
           mutability: editable
         OLLAMA_HOST:
@@ -173,11 +156,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        n8n_storage:
-          mutability: generated
-        n8n_shared:
-          mutability: generated
     postgres:
       fields:
         POSTGRES_USER:

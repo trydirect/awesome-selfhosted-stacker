@@ -136,31 +136,14 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         ACCOUNTS_URL:
           mutability: editable
-        AUTH_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DB_URL:
           mutability: editable
         GITHUB_APP_NAME:
           mutability: editable
         GITHUB_CLIENT_ID:
           mutability: editable
-        GITHUB_CLIENT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        GITHUB_PRIVATE_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         GITHUB_WEBHOOK_URL:
           mutability: editable
         REDIS_URL:
@@ -171,16 +154,8 @@ config_contract:
           mutability: editable
         TELEGRAM_API_ID:
           mutability: editable
-        TELEGRAM_API_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         UPLOAD_URL:
           mutability: editable
-      volumes:
-        huly-files:
-          mutability: generated
     huly-account:
       fields:
         ACCOUNTS_PORT:

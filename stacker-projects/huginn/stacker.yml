@@ -95,24 +95,12 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        APP_SECRET_TOKEN:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DATABASE_ADAPTER:
           mutability: editable
         DATABASE_HOST:
           mutability: editable
         DATABASE_NAME:
           mutability: editable
-        DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DATABASE_PORT:
           mutability: editable
           display: number
@@ -122,11 +110,6 @@ config_contract:
           mutability: editable
         HUGINN_DATABASE_NAME:
           mutability: editable
-        HUGINN_DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         HUGINN_DATABASE_USERNAME:
           mutability: editable
         command:

@@ -80,21 +80,8 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         APP_ENV:
           mutability: editable
-        HF_TOKEN:
-          mutability: provided
-          display: password
-        JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        OPENAI_API_KEY:
-          mutability: provided
-          display: password
         PGID:
           mutability: editable
           display: number
@@ -117,8 +104,3 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        scriberr_data:
-          mutability: generated
-        scriberr_env:
-          mutability: generated

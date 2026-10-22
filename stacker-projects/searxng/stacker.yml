@@ -52,8 +52,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         SEARXNG_BASE_URL:
           mutability: editable
         SEARXNG_RATELIMIT:
@@ -62,11 +60,3 @@ config_contract:
           mutability: editable
         SEARXNG_RATE_LIMIT_PER_IP:
           mutability: editable
-        SEARXNG_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-      volumes:
-        searxng-data:
-          mutability: generated

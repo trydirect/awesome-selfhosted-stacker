@@ -124,13 +124,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
     posthog_db:
       fields:
         POSTGRES_PASSWORD:

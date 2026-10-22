@@ -82,22 +82,10 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        ESPOCRM_ADMIN_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         ESPOCRM_DATABASE_HOST:
           mutability: editable
         ESPOCRM_DATABASE_NAME:
           mutability: editable
-        ESPOCRM_DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         ESPOCRM_DATABASE_PLATFORM:
           mutability: editable
         ESPOCRM_DATABASE_PORT:

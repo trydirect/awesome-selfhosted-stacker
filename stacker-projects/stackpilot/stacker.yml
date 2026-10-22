@@ -22,18 +22,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        ADMIN_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
     stackpilot-db:
       fields:
         POSTGRES_PASSWORD:

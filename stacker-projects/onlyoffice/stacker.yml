@@ -33,27 +33,15 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         JWT_ENABLED:
           mutability: editable
         JWT_HEADER:
           mutability: editable
         JWT_HEADER_SCHEMA:
           mutability: editable
-        JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         ONLYOFFICE_EXAMPLE:
           mutability: editable
         ONLYOFFICE_SAMPLE:
           mutability: editable
         WOPI_ENABLED:
           mutability: editable
-      volumes:
-        onlyoffice-data:
-          mutability: generated
-        onlyoffice-logs:
-          mutability: generated

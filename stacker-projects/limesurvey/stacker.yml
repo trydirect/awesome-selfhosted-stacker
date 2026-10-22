@@ -82,13 +82,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        LIMESURVEY_ADMIN_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         LIMESURVEY_ADMIN_USERNAME:
           mutability: editable
         LIMESURVEY_AUTH_MODE:
@@ -103,11 +96,6 @@ config_contract:
           mutability: editable
         LIMESURVEY_DBUSER:
           mutability: editable
-      volumes:
-        limesurvey-uploads:
-          mutability: generated
-        limesurvey-config:
-          mutability: generated
     mysql:
       fields:
         MYSQL_DATABASE:

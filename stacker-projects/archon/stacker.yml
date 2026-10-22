@@ -85,27 +85,11 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         ARCHON_DOCKER:
           mutability: editable
         PORT:
           mutability: editable
           display: number
-        WEBHOOK_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        TOKEN_ENCRYPTION_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        CLAUDE_CODE_OAUTH_TOKEN:
-          mutability: provided
-        CLAUDE_API_KEY:
-          mutability: provided
         healthcheck:
           mutability: editable
         interval:
@@ -120,8 +104,3 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        archon_data:
-          mutability: generated
-        archon_user_home:
-          mutability: generated

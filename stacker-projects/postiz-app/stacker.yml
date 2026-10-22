@@ -14,26 +14,19 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    temporal-postgresql:
-      fields:
-        POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-    app:
-      fields:
-        JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
         TEMPORAL_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    temporal-postgresql:
+      fields:
+        POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32

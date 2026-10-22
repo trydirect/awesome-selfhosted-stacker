@@ -14,16 +14,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        Authentication__Password:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-      volumes:
-        mailarchiver_keys: { mutability: generated }
-        mailarchiver_postgres_data: { mutability: generated }
     postgres:
       fields:
         POSTGRES_PASSWORD:

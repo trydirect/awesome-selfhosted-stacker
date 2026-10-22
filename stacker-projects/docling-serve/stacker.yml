@@ -63,13 +63,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        DOCLING_SERVE_API_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DOCLING_SERVE_ENABLE_UI:
           mutability: editable
         healthcheck:
@@ -86,6 +79,3 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        docling_cache:
-          mutability: generated

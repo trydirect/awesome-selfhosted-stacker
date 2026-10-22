@@ -69,30 +69,18 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         NODE_ENV:
           mutability: editable
         PEERTUBE_DB_HOST:
           mutability: editable
         PEERTUBE_DB_NAME:
           mutability: editable
-        PEERTUBE_DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         PEERTUBE_DB_PORT:
           mutability: editable
         PEERTUBE_DB_USER:
           mutability: editable
         PEERTUBE_REDIS_HOST:
           mutability: editable
-        PEERTUBE_REDIS_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         PEERTUBE_REDIS_PORT:
           mutability: editable
         PEERTUBE_SMTP_FROM:
@@ -109,11 +97,6 @@ config_contract:
           mutability: editable
         PEERTUBE_WEBSERVER_PORT:
           mutability: editable
-      volumes:
-        peertube-data:
-          mutability: generated
-        peertube-config:
-          mutability: generated
     postgres:
       fields:
         POSTGRES_DB:

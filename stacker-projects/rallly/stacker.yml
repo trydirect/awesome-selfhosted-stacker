@@ -59,8 +59,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         DATABASE_URL:
           mutability: generated
           type: alphanumeric
@@ -68,9 +66,6 @@ config_contract:
           display: password
         NEXT_PUBLIC_BASE_URL:
           mutability: editable
-        SECRET_PASSWORD:
-          mutability: generated
-          type: alphanumeric
         SUPPORT_EMAIL:
           mutability: editable
           length: 32

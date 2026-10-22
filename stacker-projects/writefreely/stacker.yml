@@ -70,14 +70,7 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        WF_DB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32

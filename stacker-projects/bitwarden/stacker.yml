@@ -71,8 +71,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         SHOW_PASSWORD_HINT:
           mutability: provided
         DB_PASSWORD:
@@ -80,12 +78,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        ADMIN_TOKEN:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-
     bitwarden_db:
       fields:
         POSTGRES_PASSWORD:

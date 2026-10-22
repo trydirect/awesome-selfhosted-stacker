@@ -135,6 +135,13 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        VAPID_PUBLIC_KEY:
+          mutability: provided
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     sidekiq:
       fields:
         ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY:
@@ -157,46 +164,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        VAPID_PUBLIC_KEY:
-          mutability: provided
-        ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        SECRET_KEY_BASE:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        OTP_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        VAPID_PRIVATE_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-
     mastodon_db:
       fields:
         POSTGRES_PASSWORD:

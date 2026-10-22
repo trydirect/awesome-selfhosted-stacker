@@ -102,8 +102,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         _APP_DB_HOST:
           mutability: editable
         _APP_DB_PASS:
@@ -122,11 +120,6 @@ config_contract:
           mutability: editable
         _APP_DOMAIN_TARGET:
           mutability: editable
-        _APP_OPENSSL_KEY_V1:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         _APP_REDIS_HOST:
           mutability: editable
         _APP_REDIS_PORT:

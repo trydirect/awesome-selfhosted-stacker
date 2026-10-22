@@ -85,13 +85,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        ENCRYPTION_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         NODE_PORT:
           mutability: editable
           display: number
@@ -115,9 +108,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        twenty_data:
-          mutability: generated
     db:
       fields:
         POSTGRES_DB:

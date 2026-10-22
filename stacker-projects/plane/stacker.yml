@@ -130,20 +130,12 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        AWS_ACCESS_KEY_ID:
-          mutability: provided
-          display: string
         AWS_REGION:
           mutability: editable
         AWS_S3_BUCKET_NAME:
           mutability: editable
         AWS_S3_ENDPOINT_URL:
           mutability: editable
-        AWS_SECRET_ACCESS_KEY:
-          mutability: provided
-          display: password
         AMQP_URL:
           mutability: editable
         DATABASE_URL:
@@ -152,10 +144,6 @@ config_contract:
           mutability: editable
         REDIS_URL:
           mutability: editable
-        SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          display: password
         USE_MINIO:
           mutability: editable
         healthcheck:
@@ -172,9 +160,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        plane_data:
-          mutability: generated
     db:
       fields:
         POSTGRES_DB:

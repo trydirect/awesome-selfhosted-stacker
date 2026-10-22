@@ -129,8 +129,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         HOST:
           mutability: editable
         PORT:
@@ -157,11 +155,6 @@ config_contract:
           display: number
         POSTGRES_USER:
           mutability: editable
-        POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         POSTGRES_DATABASE:
           mutability: editable
         QDRANT_URL:
@@ -170,18 +163,12 @@ config_contract:
           mutability: editable
         LLM_BINDING_HOST:
           mutability: editable
-        LLM_BINDING_API_KEY:
-          mutability: provided
-          display: password
         LLM_MODEL:
           mutability: editable
         EMBEDDING_BINDING:
           mutability: editable
         EMBEDDING_BINDING_HOST:
           mutability: editable
-        EMBEDDING_BINDING_API_KEY:
-          mutability: provided
-          display: password
         EMBEDDING_MODEL:
           mutability: editable
         EMBEDDING_DIM:
@@ -201,13 +188,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        lightrag_data:
-          mutability: generated
-        lightrag_inputs:
-          mutability: generated
-        lightrag_prompts:
-          mutability: generated
     postgres:
       fields:
         POSTGRES_DB:

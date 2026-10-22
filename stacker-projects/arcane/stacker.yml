@@ -70,20 +70,8 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         APP_URL:
           mutability: editable
-        ENCRYPTION_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         TZ:
           mutability: editable
         healthcheck:

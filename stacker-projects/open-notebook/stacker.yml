@@ -104,33 +104,10 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        OPEN_NOTEBOOK_ENCRYPTION_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        OPEN_NOTEBOOK_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         SURREAL_USER:
           mutability: generated
           type: alphanumeric
           length: 32
-          display: password
-        SURREAL_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        ANTHROPIC_API_KEY:
-          mutability: provided
-          display: password
-        OPENAI_API_KEY:
-          mutability: provided
           display: password
         SURREAL_URL:
           mutability: editable
@@ -152,9 +129,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        open_notebook_data:
-          mutability: generated
     surrealdb:
       fields:
         command:

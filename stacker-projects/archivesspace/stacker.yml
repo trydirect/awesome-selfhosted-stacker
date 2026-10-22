@@ -100,45 +100,18 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         APPCONFIG_BACKEND_URL:
           mutability: editable
         APPCONFIG_DB_URL:
           mutability: editable
-        APPCONFIG_FRONTEND_COOKIE_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         APPCONFIG_FRONTEND_PROXY_URL:
           mutability: editable
         APPCONFIG_OAI_PROXY_URL:
           mutability: editable
-        APPCONFIG_PUBLIC_COOKIE_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         APPCONFIG_PUBLIC_PROXY_URL:
           mutability: editable
-        APPCONFIG_PUBLIC_USER_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        APPCONFIG_SEARCH_USER_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         APPCONFIG_SOLR_URL:
           mutability: editable
-        APPCONFIG_STAFF_USER_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         JAVA_OPTS:
           mutability: editable
     db:

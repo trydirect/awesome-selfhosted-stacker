@@ -83,15 +83,8 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         ASPNETCORE_URLS:
           mutability: editable
-        AUTH_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         BASE_URL:
           mutability: editable
         CLICKHOUSE_URL:

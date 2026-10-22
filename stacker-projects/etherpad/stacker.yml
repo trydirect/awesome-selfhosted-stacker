@@ -63,15 +63,8 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         ABIWORD:
           mutability: editable
-        ADMIN_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         ALLOW_UNKNOWN_FILE_ENDS:
           mutability: editable
         DB_DIR:
@@ -104,17 +97,9 @@ config_contract:
           mutability: editable
         TRUST_PROXY:
           mutability: editable
-        USER_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         automaticReconnectionTimeout:
           mutability: editable
         loadTest:
           mutability: editable
         loglevel:
           mutability: editable
-      volumes:
-        etherpad-data:
-          mutability: generated

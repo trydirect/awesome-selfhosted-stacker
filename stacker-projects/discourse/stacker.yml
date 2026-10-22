@@ -88,18 +88,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        DISCOURSE_SMTP_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        DISCOURSE_DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric

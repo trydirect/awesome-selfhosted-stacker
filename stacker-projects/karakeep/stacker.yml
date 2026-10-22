@@ -90,19 +90,12 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         DATABASE_URL:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
         MEILI_MASTER_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        NEXTAUTH_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32

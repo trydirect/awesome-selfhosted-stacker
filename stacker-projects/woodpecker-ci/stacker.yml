@@ -52,20 +52,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    woodpecker-agent:
-      fields:
-        WOODPECKER_AGENT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-    app:
-      fields:
-        WOODPECKER_AGENT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         WOODPECKER_GITEA:
           mutability: editable
         WOODPECKER_GITHUB:
@@ -78,6 +64,11 @@ config_contract:
           mutability: editable
     woodpecker-agent:
       fields:
+        WOODPECKER_AGENT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         WOODPECKER_SERVER:
           mutability: editable
         depends_on:

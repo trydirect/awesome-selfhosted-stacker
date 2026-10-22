@@ -36,28 +36,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        FLOWISE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        APIKEY_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        SECRETKEY_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         N8N_PASSWORD:
           mutability: generated
           type: alphanumeric

@@ -69,14 +69,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        OPENAI_API_KEY:
-          mutability: provided
-          display: password
-        KH_FEATURE_USER_MANAGEMENT_PASSWORD:
-          mutability: provided
-          display: password
         ADMIN_USERNAME:
           mutability: generated
           type: alphanumeric
@@ -100,6 +92,3 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        kotaemon_data:
-          mutability: generated

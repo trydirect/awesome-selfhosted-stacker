@@ -77,13 +77,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        PHOTOPRISM_ADMIN_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         PHOTOPRISM_ADMIN_USER:
           mutability: editable
         PHOTOPRISM_AUTH_MODE:
@@ -94,11 +87,6 @@ config_contract:
           mutability: editable
         PHOTOPRISM_DATABASE_NAME:
           mutability: editable
-        PHOTOPRISM_DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         PHOTOPRISM_DATABASE_SERVER:
           mutability: editable
         PHOTOPRISM_DATABASE_USER:
@@ -111,10 +99,3 @@ config_contract:
           mutability: editable
         PHOTOPRISM_SITE_URL:
           mutability: editable
-      volumes:
-        photoprism-storage:
-          mutability: generated
-        photoprism-originals:
-          mutability: generated
-        photoprism-import:
-          mutability: generated

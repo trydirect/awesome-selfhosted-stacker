@@ -87,18 +87,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        LEMMY_JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        LEMMY_DEFAULT_ADMIN_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric

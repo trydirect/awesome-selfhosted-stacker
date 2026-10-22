@@ -86,10 +86,3 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        WEBPASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password

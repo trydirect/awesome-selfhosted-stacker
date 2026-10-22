@@ -85,15 +85,8 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         AIRFLOW__CORE__EXECUTOR:
           mutability: editable
-        AIRFLOW__CORE__FERNET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         AIRFLOW__DATABASE__SQL_ALCHEMY_CONN:
           mutability: generated
           type: alphanumeric
@@ -101,11 +94,6 @@ config_contract:
           display: password
         AIRFLOW__WEBSERVER__EXPOSE_CONFIG:
           mutability: editable
-        AIRFLOW__WEBSERVER__SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         command:
           mutability: editable
         volumes:

@@ -77,16 +77,9 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         BASE_URL:
           mutability: editable
         DATABASE_URL:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        SECRET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32

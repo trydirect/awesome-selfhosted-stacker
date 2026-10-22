@@ -62,15 +62,8 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         EMBEDDING_ENGINE:
           mutability: editable
-        JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         LLM_PROVIDER:
           mutability: editable
         OPEN_AI_KEY:

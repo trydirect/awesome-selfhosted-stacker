@@ -49,19 +49,11 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        DJANGO_SUPERUSER_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         ADMIN_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

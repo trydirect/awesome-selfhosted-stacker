@@ -72,13 +72,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        SEMAPHORE_ADMIN_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
@@ -89,7 +82,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
     postgres:
       fields:
         POSTGRES_PASSWORD:

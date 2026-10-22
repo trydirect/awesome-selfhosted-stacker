@@ -72,8 +72,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         DATABASE_URL:
           mutability: generated
           type: alphanumeric
@@ -90,11 +88,6 @@ config_contract:
           mutability: editable
         REDIS_URL:
           mutability: editable
-        SECRET_KEY_BASE:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
     chatwoot-db:
       fields:
         POSTGRES_DB:

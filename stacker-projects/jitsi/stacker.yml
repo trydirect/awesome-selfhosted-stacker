@@ -116,6 +116,31 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        JICOFO_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JVB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JIGASI_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JIBRI_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JICOFO_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     jicofo:
       fields:
         JICOFO_AUTH_PASSWORD:
@@ -162,55 +187,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        JIGASI_XMPP_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JVB_AUTH_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JICOFO_COMPONENT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JIBRI_XMPP_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JICOFO_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JVB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JIGASI_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JIBRI_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JICOFO_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-    prosody:
-      fields:
         JICOFO_AUTH_PASSWORD:
           mutability: generated
           type: alphanumeric

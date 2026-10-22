@@ -17,14 +17,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        WEBUI_SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

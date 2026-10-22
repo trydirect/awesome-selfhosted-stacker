@@ -77,17 +77,10 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         OPENPROJECT_DB__POSTGRESQL__DATABASE:
           mutability: editable
         OPENPROJECT_DB__POSTGRESQL__HOST:
           mutability: editable
-        OPENPROJECT_DB__POSTGRESQL__PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         OPENPROJECT_DB__POSTGRESQL__PORT:
           mutability: editable
         OPENPROJECT_DB__POSTGRESQL__USERNAME:
@@ -104,16 +97,6 @@ config_contract:
           mutability: editable
         OPENPROJECT_RAILS__RELATIVE__URL__ROOT:
           mutability: editable
-        OPENPROJECT_SECRET_KEY_BASE:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-      volumes:
-        openproject-assets:
-          mutability: generated
-        openproject-logs:
-          mutability: generated
     openproject-worker:
       fields:
         OPENPROJECT_DB__POSTGRESQL__DATABASE:

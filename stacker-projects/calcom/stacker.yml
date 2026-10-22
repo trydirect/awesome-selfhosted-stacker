@@ -76,13 +76,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        CALCOM_ENCRYPTION_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         CALCOM_TIMEZONE:
           mutability: editable
         DATABASE_URL:
@@ -105,9 +98,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        calcom_data:
-          mutability: generated
     db:
       fields:
         POSTGRES_DB:

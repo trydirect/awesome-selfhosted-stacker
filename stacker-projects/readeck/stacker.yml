@@ -75,16 +75,9 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         READECK_DATABASE_DRIVER:
           mutability: editable
         READECK_DATABASE_SOURCE:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        READECK_SECRET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32

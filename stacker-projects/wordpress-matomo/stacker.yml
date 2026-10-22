@@ -82,17 +82,10 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         WORDPRESS_DB_HOST:
           mutability: editable
         WORDPRESS_DB_NAME:
           mutability: editable
-        WORDPRESS_DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         WORDPRESS_DB_USER:
           mutability: editable
         WORDPRESS_DEBUG:

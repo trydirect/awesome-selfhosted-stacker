@@ -94,8 +94,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
         KESTRA_CONFIGURATION:
           mutability: editable
         command:
@@ -106,11 +104,6 @@ config_contract:
           mutability: editable
         local:
           mutability: editable
-        password:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         path:
           mutability: editable
         postgres:

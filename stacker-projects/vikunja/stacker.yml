@@ -80,18 +80,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        VIKUNJA_DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        VIKUNJA_SERVICE_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         JWT_SECRET:
           mutability: generated
           type: alphanumeric
@@ -102,7 +90,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
     postgres:
       fields:
         POSTGRES_PASSWORD:

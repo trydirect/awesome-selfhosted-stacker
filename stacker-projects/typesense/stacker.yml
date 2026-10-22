@@ -53,13 +53,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        TYPESENSE_API_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         TYPESENSE_DATA_DIR:
           mutability: editable
         TYPESENSE_ENABLE_CORS:

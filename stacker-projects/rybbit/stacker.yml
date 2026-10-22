@@ -24,6 +24,21 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        MAPBOX_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENROUTER_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     clickhouse:
       fields:
         CLICKHOUSE_PASSWORD:
@@ -51,23 +66,6 @@ config_contract:
           length: 32
           display: password
         POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-    backend:
-      fields:
-        MAPBOX_TOKEN:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        OPENROUTER_API_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        REDIS_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32

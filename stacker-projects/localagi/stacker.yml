@@ -112,24 +112,11 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    app:
-      fields:
-        LOCALAGI_API_KEYS:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        LOCALAGI_LLM_API_KEY:
-          mutability: provided
-          display: password
         POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-      volumes:
-        localagi_pool:
-          mutability: generated
     localai:
       fields:
         DEBUG:
