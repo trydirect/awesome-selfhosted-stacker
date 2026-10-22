@@ -72,6 +72,18 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        PHOTOPRISM_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
+        PHOTOPRISM_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         PHOTOPRISM_ADMIN_USER:
           mutability: editable
         PHOTOPRISM_AUTH_MODE:

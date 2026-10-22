@@ -12,6 +12,13 @@ config_contract:
   services:
     app:
       fields:
+        WEBUI_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         # The buyer's own address. Declared so the bake turns the literal URL
         # baked into the compose back into ${WEBUI_URL}: without it every clone
         # would keep pointing links and redirects at the author's domain.

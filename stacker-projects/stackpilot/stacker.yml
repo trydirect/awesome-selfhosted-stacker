@@ -12,6 +12,18 @@ config_contract:
   services:
     app:
       fields:
+        ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         SECRET_KEY:
           mutability: generated
           type: alphanumeric

@@ -75,6 +75,18 @@ config_contract:
   services:
     app:
       fields:
+        AIRFLOW__CORE__FERNET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AIRFLOW__WEBSERVER__SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         AIRFLOW__CORE__EXECUTOR:
           mutability: editable
         AIRFLOW__CORE__FERNET_KEY:

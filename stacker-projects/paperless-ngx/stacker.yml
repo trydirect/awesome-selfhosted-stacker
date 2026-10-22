@@ -125,6 +125,18 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        PAPERLESS_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
+        PAPERLESS_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         PAPERLESS_DBPASS:
           mutability: generated
           type: alphanumeric

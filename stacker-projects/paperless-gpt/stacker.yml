@@ -132,6 +132,18 @@ config_contract:
   services:
     app:
       fields:
+        OPENAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PAPERLESS_API_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         PAPERLESS_API_TOKEN:
           mutability: generated
           type: alphanumeric

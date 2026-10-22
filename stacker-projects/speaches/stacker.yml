@@ -62,6 +62,13 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+    app:
+      fields:
+        API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         healthcheck:
           mutability: editable
         interval:

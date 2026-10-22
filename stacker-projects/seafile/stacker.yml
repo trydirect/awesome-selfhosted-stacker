@@ -78,6 +78,28 @@ config_contract:
   services:
     app:
       fields:
+        INIT_SEAFILE_MYSQL_ROOT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_PRIVATE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SEAFILE_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SEAFILE_MYSQL_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         SEAFILE_MYSQL_DB_HOST:
           mutability: editable
         SEAFILE_MYSQL_DB_PORT:

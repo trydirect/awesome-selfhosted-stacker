@@ -89,6 +89,33 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        HITKEEP_GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HITKEEP_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HITKEEP_MAIL_ENCRYPTION:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HITKEEP_MAIL_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
+        HITKEEP_AI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         HITKEEP_AI_BASE_URL:
           mutability: editable
         HITKEEP_AI_BUDGET_WINDOW:

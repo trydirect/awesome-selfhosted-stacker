@@ -71,6 +71,23 @@ config_contract:
   services:
     app:
       fields:
+        LIVE_VIEW_SIGNING_SALT:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         DATABASE_URL:
           mutability: generated
           type: alphanumeric

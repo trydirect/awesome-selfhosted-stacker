@@ -59,6 +59,18 @@ config_contract:
   services:
     app:
       fields:
+        KH_FEATURE_USER_MANAGEMENT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         OPENAI_API_KEY:
           mutability: provided
           display: password

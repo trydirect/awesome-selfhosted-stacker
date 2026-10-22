@@ -67,6 +67,48 @@ config_contract:
     app:
       fields:
         ANTHROPIC_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GOOGLE_GENERATIVE_AI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GROQ_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HuggingFace_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPEN_ROUTER_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TOGETHER_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        XAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
+        ANTHROPIC_API_KEY:
           mutability: provided
           display: password
         GOOGLE_GENERATIVE_AI_API_KEY:

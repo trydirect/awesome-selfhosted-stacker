@@ -85,6 +85,23 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HUGINN_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
+        APP_SECRET_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DATABASE_ADAPTER:
           mutability: editable
         DATABASE_HOST:

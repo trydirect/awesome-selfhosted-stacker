@@ -100,6 +100,13 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+    app:
+      fields:
+        APP_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     postgres:
       fields:
         POSTGRES_PASSWORD:

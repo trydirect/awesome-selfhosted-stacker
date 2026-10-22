@@ -65,6 +65,28 @@ config_contract:
   services:
     app:
       fields:
+        CLAUDE_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CLAUDE_CODE_OAUTH_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TOKEN_ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        WEBHOOK_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         ARCHON_DOCKER:
           mutability: editable
         PORT:

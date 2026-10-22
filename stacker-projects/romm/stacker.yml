@@ -48,6 +48,28 @@ install:
     commonDomain: romm.example.com
 config_contract:
   services:
+    app:
+      fields:
+        RETROACHIEVEMENTS_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ROMM_AUTH_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SCREENSCRAPER_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        STEAMGRIDDB_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     romm-db:
       required:
       - MARIADB_DATABASE

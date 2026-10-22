@@ -56,6 +56,13 @@ config_contract:
   services:
     app:
       fields:
+        CLICKHOUSE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         CLICKHOUSE_DB:
           mutability: editable
         CLICKHOUSE_PASSWORD:

@@ -76,6 +76,18 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+    app:
+      fields:
+        LISTMONK_app__admin_password:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        LISTMONK_db__password:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric

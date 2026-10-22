@@ -62,6 +62,18 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        DOCKER_INFLUXDB_INIT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
+        DOCKER_INFLUXDB_INIT_ADMIN_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DOCKER_INFLUXDB_INIT_BUCKET:
           mutability: editable
         DOCKER_INFLUXDB_INIT_MODE:

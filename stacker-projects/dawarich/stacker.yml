@@ -110,6 +110,28 @@ config_contract:
   services:
     app:
       fields:
+        DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ENCRYPTION_DTERMINARY_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ENCRYPTION_PRIMARY_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         APPLICATION_HOST:
           mutability: editable
         APPLICATION_PROTOCOL:

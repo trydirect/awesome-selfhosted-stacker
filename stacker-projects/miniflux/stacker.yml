@@ -75,6 +75,13 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+    app:
+      fields:
+        ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         ADMIN_USERNAME:
           mutability: editable
         CREATE_ADMIN:

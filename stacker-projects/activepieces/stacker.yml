@@ -102,6 +102,23 @@ config_contract:
   services:
     app:
       fields:
+        AP_ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AP_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AP_POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         AP_CONTAINER_TYPE:
           mutability: editable
         AP_ENCRYPTION_KEY:

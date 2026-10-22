@@ -48,6 +48,18 @@ config_contract:
   services:
     app:
       fields:
+        HANKO_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HANKO_SECRETS_DEFAULT:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         HANKO_DATABASE_HOST:
           mutability: editable
         HANKO_DATABASE_NAME:

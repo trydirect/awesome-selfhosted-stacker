@@ -105,6 +105,20 @@ env_file: .env
 env: {}
 config_contract:
   services:
+    app:
+      fields:
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    plausible_db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     plausible:
       required:
       - BASE_URL

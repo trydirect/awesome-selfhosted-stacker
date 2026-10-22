@@ -40,6 +40,23 @@ config_contract:
   services:
     app:
       fields:
+        ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         ADMIN_EMAIL:
           mutability: editable
         ADMIN_PASSWORD:

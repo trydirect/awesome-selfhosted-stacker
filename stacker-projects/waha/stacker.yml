@@ -64,6 +64,13 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+    app:
+      fields:
+        WAHA_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         WHATSAPP_API_KEY_EXCLUDE_PATH:
           mutability: provided
         WHATSAPP_DEFAULT_ENGINE:

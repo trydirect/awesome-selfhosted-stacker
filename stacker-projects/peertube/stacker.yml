@@ -59,6 +59,18 @@ config_contract:
   services:
     app:
       fields:
+        PEERTUBE_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PEERTUBE_REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         NODE_ENV:
           mutability: editable
         PEERTUBE_DB_HOST:

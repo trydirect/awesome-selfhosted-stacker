@@ -70,6 +70,18 @@ config_contract:
     app:
       fields:
         CP_ANALYTICS_SALT:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CP_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
+        CP_ANALYTICS_SALT:
           mutability: editable
         CP_BASEURL:
           mutability: editable

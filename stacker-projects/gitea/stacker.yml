@@ -109,6 +109,18 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        GITEA_SECURITY_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
+        GITEA_SECURITY_INTERNAL_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         GITEA_DATABASE_PASSWD:
           mutability: generated
           type: alphanumeric

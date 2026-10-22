@@ -57,6 +57,18 @@ config_contract:
   services:
     app:
       fields:
+        KC_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        KEYCLOAK_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         KC_DB:
           mutability: editable
         KC_DB_PASSWORD:

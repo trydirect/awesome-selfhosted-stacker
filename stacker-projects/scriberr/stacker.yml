@@ -65,6 +65,23 @@ config_contract:
   services:
     app:
       fields:
+        HF_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
         APP_ENV:
           mutability: editable
         HF_TOKEN:

@@ -88,6 +88,23 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        EMAIL_SERVER_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
+        APP_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_HOST:
           mutability: editable
         DB_NAME:
