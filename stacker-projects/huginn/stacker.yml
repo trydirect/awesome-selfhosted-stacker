@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/huginn/huginn:latest
+  image: huginn/huginn:latest
   ports:
     - "3000:3000"
   environment:

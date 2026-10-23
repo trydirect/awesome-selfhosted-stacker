@@ -15,7 +15,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/danny-avila/librechat:latest
+  image: librechat/librechat:latest
   ports:
     - "3080:3080"
   environment:

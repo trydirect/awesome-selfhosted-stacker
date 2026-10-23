@@ -14,8 +14,8 @@ proxy:
 project:
   identity: mailu
 app:
-  type: static
-  path: .
+  type: custom
+  image: roundcube/roundcubemail:latest
 monitoring:
   status_panel: false
 
