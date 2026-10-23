@@ -215,3 +215,6 @@ config_contract:
       volumes:
         zammad-redis:
           mutability: generated
+
+marketplace:
+  display_name: "Zammad"

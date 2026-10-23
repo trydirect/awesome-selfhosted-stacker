@@ -145,3 +145,6 @@ env_file: .env
 volumes:
   standardnotes_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Standard Notes"

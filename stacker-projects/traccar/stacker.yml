@@ -96,3 +96,6 @@ volumes:
   traccar_logs: {}
   traccar_conf: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Traccar"

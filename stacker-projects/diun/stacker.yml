@@ -61,3 +61,6 @@ config_contract:
       volumes:
         diun_data:
           mutability: generated
+
+marketplace:
+  display_name: "DIUN"

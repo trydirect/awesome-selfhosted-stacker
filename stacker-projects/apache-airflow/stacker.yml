@@ -125,3 +125,6 @@ volumes:
   airflow_dags: {}
   airflow_logs: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Apache Airflow"

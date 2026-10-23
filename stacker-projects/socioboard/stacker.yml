@@ -389,3 +389,6 @@ config_contract:
       volumes:
         socioboard_mongo:
           mutability: generated
+
+marketplace:
+  display_name: "Socioboard"

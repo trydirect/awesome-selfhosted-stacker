@@ -98,3 +98,6 @@ env_file: .env
 volumes:
   windmill_logs: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Windmill"

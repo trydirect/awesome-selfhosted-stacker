@@ -124,3 +124,6 @@ config_contract:
       volumes:
         calcom_db:
           mutability: generated
+
+marketplace:
+  display_name: "Cal.com"

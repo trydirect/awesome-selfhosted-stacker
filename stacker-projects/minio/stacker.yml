@@ -70,3 +70,6 @@ deploy:
       - "443"
       - "9000"
       - "9001"
+
+marketplace:
+  display_name: "MinIO"

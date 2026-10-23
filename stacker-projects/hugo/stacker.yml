@@ -48,3 +48,6 @@ config_contract:
       volumes:
         hugo_data:
           mutability: generated
+
+marketplace:
+  display_name: "Hugo"

@@ -62,3 +62,6 @@ env_file: .env
 
 volumes:
   prowlarr_config: {}
+
+marketplace:
+  display_name: "Prowlarr"

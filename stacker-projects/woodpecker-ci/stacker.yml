@@ -74,3 +74,6 @@ config_contract:
         depends_on:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Woodpecker Ci"

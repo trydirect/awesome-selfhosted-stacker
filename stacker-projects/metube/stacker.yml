@@ -41,3 +41,6 @@ deploy:
     size: cpx22
     public_ports:
       - "8081"
+
+marketplace:
+  display_name: "Metube"

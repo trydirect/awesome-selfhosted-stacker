@@ -152,3 +152,6 @@ config_contract:
       volumes:
         librenms_db:
           mutability: generated
+
+marketplace:
+  display_name: "LibreNMS"

@@ -103,3 +103,6 @@ env_file: .env
 
 volumes:
   listmonk_pgdata: {}
+
+marketplace:
+  display_name: "Listmonk"

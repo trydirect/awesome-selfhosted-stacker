@@ -111,3 +111,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+
+marketplace:
+  display_name: "Ghost"

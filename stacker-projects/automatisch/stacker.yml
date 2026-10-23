@@ -141,3 +141,6 @@ deploy:
       - "80"
       - "443"
       - "3000"
+
+marketplace:
+  display_name: "Automatisch"

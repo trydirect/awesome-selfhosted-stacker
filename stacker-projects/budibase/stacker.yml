@@ -161,3 +161,6 @@ volumes:
   budibase_data: {}
   couchdb_data: {}
   minio_data: {}
+
+marketplace:
+  display_name: "Budibase"

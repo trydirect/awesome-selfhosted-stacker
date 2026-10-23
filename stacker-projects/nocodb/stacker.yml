@@ -83,3 +83,6 @@ deploy:
     size: cpx22
     public_ports:
       - "8080"
+
+marketplace:
+  display_name: "NocoDB"

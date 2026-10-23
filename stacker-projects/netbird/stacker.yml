@@ -100,3 +100,6 @@ env_file: .env
 volumes:
   netbird_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "NetBird"

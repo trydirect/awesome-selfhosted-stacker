@@ -94,3 +94,6 @@ config_contract:
         STACKDOG_AI_API_KEY:
           mutability: provided
           display: password
+
+marketplace:
+  display_name: "Stackdog"

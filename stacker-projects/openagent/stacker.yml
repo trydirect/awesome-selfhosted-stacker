@@ -126,3 +126,6 @@ config_contract:
       volumes:
         openagent_db:
           mutability: generated
+
+marketplace:
+  display_name: "Openagent"

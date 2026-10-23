@@ -53,3 +53,6 @@ deploy:
       - "80"
       - "443"
       - "5050"
+
+marketplace:
+  display_name: "Screego"

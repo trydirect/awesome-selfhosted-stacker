@@ -126,3 +126,6 @@ env_file: .env
 volumes:
   wger_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Wger"

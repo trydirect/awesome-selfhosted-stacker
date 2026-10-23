@@ -26,3 +26,6 @@ deploy:
     user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22
+
+marketplace:
+  display_name: "Gotify"

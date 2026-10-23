@@ -120,3 +120,6 @@ deploy:
       - "80"
       - "443"
       - "8080"
+
+marketplace:
+  display_name: "Keycloak"

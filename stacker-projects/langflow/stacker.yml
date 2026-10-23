@@ -119,3 +119,6 @@ env_file: .env
 volumes:
   langflow_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Langflow"

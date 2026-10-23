@@ -46,3 +46,6 @@ deploy:
     size: cpx22
     public_ports:
       - "9983"
+
+marketplace:
+  display_name: "Organizr"

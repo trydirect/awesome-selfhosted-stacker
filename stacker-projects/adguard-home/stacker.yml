@@ -57,3 +57,6 @@ config_contract:
           mutability: generated
         adguard_conf:
           mutability: generated
+
+marketplace:
+  display_name: "Adguard Home"

@@ -333,3 +333,6 @@ config_contract:
           mutability: generated
         neo4j_logs:
           mutability: generated
+
+marketplace:
+  display_name: "Pipeshub AI"

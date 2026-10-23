@@ -54,3 +54,6 @@ config_contract:
           mutability: editable
         timeout:
           mutability: editable
+
+marketplace:
+  display_name: "Netdata"

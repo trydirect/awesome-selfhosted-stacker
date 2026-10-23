@@ -65,3 +65,6 @@ config_contract:
           display: password
         AUTH_LOGIN:
           mutability: editable
+
+marketplace:
+  display_name: "Agent Zero"

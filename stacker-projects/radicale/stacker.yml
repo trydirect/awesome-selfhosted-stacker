@@ -58,3 +58,6 @@ env_file: .env
 volumes:
   radicale_data: {}
   radicale_config: {}
+
+marketplace:
+  display_name: "Radicale"

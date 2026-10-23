@@ -62,3 +62,6 @@ env_file: .env
 
 volumes:
   localai_models: {}
+
+marketplace:
+  display_name: "LocalAI"

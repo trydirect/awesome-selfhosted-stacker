@@ -171,3 +171,6 @@ volumes:
   postgres_data: {}
   clickhouse_data: {}
   kafka_data: {}
+
+marketplace:
+  display_name: "Dittofeed"

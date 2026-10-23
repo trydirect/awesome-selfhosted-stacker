@@ -67,3 +67,6 @@ env_file: .env
 volumes:
   mongodb_data: {}
   mongodb_config: {}
+
+marketplace:
+  display_name: "MongoDB"

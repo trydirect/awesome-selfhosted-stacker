@@ -121,3 +121,6 @@ config_contract:
       volumes:
         glpi_db:
           mutability: generated
+
+marketplace:
+  display_name: "GLPI"

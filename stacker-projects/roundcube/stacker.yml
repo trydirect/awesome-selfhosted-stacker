@@ -53,3 +53,6 @@ config_contract:
           mutability: editable
         ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE:
           mutability: editable
+
+marketplace:
+  display_name: "Roundcube"

@@ -64,3 +64,6 @@ env_file: .env
 
 volumes:
   linkding_data: {}
+
+marketplace:
+  display_name: "Linkding"

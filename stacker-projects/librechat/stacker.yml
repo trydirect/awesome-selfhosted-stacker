@@ -106,3 +106,6 @@ config_contract:
       volumes:
         librechat-mongo:
           mutability: generated
+
+marketplace:
+  display_name: "LibreChat"

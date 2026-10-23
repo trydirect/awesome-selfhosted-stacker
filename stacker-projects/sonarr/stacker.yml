@@ -60,3 +60,6 @@ volumes:
   sonarr_config: {}
   sonarr_tv: {}
   sonarr_downloads: {}
+
+marketplace:
+  display_name: "Sonarr"

@@ -111,3 +111,6 @@ env_file: .env
 volumes:
   appflowy_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Appflowy"

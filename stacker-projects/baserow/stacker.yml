@@ -128,3 +128,6 @@ env_file: .env
 volumes:
   baserow_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Baserow"

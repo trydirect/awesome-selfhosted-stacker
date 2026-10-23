@@ -69,3 +69,6 @@ env_file: .env
 
 volumes:
   typesense_data: {}
+
+marketplace:
+  display_name: "Typesense"

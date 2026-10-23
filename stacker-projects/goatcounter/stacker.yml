@@ -50,3 +50,6 @@ config_contract:
       volumes:
         goatcounter_data:
           mutability: generated
+
+marketplace:
+  display_name: "Goatcounter"

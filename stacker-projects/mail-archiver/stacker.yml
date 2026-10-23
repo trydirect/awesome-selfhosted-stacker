@@ -70,3 +70,6 @@ env_file: ".env"
 volumes:
   mailarchiver_keys: {}
   mailarchiver_postgres_data: {}
+
+marketplace:
+  display_name: "Mail Archiver"

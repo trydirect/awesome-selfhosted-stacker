@@ -56,3 +56,6 @@ volumes:
   crafty_data: {}
   crafty_backups: {}
   crafty_servers: {}
+
+marketplace:
+  display_name: "Crafty Controller"

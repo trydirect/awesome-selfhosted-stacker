@@ -269,3 +269,6 @@ monitoring:
     interval: 30s
 
 env_file: .env
+
+marketplace:
+  display_name: "AI Knowledge Base"

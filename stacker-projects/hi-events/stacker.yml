@@ -155,3 +155,6 @@ env_file: .env
 volumes:
   hievents_storage: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Hi Events"

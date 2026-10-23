@@ -51,3 +51,6 @@ config_contract:
           mutability: editable
         TZ:
           mutability: editable
+
+marketplace:
+  display_name: "Code Server"

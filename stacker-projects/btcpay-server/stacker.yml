@@ -95,3 +95,6 @@ config_contract:
       volumes:
         btcpay-postgres:
           mutability: generated
+
+marketplace:
+  display_name: "Btcpay Server"

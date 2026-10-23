@@ -125,3 +125,6 @@ env_file: .env
 volumes:
   firezone_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Firezone"

@@ -1171,3 +1171,6 @@ config_contract:
           type: alphanumeric
           min_length: 32
 # <<< end of generated services
+
+marketplace:
+  display_name: "Local AI Packaged"

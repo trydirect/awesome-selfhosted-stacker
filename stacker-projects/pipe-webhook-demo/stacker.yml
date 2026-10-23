@@ -92,3 +92,6 @@ env_file: .env
 volumes:
   apprise_config: {}
   ntfy_data: {}
+
+marketplace:
+  display_name: "Pipe Webhook Demo"

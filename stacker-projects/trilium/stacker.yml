@@ -51,3 +51,6 @@ env_file: .env
 
 volumes:
   trilium_data: {}
+
+marketplace:
+  display_name: "Trilium"

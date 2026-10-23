@@ -82,3 +82,6 @@ env_file: .env
 volumes:
   influxdb_data: {}
   influxdb_config: {}
+
+marketplace:
+  display_name: "InfluxDB"

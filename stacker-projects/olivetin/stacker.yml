@@ -47,3 +47,6 @@ config_contract:
       volumes:
         olivetin_config:
           mutability: generated
+
+marketplace:
+  display_name: "Olivetin"

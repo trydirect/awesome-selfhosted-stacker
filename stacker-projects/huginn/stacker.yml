@@ -142,3 +142,6 @@ env_file: .env
 volumes:
   huginn_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Huginn"

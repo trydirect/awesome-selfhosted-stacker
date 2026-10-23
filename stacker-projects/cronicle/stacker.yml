@@ -69,3 +69,6 @@ volumes:
   cronicle_data: {}
   cronicle_logs: {}
   cronicle_plugins: {}
+
+marketplace:
+  display_name: "Cronicle"

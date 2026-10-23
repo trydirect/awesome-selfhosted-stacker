@@ -44,3 +44,6 @@ deploy:
     size: cpx22
     public_ports:
     - '7700'
+
+marketplace:
+  display_name: "Meilisearch"

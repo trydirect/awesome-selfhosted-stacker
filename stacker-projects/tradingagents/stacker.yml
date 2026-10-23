@@ -178,3 +178,6 @@ config_contract:
         TRADINGAGENTS_LLM_PROVIDER:
           mutability: editable
           required: false
+
+marketplace:
+  display_name: "Tradingagents"

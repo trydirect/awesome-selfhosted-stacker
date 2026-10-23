@@ -148,3 +148,6 @@ env_file: .env
 volumes:
   seafile_data: {}
   seafile_mysql: {}
+
+marketplace:
+  display_name: "Seafile"

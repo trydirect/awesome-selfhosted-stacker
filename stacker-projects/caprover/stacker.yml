@@ -75,3 +75,6 @@ config_contract:
       volumes:
         caprover_data:
           mutability: generated
+
+marketplace:
+  display_name: "CapRover"

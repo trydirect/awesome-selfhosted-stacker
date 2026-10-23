@@ -51,3 +51,6 @@ config_contract:
       volumes:
         headscale_data:
           mutability: generated
+
+marketplace:
+  display_name: "Headscale"

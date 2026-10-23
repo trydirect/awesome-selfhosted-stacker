@@ -67,3 +67,6 @@ env_file: .env
 
 volumes:
   opensearch_data: {}
+
+marketplace:
+  display_name: "OpenSearch"

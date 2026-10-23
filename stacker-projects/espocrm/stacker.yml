@@ -129,3 +129,6 @@ volumes:
   espocrm_data: {}
   espocrm_config: {}
   mysql_data: {}
+
+marketplace:
+  display_name: "EspoCRM"

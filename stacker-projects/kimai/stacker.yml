@@ -112,3 +112,6 @@ env_file: .env
 volumes:
   kimai_data: {}
   mysql_data: {}
+
+marketplace:
+  display_name: "Kimai"

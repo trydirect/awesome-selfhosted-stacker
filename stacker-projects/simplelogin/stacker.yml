@@ -153,3 +153,6 @@ env_file: .env
 volumes:
   simplelogin_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Simplelogin"

@@ -222,3 +222,6 @@ volumes:
   druid_historical_var: {}
   druid_middlemanager_var: {}
   druid_router_var: {}
+
+marketplace:
+  display_name: "Druid"

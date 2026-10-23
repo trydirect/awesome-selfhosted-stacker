@@ -114,3 +114,6 @@ volumes:
   ampache_music: {}
   ampache_data: {}
   mysql_data: {}
+
+marketplace:
+  display_name: "Ampache"

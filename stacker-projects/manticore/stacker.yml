@@ -58,3 +58,6 @@ config_contract:
           mutability: generated
         manticore_log:
           mutability: generated
+
+marketplace:
+  display_name: "Manticore"

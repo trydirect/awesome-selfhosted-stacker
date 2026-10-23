@@ -110,3 +110,6 @@ env_file: .env
 volumes:
   readeck_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Readeck"

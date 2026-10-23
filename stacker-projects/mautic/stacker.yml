@@ -295,3 +295,6 @@ config_contract:
           mutability: generated
         mautic_images:
           mutability: generated
+
+marketplace:
+  display_name: "Mautic"

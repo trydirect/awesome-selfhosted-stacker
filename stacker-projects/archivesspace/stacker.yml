@@ -137,3 +137,6 @@ config_contract:
       volumes:
         archivesspace_solr:
           mutability: generated
+
+marketplace:
+  display_name: "Archivesspace"

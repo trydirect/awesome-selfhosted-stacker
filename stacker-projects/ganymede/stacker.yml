@@ -101,3 +101,6 @@ volumes:
   ganymede_logs: {}
   ganymede_config: {}
   ganymede_postgres_data: {}
+
+marketplace:
+  display_name: "Ganymede"

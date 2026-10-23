@@ -220,3 +220,6 @@ config_contract:
       volumes:
         qdrant_storage:
           mutability: generated
+
+marketplace:
+  display_name: "Self Hosted AI Starter Kit"

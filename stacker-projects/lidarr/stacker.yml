@@ -60,3 +60,6 @@ volumes:
   lidarr_config: {}
   lidarr_music: {}
   lidarr_downloads: {}
+
+marketplace:
+  display_name: "Lidarr"

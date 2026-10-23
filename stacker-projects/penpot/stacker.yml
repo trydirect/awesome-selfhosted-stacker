@@ -177,3 +177,6 @@ config_contract:
       volumes:
         penpot-redis:
           mutability: generated
+
+marketplace:
+  display_name: "Penpot"

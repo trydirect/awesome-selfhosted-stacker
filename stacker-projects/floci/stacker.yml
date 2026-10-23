@@ -118,3 +118,6 @@ config_contract:
           display: password
         AWS_REGION:
           mutability: editable
+
+marketplace:
+  display_name: "Floci"

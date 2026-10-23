@@ -140,3 +140,6 @@ config_contract:
       volumes:
         open_notebook_surreal:
           mutability: generated
+
+marketplace:
+  display_name: "Open Notebook"

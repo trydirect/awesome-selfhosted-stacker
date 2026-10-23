@@ -67,3 +67,6 @@ deploy:
 
 monitoring:
   status_panel: true
+
+marketplace:
+  display_name: "Langchain Chatchat"

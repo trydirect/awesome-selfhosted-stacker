@@ -96,3 +96,6 @@ config_contract:
         timeout:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Mattermost"

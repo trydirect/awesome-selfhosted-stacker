@@ -99,3 +99,6 @@ env_file: .env
 
 volumes:
   semaphore_pgdata: {}
+
+marketplace:
+  display_name: "Semaphore"

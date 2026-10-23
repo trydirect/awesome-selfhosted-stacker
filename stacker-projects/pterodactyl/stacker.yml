@@ -159,3 +159,6 @@ volumes:
   pterodactyl_data: {}
   pterodactyl_env: {}
   mysql_data: {}
+
+marketplace:
+  display_name: "Pterodactyl"

@@ -72,3 +72,6 @@ env_file: .env
 
 volumes:
   stalwart_data: {}
+
+marketplace:
+  display_name: "Stalwart Mail"

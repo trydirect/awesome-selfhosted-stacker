@@ -215,3 +215,6 @@ config_contract:
       volumes:
         activepieces_redis_data:
           mutability: generated
+
+marketplace:
+  display_name: "Activepieces"

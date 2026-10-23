@@ -42,3 +42,6 @@ config_contract:
           mutability: generated
         stirling_config:
           mutability: generated
+
+marketplace:
+  display_name: "Stirling PDF"

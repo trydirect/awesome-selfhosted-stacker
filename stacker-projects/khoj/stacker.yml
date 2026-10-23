@@ -129,3 +129,6 @@ env_file: .env
 volumes:
   khoj_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Khoj"

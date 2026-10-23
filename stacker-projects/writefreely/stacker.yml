@@ -99,3 +99,6 @@ env_file: .env
 volumes:
   writefreely_data: {}
   writefreely_mysql: {}
+
+marketplace:
+  display_name: "Writefreely"

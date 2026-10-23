@@ -168,3 +168,6 @@ config_contract:
       volumes:
         postgres_data:
           mutability: generated
+
+marketplace:
+  display_name: "Localagi"

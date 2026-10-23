@@ -53,3 +53,6 @@ config_contract:
       volumes:
         element_config:
           mutability: generated
+
+marketplace:
+  display_name: "Element"

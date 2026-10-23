@@ -121,3 +121,6 @@ deploy:
       - "80"
       - "443"
       - "3001"
+
+marketplace:
+  display_name: "Typebot"

@@ -157,3 +157,6 @@ volumes:
   postiz_redis_data: {}
   temporal_elasticsearch_data: {}
   temporal_postgres_data: {}
+
+marketplace:
+  display_name: "Postiz App"

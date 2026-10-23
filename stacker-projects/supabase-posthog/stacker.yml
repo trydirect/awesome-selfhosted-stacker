@@ -375,3 +375,6 @@ volumes:
   db_data: {}
   studio_snippets: {}
   storage_data: {}
+
+marketplace:
+  display_name: "Supabase Posthog"

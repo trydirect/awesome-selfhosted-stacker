@@ -60,3 +60,6 @@ env_file: .env
 
 volumes:
   strata-data: {}
+
+marketplace:
+  display_name: "Strata"

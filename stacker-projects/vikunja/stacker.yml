@@ -108,3 +108,6 @@ env_file: .env
 volumes:
   vikunja_files: {}
   vikunja_pgdata: {}
+
+marketplace:
+  display_name: "Vikunja"

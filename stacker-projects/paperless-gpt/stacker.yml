@@ -178,3 +178,6 @@ config_contract:
       volumes:
         paperless_db:
           mutability: generated
+
+marketplace:
+  display_name: "Paperless Gpt"

@@ -51,3 +51,6 @@ deploy:
     size: cpx22
     public_ports:
       - "8083"
+
+marketplace:
+  display_name: "Calibre WEB"

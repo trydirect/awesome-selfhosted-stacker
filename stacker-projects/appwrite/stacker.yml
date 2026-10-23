@@ -169,3 +169,6 @@ volumes:
   appwrite_uploads: {}
   mariadb_data: {}
   influxdb_data: {}
+
+marketplace:
+  display_name: "Appwrite"

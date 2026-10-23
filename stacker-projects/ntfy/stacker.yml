@@ -74,3 +74,6 @@ env_file: .env
 volumes:
   ntfy_data: {}
   ntfy_cache: {}
+
+marketplace:
+  display_name: "ntfy"

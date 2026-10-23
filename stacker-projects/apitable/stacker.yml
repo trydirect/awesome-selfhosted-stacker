@@ -68,3 +68,6 @@ config_contract:
       volumes:
         apitable_data:
           mutability: generated
+
+marketplace:
+  display_name: "Apitable"

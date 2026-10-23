@@ -64,3 +64,6 @@ env_file: .env
 
 volumes:
   vaultwarden_data: {}
+
+marketplace:
+  display_name: "Vaultwarden Secrets"

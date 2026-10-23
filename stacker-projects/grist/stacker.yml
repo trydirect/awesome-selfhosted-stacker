@@ -57,3 +57,6 @@ env_file: .env
 
 volumes:
   grist_data: {}
+
+marketplace:
+  display_name: "Grist"

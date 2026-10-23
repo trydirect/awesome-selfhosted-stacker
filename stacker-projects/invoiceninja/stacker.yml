@@ -133,3 +133,6 @@ config_contract:
       volumes:
         invoiceninja_db:
           mutability: generated
+
+marketplace:
+  display_name: "Invoiceninja"

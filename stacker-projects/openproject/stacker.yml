@@ -138,3 +138,6 @@ config_contract:
       volumes:
         openproject-postgres:
           mutability: generated
+
+marketplace:
+  display_name: "OpenProject"

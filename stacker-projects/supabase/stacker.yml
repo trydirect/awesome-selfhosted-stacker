@@ -461,3 +461,6 @@ config_contract:
           display: password
 
 env_file: .env
+
+marketplace:
+  display_name: "Supabase"

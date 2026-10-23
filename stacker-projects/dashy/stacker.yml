@@ -46,3 +46,6 @@ env_file: .env
 
 volumes:
   dashy_config: {}
+
+marketplace:
+  display_name: "Dashy"

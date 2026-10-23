@@ -128,3 +128,6 @@ volumes:
   lychee_data: {}
   lychee_images: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Lychee"

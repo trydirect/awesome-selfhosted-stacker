@@ -53,3 +53,6 @@ env_file: .env
 
 volumes:
   shaper_data: {}
+
+marketplace:
+  display_name: "Shaper"

@@ -132,3 +132,6 @@ config_contract:
       volumes:
         fossbilling_db:
           mutability: generated
+
+marketplace:
+  display_name: "Fossbilling"

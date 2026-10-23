@@ -154,3 +154,6 @@ config_contract:
       volumes:
         freescout_db:
           mutability: generated
+
+marketplace:
+  display_name: "Freescout"

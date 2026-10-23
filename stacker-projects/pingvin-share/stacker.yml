@@ -53,3 +53,6 @@ env_file: .env
 volumes:
   pingvin_data: {}
   pingvin_uploads: {}
+
+marketplace:
+  display_name: "Pingvin Share"

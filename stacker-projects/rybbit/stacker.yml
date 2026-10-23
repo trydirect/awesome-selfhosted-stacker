@@ -174,3 +174,6 @@ volumes:
   rybbit_clickhouse_data: {}
   rybbit_postgres_data: {}
   rybbit_redis_data: {}
+
+marketplace:
+  display_name: "Rybbit"

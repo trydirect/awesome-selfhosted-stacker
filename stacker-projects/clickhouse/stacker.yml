@@ -72,3 +72,6 @@ env_file: .env
 volumes:
   clickhouse_data: {}
   clickhouse_logs: {}
+
+marketplace:
+  display_name: "ClickHouse"

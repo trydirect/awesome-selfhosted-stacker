@@ -99,3 +99,6 @@ config_contract:
           mutability: editable
         PHOTOPRISM_SITE_URL:
           mutability: editable
+
+marketplace:
+  display_name: "PhotoPrism"

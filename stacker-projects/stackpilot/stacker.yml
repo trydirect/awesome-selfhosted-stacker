@@ -143,3 +143,6 @@ monitoring:
     interval: 30s
 
 env_file: .env
+
+marketplace:
+  display_name: "Stackpilot"

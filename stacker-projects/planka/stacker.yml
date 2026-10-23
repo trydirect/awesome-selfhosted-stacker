@@ -115,3 +115,6 @@ volumes:
   planka_data: {}
   planka_attachments: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Planka"

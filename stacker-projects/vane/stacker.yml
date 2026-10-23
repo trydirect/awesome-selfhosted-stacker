@@ -62,3 +62,6 @@ config_contract:
           display: password
         OPENAI_BASE_URL:
           mutability: editable
+
+marketplace:
+  display_name: "Vane"

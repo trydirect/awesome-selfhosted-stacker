@@ -32,3 +32,6 @@ config_contract:
           mutability: generated
         caddy_config:
           mutability: generated
+
+marketplace:
+  display_name: "Caddy"

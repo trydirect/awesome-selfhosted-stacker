@@ -232,3 +232,6 @@ config_contract:
       volumes:
         plane_minio:
           mutability: generated
+
+marketplace:
+  display_name: "Plane"

@@ -60,3 +60,6 @@ volumes:
   radarr_config: {}
   radarr_movies: {}
   radarr_downloads: {}
+
+marketplace:
+  display_name: "Radarr"

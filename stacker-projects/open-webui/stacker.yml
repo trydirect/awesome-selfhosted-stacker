@@ -56,3 +56,6 @@ env: {}
 
 volumes:
   ollama: {}
+
+marketplace:
+  display_name: "Open WebUI"

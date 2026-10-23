@@ -104,3 +104,6 @@ env_file: .env
 volumes:
   focalboard_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Focalboard"

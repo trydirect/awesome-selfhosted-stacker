@@ -159,3 +159,6 @@ config_contract:
       volumes:
         teable_cache:
           mutability: generated
+
+marketplace:
+  display_name: "Teable"

@@ -55,3 +55,6 @@ env_file: .env
 volumes:
   apprise_config: {}
   apprise_state: {}
+
+marketplace:
+  display_name: "Apprise"

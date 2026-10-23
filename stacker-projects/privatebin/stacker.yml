@@ -50,3 +50,6 @@ env_file: .env
 
 volumes:
   privatebin_data: {}
+
+marketplace:
+  display_name: "PrivateBin"

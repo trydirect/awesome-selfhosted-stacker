@@ -55,3 +55,6 @@ config_contract:
           mutability: editable
 env_file: .env
 env: {}
+
+marketplace:
+  display_name: "Hermes Agent"

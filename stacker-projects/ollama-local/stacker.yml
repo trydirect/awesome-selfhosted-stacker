@@ -72,3 +72,6 @@ config_contract:
       volumes:
         ollama-data:
           mutability: generated
+
+marketplace:
+  display_name: "Ollama Local"

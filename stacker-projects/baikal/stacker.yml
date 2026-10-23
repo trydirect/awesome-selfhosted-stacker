@@ -51,3 +51,6 @@ config_contract:
           mutability: generated
         baikal_data:
           mutability: generated
+
+marketplace:
+  display_name: "Baïkal"

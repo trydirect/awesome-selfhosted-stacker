@@ -101,3 +101,6 @@ env_file: .env
 volumes:
   docmost_uploads: {}
   docmost_pgdata: {}
+
+marketplace:
+  display_name: "Docmost"

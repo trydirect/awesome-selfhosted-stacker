@@ -122,3 +122,6 @@ env_file: .env
 volumes:
   castopod_data: {}
   mysql_data: {}
+
+marketplace:
+  display_name: "Castopod"

@@ -135,3 +135,6 @@ config_contract:
       volumes:
         passbolt-mysql:
           mutability: generated
+
+marketplace:
+  display_name: "Passbolt"

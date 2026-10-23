@@ -101,3 +101,6 @@ volumes:
   tandoor_staticfiles: {}
   tandoor_mediafiles: {}
   tandoor_pgdata: {}
+
+marketplace:
+  display_name: "Tandoor"

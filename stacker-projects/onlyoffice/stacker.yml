@@ -45,3 +45,6 @@ config_contract:
           mutability: editable
         WOPI_ENABLED:
           mutability: editable
+
+marketplace:
+  display_name: "OnlyOffice"

@@ -148,3 +148,6 @@ env_file: .env
 volumes:
   cachet_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Cachet"

@@ -62,3 +62,6 @@ env_file: .env
 
 volumes:
   whoogle_data: {}
+
+marketplace:
+  display_name: "Whoogle"

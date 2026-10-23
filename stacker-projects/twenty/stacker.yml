@@ -134,3 +134,6 @@ config_contract:
       volumes:
         twenty_db:
           mutability: generated
+
+marketplace:
+  display_name: "Twenty"

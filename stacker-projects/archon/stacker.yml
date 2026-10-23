@@ -104,3 +104,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
+
+marketplace:
+  display_name: "Archon"

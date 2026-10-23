@@ -40,3 +40,6 @@ config_contract:
       volumes:
         changedetection_data:
           mutability: generated
+
+marketplace:
+  display_name: "Changedetection"

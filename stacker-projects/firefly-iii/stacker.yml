@@ -99,3 +99,6 @@ config_contract:
       volumes:
         firefly-iii-postgres:
           mutability: generated
+
+marketplace:
+  display_name: "Firefly III"

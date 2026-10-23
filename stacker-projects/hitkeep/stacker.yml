@@ -168,3 +168,6 @@ config_contract:
           mutability: editable
         HITKEEP_SPAM_FILTER_UPDATE_INTERVAL:
           mutability: editable
+
+marketplace:
+  display_name: "Hitkeep"

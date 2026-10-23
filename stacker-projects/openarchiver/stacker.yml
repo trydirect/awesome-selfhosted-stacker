@@ -136,3 +136,6 @@ volumes:
   openarchiver_postgres_data: {}
   openarchiver_valkey_data: {}
   openarchiver_meili_data: {}
+
+marketplace:
+  display_name: "Openarchiver"

@@ -44,3 +44,6 @@ config_contract:
         PRELOAD_MODELS:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Comfyui"

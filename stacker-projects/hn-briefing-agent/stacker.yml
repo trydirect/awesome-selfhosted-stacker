@@ -81,3 +81,6 @@ config_contract:
         AGENTSCOUT_GMAIL_CLIENT_ID:
           mutability: editable
           required: false
+
+marketplace:
+  display_name: "Hn Briefing Agent"

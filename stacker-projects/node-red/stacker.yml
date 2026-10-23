@@ -56,3 +56,6 @@ env_file: .env
 
 volumes:
   nodered_data: {}
+
+marketplace:
+  display_name: "Node-RED"

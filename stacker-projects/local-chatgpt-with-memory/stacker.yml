@@ -95,3 +95,6 @@ config_contract:
       volumes:
         ollama_models:
           mutability: generated
+
+marketplace:
+  display_name: "Local Chatgpt With Memory"

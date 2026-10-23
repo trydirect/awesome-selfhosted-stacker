@@ -58,3 +58,6 @@ env_file: .env
 
 volumes:
   seaweedfs_data: {}
+
+marketplace:
+  display_name: "Seaweedfs"

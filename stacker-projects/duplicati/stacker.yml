@@ -69,3 +69,6 @@ deploy:
       - "80"
       - "443"
       - "8200"
+
+marketplace:
+  display_name: "Duplicati"

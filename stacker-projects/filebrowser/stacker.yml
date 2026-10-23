@@ -62,3 +62,6 @@ env_file: .env
 volumes:
   filebrowser_data: {}
   filebrowser_db: {}
+
+marketplace:
+  display_name: "Filebrowser"

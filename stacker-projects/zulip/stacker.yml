@@ -111,3 +111,6 @@ monitoring:
   status_panel: true
 
 env_file: .env
+
+marketplace:
+  display_name: "Zulip"

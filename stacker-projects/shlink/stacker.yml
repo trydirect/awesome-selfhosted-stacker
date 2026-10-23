@@ -127,3 +127,6 @@ env_file: .env
 
 volumes:
   postgres_data: {}
+
+marketplace:
+  display_name: "Shlink"

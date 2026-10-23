@@ -96,3 +96,6 @@ env_file: .env
 volumes:
   maybe_storage: {}
   maybe_pgdata: {}
+
+marketplace:
+  display_name: "Maybe Finance"

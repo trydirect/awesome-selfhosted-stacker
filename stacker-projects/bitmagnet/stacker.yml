@@ -82,3 +82,6 @@ volumes:
   bitmagnet_config: {}
   bitmagnet_data: {}
   bitmagnet_postgres_data: {}
+
+marketplace:
+  display_name: "Bitmagnet"

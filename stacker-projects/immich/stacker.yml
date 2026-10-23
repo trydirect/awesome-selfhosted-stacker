@@ -101,3 +101,6 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
 
 env_file: .env
+
+marketplace:
+  display_name: "Immich"

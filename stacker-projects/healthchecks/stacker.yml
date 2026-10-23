@@ -127,3 +127,6 @@ env_file: .env
 volumes:
   healthchecks_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Healthchecks"

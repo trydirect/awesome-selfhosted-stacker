@@ -111,3 +111,6 @@ env_file: .env
 volumes:
   metabase_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Metabase"

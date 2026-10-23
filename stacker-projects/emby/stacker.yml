@@ -56,3 +56,6 @@ env_file: .env
 volumes:
   emby_config: {}
   emby_data: {}
+
+marketplace:
+  display_name: "Emby"

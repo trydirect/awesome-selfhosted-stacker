@@ -83,3 +83,6 @@ env_file: .env
 
 volumes:
   anythingllm_storage: {}
+
+marketplace:
+  display_name: "Anythingllm"

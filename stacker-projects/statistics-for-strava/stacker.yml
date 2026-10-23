@@ -87,3 +87,6 @@ volumes:
   strava_files: {}
   strava_gear_maintenance: {}
   strava_watch: {}
+
+marketplace:
+  display_name: "Statistics For Strava"

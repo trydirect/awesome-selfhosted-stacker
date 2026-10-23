@@ -209,3 +209,6 @@ config_contract:
       volumes:
         huly-redis:
           mutability: generated
+
+marketplace:
+  display_name: "Huly"

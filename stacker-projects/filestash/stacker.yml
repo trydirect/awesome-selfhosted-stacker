@@ -50,3 +50,6 @@ config_contract:
       volumes:
         filestash_state:
           mutability: generated
+
+marketplace:
+  display_name: "Filestash"

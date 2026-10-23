@@ -71,3 +71,6 @@ config_contract:
 env_file: ".env"
 volumes:
   countly_mongodb_data: {}
+
+marketplace:
+  display_name: "Countly Server"

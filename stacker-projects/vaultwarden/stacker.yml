@@ -92,3 +92,6 @@ volumes:
   vaultwarden_data: {}
   npm_data: {}
   npm_letsencrypt: {}
+
+marketplace:
+  display_name: "Vaultwarden"

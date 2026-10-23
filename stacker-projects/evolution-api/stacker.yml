@@ -163,3 +163,6 @@ config_contract:
       volumes:
         evolution_redis:
           mutability: generated
+
+marketplace:
+  display_name: "Evolution API"

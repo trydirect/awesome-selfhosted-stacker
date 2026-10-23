@@ -75,3 +75,6 @@ config_contract:
         DEFAULT_MCP_SERVERS:
           mutability: editable
           required: false
+
+marketplace:
+  display_name: "AI MCP App Builder"

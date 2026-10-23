@@ -77,3 +77,6 @@ env_file: .env
 
 volumes:
   centrifugo_data: {}
+
+marketplace:
+  display_name: "Centrifugo"

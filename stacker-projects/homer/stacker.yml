@@ -52,3 +52,6 @@ config_contract:
       volumes:
         homer_config: { mutability: generated }
 env_file: .env
+
+marketplace:
+  display_name: "Homer"

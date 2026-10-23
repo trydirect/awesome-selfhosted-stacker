@@ -36,3 +36,6 @@ config_contract:
       volumes:
         memos_data:
           mutability: generated
+
+marketplace:
+  display_name: "Memos"

@@ -151,3 +151,6 @@ volumes:
   kestra_data: {}
   kestra_tmp: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Kestra"

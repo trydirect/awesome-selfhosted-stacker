@@ -74,3 +74,6 @@ env_file: .env
 env: {}
 config_contract:
   services: {}
+
+marketplace:
+  display_name: "Jellyfin"

@@ -110,3 +110,6 @@ env_file: .env
 volumes:
   easyappointments_data: {}
   mysql_data: {}
+
+marketplace:
+  display_name: "Easyappointments"

@@ -110,3 +110,6 @@ env_file: .env
 volumes:
   librebooking_config: {}
   mysql_data: {}
+
+marketplace:
+  display_name: "Librebooking"

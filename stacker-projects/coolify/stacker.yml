@@ -173,3 +173,6 @@ monitoring:
     interval: 15s
 
 env_file: .env
+
+marketplace:
+  display_name: "Coolify"

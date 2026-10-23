@@ -68,3 +68,6 @@ config_contract:
           mutability: generated
         middleware_keys:
           mutability: generated
+
+marketplace:
+  display_name: "Middleware"

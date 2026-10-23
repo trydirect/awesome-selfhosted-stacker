@@ -60,3 +60,6 @@ config_contract:
           mutability: editable
         SEARXNG_RATE_LIMIT_PER_IP:
           mutability: editable
+
+marketplace:
+  display_name: "SearXNG"

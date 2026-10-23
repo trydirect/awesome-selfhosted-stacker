@@ -48,3 +48,6 @@ config_contract:
           mutability: editable
         SERVICES:
           mutability: editable
+
+marketplace:
+  display_name: "Docker Socket Proxy"

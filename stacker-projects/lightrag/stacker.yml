@@ -233,3 +233,6 @@ config_contract:
       volumes:
         lightrag_qdrant:
           mutability: generated
+
+marketplace:
+  display_name: "Lightrag"

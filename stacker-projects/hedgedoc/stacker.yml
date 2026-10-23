@@ -92,3 +92,6 @@ env_file: .env
 
 volumes:
   hedgedoc_pgdata: {}
+
+marketplace:
+  display_name: "HedgeDoc"

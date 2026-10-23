@@ -103,3 +103,6 @@ config_contract:
           mutability: editable
         loglevel:
           mutability: editable
+
+marketplace:
+  display_name: "Etherpad"

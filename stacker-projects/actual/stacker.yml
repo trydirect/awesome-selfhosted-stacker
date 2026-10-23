@@ -121,3 +121,6 @@ config_contract:
       volumes:
         actual_db:
           mutability: generated
+
+marketplace:
+  display_name: "Actual"

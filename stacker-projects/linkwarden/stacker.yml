@@ -89,3 +89,6 @@ env_file: .env
 volumes:
   linkwarden_data: {}
   linkwarden_pgdata: {}
+
+marketplace:
+  display_name: "Linkwarden"

@@ -115,3 +115,6 @@ config_contract:
       volumes:
         limesurvey-mysql:
           mutability: generated
+
+marketplace:
+  display_name: "LimeSurvey"

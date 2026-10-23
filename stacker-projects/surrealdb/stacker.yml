@@ -71,3 +71,6 @@ env_file: .env
 
 volumes:
   surrealdb_data: {}
+
+marketplace:
+  display_name: "SurrealDB"

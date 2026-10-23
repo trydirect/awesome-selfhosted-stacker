@@ -48,3 +48,6 @@ config_contract:
         swarm_data: { mutability: generated }
         swarm_backend: { mutability: generated }
 env_file: .env
+
+marketplace:
+  display_name: "Swarm UI"

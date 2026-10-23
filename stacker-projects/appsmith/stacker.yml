@@ -50,3 +50,6 @@ env_file: .env
 
 volumes:
   appsmith_data: {}
+
+marketplace:
+  display_name: "Appsmith"

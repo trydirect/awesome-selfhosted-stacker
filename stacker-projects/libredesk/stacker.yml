@@ -122,3 +122,6 @@ config_contract:
       volumes:
         libredesk_db:
           mutability: generated
+
+marketplace:
+  display_name: "Libredesk"

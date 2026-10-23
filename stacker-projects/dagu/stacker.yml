@@ -62,3 +62,6 @@ env_file: .env
 volumes:
   dagu_data: {}
   dagu_dags: {}
+
+marketplace:
+  display_name: "Dagu"

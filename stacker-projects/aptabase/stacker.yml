@@ -119,3 +119,6 @@ config_contract:
       volumes:
         aptabase_clickhouse_data:
           mutability: generated
+
+marketplace:
+  display_name: "Aptabase"
