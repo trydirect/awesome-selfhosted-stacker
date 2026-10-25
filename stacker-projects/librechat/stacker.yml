@@ -15,7 +15,7 @@ install:
 
 app:
   type: custom
-  image: librechat/librechat:latest
+  image: librechat/librechat:v0.8.8
   ports:
     - "3080:3080"
   environment:

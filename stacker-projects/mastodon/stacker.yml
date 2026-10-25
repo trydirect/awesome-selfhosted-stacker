@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/mastodon/mastodon:latest
+  image: ghcr.io/mastodon/mastodon:v4.3.2
   command: bash -c "bundle exec rails db:prepare && bundle exec puma -C config/puma.rb"
   ports:
     - "3000:3000"
@@ -64,7 +64,7 @@ services:
       retries: 10
 
   - name: sidekiq
-    image: ghcr.io/mastodon/mastodon:latest
+    image: ghcr.io/mastodon/mastodon:v4.3.2
     command: bundle exec sidekiq -c 5 -v
     environment:
       DB_HOST: mastodon_db

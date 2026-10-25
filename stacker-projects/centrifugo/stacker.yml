@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: centrifugo/centrifugo:latest
+  image: centrifugo/centrifugo:v5.5.0
   ports:
     - "8000:8000"
   environment:

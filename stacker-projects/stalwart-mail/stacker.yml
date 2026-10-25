@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: stalwartlabs/stalwart:latest
+  image: stalwartlabs/stalwart:0.11.0
   ports:
     - "25:25"
     - "143:143"

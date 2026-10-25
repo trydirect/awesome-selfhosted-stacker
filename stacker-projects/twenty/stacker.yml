@@ -2,7 +2,7 @@ name: twenty
 
 app:
   type: custom
-  image: twentycrm/twenty:latest
+  image: twentycrm/twenty:v0.36.0
   ports:
     - "3000:3000/tcp"
   environment:

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/karakeep-app/karakeep:latest
+  image: ghcr.io/karakeep-app/karakeep:v0.40.3
   ports:
     - "3000:3000"
   environment:

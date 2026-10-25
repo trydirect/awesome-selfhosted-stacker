@@ -35,7 +35,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "ghcr.io/bitmagnet-io/bitmagnet:latest"
+  image: "ghcr.io/bitmagnet-io/bitmagnet:v0.10.0"
   ports:
     - "3333:3333"
   command: "worker run --all"

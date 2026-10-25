@@ -25,7 +25,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "s1t5/mailarchiver:latest"
+  image: "s1t5/mailarchiver:1.0.0"
   ports:
     - "5002:5000"
   volumes:

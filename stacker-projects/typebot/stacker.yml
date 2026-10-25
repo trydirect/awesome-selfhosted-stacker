@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: baptistearno/typebot-builder:latest
+  image: baptistearno/typebot-builder:2.32.2
   ports:
     - "3001:3000"
   environment:

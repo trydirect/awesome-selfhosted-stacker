@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: matrixconduit/matrix-conduit:latest
+  image: matrixconduit/matrix-conduit:0.7.0
   ports:
     - "6167:6167"
   environment:

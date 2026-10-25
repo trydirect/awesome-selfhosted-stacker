@@ -2,7 +2,7 @@ name: ofelia
 
 app:
   type: custom
-  image: mcuadros/ofelia:latest
+  image: mcuadros/ofelia:v0.18.1
   environment:
     OFELIA_HOST: "ofelia"
   volumes:

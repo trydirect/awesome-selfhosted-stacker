@@ -7,7 +7,7 @@ version: "1.0.0"
 app:
   type: custom
   path: .
-  image: ashleykza/comfyui:latest
+  image: ashleykza/comfyui:1.0.3
   ports:
     - "8188:3001"
   environment:

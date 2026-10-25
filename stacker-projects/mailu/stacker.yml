@@ -15,7 +15,7 @@ project:
   identity: mailu
 app:
   type: custom
-  image: roundcube/roundcubemail:latest
+  image: roundcube/roundcubemail:1.6.20-fpm-alpine
 monitoring:
   status_panel: false
 

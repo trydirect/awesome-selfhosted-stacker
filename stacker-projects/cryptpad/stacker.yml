@@ -2,7 +2,7 @@ name: cryptpad
 version: 5.7.0
 app:
   type: custom
-  image: cryptpad/cryptpad:latest
+  image: cryptpad/cryptpad:2024.9.0
   ports:
   - "3000:3000"
   - "3001:3001"

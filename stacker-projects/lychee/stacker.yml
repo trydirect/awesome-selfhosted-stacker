@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: lycheeorg/lychee:latest
+  image: lycheeorg/lychee:v5.0.0
   ports:
     - "8080:80"
   environment:

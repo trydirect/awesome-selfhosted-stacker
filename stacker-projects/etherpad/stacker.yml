@@ -3,7 +3,7 @@ version: "1.10.0"
 
 app:
   type: custom
-  image: etherpad/etherpad:latest
+  image: etherpad/etherpad:1.9.7
   ports:
     - "9001:9001"
   environment:

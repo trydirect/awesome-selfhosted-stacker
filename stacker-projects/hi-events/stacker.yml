@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/hidevops/hi-events:latest
+  image: ghcr.io/hidevops/hi-events:1.0.1
   ports:
     - "8080:8080"
   environment:

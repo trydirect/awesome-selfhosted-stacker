@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/linkwarden/linkwarden:latest
+  image: ghcr.io/linkwarden/linkwarden:v2.7.0
   ports:
     - "3000:3000"
   environment:

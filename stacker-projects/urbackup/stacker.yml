@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: uroni/urbackup-server:latest
+  image: uroni/urbackup-server:2.4.13
   ports:
     - "55414:55414"
     - "35623:35623"

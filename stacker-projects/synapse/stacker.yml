@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: matrixdotorg/synapse:latest
+  image: matrixdotorg/synapse:v1.128.0
   build: null
   ports:
   - "8008:8008"

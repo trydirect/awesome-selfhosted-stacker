@@ -4,7 +4,7 @@ project:
 version: 1.0.0
 app:
   type: custom
-  image: nousresearch/hermes-agent:latest
+  image: nousresearch/hermes-agent:1.0.0
   command: sleep infinity
   ports:
   - "8000:8000"

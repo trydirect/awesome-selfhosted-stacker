@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: pgsty/silo:latest
+  image: pgsty/silo:0.1.0
   ports:
     - "9000:9000"
     - "9001:9001"

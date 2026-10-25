@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: jamesread/olivetin:latest
+  image: jamesread/olivetin:0.3.1
   ports:
     - "1337:1337"
   volumes:

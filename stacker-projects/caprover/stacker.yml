@@ -2,7 +2,7 @@ name: caprover
 
 app:
   type: custom
-  image: caprover/caprover:latest
+  image: caprover/caprover:1.15.4
   ports:
     - "3000:3000"
     - "8080:8080"

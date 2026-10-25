@@ -7,7 +7,7 @@ app:
   type: python
   path: .
   dockerfile: null
-  image: posthog/posthog:latest
+  image: posthog/posthog:1.53.0
   build: null
   ports:
   - "8000:8000"

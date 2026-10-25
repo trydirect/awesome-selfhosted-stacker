@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: castopod/app:latest
+  image: castopod/app:1.6.4
   ports:
     - "8000:8000"
   environment:

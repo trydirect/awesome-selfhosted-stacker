@@ -35,7 +35,7 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:
   type: custom
-  image: robiningelbrecht/strava-statistics:latest
+  image: robiningelbrecht/strava-statistics:v0.6.8
   ports:
   - "8081:8080"
   volumes:
@@ -50,7 +50,7 @@ app:
     STRAVA_REFRESH_TOKEN: ${STRAVA_REFRESH_TOKEN}
 services:
 - name: daemon
-  image: robiningelbrecht/strava-statistics:latest
+  image: robiningelbrecht/strava-statistics:v0.6.8
   command: bin/console app:daemon:run
   volumes:
   - strava_database:/var/www/storage/database

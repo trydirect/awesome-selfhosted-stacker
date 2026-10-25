@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: lobehub/lobe-chat:latest
+  image: lobehub/lobe-chat:v1.26.0
   ports:
     - "3210:3210"
   environment:

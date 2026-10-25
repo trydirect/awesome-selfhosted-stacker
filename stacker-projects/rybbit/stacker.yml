@@ -74,7 +74,7 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:
   type: custom
-  image: ghcr.io/rybbit-io/rybbit-client:latest
+  image: ghcr.io/rybbit-io/rybbit-client:v1.0.0
   ports:
   - "3002:3002"
   environment:
@@ -123,7 +123,7 @@ services:
     timeout: 5s
     retries: 10
 - name: backend
-  image: ghcr.io/rybbit-io/rybbit-backend:latest
+  image: ghcr.io/rybbit-io/rybbit-backend:v1.0.0
   ports:
   - "3001:3001"
   environment:

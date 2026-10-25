@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: floci/floci:latest
+  image: floci/floci:1.0.0
   build: null
   ports:
   - "4566:4566"
@@ -29,7 +29,7 @@ app:
     retries: 10
 services:
   - name: floci-ui
-    image: floci/floci-ui:latest
+    image: floci/floci-ui:1.0.0
     ports:
       - "4500:4500"
     environment:

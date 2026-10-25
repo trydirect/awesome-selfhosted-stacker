@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: kestra/kestra:latest
+  image: kestra/kestra:v0.19.8
   ports:
     - "8080:8080"
   environment:

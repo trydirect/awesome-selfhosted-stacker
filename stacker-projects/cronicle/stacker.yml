@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: cronicle/cronicle:latest
+  image: cronicle/cronicle:1.12.3
   ports:
     - "3012:3012"
   environment:

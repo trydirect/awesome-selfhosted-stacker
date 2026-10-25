@@ -9,7 +9,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "sintelli/socioboard-web:latest"
+  image: "sintelli/socioboard-web:6.0.0"
   ports:
     - "80:80"
   environment:
@@ -18,7 +18,7 @@ app:
     LARAVEL_KEY: "${LARAVEL_KEY}"
 services:
   - name: "socioboard"
-    image: "sintelli/socioboard:latest"
+    image: "sintelli/socioboard:6.0.0"
     volumes:
       - "socioboard_api_data:/data"
     environment:

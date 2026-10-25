@@ -42,7 +42,7 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:
   type: custom
-  image: ghcr.io/gitroomhq/postiz-app:latest
+  image: ghcr.io/gitroomhq/postiz-app:v1.6.4
   ports:
   - "4007:5000"
   volumes:

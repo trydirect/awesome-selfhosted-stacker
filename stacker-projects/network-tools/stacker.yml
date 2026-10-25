@@ -3,7 +3,7 @@ name: network-tools
 app:
   type: custom
   dockerfile: Dockerfile
-  image: trydirect/network-tools:latest
+  image: trydirect/network-tools:1.0.0
 
 proxy:
   type: none

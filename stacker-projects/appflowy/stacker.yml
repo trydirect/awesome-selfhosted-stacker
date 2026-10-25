@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: appflowyinc/appflowy_cloud:latest
+  image: appflowyinc/appflowy_cloud:0.8.1
   ports:
     - "8000:8000"
   environment:

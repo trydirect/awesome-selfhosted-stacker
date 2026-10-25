@@ -1,7 +1,7 @@
 name: jellyseerr
 app:
   type: custom
-  image: fallenbagel/jellyseerr:latest
+  image: fallenbagel/jellyseerr:2.3.0
   ports:
   - "5055:5055"
   volumes:

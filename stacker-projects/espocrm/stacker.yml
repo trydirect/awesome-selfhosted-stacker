@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: espocrm/espocrm:latest
+  image: espocrm/espocrm:8.3.1
   ports:
     - "8080:80"
   environment:

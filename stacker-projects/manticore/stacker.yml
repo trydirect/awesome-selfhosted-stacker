@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: manticoresearch/manticore:latest
+  image: manticoresearch/manticore:6.3.6
   ports:
     - "9306:9306"
     - "9308:9308"

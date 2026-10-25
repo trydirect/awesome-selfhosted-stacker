@@ -6,7 +6,7 @@ project:
 
 app:
   type: custom
-  image: soulter/astrbot:latest
+  image: soulter/astrbot:v3.5.5
   ports:
     - "6185:6185"
     - "6199:6199"

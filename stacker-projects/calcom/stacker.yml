@@ -2,7 +2,7 @@ name: calcom
 
 app:
   type: custom
-  image: calcom/cal.com:latest
+  image: calcom/cal.com:v4.7.1
   ports:
     - "3000:3000/tcp"
   environment:

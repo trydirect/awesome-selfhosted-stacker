@@ -13,7 +13,7 @@ hooks:
 
 app:
   type: custom
-  image: ghcr.io/getarcaneapp/manager:latest
+  image: ghcr.io/getarcaneapp/manager:v0.14.2
   ports:
     - "3552:3552"
   environment:

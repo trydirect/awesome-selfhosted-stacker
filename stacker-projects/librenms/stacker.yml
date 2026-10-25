@@ -2,7 +2,7 @@ name: librenms
 
 app:
   type: custom
-  image: librenms/librenms:latest
+  image: librenms/librenms:24.10.1
   ports:
     - "8000:8000/tcp"
   environment:

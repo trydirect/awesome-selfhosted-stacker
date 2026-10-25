@@ -5,7 +5,7 @@ project:
 
 app:
   type: custom
-  image: onetimesecret/onetimesecret:latest
+  image: onetimesecret/onetimesecret:0.16.1
   ports:
     - "3000:3000"
   environment:

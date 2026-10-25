@@ -78,7 +78,7 @@ services:
   # Pipelines — Open WebUI plugin runtime. Internal-only; Open WebUI
   # auto-discovers it on the docker network.
   - name: sovereign-ai-pipelines
-    image: ghcr.io/open-webui/pipelines:main
+    image: ghcr.io/open-webui/pipelines:0.1.0
     environment:
       PIPELINES_URLS: ""
     volumes:

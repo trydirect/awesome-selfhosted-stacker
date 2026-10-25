@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: quay.io/mudler/localagi:latest
+  image: quay.io/mudler/localagi:1.0.0
   ports:
     - "8080:3000"
   environment:

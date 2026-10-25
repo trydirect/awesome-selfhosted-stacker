@@ -10,7 +10,7 @@ install:
 
 app:
   type: php
-  image: wallabag/wallabag:latest
+  image: wallabag/wallabag:2.6.0
   ports:
     - "8080:80"
   environment:

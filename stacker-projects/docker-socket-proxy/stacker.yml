@@ -2,7 +2,7 @@ name: docker-socket-proxy
 
 app:
   type: custom
-  image: tecnativa/docker-socket-proxy:latest
+  image: tecnativa/docker-socket-proxy:0.4.2
   ports:
     - "2375:2375"
   environment:

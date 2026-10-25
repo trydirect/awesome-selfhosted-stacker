@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/khoj-ai/khoj:latest
+  image: ghcr.io/khoj-ai/khoj:v1.28.0
   ports:
     - "42110:42110"
   environment:

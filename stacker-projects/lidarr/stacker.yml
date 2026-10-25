@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: linuxserver/lidarr:latest
+  image: linuxserver/lidarr:2.7.2
   ports:
     - "8686:8686"
   environment:

@@ -45,7 +45,7 @@ hooks:
 
 app:
   type: custom
-  image: trydirect/stackpilot:latest
+  image: trydirect/stackpilot:1.0.0
   ports:
     - "8080:8000"
   environment:

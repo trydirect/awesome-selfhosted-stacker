@@ -2,7 +2,7 @@ name: hanko
 
 app:
   type: custom
-  image: ghcr.io/teamhanko/hanko:latest
+  image: ghcr.io/teamhanko/hanko:v0.11.1
   ports:
     - "8002:8000"
   volumes:

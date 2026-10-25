@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghostfolio/ghostfolio:latest
+  image: ghostfolio/ghostfolio:2.128.1
   ports:
     - "3333:3333"
   environment:

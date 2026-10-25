@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: codeberg.org/readeck/readeck:latest
+  image: codeberg.org/readeck/readeck:0.16.2
   ports:
     - "8000:8000"
   environment:

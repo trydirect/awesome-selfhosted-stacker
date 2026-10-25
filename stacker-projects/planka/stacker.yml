@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/plankanban/planka:latest
+  image: ghcr.io/plankanban/planka:v1.22.1
   ports:
     - "1337:1337"
   environment:

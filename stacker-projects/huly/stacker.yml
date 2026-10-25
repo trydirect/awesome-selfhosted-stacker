@@ -14,7 +14,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/hcengineering/platform:latest
+  image: ghcr.io/hcengineering/platform:v0.6.0
   ports:
     - "8080:8080"
   environment:
@@ -37,7 +37,7 @@ app:
 
 services:
   - name: huly-account
-    image: ghcr.io/hcengineering/account:latest
+    image: ghcr.io/hcengineering/account:v0.6.0
     environment:
       ACCOUNTS_PORT: "8083"
       DB_URL: postgres://postgres:${HULY_DATABASE_PASSWORD}@postgres:5432/huly
@@ -49,7 +49,7 @@ services:
       - redis
 
   - name: huly-worker
-    image: ghcr.io/hcengineering/worker:latest
+    image: ghcr.io/hcengineering/worker:v0.6.0
     environment:
       SERVER_PORT: "8080"
       DB_URL: postgres://postgres:${HULY_DATABASE_PASSWORD}@postgres:5432/huly

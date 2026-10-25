@@ -7,7 +7,7 @@ install:
     commonDomain: redash.example.com
 app:
   type: custom
-  image: redash/redash:latest
+  image: redash/redash:10.1.0
   ports:
   - "5003:5000"
   environment:

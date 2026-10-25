@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: alextselegidis/easyappointments:latest
+  image: alextselegidis/easyappointments:1.5.0
   ports:
     - "8080:80"
   environment:

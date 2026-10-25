@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: writeas/writefreely:latest
+  image: writeas/writefreely:0.15.0
   ports:
     - "8082:8080"
   environment:

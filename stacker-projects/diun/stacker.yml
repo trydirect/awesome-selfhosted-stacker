@@ -2,7 +2,7 @@ name: diun
 
 app:
   type: custom
-  image: ghcr.io/crazy-max/diun:latest
+  image: ghcr.io/crazy-max/diun:v4.30.0
   command: serve
   environment:
     DIUN_PROVIDERS_DOCKER: "true"

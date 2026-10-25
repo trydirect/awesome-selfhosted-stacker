@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: fnsys/dockhand:latest
+  image: fnsys/dockhand:0.5.2
   ports:
     - "3000:3000"
   environment:

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: lscr.io/linuxserver/duplicati:latest
+  image: lscr.io/linuxserver/duplicati:2.0.9
   ports:
   - "8200:8200"
   environment:

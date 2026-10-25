@@ -2,7 +2,7 @@ name: ombi
 
 app:
   type: custom
-  image: lscr.io/linuxserver/ombi:latest
+  image: lscr.io/linuxserver/ombi:4.4.2
   ports:
     - "3579:3579"
   environment:

@@ -2,7 +2,7 @@ name: fossbilling
 
 app:
   type: custom
-  image: fossbilling/fossbilling:latest
+  image: fossbilling/fossbilling:1.0.3
   ports:
     - "8083:80/tcp"
   environment:

@@ -2,7 +2,7 @@ name: freescout
 
 app:
   type: custom
-  image: bfren/freescout:latest
+  image: bfren/freescout:1.8.33
   ports:
     - "8082:80/tcp"
   environment:

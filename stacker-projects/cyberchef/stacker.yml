@@ -2,7 +2,7 @@ name: cyberchef
 
 app:
   type: custom
-  image: ghcr.io/gchq/cyberchef:latest
+  image: ghcr.io/gchq/cyberchef:v10.18.8
   ports:
     - "8000:8080"
 

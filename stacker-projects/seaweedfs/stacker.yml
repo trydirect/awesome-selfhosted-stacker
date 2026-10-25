@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: chrislusf/seaweedfs:latest
+  image: chrislusf/seaweedfs:3.76
   ports:
     - "8888:8888"
     - "8333:8333"

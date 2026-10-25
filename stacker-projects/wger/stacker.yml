@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: wger/server:latest
+  image: wger/server:2.2.0
   ports:
     - "8000:8000"
   environment:

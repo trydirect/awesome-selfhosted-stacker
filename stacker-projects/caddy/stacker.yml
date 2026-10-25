@@ -1,7 +1,7 @@
 name: caddy
 app:
   type: custom
-  image: caddy:latest
+  image: caddy:2.8.4
   ports:
   - "80:80"
   - "443:443"

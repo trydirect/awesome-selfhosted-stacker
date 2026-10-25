@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: linuxserver/prowlarr:latest
+  image: linuxserver/prowlarr:1.28.2
   ports:
     - "9696:9696"
   environment:

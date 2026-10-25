@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: lukevella/rallly:latest
+  image: lukevella/rallly:v3.14.0
   ports:
     - "3000:3000"
   environment:

@@ -7,7 +7,7 @@ install:
     commonDomain: forum.example.com
 app:
   type: custom
-  image: discourse/discourse:latest
+  image: discourse/discourse:3.2.0
   ports:
   - "80:80"
   - "443:443"

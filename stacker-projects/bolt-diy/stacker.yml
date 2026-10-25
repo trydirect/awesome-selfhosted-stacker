@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/stackblitz-labs/bolt.diy:latest
+  image: ghcr.io/stackblitz-labs/bolt.diy:v0.0.11
   ports:
     - "5173:5173"
   environment:

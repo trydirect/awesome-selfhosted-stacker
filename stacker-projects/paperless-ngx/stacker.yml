@@ -7,7 +7,7 @@ app:
   type: python
   path: .
   dockerfile: null
-  image: ghcr.io/paperless-ngx/paperless-ngx:latest
+  image: ghcr.io/paperless-ngx/paperless-ngx:2.11.0
   build: null
   ports:
   - "8000:8000"

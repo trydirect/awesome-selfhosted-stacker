@@ -7,7 +7,7 @@ install:
     commonDomain: superset.example.com
 app:
   type: python
-  image: apache/superset:latest
+  image: apache/superset:4.0.2
   ports:
   - "8088:8088"
   environment:

@@ -4,7 +4,7 @@ project:
   identity: romm
 app:
   type: custom
-  image: rommapp/romm:latest
+  image: rommapp/romm:v4.0.2
   ports:
   - "8080:8080"
   environment:

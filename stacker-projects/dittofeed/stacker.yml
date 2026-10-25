@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: dittofeed/dittofeed-lite:latest
+  image: dittofeed/dittofeed-lite:v0.23.0
   ports:
     - "3000:3000"
     - "3001:3001"
@@ -54,7 +54,7 @@ services:
       retries: 5
 
   - name: kafka
-    image: apache/kafka:latest
+    image: apache/kafka:3.8.1
     ports:
       - "127.0.0.1:9092:9092"
     environment:

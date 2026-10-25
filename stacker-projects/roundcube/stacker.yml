@@ -3,7 +3,7 @@ version: "1.6.9"
 
 app:
   type: custom
-  image: roundcube/roundcubemail:latest
+  image: roundcube/roundcubemail:1.6.20-fpm-alpine
   ports:
     - "80:80"
   environment:

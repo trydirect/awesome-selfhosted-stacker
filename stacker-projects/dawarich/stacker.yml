@@ -14,7 +14,7 @@ install:
 
 app:
   type: custom
-  image: freikin/dawarich:latest
+  image: freikin/dawarich:0.16.0
   ports:
     - "3000:3000"
   environment:
@@ -37,7 +37,7 @@ app:
 
 services:
   - name: dawarich-background
-    image: freikin/dawarich:latest
+    image: freikin/dawarich:0.16.0
     command: bundle exec sidekiq -C config/sidekiq.yml
     environment:
       RAILS_ENV: production

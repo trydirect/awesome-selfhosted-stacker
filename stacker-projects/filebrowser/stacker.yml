@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: filebrowser/filebrowser:latest
+  image: filebrowser/filebrowser:v2.31.2
   ports:
     - "8080:80"
   environment:

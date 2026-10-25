@@ -10,7 +10,7 @@ install:
 
 app:
   type: python
-  image: sissbruecker/linkding:latest
+  image: sissbruecker/linkding:1.27.0
   ports:
     - "9090:9090"
   environment:

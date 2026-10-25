@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/pterodactyl/panel:latest
+  image: ghcr.io/pterodactyl/panel:v1.11.10
   ports:
     - "80:80"
     - "443:443"

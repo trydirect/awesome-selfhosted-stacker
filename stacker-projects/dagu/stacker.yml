@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/dagucloud/dagu:latest
+  image: ghcr.io/dagucloud/dagu:v1.2.6
   ports:
     - "8080:8080"
   environment:

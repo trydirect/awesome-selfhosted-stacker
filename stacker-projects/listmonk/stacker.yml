@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: listmonk/listmonk:latest
+  image: listmonk/listmonk:v4.1.0
   command: sh -c "yes | ./listmonk --install; exec ./listmonk"
   ports:
     - "9000:9000"

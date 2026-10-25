@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: shlinkio/shlink:latest
+  image: shlinkio/shlink:4.2.0
   ports:
     - "8080:8080"
   environment:

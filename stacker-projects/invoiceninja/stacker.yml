@@ -2,7 +2,7 @@ name: invoiceninja
 
 app:
   type: custom
-  image: invoiceninja/invoiceninja:latest
+  image: invoiceninja/invoiceninja:v5.11.2
   ports:
     - "8080:80/tcp"
   environment:

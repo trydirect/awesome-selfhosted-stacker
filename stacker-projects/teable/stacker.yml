@@ -2,7 +2,7 @@ name: teable
 
 app:
   type: custom
-  image: ghcr.io/teableio/teable:latest
+  image: ghcr.io/teableio/teable:v1.0.0
   ports:
     - "3000:3000/tcp"
   environment:

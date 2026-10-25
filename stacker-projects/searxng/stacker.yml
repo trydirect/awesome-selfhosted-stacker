@@ -3,7 +3,7 @@ version: "2024.2.10"
 
 app:
   type: custom
-  image: searxng/searxng:latest
+  image: searxng/searxng:2024.10.1
   ports:
     - "8080:8080"
   environment:

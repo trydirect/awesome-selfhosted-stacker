@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/maybe-finance/maybe:latest
+  image: ghcr.io/maybe-finance/maybe:v0.9.1
   ports:
     - "3000:3000"
   environment:

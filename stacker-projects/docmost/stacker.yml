@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: docmost/docmost:latest
+  image: docmost/docmost:0.5.0
   ports:
     - "3000:3000"
   environment:

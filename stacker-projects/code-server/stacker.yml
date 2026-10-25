@@ -2,7 +2,7 @@ name: code-server
 version: 4.90.4
 app:
   type: custom
-  image: lscr.io/linuxserver/code-server:latest
+  image: lscr.io/linuxserver/code-server:4.96.1
   ports:
   - "8443:8443"
   environment:

@@ -2,7 +2,7 @@ name: libredesk
 
 app:
   type: custom
-  image: libredesk/libredesk:latest
+  image: libredesk/libredesk:0.14.2
   ports:
     - "9000:9000/tcp"
   environment:

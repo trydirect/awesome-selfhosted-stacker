@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: devlikeapro/waha:latest-2026.9.2
+  image: devlikeapro/waha:latest-2026.9.2-2026.9.2
   ports:
     - "3000:3000"
   environment:

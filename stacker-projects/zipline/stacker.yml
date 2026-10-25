@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/diced/zipline:latest
+  image: ghcr.io/diced/zipline:v3.1.0
   ports:
     - "3000:3000"
   environment:

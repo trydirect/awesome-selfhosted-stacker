@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: vabene1111/recipes:latest
+  image: vabene1111/recipes:1.5.19
   ports:
     - "8080:80"
   environment:

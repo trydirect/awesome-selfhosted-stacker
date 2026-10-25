@@ -2,7 +2,7 @@ name: nocodb
 
 app:
   type: custom
-  image: nocodb/nocodb:latest
+  image: nocodb/nocodb:0.258.1
   ports:
     - "8080:8080"
   environment:
