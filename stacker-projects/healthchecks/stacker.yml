@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: healthchecks/healthchecks:v2.13
+  image: healthchecks/healthchecks:v5.0.1
   ports:
     - "8000:8000"
   environment:

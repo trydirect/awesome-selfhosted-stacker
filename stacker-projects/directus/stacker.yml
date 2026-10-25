@@ -1,7 +1,7 @@
 name: directus
 app:
   type: custom
-  image: directus/directus:11.1.3
+  image: directus/directus:12.5.1
   ports:
   - "8055:8055"
   environment:

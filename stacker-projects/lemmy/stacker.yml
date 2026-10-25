@@ -44,7 +44,7 @@ services:
     timeout: 5s
     retries: 10
 - name: lemmy_pictrs
-  image: asonix/pictrs:0.8.1
+  image: asonix/pictrs:0.6.0-rc.6
   environment:
     PICTRS_OPENTELEMETRY_URL: http://otel:4137
     PICTRS_LOG_TARGETS: warn

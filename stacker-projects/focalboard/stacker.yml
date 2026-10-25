@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: mattermost/focalboard:v7.11.2
+  image: mattermost/focalboard:7.8.9
   ports:
     - "8000:8000"
   environment:

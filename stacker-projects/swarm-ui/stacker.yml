@@ -6,7 +6,7 @@ project:
 
 app:
   type: custom
-  image: mchaker/swarmui:1.0.0
+  image: mchaker/swarmui:latest
   ports:
     - "7801:7801"
   volumes:

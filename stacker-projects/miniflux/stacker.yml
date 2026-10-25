@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: miniflux/miniflux:2.2.1
+  image: miniflux/miniflux:latest
   ports:
     - "8080:8080"
   environment:

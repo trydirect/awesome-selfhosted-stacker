@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: gotson/komga:1.12.2
+  image: gotson/komga:1.29.1
   ports:
     - "25600:25600"
   environment:

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: metabase/metabase:v0.52.0
+  image: metabase/metabase:v0.65.0.x
   ports:
     - "3000:3000"
   environment:

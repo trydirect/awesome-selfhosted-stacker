@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: vaultwarden/server:1.32.0
+  image: vaultwarden/server:alpine
   build: null
   ports:
   - "8080:80"

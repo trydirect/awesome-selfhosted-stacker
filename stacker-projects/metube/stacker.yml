@@ -2,7 +2,7 @@ name: metube
 
 app:
   type: custom
-  image: alexta69/metube:2024.10.0
+  image: alexta69/metube:2026.10.25
   ports:
     - "8081:8081"
   volumes:

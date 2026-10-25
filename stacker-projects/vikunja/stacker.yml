@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: vikunja/vikunja:0.22.0
+  image: vikunja/vikunja:2
   ports:
     - "3456:3456"
   environment:

@@ -12,7 +12,7 @@ install:
 
 app:
   type: custom
-  image: zammad/zammad:6.3.1
+  image: zammad/zammad:7.2
   ports:
     - "8080:80"
   environment:
@@ -34,7 +34,7 @@ app:
 
 services:
   - name: zammad-websocket
-    image: zammad/zammad:6.3.1
+    image: zammad/zammad:7.2
     command: zammad-websocket
     environment:
       POSTGRESQL_HOST: postgres
@@ -53,7 +53,7 @@ services:
       - redis
 
   - name: zammad-worker
-    image: zammad/zammad:6.3.1
+    image: zammad/zammad:7.2
     command: zammad-worker
     environment:
       POSTGRESQL_HOST: postgres

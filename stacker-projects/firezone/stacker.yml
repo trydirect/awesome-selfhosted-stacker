@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: firezone/firezone:1.14.1
+  image: firezone/firezone:0.7.36
   ports:
     - "8080:8080"
     - "51820:51820/udp"

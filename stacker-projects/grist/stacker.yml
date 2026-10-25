@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: gristlabs/grist:1.20.0
+  image: gristlabs/grist:1
   ports:
     - "8484:8484"
   environment:

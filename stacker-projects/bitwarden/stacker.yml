@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: vaultwarden/server:1.32.0
+  image: vaultwarden/server:alpine
   ports:
     - "80:80"
     - "3012:3012"

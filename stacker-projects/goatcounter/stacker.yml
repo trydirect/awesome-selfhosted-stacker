@@ -9,7 +9,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "arp242/goatcounter:v2.5.1"
+  image: "arp242/goatcounter:2.7.0"
   ports:
     - "8080:8080"
   command: "serve -listen :8080 -automigrate"

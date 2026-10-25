@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: kimai/kimai2:2.29.0
+  image: kimai/kimai2:2.71.0
   ports:
     - "8001:8001"
   environment:

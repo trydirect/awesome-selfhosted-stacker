@@ -7,7 +7,7 @@ app:
   type: php
   path: .
   dockerfile: null
-  image: nextcloud:29.0.10
+  image: nextcloud:latest
   build: null
   ports:
   - "8081:80"

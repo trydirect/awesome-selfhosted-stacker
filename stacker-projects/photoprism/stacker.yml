@@ -12,7 +12,7 @@ install:
 
 app:
   type: custom
-  image: photoprism/photoprism:240915
+  image: photoprism/photoprism:preview
   ports:
     - "2342:2342"
   environment:

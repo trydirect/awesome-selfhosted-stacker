@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: b4bz/homer:v24.09.2
+  image: b4bz/homer:v26.08.3
   ports:
     - "8080:8080"
   volumes:

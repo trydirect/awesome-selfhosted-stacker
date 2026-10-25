@@ -2,7 +2,7 @@ name: glpi
 
 app:
   type: custom
-  image: glpi/glpi:10.0.17
+  image: glpi/glpi:12.0-nightly
   ports:
     - "8081:80/tcp"
   environment:

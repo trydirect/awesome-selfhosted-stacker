@@ -50,7 +50,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "logiclabshq/open-archiver:0.1.0"
+  image: "logiclabshq/open-archiver:v0.6.2"
   ports:
     - "3000:3000"
   volumes:

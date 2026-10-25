@@ -7,7 +7,7 @@ version: "1.0.0"
 app:
   type: custom
   path: .
-  image: ashleykza/comfyui:1.0.3
+  image: ashleykza/comfyui:cu128-py311-v0.26.0
   ports:
     - "8188:3001"
   environment:

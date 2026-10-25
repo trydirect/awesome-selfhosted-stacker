@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: nodered/node-red:4.0.4
+  image: nodered/node-red:4.1.17-18-minimal
   ports:
     - "1880:1880"
   environment:

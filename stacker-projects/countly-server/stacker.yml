@@ -9,19 +9,19 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "bitnami/nginx:1.27.2"
+  image: "bitnami/nginx:latest"
   ports:
     - "8080:8080"
   environment: {}
 services:
   - name: "mongodb"
-    image: "bitnami/mongodb:7.0"
+    image: "bitnami/mongodb:latest"
     volumes:
       - "countly_mongodb_data:/bitnami"
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
   - name: "countly-api"
-    image: "countly/api:24.4"
+    image: "countly/api:25.03.56-LTS"
     environment:
       COUNTLY_PLUGINS: "mobile,web,desktop,plugins,density,locale,browser,sources,views,logger,systemlogs,populator,reports,crashes,push,star-rating,slipping-away-users,compare,server-stats,dbviewer,times-of-day,compliance-hub,alerts,onboarding,consolidate,remote-config,hooks,dashboards,sdk,data-manager"
       COUNTLY_CONFIG__MONGODB_HOST: "mongodb"
@@ -29,7 +29,7 @@ services:
       COUNTLY_CONFIG__FILESTORAGE: "gridfs"
       NODE_OPTIONS: "--max-old-space-size=2048"
   - name: "countly-frontend"
-    image: "countly/frontend:24.4"
+    image: "countly/frontend:25.03.56-LTS"
     environment:
       COUNTLY_PLUGINS: "mobile,web,desktop,plugins,density,locale,browser,sources,views,logger,systemlogs,populator,reports,crashes,push,star-rating,slipping-away-users,compare,server-stats,dbviewer,times-of-day,compliance-hub,alerts,onboarding,consolidate,remote-config,hooks,dashboards,sdk,data-manager"
       COUNTLY_CONFIG__MONGODB_HOST: "mongodb"

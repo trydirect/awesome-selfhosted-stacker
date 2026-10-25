@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: budibase/budibase:v3.1.1
+  image: budibase/budibase:cloud
   ports:
     - "80:80"
   environment:
@@ -50,7 +50,7 @@ services:
       retries: 5
 
   - name: minio
-    image: firstfinger/minio:RELEASE.2024-10-13T13-34-11Z
+    image: firstfinger/minio:buildcache-1.7.3
     ports:
       - "127.0.0.1:9000:9000"
       - "127.0.0.1:9001:9001"
