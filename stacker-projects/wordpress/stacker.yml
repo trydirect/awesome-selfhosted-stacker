@@ -21,7 +21,7 @@ app:
   - wordpress_data:/var/www/html
 services:
 - name: wordpress_db
-  image: mysql:oraclelinux9
+  image: mysql:8.4
   environment:
     MYSQL_DATABASE: wordpress
     MYSQL_USER: wordpress

@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: floci/floci:nightly-10242026-compat
+  image: floci/floci:nightly
   build: null
   ports:
   - "4566:4566"

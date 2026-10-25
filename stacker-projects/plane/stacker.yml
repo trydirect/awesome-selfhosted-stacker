@@ -2,7 +2,7 @@ name: plane
 
 app:
   type: custom
-  image: makeplane/plane-aio-community:buildcache
+  image: makeplane/plane-aio-community:v1.4.2
   ports:
     - "8000:80/tcp"
   environment:

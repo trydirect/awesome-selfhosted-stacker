@@ -75,7 +75,7 @@ services:
   - qdrant_storage:/qdrant/storage
   restart: unless-stopped
 - name: neo4j
-  image: neo4j:ubi10
+  image: neo4j:5-community
   environment:
     NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
   volumes:

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: mintplexlabs/anythingllm:pg-1.19.0
+  image: mintplexlabs/anythingllm:1.18.0
   ports:
     - "3001:3001"
   environment:
