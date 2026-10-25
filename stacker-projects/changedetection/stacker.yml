@@ -2,7 +2,7 @@ name: changedetection
 
 app:
   type: custom
-  image: ghcr.io/dgtlmoon/changedetection.io:latest
+  image: dgtlmoon/changedetection.io:latest
   ports:
     - "5001:5000"
   volumes:
