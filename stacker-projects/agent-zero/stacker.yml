@@ -77,52 +77,26 @@ marketplace:
   license: free
   support_url: https://github.com/agent0ai/agent-zero
   no_secrets_confirmation: true
-  publish: true
   long_description: |
-    **Agent Zero**: AI agent framework with computer use, RAG and multi-model support
+    ## Agent Zero
 
-    Deploy from this page: TryDirect provisions the server, starts the
-    services, generates the deployment credentials and wires the
-    1 containers together. Nothing is shared between deployments and no
-    secrets ship with the stack.
+    [Agent Zero](https://github.com/agent0ai/agent-zero) is an open agent framework for work
+    that needs more than chat. The agent runs in its own Dockerized Linux environment with a
+    terminal, files, a browser and per-project memory, and can delegate tasks to subagents.
 
-    ## What's included
+    ### What you get
 
-    | Service | Port | Description |
-    | ------- | ---- | ----------- |
-    | app | 80 (public on 50080) | `agent0ai/agent-zero:v2.14` |
+    - **Agent Zero v2.14** web UI on port 50080
+    - A persistent volume for your settings, projects, memory and files
+    - A health check on the container
 
-    ## What you configure
+    ### Security
 
-    - **Domain** (`commonDomain`): the hostname the stack is served on
-    - **Defaults provided**: `AUTH_LOGIN` ship prefilled and can be adjusted in the deploy form
+    The web UI and API require a login. The username defaults to `admin` and the
+    password is generated fresh for every install. The UI is served over plain HTTP on
+    port 50080; put it behind HTTPS before sending real credentials over the internet.
 
-    All 1 credential (passwords and keys) are generated per
-    deployment and stored in your project's secret store.
+    ### After install
 
-    ## Requirements
-
-    - A cloud account connected to TryDirect (the deploy form provisions
-      the server) or one of your own servers
-    - A server that fits 1 containers (2 GB RAM or more recommended)
-    - A DNS record for the domain you set in the deploy form
-
-    ## Alternative: deploy with the Stacker CLI
-
-    Everything above also works from the command line:
-
-    ```bash
-    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
-    cd awesome-selfhosted-stacker/stacker-projects/agent-zero
-
-    # Generate secrets
-    cp .env.example .env
-    ./scripts/generate-secrets.sh
-
-    # Deploy
-    stacker deploy
-    ```
-  category: devops
-  tags: [agent zero]
-  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/agent-zero
-  no_secrets_confirmation: true
+    Open the web UI, sign in, and choose your LLM provider and API key in Settings
+    (OpenAI, Anthropic, OpenRouter, Ollama and others).
