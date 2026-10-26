@@ -136,3 +136,55 @@ config_contract:
       volumes:
         invoiceninja_db:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Invoiceninja"
+  short_description: "Invoicing, billing, and payment management for freelancers"
+  long_description: |
+    **Invoiceninja**: Invoicing, billing, and payment management for freelancers
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80/tcp (public on 8080) | `invoiceninja/invoiceninja:latest` |
+    | db | internal | Database |
+
+    ## What you configure
+
+    - **Defaults provided**: `DB_HOST`, `DB_NAME`, `DB_PORT`, `DB_USER`, `MARIADB_DATABASE`, `MARIADB_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 3 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/invoiceninja
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [invoiceninja]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/invoiceninja
+  no_secrets_confirmation: true

@@ -46,3 +46,53 @@ config_contract:
         volumes:
           mutability: editable
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Frigate"
+  short_description: "NVR with real-time AI object detection for home security cameras. Frigate detects persons, vehicles and pets with 24/7 recording."
+  long_description: |
+    **Frigate**: NVR with real-time AI object detection for home security cameras. Frigate detects persons, vehicles and pets with 24/7 recording.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 5000 (public on 5001), 8554 (public), 8555/tcp (public on 8555), 8555/udp (public on 8555) | `ghcr.io/blakeblackshear/frigate:stable` |
+
+    ## What you configure
+
+
+    All 1 credential (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/frigate
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [frigate]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/frigate
+  no_secrets_confirmation: true

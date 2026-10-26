@@ -212,3 +212,60 @@ config_contract:
       volumes:
         dawarich-redis:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Dawarich"
+  short_description: "Self-hosted location tracking platform (Google Timeline alternative). Store and visualize your GPS history with full ownership of your location data."
+  long_description: |
+    **Dawarich**: Self-hosted location tracking platform (Google Timeline alternative). Store and visualize your GPS history with full ownership of your location data.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    4 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public) | `freikin/dawarich:latest` |
+    | dawarich-background | internal | `freikin/dawarich:latest` |
+    | postgres | internal | Database |
+    | redis | internal | Cache |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Domain** (`domain`): the hostname the stack is served on
+    - **Defaults provided**: `APPLICATION_HOST`, `APPLICATION_PROTOCOL`, `DATABASE_HOST`, `DATABASE_NAME`, `DATABASE_PORT`, `DATABASE_USERNAME` and 13 more ship prefilled and can be adjusted in the deploy form
+
+    All 9 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 4 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/dawarich
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [dawarich]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/dawarich
+  no_secrets_confirmation: true

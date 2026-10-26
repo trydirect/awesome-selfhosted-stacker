@@ -304,3 +304,59 @@ config_contract:
           mutability: generated
         mautic_images:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Mautic"
+  short_description: "Open-source marketing automation, email, campaigns, CRM integration"
+  long_description: |
+    **Mautic**: Open-source marketing automation, email, campaigns, CRM integration
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    4 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 8080) | `mautic/mautic:6.0.6-apache` |
+    | db | internal | Database |
+    | worker | internal | Background worker |
+    | cron | internal | Scheduler |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `DOCKER_MAUTIC_ROLE`, `MAUTIC_DB_DATABASE`, `MAUTIC_DB_HOST`, `MAUTIC_DB_PORT`, `MAUTIC_DB_USER`, `MAUTIC_MESSENGER_DSN_EMAIL` and 17 more ship prefilled and can be adjusted in the deploy form
+
+    All 5 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 4 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/mautic
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [mautic]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/mautic
+  no_secrets_confirmation: true

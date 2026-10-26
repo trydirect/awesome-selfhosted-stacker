@@ -119,3 +119,58 @@ config_contract:
       volumes:
         aptabase_clickhouse_data:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Aptabase"
+  short_description: "Privacy-friendly, open-source analytics for mobile and desktop apps. GDPR-compliant app analytics you fully own on your own server."
+  long_description: |
+    **Aptabase**: Privacy-friendly, open-source analytics for mobile and desktop apps. GDPR-compliant app analytics you fully own on your own server.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public on 3000) | `ghcr.io/aptabase/aptabase:main` |
+    | postgres | internal | Database |
+    | clickhouse | internal | Database |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `ASPNETCORE_URLS`, `BASE_URL`, `CLICKHOUSE_URL`, `DATABASE_URL`, `CLICKHOUSE_DB`, `CLICKHOUSE_USER` and 2 more ship prefilled and can be adjusted in the deploy form
+
+    All 3 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/aptabase
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [aptabase]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/aptabase
+  no_secrets_confirmation: true

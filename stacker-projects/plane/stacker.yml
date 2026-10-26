@@ -230,3 +230,60 @@ config_contract:
       volumes:
         plane_minio:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Plane App"
+  short_description: "Project management, issues, cycles, modules, and analytics for teams"
+  long_description: |
+    **plane**: Project management, issues, cycles, modules, and analytics for teams
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    5 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80/tcp (public on 8000) | `makeplane/plane-aio-community:stable` |
+    | db | internal | Database |
+    | redis | internal | Cache |
+    | mq | internal | Message queue |
+    | minio | internal | Object storage |
+
+    ## What you configure
+
+    - **MINIO_ROOT_PASSWORD**: you provide this in the deploy form
+    - **MINIO_ROOT_USER**: you provide this in the deploy form
+    - **Defaults provided**: `AMQP_URL`, `AWS_REGION`, `AWS_S3_BUCKET_NAME`, `AWS_S3_ENDPOINT_URL`, `DATABASE_URL`, `DOMAIN_NAME` and 4 more ship prefilled and can be adjusted in the deploy form
+
+    All 4 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 5 containers (4 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/plane
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [plane app]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/plane
+  no_secrets_confirmation: true

@@ -155,3 +155,58 @@ env_file: .env
 volumes:
   hievents_storage: {}
   postgres_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Hi Events"
+  short_description: "Event management and ticketing platform with RSVP support"
+  long_description: |
+    **Hi Events**: Event management and ticketing platform with RSVP support
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public) | `ghcr.io/hidevops/hi-events:latest` |
+    | postgres | 5432 (local only) | Database |
+    | redis | 6379 (local only) | Cache |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `APP_NAME`, `APP_URL`, `CACHE_DRIVER`, `DB_CONNECTION`, `DB_DATABASE`, `DB_HOST` and 7 more ship prefilled and can be adjusted in the deploy form
+
+    All 3 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/hi-events
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [hi events]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/hi-events
+  no_secrets_confirmation: true

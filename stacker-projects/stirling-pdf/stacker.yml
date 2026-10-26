@@ -42,3 +42,47 @@ config_contract:
           mutability: generated
         stirling_config:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Stirling Pdf"
+  short_description: "Web-based PDF toolkit: merge, split, convert, compress, OCR and more. Do everything with PDFs locally in your browser."
+  long_description: |
+    **Stirling PDF**: Web-based PDF toolkit: merge, split, convert, compress, OCR and more. Do everything with PDFs locally in your browser.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public) | `frooodle/s-pdf:latest` |
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/stirling-pdf
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [stirling pdf]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/stirling-pdf
+  no_secrets_confirmation: true

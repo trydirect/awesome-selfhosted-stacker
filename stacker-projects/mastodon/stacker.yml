@@ -157,3 +157,59 @@ monitoring:
   status_panel: true
 
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Mastodon"
+  short_description: "Decentralized social network on the ActivityPub protocol. Host your own microblogging instance federated with the fediverse."
+  long_description: |
+    **Mastodon**: Decentralized social network on the ActivityPub protocol. Host your own microblogging instance federated with the fediverse.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    4 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public) | `ghcr.io/mastodon/mastodon:latest` |
+    | mastodon_db | 5432 (local only) | Database |
+    | redis | 6379 (local only) | Cache |
+    | sidekiq | internal | Background worker |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **VAPID_PUBLIC_KEY**: you provide this in the deploy form
+
+    All 12 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 4 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/mastodon
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [mastodon]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/mastodon
+  no_secrets_confirmation: true

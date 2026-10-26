@@ -61,3 +61,51 @@ config_contract:
       volumes:
         diun_data:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Diun App"
+  short_description: "Docker Image Update Notifier, watches registries and alerts on new tags"
+  long_description: |
+    **diun**: Docker Image Update Notifier, watches registries and alerts on new tags
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | internal | `ghcr.io/crazy-max/diun:latest` |
+
+    ## What you configure
+
+    - **Defaults provided**: `DIUN_PROVIDERS_DOCKER`, `DIUN_PROVIDERS_DOCKER_ENDPOINT`, `DIUN_PROVIDERS_DOCKER_WATCHBYDEFAULT`, `DIUN_WATCH_RUNONSTARTUP`, `DIUN_WATCH_SCHEDULE` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/diun
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [diun app]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/diun
+  no_secrets_confirmation: true

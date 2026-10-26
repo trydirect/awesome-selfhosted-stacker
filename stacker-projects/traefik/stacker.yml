@@ -32,3 +32,47 @@ config_contract:
       volumes:
         traefik_certs: { mutability: generated }
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Traefik"
+  short_description: "Cloud-native reverse proxy with automatic service discovery and Let's Encrypt TLS. Route traffic to containers automatically."
+  long_description: |
+    **Traefik**: Cloud-native reverse proxy with automatic service discovery and Let's Encrypt TLS. Route traffic to containers automatically.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public), 443 (public), 8080 (public) | Reverse proxy |
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/traefik
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [traefik]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/traefik
+  no_secrets_confirmation: true

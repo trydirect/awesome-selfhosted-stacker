@@ -48,3 +48,51 @@ deploy:
     size: cpx22
     public_ports:
       - "13378"
+
+marketplace:
+  publish: true
+  display_name: "Audiobookshelf"
+  short_description: "Self-hosted audiobook and podcast server with polished web and mobile apps. Stream and track listening progress across devices with Audiobookshelf."
+  long_description: |
+    **Audiobookshelf**: Self-hosted audiobook and podcast server with polished web and mobile apps. Stream and track listening progress across devices with Audiobookshelf.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 13378) | `ghcr.io/advplyr/audiobookshelf:latest` |
+
+    ## What you configure
+
+    - **Defaults provided**: `TZ` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/audiobookshelf
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [audiobookshelf]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/audiobookshelf
+  no_secrets_confirmation: true

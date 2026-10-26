@@ -62,3 +62,56 @@ env_file: .env
 
 volumes:
   whoogle_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Whoogle"
+  short_description: "Self-hosted, ad-free Google search proxy. Query Google results without tracking, ads or cookies."
+  long_description: |
+    **Whoogle**: Self-hosted, ad-free Google search proxy. Query Google results without tracking, ads or cookies.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 5000 (public on 5001) | `benbusby/whoogle-search:latest` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `WHOOGLE_DOTENV`, `WHOOGLE_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 1 credential (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/whoogle
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [whoogle]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/whoogle
+  no_secrets_confirmation: true

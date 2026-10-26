@@ -117,3 +117,55 @@ deploy:
       - "80"
       - "443"
       - "6875"
+
+marketplace:
+  publish: true
+  display_name: "Bookstack"
+  short_description: "Simple, clean documentation and wiki platform organized in books, chapters and pages. Perfect for internal knowledge bases with markdown and WYSIWYG editing."
+  long_description: |
+    **BookStack**: Simple, clean documentation and wiki platform organized in books, chapters and pages. Perfect for internal knowledge bases with markdown and WYSIWYG editing.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 6875) | API server |
+    | bookstack-db | internal | Database |
+
+    ## What you configure
+
+    - **Defaults provided**: `APP_URL`, `DB_DATABASE`, `DB_HOST`, `DB_USER`, `PGID`, `PUID` and 3 more ship prefilled and can be adjusted in the deploy form
+
+    All 4 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/bookstack
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [bookstack]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/bookstack
+  no_secrets_confirmation: true

@@ -48,3 +48,51 @@ config_contract:
           mutability: editable
         SERVICES:
           mutability: editable
+
+marketplace:
+  publish: true
+  display_name: "Docker Socket Proxy App"
+  short_description: "Self-hosted docker-socket-proxy"
+  long_description: |
+    **docker-socket-proxy**: Self-hosted docker-socket-proxy
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 2375 (public) | Reverse proxy |
+
+    ## What you configure
+
+    - **Defaults provided**: `CONTAINERS`, `POST`, `SERVICES` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/docker-socket-proxy
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [docker socket proxy app]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/docker-socket-proxy
+  no_secrets_confirmation: true

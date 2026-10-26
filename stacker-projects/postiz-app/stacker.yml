@@ -150,3 +150,60 @@ volumes:
   postiz_redis_data: {}
   temporal_elasticsearch_data: {}
   temporal_postgres_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Postiz App"
+  short_description: "Open-source social media scheduling and publishing tool (Buffer alternative). Plan and automate posts across networks."
+  long_description: |
+    **Postiz App**: Open-source social media scheduling and publishing tool (Buffer alternative). Plan and automate posts across networks.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    6 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 5000 (public on 4007) | `ghcr.io/gitroomhq/postiz-app:latest` |
+    | postiz-postgres | internal | Database |
+    | postiz-redis | internal | Cache |
+    | temporal-elasticsearch | internal | Search |
+    | temporal-postgresql | internal | Database |
+    | temporal | 7233 (local only) | `temporalio/auto-setup:1.28.1` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    All 5 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 6 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/postiz-app
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [postiz app]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/postiz-app
+  no_secrets_confirmation: true

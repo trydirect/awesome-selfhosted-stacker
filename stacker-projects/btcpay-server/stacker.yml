@@ -95,3 +95,57 @@ config_contract:
       volumes:
         btcpay-postgres:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Btcpay Server"
+  short_description: "Self-hosted, open-source Bitcoin payment processor with no custody of funds. Accept BTC and Lightning payments with full privacy on your own server."
+  long_description: |
+    **Btcpay Server**: Self-hosted, open-source Bitcoin payment processor with no custody of funds. Accept BTC and Lightning payments with full privacy on your own server.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 23000 (public) | API server |
+    | postgres | internal | Database |
+
+    ## What you configure
+
+    - **Domain** (`domain`): the hostname the stack is served on
+    - **Defaults provided**: `BTCPAY_CHAIN`, `BTCPAY_EXPLORERURL`, `BTCPAY_HOST`, `BTCPAY_LIGHTNING__CHARGEURL`, `BTCPAY_PORT`, `BTCPAY_PROTOCOL` and 6 more ship prefilled and can be adjusted in the deploy form
+
+    All 1 credential (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/btcpay-server
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [btcpay server]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/btcpay-server
+  no_secrets_confirmation: true

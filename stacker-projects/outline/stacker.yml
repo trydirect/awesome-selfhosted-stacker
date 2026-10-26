@@ -89,3 +89,58 @@ config_contract:
         FILE_STORAGE_UPLOAD_MAX_SIZE:
           mutability: editable
           display: number
+
+marketplace:
+  publish: true
+  display_name: "Outline"
+  short_description: "Self-hosted outline application, ready to deploy with Stacker"
+  long_description: |
+    **Outline**: Self-hosted outline application, ready to deploy with Stacker
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public) | `outlinewiki/outline:latest` |
+    | postgres | 5432 (local only) | Database |
+    | redis | 6379 (local only) | Cache |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `DATABASE_URL`, `FILE_STORAGE_UPLOAD_MAX_SIZE`, `REDIS_URL` ship prefilled and can be adjusted in the deploy form
+
+    All 4 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/outline
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [outline]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/outline
+  no_secrets_confirmation: true

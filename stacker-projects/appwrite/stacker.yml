@@ -169,3 +169,59 @@ volumes:
   appwrite_uploads: {}
   mariadb_data: {}
   influxdb_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Appwrite"
+  short_description: "Self-hosted Backend-as-a-Service with auth, databases, storage, functions and messaging. Ship web and mobile apps with a complete open-source backend."
+  long_description: |
+    **Appwrite**: Self-hosted Backend-as-a-Service with auth, databases, storage, functions and messaging. Ship web and mobile apps with a complete open-source backend.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    4 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public), 443 (public) | `appwrite/appwrite:1.6.0` |
+    | mariadb | 3306 (local only) | Database |
+    | redis | 6379 (local only) | Cache |
+    | influxdb | 8086 (local only) | `influxdb:1.8` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `INFLUXDB_ADMIN_ENABLED`, `INFLUXDB_DB`, `MYSQL_DATABASE`, `MYSQL_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 4 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 4 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/appwrite
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [appwrite]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/appwrite
+  no_secrets_confirmation: true

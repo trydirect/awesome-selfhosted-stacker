@@ -96,3 +96,55 @@ config_contract:
         timeout:
           mutability: editable
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Mattermost"
+  short_description: "Open-source Slack alternative for team messaging with threads and calls. Self-hosted, secure collaboration for technical teams."
+  long_description: |
+    **Mattermost**: Open-source Slack alternative for team messaging with threads and calls. Self-hosted, secure collaboration for technical teams.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8065 (public) | `mattermost/mattermost-enterprise-edition:9.11` |
+    | mattermost-db | internal | Database |
+
+    ## What you configure
+
+    - **Defaults provided**: `MM_SERVICESETTINGS_SITEURL`, `MM_SQLSETTINGS_DRIVERNAME`, `POSTGRES_DB`, `POSTGRES_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 2 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/mattermost
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [mattermost]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/mattermost
+  no_secrets_confirmation: true

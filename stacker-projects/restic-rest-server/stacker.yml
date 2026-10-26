@@ -57,3 +57,52 @@ config_contract:
       volumes:
         restic_repos:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Restic Rest Server"
+  short_description: "REST backend for restic backups over HTTPS. Store encrypted, deduplicated snapshots on remote storage you control."
+  long_description: |
+    **Restic REST Server**: REST backend for restic backups over HTTPS. Store encrypted, deduplicated snapshots on remote storage you control.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8000 (public) | API server |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/restic-rest-server
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [restic rest server]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/restic-rest-server
+  no_secrets_confirmation: true

@@ -62,3 +62,53 @@ env_file: .env
 
 volumes:
   localai_models: {}
+
+marketplace:
+  publish: true
+  display_name: "Localai"
+  short_description: "Drop-in OpenAI-compatible API running entirely on your hardware. Serve LLMs, image and audio models locally with LocalAI."
+  long_description: |
+    **LocalAI**: Drop-in OpenAI-compatible API running entirely on your hardware. Serve LLMs, image and audio models locally with LocalAI.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public) | `localai/localai:latest` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `DEBUG`, `MODELS_PATH`, `THREADS` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/localai
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [localai]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/localai
+  no_secrets_confirmation: true

@@ -39,3 +39,51 @@ config_contract:
         volumes:
           mutability: editable
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Tautulli"
+  short_description: "Monitoring and analytics for Plex: who's watching, transcoding stats and notifications. Track your media server activity."
+  long_description: |
+    **Tautulli**: Monitoring and analytics for Plex: who's watching, transcoding stats and notifications. Track your media server activity.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8181 (public) | API server |
+
+    ## What you configure
+
+    - **Defaults provided**: `PGID`, `PUID`, `TZ` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/tautulli
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [tautulli]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/tautulli
+  no_secrets_confirmation: true

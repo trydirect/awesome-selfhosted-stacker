@@ -62,3 +62,53 @@ env_file: .env
 volumes:
   dagu_data: {}
   dagu_dags: {}
+
+marketplace:
+  publish: true
+  display_name: "Dagu"
+  short_description: "Lightweight cron alternative with a web UI and YAML-defined DAGs. Run and monitor cron jobs with logs, retries and dependencies."
+  long_description: |
+    **Dagu**: Lightweight cron alternative with a web UI and YAML-defined DAGs. Run and monitor cron jobs with logs, retries and dependencies.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public) | `ghcr.io/dagucloud/dagu:latest` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `DAGU_HOST`, `DAGU_PORT` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/dagu
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [dagu]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/dagu
+  no_secrets_confirmation: true

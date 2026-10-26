@@ -71,3 +71,59 @@ config_contract:
 env_file: ".env"
 volumes:
   countly_mongodb_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Countly Server"
+  short_description: "Open-source product analytics platform for mobile and web applications. Track user journeys, funnels and retention with full data ownership."
+  long_description: |
+    **Countly Server**: Open-source product analytics platform for mobile and web applications. Track user journeys, funnels and retention with full data ownership.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    4 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public) | Web server |
+    | mongodb | internal | Database |
+    | countly-api | internal | API server |
+    | countly-frontend | internal | Web UI |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `COUNTLY_CONFIG_API_API_WORKERS`, `COUNTLY_CONFIG__FILESTORAGE`, `COUNTLY_CONFIG__MONGODB_HOST`, `COUNTLY_PLUGINS`, `NODE_OPTIONS` ship prefilled and can be adjusted in the deploy form
+
+    All 1 credential (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 4 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/countly-server
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [countly server]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/countly-server
+  no_secrets_confirmation: true

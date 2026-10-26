@@ -212,3 +212,61 @@ config_contract:
       volumes:
         huly-redis:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Huly"
+  short_description: "All-in-one project management, issues, docs, chat, and HR"
+  long_description: |
+    **Huly**: All-in-one project management, issues, docs, chat, and HR
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    5 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public) | `ghcr.io/hcengineering/platform:latest` |
+    | huly-account | internal | `ghcr.io/hcengineering/account:latest` |
+    | huly-worker | internal | Background worker |
+    | postgres | internal | Database |
+    | redis | internal | Cache |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Domain** (`domain`): the hostname the stack is served on
+    - **Defaults provided**: `ACCOUNTS_URL`, `DB_URL`, `GITHUB_APP_NAME`, `GITHUB_CLIENT_ID`, `GITHUB_WEBHOOK_URL`, `REDIS_URL` and 15 more ship prefilled and can be adjusted in the deploy form
+
+    All 7 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 5 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/huly
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [huly]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/huly
+  no_secrets_confirmation: true

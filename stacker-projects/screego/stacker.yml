@@ -53,3 +53,53 @@ deploy:
       - "80"
       - "443"
       - "5050"
+
+marketplace:
+  publish: true
+  display_name: "Screego"
+  short_description: "Screen sharing for developers over WebSockets. Share your terminal or desktop in the browser with a single link."
+  long_description: |
+    **Screego**: Screen sharing for developers over WebSockets. Share your terminal or desktop in the browser with a single link.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 5050 (public) | API server |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `SCREEGO_EXTERNAL_IP`, `SCREEGO_TURN_PORT_RANGE` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/screego
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [screego]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/screego
+  no_secrets_confirmation: true

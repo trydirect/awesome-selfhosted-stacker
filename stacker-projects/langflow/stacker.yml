@@ -119,3 +119,57 @@ env_file: .env
 volumes:
   langflow_data: {}
   postgres_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Langflow"
+  short_description: "Visual builder for LLM applications, drag-and-drop components to compose AI chains. Prototype and deploy RAG and agent flows fast."
+  long_description: |
+    **Langflow**: Visual builder for LLM applications, drag-and-drop components to compose AI chains. Prototype and deploy RAG and agent flows fast.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 7860 (public) | `langflowai/langflow:latest` |
+    | postgres | 5432 (local only) | Database |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `LANGFLOW_AUTO_LOGIN`, `LANGFLOW_SUPERUSER`, `POSTGRES_DB`, `POSTGRES_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 4 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/langflow
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [langflow]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/langflow
+  no_secrets_confirmation: true

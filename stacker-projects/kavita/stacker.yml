@@ -48,3 +48,51 @@ deploy:
     size: cpx22
     public_ports:
       - "5001"
+
+marketplace:
+  publish: true
+  display_name: "Kavita"
+  short_description: "Fast reading server for manga, comics, books and magazines. Kavita serves your library with progress tracking and OPDS."
+  long_description: |
+    **Kavita**: Fast reading server for manga, comics, books and magazines. Kavita serves your library with progress tracking and OPDS.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 5000 (public on 5001) | API server |
+
+    ## What you configure
+
+    - **Defaults provided**: `PGID`, `PUID`, `TZ` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/kavita
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [kavita]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/kavita
+  no_secrets_confirmation: true

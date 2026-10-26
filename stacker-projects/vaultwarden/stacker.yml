@@ -92,3 +92,56 @@ volumes:
   vaultwarden_data: {}
   npm_data: {}
   npm_letsencrypt: {}
+
+marketplace:
+  publish: true
+  display_name: "Vaultwarden"
+  short_description: "One-click Vaultwarden stack using only official images and guidance from the project docs."
+  long_description: |
+    **Vaultwarden**: One-click Vaultwarden stack using only official images and guidance from the project docs.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 8080) | API server |
+    | proxy-manager | 80 (public), 443 (public), 81 (public) | Reverse proxy |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    All 1 credential (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/vaultwarden
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [vaultwarden]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/vaultwarden
+  no_secrets_confirmation: true

@@ -171,3 +171,59 @@ volumes:
   postgres_data: {}
   clickhouse_data: {}
   kafka_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Dittofeed"
+  short_description: "Open-source customer engagement and lifecycle messaging platform. Design email and SMS journeys with segmentation and analytics."
+  long_description: |
+    **Dittofeed**: Open-source customer engagement and lifecycle messaging platform. Design email and SMS journeys with segmentation and analytics.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    4 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public), 3001 (public) | `dittofeed/dittofeed-lite:latest` |
+    | postgres | 5432 (local only) | Database |
+    | clickhouse | 8123 (local only), 9000 (local only) | Database |
+    | kafka | 9092 (local only) | Message queue |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `CLICKHOUSE_HOST`, `CLICKHOUSE_USER`, `KAFKA_BROKERS`, `NODE_ENV`, `CLUSTER_ID`, `KAFKA_ADVERTISED_LISTENERS` and 8 more ship prefilled and can be adjusted in the deploy form
+
+    All 3 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 4 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/dittofeed
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [dittofeed]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/dittofeed
+  no_secrets_confirmation: true

@@ -111,3 +111,58 @@ env_file: .env
 volumes:
   appflowy_data: {}
   postgres_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Appflowy"
+  short_description: "Open-source Notion alternative for notes, wikis and tasks with offline-first support. Self-host your AppFlowy workspace with sync server and databases."
+  long_description: |
+    **Appflowy**: Open-source Notion alternative for notes, wikis and tasks with offline-first support. Self-host your AppFlowy workspace with sync server and databases.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8000 (public) | `appflowyinc/appflowy_cloud:latest` |
+    | postgres | 5432 (local only) | Database |
+    | redis | 6379 (local only) | Cache |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `APPFLOWY_ENVIRONMENT`, `APPFLOWY_REDIS_URI`, `POSTGRES_DB`, `POSTGRES_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 2 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/appflowy
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [appflowy]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/appflowy
+  no_secrets_confirmation: true

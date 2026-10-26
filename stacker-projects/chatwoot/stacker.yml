@@ -128,3 +128,58 @@ deploy:
       - "80"
       - "443"
       - "3000"
+
+marketplace:
+  publish: true
+  display_name: "Chatwoot"
+  short_description: "Open-source customer support platform (Intercom alternative). Unified inbox for live chat, email, WhatsApp and social channels."
+  long_description: |
+    **Chatwoot**: Open-source customer support platform (Intercom alternative). Unified inbox for live chat, email, WhatsApp and social channels.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public) | `chatwoot/chatwoot:develop-ce` |
+    | chatwoot-db | internal | Database |
+    | chatwoot-redis | internal | Cache |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `ENABLE_ACCOUNT_SIGNUP`, `FRONTEND_URL`, `MAILER_SENDER_EMAIL`, `RAILS_ENV`, `REDIS_URL`, `POSTGRES_DB` and 1 more ship prefilled and can be adjusted in the deploy form
+
+    All 3 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/chatwoot
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [chatwoot]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/chatwoot
+  no_secrets_confirmation: true

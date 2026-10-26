@@ -191,3 +191,60 @@ monitoring:
     interval: 30s
 
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Ai Automation Workflows"
+  short_description: "Self-hosted ai-automation-workflows application, ready to deploy with Stacker"
+  long_description: |
+    **AI Automation Workflows**: Self-hosted ai-automation-workflows application, ready to deploy with Stacker
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    6 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public on 3001) | `flowiseai/flowise:2.1.3` |
+    | ai-workflows-db | internal | Database |
+    | ai-workflows-redis | internal | Cache |
+    | ai-workflows-ollama | 11434 (public on 11435) | LLM runtime |
+    | ai-workflows-n8n | 5678 (public on 5679) | `n8nio/n8n:1.64.0` |
+    | ai-workflows-qdrant | 6333 (public), 6334 (public) | Vector database |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    All 7 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 6 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/ai-automation-workflows
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [ai automation workflows]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/ai-automation-workflows
+  no_secrets_confirmation: true

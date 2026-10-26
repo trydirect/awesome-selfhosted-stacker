@@ -242,3 +242,62 @@ monitoring:
     interval: 30s
 
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Ai Knowledge Base"
+  short_description: "Self-hosted AI knowledge base pairing Dify with Qdrant vector search and Postgres. Ingest documents, embed them, and query your data through a private RAG chat interface."
+  long_description: |
+    **AI Knowledge Base**: Self-hosted AI knowledge base pairing Dify with Qdrant vector search and Postgres. Ingest documents, embed them, and query your data through a private RAG chat interface.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    8 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public on 8080) | API server |
+    | ai-knowledge-base-web | 3000 (public) | Web UI |
+    | ai-knowledge-base-worker | internal | Background worker |
+    | ai-knowledge-base-db | internal | Database |
+    | ai-knowledge-base-redis | internal | Cache |
+    | ai-knowledge-base-qdrant | 6333 (public), 6334 (public) | Vector database |
+    | ai-knowledge-base-ollama | 11434 (public) | LLM runtime |
+    | ai-knowledge-base-sandbox | internal | `langgenius/dify-sandbox:0.2.10` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    All 16 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 8 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/ai-knowledge-base
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [ai knowledge base]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/ai-knowledge-base
+  no_secrets_confirmation: true

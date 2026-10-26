@@ -51,3 +51,53 @@ config_contract:
         volumes:
           mutability: editable
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Glances"
+  short_description: "Cross-platform system monitoring tool with a web mode. Watch CPU, memory, disks and processes in real time via Glances."
+  long_description: |
+    **Glances**: Cross-platform system monitoring tool with a web mode. Watch CPU, memory, disks and processes in real time via Glances.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 61208 (public) | `nicolargo/glances:latest-full` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `GLANCES_OPT` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/glances
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [glances]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/glances
+  no_secrets_confirmation: true

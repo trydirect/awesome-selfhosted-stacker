@@ -126,3 +126,56 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+
+marketplace:
+  publish: true
+  display_name: "Gitea"
+  short_description: "Lightweight self-hosted Git service with code review, issues and packages. A fast GitHub alternative written in Go."
+  long_description: |
+    **Gitea**: Lightweight self-hosted Git service with code review, issues and packages. A fast GitHub alternative written in Go.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public), 22 (public on 2222) | `gitea/gitea:1.22.3` |
+    | gitea_db | 5432 (local only) | Database |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    All 4 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/gitea
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [gitea]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/gitea
+  no_secrets_confirmation: true

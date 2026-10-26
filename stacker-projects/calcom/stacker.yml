@@ -127,3 +127,55 @@ config_contract:
       volumes:
         calcom_db:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Calcom"
+  short_description: "Open-source Calendly alternative for scheduling meetings. Self-host the booking infrastructure with calendars, availability rules and meeting links."
+  long_description: |
+    **calcom**: Open-source Calendly alternative for scheduling meetings. Self-host the booking infrastructure with calendars, availability rules and meeting links.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000/tcp (public on 3000) | `calcom/cal.com:latest` |
+    | db | internal | Database |
+
+    ## What you configure
+
+    - **Defaults provided**: `CALCOM_TIMEZONE`, `DATABASE_URL`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_WEBAPP_URL`, `POSTGRES_DB`, `POSTGRES_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 2 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/calcom
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [calcom]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/calcom
+  no_secrets_confirmation: true

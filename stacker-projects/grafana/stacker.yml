@@ -49,3 +49,54 @@ deploy:
     size: cpx22
     public_ports:
       - "3000"
+
+marketplace:
+  publish: true
+  display_name: "Grafana"
+  short_description: "Industry-standard dashboards and visualization for metrics, logs and traces. Connect data sources and build rich observability dashboards."
+  long_description: |
+    **Grafana**: Industry-standard dashboards and visualization for metrics, logs and traces. Connect data sources and build rich observability dashboards.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public) | `grafana/grafana:11.2.2` |
+
+    ## What you configure
+
+    - **Defaults provided**: `GF_SECURITY_ADMIN_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 1 credential (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/grafana
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [grafana]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/grafana
+  no_secrets_confirmation: true

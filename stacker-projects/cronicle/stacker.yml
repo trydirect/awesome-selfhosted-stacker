@@ -69,3 +69,52 @@ volumes:
   cronicle_data: {}
   cronicle_logs: {}
   cronicle_plugins: {}
+
+marketplace:
+  publish: true
+  display_name: "Cronicle"
+  short_description: "Node.js job scheduler and task runner with a colorful web UI. Replace crontab with Cronicle for clustered scheduling, logs and retries."
+  long_description: |
+    **Cronicle**: Node.js job scheduler and task runner with a colorful web UI. Replace crontab with Cronicle for clustered scheduling, logs and retries.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3012 (public) | Scheduler |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/cronicle
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [cronicle]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/cronicle
+  no_secrets_confirmation: true

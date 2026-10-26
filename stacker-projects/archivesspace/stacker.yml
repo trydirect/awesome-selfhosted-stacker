@@ -137,3 +137,58 @@ config_contract:
       volumes:
         archivesspace_solr:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Archivesspace"
+  short_description: "Open-source archival information management system for documenting and managing archives. Run ArchivesSpace to catalog collections, agents and accessions."
+  long_description: |
+    **Archivesspace**: Open-source archival information management system for documenting and managing archives. Run ArchivesSpace to catalog collections, agents and accessions.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public on 8081) | `archivesspace/archivesspace:3.5.1` |
+    | db | internal | Database |
+    | solr | internal | `archivesspace/solr:3.5.1` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `APPCONFIG_BACKEND_URL`, `APPCONFIG_DB_URL`, `APPCONFIG_FRONTEND_PROXY_URL`, `APPCONFIG_OAI_PROXY_URL`, `APPCONFIG_PUBLIC_PROXY_URL`, `APPCONFIG_SOLR_URL` and 3 more ship prefilled and can be adjusted in the deploy form
+
+    All 7 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/archivesspace
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [archivesspace]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/archivesspace
+  no_secrets_confirmation: true

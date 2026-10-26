@@ -114,3 +114,56 @@ config_contract:
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Zitadel"
+  short_description: "Cloud-native identity management with passkeys, OIDC and OAuth2. A battle-tested IAM you self-host."
+  long_description: |
+    **Zitadel**: Cloud-native identity management with passkeys, OIDC and OAuth2. A battle-tested IAM you self-host.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public) | `ghcr.io/zitadel/zitadel:v4.16.0` |
+    | postgres | internal | Database |
+    | redis | internal | Cache |
+
+    ## What you configure
+
+    - **Defaults provided**: `ZITADEL_CACHES_CONNECTORS_REDIS_ENABLED`, `ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_REQUIRED`, `ZITADEL_DOMAIN`, `ZITADEL_EXTERNALPORT`, `ZITADEL_EXTERNALSECURE`, `ZITADEL_LOGSTORE_ACCESS_STDOUT_ENABLED` and 5 more ship prefilled and can be adjusted in the deploy form
+
+    All 3 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/zitadel
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [zitadel]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/zitadel
+  no_secrets_confirmation: true

@@ -92,3 +92,57 @@ env_file: .env
 volumes:
   apprise_config: {}
   ntfy_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Pipe Webhook Demo"
+  short_description: "Demo stack showing Stacker PIPE webhooks connecting services. A starting point for wiring app events between containers."
+  long_description: |
+    **Pipe Webhook Demo**: Demo stack showing Stacker PIPE webhooks connecting services. A starting point for wiring app events between containers.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8000 (public) | `caronc/apprise:1.8.0` |
+    | ntfy | 80 (public on 8080) | `binwiederhier/ntfy:v2.8` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `APPRISE_STATEFUL_MODE`, `APPRISE_WORKER_COUNT`, `NTFY_BASE_URL` ship prefilled and can be adjusted in the deploy form
+
+    All 1 credential (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/pipe-webhook-demo
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [pipe webhook demo]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/pipe-webhook-demo
+  no_secrets_confirmation: true

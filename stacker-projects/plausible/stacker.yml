@@ -126,3 +126,57 @@ config_contract:
       - POSTGRES_DB
       secret:
       - POSTGRES_PASSWORD
+
+marketplace:
+  publish: true
+  display_name: "Plausible"
+  short_description: "Deploy the official Plausible stack with one click: Plausible web, PostgreSQL event storage, and migration-ready event DB all configured for private analytics."
+  long_description: |
+    **Plausible**: Deploy the official Plausible stack with one click: Plausible web, PostgreSQL event storage, and migration-ready event DB all configured for private analytics.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | internal | `ghcr.io/plausible/community-edition:v3.2.1` |
+    | plausible_db | internal | Database |
+    | plausible_events_db | internal | Database |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    All 4 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/plausible
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [plausible]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/plausible
+  no_secrets_confirmation: true

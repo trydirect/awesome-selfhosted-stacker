@@ -389,3 +389,59 @@ config_contract:
       volumes:
         socioboard_mongo:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Socioboard"
+  short_description: "Open-source social media management suite: scheduling, monitoring and analytics across networks. Run your social workflow yourself."
+  long_description: |
+    **Socioboard**: Open-source social media management suite: scheduling, monitoring and analytics across networks. Run your social workflow yourself.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    4 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public) | Web UI |
+    | socioboard | internal | `sintelli/socioboard:latest` |
+    | socioboard-mysql | internal | Database |
+    | socioboard-mongo | internal | `mongo:6` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `BASE_DOMAIN`, `HTTPS_PORT`, `ADMIN_EMAIL`, `ADMIN_PANEL_ENABLED`, `ADMIN_SESSION_NAME`, `AMEMBER_DOMAIN` and 35 more ship prefilled and can be adjusted in the deploy form
+
+    All 32 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 4 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/socioboard
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [socioboard]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/socioboard
+  no_secrets_confirmation: true

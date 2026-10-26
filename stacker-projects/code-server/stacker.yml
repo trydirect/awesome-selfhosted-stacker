@@ -54,3 +54,56 @@ config_contract:
       volumes:
         code-server-config:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Code Server"
+  short_description: "Run VS Code in the browser with full extensions and Git support. Code-server gives you a portable development environment accessible anywhere."
+  long_description: |
+    **Code Server**: Run VS Code in the browser with full extensions and Git support. Code-server gives you a portable development environment accessible anywhere.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8443 (public) | API server |
+
+    ## What you configure
+
+    - **Domain** (`domain`): the hostname the stack is served on
+    - **Defaults provided**: `DEFAULT_WORKSPACE`, `PGID`, `PUID`, `TZ` ship prefilled and can be adjusted in the deploy form
+
+    All 2 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/code-server
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [code server]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/code-server
+  no_secrets_confirmation: true

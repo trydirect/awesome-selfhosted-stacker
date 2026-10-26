@@ -61,3 +61,51 @@ deploy:
     size: cpx22
     public_ports:
       - "51820/udp"
+
+marketplace:
+  publish: true
+  display_name: "Wireguard"
+  short_description: "Fast, modern, minimal VPN tunnel server. Run your own WireGuard endpoint for secure site-to-site and remote access."
+  long_description: |
+    **WireGuard**: Fast, modern, minimal VPN tunnel server. Run your own WireGuard endpoint for secure site-to-site and remote access.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 51820/udp (public on 51820) | API server |
+
+    ## What you configure
+
+    - **Defaults provided**: `PEERS`, `PGID`, `PUID`, `SERVERPORT`, `SERVERURL`, `TZ` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/wireguard
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [wireguard]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/wireguard
+  no_secrets_confirmation: true

@@ -118,3 +118,55 @@ config_contract:
           display: password
         AWS_REGION:
           mutability: editable
+
+marketplace:
+  publish: true
+  display_name: "Floci"
+  short_description: "Self-hosted network monitoring and visualization tool. Map and observe your infrastructure from a single pane of glass."
+  long_description: |
+    **floci**: Self-hosted network monitoring and visualization tool. Map and observe your infrastructure from a single pane of glass.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 4566 (public) | `floci/floci:latest` |
+    | floci-ui | 4500 (public) | Web UI |
+
+    ## What you configure
+
+    - **Defaults provided**: `FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ENABLED`, `FLOCI_SERVICES_RDS_PROXY_BASE_PORT`, `FLOCI_TLS_ENABLED`, `AWS_REGION` ship prefilled and can be adjusted in the deploy form
+
+    All 3 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/floci
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [floci]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/floci
+  no_secrets_confirmation: true

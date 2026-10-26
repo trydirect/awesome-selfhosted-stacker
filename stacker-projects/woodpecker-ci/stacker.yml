@@ -69,3 +69,55 @@ config_contract:
         depends_on:
           mutability: editable
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Woodpecker Ci"
+  short_description: "Lightweight, community-forked CI/CD engine (Drone successor). Pipeline-as-code builds with Docker and Kubernetes executors."
+  long_description: |
+    **Woodpecker Ci**: Lightweight, community-forked CI/CD engine (Drone successor). Pipeline-as-code builds with Docker and Kubernetes executors.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8000 (public) | API server |
+    | woodpecker-agent | internal | `woodpeckerci/woodpecker-agent:v3` |
+
+    ## What you configure
+
+    - **Defaults provided**: `WOODPECKER_GITEA`, `WOODPECKER_GITHUB`, `WOODPECKER_HOST`, `WOODPECKER_OPEN`, `WOODPECKER_SERVER` ship prefilled and can be adjusted in the deploy form
+
+    All 2 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/woodpecker-ci
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [woodpecker ci]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/woodpecker-ci
+  no_secrets_confirmation: true

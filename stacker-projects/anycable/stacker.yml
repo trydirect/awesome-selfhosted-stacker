@@ -66,3 +66,54 @@ config_contract:
           mutability: editable
           display: number
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Anycable"
+  short_description: "Real-time WebSocket server compatible with Ruby on Rails ActionCable protocols. Scale live features with AnyCable's Go-powered Ruby alternatives."
+  long_description: |
+    **Anycable**: Real-time WebSocket server compatible with Ruby on Rails ActionCable protocols. Scale live features with AnyCable's Go-powered Ruby alternatives.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public), 50051 (public) | `anycable/anycable-go:1.4.4` |
+    | redis | 6379 (local only) | Cache |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `ANYCABLE_HOST`, `ANYCABLE_PORT` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/anycable
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [anycable]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/anycable
+  no_secrets_confirmation: true

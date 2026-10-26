@@ -50,3 +50,52 @@ config_contract:
       volumes:
         filestash_state:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Filestash"
+  short_description: "Web client for SFTP, S3, WebDAV, FTP and more, a beautiful file explorer for many backends. Connect cloud and self-hosted storage in one UI."
+  long_description: |
+    **Filestash**: Web client for SFTP, S3, WebDAV, FTP and more, a beautiful file explorer for many backends. Connect cloud and self-hosted storage in one UI.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8334 (public) | `machines/filestash:latest` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/filestash
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [filestash]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/filestash
+  no_secrets_confirmation: true

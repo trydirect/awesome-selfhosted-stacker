@@ -111,3 +111,57 @@ env_file: .env
 volumes:
   metabase_data: {}
   postgres_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Metabase"
+  short_description: "Open-source business intelligence: ask questions of your data in plain language and build dashboards. No SQL required for most users."
+  long_description: |
+    **Metabase**: Open-source business intelligence: ask questions of your data in plain language and build dashboards. No SQL required for most users.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public) | `metabase/metabase:latest` |
+    | postgres | 5432 (local only) | Database |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `MB_DB_DBNAME`, `MB_DB_HOST`, `MB_DB_PORT`, `MB_DB_TYPE`, `MB_DB_USER`, `POSTGRES_DB` and 1 more ship prefilled and can be adjusted in the deploy form
+
+    All 2 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/metabase
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [metabase]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/metabase
+  no_secrets_confirmation: true

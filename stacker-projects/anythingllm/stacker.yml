@@ -83,3 +83,56 @@ env_file: .env
 
 volumes:
   anythingllm_storage: {}
+
+marketplace:
+  publish: true
+  display_name: "Anythingllm"
+  short_description: "All-in-one AI desktop and server application: chat with documents, run agents, and use many LLM providers in one self-hosted workspace. Includes vector database and multi-user support."
+  long_description: |
+    **Anythingllm**: All-in-one AI desktop and server application: chat with documents, run agents, and use many LLM providers in one self-hosted workspace. Includes vector database and multi-user support.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3001 (public) | `mintplexlabs/anythingllm:1.6.8` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `EMBEDDING_ENGINE`, `LLM_PROVIDER`, `OPEN_AI_MODEL_PREF`, `STORAGE_DIR`, `VECTOR_DB` ship prefilled and can be adjusted in the deploy form
+
+    All 2 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/anythingllm
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [anythingllm]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/anythingllm
+  no_secrets_confirmation: true

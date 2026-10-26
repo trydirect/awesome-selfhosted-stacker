@@ -58,3 +58,52 @@ config_contract:
           mutability: generated
         manticore_log:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Manticore"
+  short_description: "Fast open-source search engine (MySQL-compatible) for full-text and vector search. A drop-in Elasticsearch/SQLite FTS alternative."
+  long_description: |
+    **Manticore**: Fast open-source search engine (MySQL-compatible) for full-text and vector search. A drop-in Elasticsearch/SQLite FTS alternative.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 9306 (public), 9308 (public), 9312 (public) | `manticoresearch/manticore:latest` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/manticore
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [manticore]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/manticore
+  no_secrets_confirmation: true

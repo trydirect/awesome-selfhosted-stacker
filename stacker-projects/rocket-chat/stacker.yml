@@ -66,3 +66,54 @@ config_contract:
         depends_on:
           mutability: editable
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Rocket Chat"
+  short_description: "Open-source team communication platform with chat, channels and integrations. A self-hosted Slack alternative at any scale."
+  long_description: |
+    **Rocket Chat**: Open-source team communication platform with chat, channels and integrations. A self-hosted Slack alternative at any scale.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public) | `rocket.chat:6.12.2` |
+    | mongo | 27017 (local only) | `mongo:7.0.12` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `MONGO_OPLOG_URL`, `MONGO_URL`, `ROOT_URL` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/rocket-chat
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [rocket chat]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/rocket-chat
+  no_secrets_confirmation: true

@@ -75,3 +75,53 @@ volumes:
   gitlab_config: {}
   gitlab_logs: {}
   gitlab_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Gitlab"
+  short_description: "Complete DevSecOps platform: Git hosting, CI/CD, registries and security scanning. Run the full GitLab stack on your infrastructure."
+  long_description: |
+    **GitLab**: Complete DevSecOps platform: Git hosting, CI/CD, registries and security scanning. Run the full GitLab stack on your infrastructure.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 8082), 22 (public on 2222) | `gitlab/gitlab-ce:18.10.1-ce.0` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `GITLAB_OMNIBUS_CONFIG` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/gitlab
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [gitlab]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/gitlab
+  no_secrets_confirmation: true

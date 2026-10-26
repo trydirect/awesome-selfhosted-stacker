@@ -32,3 +32,47 @@ env_file: .env
 
 config_contract:
   services: {}
+
+marketplace:
+  publish: true
+  display_name: "Cyberchef"
+  short_description: "The Cyber Swiss Army Knife, a web app for encoding, encryption, compression and data analysis. Chain operations to slice and dice any payload."
+  long_description: |
+    **CyberChef**: The Cyber Swiss Army Knife, a web app for encoding, encryption, compression and data analysis. Chain operations to slice and dice any payload.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public on 8000) | `ghcr.io/gchq/cyberchef:latest` |
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/cyberchef
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [cyberchef]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/cyberchef
+  no_secrets_confirmation: true

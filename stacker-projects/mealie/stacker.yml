@@ -49,3 +49,51 @@ config_contract:
           mutability: editable
 
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Mealie"
+  short_description: "All-in-one recipe manager and meal planner with a friendly web UI. Import recipes, plan weekly menus and generate shopping lists."
+  long_description: |
+    **Mealie**: All-in-one recipe manager and meal planner with a friendly web UI. Import recipes, plan weekly menus and generate shopping lists.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 9000 (public on 9925) | `ghcr.io/mealie-recipes/mealie:latest` |
+
+    ## What you configure
+
+    - **Defaults provided**: `ALLOW_SIGNUP`, `BASE_URL`, `DB_ENGINE` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/mealie
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [mealie]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/mealie
+  no_secrets_confirmation: true

@@ -136,3 +136,58 @@ deploy:
       - "80"
       - "443"
       - "3000"
+
+marketplace:
+  publish: true
+  display_name: "Automatisch"
+  short_description: "Open-source workflow automation platform (Zapier alternative) that keeps data on your server. Connect apps and automate repetitive tasks visually."
+  long_description: |
+    **Automatisch**: Open-source workflow automation platform (Zapier alternative) that keeps data on your server. Connect apps and automate repetitive tasks visually.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public) | `trydirect/automatisch:latest` |
+    | automatisch-db | internal | Database |
+    | redis | internal | Cache |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `POSTGRES_DATABASE`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USERNAME`, `REDIS_HOST`, `WEB_APP_URL` and 2 more ship prefilled and can be adjusted in the deploy form
+
+    All 5 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/automatisch
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [automatisch]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/automatisch
+  no_secrets_confirmation: true

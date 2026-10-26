@@ -148,3 +148,57 @@ env_file: .env
 volumes:
   seafile_data: {}
   seafile_mysql: {}
+
+marketplace:
+  publish: true
+  display_name: "Seafile"
+  short_description: "High-performance file sync and share with client-side encryption. A fast, Dropbox-like private cloud for teams."
+  long_description: |
+    **Seafile**: High-performance file sync and share with client-side encryption. A fast, Dropbox-like private cloud for teams.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 8080) | `seafileltd/seafile-mc:13.0.25` |
+    | mysql | 3306 (local only) | Database |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `SEAFILE_ADMIN_EMAIL`, `SEAFILE_MYSQL_DB_HOST`, `SEAFILE_MYSQL_DB_PORT`, `SEAFILE_MYSQL_DB_USER`, `SEAFILE_SERVER_HOSTNAME`, `SEAFILE_SERVER_LETSENCRYPT` and 3 more ship prefilled and can be adjusted in the deploy form
+
+    All 6 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/seafile
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [seafile]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/seafile
+  no_secrets_confirmation: true

@@ -109,3 +109,52 @@ config_contract:
           mutability: editable
         timeout:
           mutability: editable
+
+marketplace:
+  publish: true
+  display_name: "Bunkerweb"
+  short_description: "Self-hosted BunkerWeb firewall and reverse proxy with WAF protection"
+  long_description: |
+    **BunkerWeb**: Self-hosted BunkerWeb firewall and reverse proxy with WAF protection
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80/tcp (public on 80), 443/tcp (public on 443), 7000/tcp (public on 7000) | Web UI |
+    | redis | 6379 (local only) | Cache |
+
+    ## What you configure
+
+    - **Defaults provided**: `API_HOST`, `API_PORT`, `REDIS_HOST`, `REDIS_PORT`, `POSTGRES_DB` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/bunkerweb
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [bunkerweb]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/bunkerweb
+  no_secrets_confirmation: true

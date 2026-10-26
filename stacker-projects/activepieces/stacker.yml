@@ -218,3 +218,59 @@ config_contract:
       volumes:
         activepieces_redis_data:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Activepieces"
+  short_description: "Open-source no-code business automation platform with 120+ integrations"
+  long_description: |
+    **Activepieces**: Open-source no-code business automation platform with 120+ integrations
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    4 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 8080) | `ghcr.io/activepieces/activepieces:0.86.2` |
+    | worker | internal | Background worker |
+    | postgres | internal | Database |
+    | redis | internal | Cache |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `AP_CONTAINER_TYPE`, `AP_ENGINE_EXECUTABLE_PATH`, `AP_ENVIRONMENT`, `AP_EXECUTION_MODE`, `AP_FLOW_TIMEOUT_SECONDS`, `AP_FRONTEND_URL` and 26 more ship prefilled and can be adjusted in the deploy form
+
+    All 7 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 4 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/activepieces
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [activepieces]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/activepieces
+  no_secrets_confirmation: true

@@ -26,3 +26,47 @@ deploy:
     user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22
+
+marketplace:
+  publish: true
+  display_name: "Gotify"
+  short_description: "Self-hosted push notification server with Android/iOS clients. Send alerts from scripts and services to your phone via Gotify."
+  long_description: |
+    **Gotify**: Self-hosted push notification server with Android/iOS clients. Send alerts from scripts and services to your phone via Gotify.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 8080) | API server |
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/gotify
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [gotify]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/gotify
+  no_secrets_confirmation: true

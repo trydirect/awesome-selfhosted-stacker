@@ -106,3 +106,57 @@ config_contract:
           mutability: generated
         photoprism-import:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Photoprism"
+  short_description: "AI-powered photo management: auto-tagging, face recognition and maps. Browse your private photo collection beautifully."
+  long_description: |
+    **PhotoPrism**: AI-powered photo management: auto-tagging, face recognition and maps. Browse your private photo collection beautifully.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 2342 (public) | `photoprism/photoprism:240915` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Domain** (`domain`): the hostname the stack is served on
+    - **Defaults provided**: `PHOTOPRISM_ADMIN_USER`, `PHOTOPRISM_AUTH_MODE`, `PHOTOPRISM_DATABASE_CONCENTRATION`, `PHOTOPRISM_DATABASE_DRIVER`, `PHOTOPRISM_DATABASE_NAME`, `PHOTOPRISM_DATABASE_SERVER` and 5 more ship prefilled and can be adjusted in the deploy form
+
+    All 2 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/photoprism
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [photoprism]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/photoprism
+  no_secrets_confirmation: true

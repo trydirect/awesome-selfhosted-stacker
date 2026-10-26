@@ -129,3 +129,57 @@ env_file: .env
 volumes:
   khoj_data: {}
   postgres_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Khoj"
+  short_description: "AI second brain, chat with your notes, documents and images using local or hosted LLMs. Khoj indexes your data for instant answers."
+  long_description: |
+    **Khoj**: AI second brain, chat with your notes, documents and images using local or hosted LLMs. Khoj indexes your data for instant answers.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 42110 (public) | `ghcr.io/khoj-ai/khoj:latest` |
+    | postgres | 5432 (local only) | Database |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Defaults provided**: `KHOJ_ADMIN_EMAIL`, `KHOJ_MODE`, `KHOJ_NO_HTTPS`, `POSTGRES_DB`, `POSTGRES_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 4 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/khoj
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [khoj]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/khoj
+  no_secrets_confirmation: true

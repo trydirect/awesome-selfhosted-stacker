@@ -140,3 +140,61 @@ config_contract:
       volumes:
         passbolt-mysql:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Passbolt"
+  short_description: "Open-source password manager for teams with GPG-based sharing. Share credentials with granular permissions and audit trails."
+  long_description: |
+    **Passbolt**: Open-source password manager for teams with GPG-based sharing. Share credentials with granular permissions and audit trails.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 443 (public on 8443) | `passbolt/passbolt:4.8.0` |
+    | postgres | internal | Database |
+    | mailcatcher | 1080 (public) | `sj26/mailcatcher:0.9.0` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Domain** (`domain`): the hostname the stack is served on
+    - **PASSBOLT_GPG_SERVER_KEY_FINGERPRINT**: you provide this in the deploy form
+    - **PASSBOLT_GPG_SERVER_KEY_PATH**: you provide this in the deploy form
+    - **Defaults provided**: `APP_FULL_BASE_URL`, `DATASOURCES_DEFAULT_DATABASE`, `DATASOURCES_DEFAULT_HOST`, `DATASOURCES_DEFAULT_PORT`, `DATASOURCES_DEFAULT_USERNAME`, `JAVA_OPTS` and 6 more ship prefilled and can be adjusted in the deploy form
+
+    All 3 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/passbolt
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [passbolt]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/passbolt
+  no_secrets_confirmation: true

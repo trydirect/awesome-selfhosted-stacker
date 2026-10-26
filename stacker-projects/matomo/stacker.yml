@@ -109,3 +109,56 @@ monitoring:
   status_panel: true
 
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Matomo"
+  short_description: "Full-featured, privacy-focused web analytics platform (Google Analytics alternative). Own your data with heatmaps, funnels and GDPR controls."
+  long_description: |
+    **Matomo**: Full-featured, privacy-focused web analytics platform (Google Analytics alternative). Own your data with heatmaps, funnels and GDPR controls.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 8080) | `matomo:5.1:5.1` |
+    | matomo_db | 3306 (local only) | Database |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    All 5 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/matomo
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [matomo]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/matomo
+  no_secrets_confirmation: true

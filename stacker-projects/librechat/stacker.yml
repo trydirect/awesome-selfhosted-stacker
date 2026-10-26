@@ -113,3 +113,58 @@ config_contract:
       volumes:
         librechat-mongo:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Librechat"
+  short_description: "Open-source chat interface supporting OpenAI, Anthropic, Google and local models. One polished UI for many LLM providers with chat history."
+  long_description: |
+    **LibreChat**: Open-source chat interface supporting OpenAI, Anthropic, Google and local models. One polished UI for many LLM providers with chat history.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3080 (public) | `ghcr.io/danny-avila/librechat:latest` |
+    | mongo | internal | `mongo:7` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+    - **Domain** (`domain`): the hostname the stack is served on
+    - **Defaults provided**: `CREDS_IV`, `HOST_URL`, `LOG_LEVEL`, `MONGO_URI`, `NODE_ENV` ship prefilled and can be adjusted in the deploy form
+
+    All 3 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/librechat
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [librechat]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/librechat
+  no_secrets_confirmation: true

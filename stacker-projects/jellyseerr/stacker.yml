@@ -24,3 +24,47 @@ deploy:
     user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22
+
+marketplace:
+  publish: true
+  display_name: "Jellyseerr"
+  short_description: "Media request management for Jellyfin, let users request movies and shows. Tracks requests and pushes them to download clients."
+  long_description: |
+    **Jellyseerr**: Media request management for Jellyfin, let users request movies and shows. Tracks requests and pushes them to download clients.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 5055 (public) | `fallenbagel/jellyseerr:latest` |
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/jellyseerr
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [jellyseerr]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/jellyseerr
+  no_secrets_confirmation: true

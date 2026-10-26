@@ -134,3 +134,57 @@ deploy:
     user: root
     ssh_key: ${BASE_PATH}/stacker-project-test
     port: 22
+
+marketplace:
+  publish: true
+  display_name: "Wordpress Matomo"
+  short_description: "WordPress paired with Matomo for first-party, privacy-respecting analytics. Publish content while owning your stats."
+  long_description: |
+    **Wordpress Matomo**: WordPress paired with Matomo for first-party, privacy-respecting analytics. Publish content while owning your stats.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    4 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 8080) | `wordpress:6.6` |
+    | wp-db | 3306 (local only) | Database |
+    | matomo | 80 (public on 8081) | `matomo:5.1:5.1` |
+    | matomo-db | 3306 (local only) | Database |
+
+    ## What you configure
+
+    - **Defaults provided**: `WORDPRESS_DB_HOST`, `WORDPRESS_DB_NAME`, `WORDPRESS_DB_USER`, `WORDPRESS_DEBUG`, `WORDPRESS_TABLE_PREFIX` ship prefilled and can be adjusted in the deploy form
+
+    All 6 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 4 containers (4 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/wordpress-matomo
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [wordpress matomo]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/wordpress-matomo
+  no_secrets_confirmation: true

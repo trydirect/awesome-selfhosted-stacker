@@ -123,3 +123,56 @@ config_contract:
       volumes:
         libredesk_db:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Libredesk App"
+  short_description: "Self-hosted libredesk"
+  long_description: |
+    **libredesk**: Self-hosted libredesk
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    3 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 9000/tcp (public on 9000) | `libredesk/libredesk:latest` |
+    | db | internal | Database |
+    | redis | internal | Cache |
+
+    ## What you configure
+
+    - **Defaults provided**: `POSTGRES_DB`, `POSTGRES_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 2 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 3 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/libredesk
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [libredesk app]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/libredesk
+  no_secrets_confirmation: true

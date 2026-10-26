@@ -67,3 +67,53 @@ deploy:
 
 monitoring:
   status_panel: true
+
+marketplace:
+  publish: true
+  display_name: "Langchain Chatchat"
+  short_description: "Local LLM chat with RAG, knowledge bases, and agent tools"
+  long_description: |
+    **Langchain Chatchat**: Local LLM chat with RAG, knowledge bases, and agent tools
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8501 (public), 7861 (public) | `chatimage/chatchat:0.3.1.3-93e2c87-20240829` |
+    | xinference | internal | `xprobe/xinference:v0.12.3-cpu` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/langchain-chatchat
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [langchain chatchat]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/langchain-chatchat
+  no_secrets_confirmation: true

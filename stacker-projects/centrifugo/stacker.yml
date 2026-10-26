@@ -77,3 +77,55 @@ env_file: .env
 
 volumes:
   centrifugo_data: {}
+
+marketplace:
+  publish: true
+  display_name: "Centrifugo"
+  short_description: "Scalable real-time messaging server supporting WebSocket, SSE and HTTP streaming. Add live updates to your apps with a simple pub/sub API."
+  long_description: |
+    **Centrifugo**: Scalable real-time messaging server supporting WebSocket, SSE and HTTP streaming. Add live updates to your apps with a simple pub/sub API.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8000 (public) | `centrifugo/centrifugo:latest` |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`): the hostname the stack is served on
+
+    All 3 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/centrifugo
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [centrifugo]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/centrifugo
+  no_secrets_confirmation: true

@@ -143,3 +143,59 @@ config_contract:
       volumes:
         openproject-postgres:
           mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Openproject"
+  short_description: "Open-source project management with Gantt charts, agile boards and wikis. Plan, track and release projects with OpenProject."
+  long_description: |
+    **openproject**: Open-source project management with Gantt charts, agile boards and wikis. Plan, track and release projects with OpenProject.
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    4 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 80 (public on 8080) | `openproject/openproject:16` |
+    | openproject-worker | internal | Background worker |
+    | postgres | internal | Database |
+    | mailcatcher | 1080 (public) | `sj26/mailcatcher:latest` |
+
+    ## What you configure
+
+    - **Domain** (`domain`): the hostname the stack is served on
+    - **Defaults provided**: `OPENPROJECT_DB__POSTGRESQL__DATABASE`, `OPENPROJECT_DB__POSTGRESQL__HOST`, `OPENPROJECT_DB__POSTGRESQL__PORT`, `OPENPROJECT_DB__POSTGRESQL__USERNAME`, `OPENPROJECT_HOST__NAME`, `OPENPROJECT_HTTPS` and 12 more ship prefilled and can be adjusted in the deploy form
+
+    All 5 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 4 containers (4 GB RAM or more recommended)
+    - A DNS record for the domain you set in the deploy form
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/openproject
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [openproject]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/openproject
+  no_secrets_confirmation: true
