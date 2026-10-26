@@ -16,7 +16,7 @@ services:
     ports:
       - "5001:5001"
     environment:
-      SECRET_KEY: "${SECRET_KEY}"
+      SECRET_KEY: "${SECRET_KEY:-auto-generated-key-change-in-production}"
       CONSOLE_API_URL: "https://${commonDomain}"
       APP_API_URL: "https://${commonDomain}"
     volumes:
@@ -29,7 +29,7 @@ services:
     environment:
       POSTGRES_DB: dify
       POSTGRES_USER: dify
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-auto-generated-password}"
     volumes:
       - db_data:/var/lib/postgresql/data
   - name: redis

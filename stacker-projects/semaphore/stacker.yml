@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: semaphoreui/semaphore:v2.10.0
+  image: semaphoreui/semaphore:v2.20.16-beta6
   ports:
     - "3000:3000"
   environment:

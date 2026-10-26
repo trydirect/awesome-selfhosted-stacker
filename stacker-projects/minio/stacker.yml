@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: pgsty/silo:0.1.0
+  image: bitnami/minio:2024.10.13
   ports:
     - "9000:9000"
     - "9001:9001"

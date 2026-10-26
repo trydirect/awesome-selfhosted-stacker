@@ -1,10 +1,10 @@
 services:
   app:
-    image: vaultwarden/server:latest
+    image: vaultwarden/server:alpine
     ports:
       - "8080:80"
     environment:
-      ADMIN_TOKEN: "4enB+vV6NyjUjl9TkHThl1ZgAXLjIqQ8PO00umS3J6IP31j635rvyL2HpuUSBjrx"
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
       DOMAIN: "http://localhost:8080"
       SIGNUPS_ALLOWED: "true"
     volumes:
@@ -18,7 +18,7 @@ services:
       my.stacker.service: "vaultwarden"
 
   proxy-manager:
-    image: jc21/nginx-proxy-manager:latest
+    image: jc21/nginx-proxy-manager:2.11.3
     ports:
       - "80:80"
       - "443:443"
