@@ -19,7 +19,7 @@ config_contract:
           display: password
     sovereign-ai-ollama:
       volumes:
-        # Model weights: gigabytes behind a pull. No credentials — Ollama holds
+        # Model weights: gigabytes behind a pull. No credentials - Ollama holds
         # no secret of its own.
         sovereign_ai_ollama:
           mutability: fixed
@@ -27,7 +27,7 @@ config_contract:
       volumes:
         # The integration scripts the author ships. Credentials for whatever a
         # pipeline talks to are Open WebUI "valves", stored in its own volume
-        # (sovereign_ai_webui), which resets — so nothing secret lives here.
+        # (sovereign_ai_webui), which resets - so nothing secret lives here.
         sovereign_ai_pipelines:
           mutability: fixed
 hooks:
@@ -36,7 +36,7 @@ hooks:
 app:
   type: custom
   image: ghcr.io/open-webui/open-webui:v0.3.32
-  # No host port publish — traffic reaches this container only via
+  # No host port publish - traffic reaches this container only via
   # the NPM reverse proxy on 443. Internal docker port stays 8080.
   environment:
     OLLAMA_BASE_URL: "http://sovereign-ai-ollama:11434"
@@ -62,7 +62,7 @@ app:
     retries: 5
 
 services:
-  # Ollama — the local LLM runtime. Internal-only, reached from Open WebUI
+  # Ollama - the local LLM runtime. Internal-only, reached from Open WebUI
   # via the docker DNS alias sovereign-ai-ollama:11434.
   - name: sovereign-ai-ollama
     image: ollama/ollama:0.3.12
@@ -75,7 +75,7 @@ services:
       timeout: 5s
       retries: 10
 
-  # Pipelines — Open WebUI plugin runtime. Internal-only; Open WebUI
+  # Pipelines - Open WebUI plugin runtime. Internal-only; Open WebUI
   # auto-discovers it on the docker network.
   - name: sovereign-ai-pipelines
     image: ghcr.io/open-webui/pipelines:0.1.0

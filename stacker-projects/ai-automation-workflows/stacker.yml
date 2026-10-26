@@ -157,7 +157,7 @@ deploy:
     public_ports:
       # Only 22 (SSH) and 80/443 (NPM) are public. Flowise, n8n, Qdrant,
       # Ollama, and Postgres are reached only via the NPM reverse proxy
-      # over HTTPS — never exposed directly.
+      # over HTTPS - never exposed directly.
       - "22"
       - "80"
       - "443"
@@ -168,7 +168,7 @@ proxy:
   domains:
     # Flowise UI (primary landing) at the root subdomain.
     # ⚠ VERIFY: upstream is the top-level `app:` container. Stacker names it
-    # after `project.identity` — confirm on your server with:
+    # after `project.identity` - confirm on your server with:
     #   docker ps --format '{{.Names}}' | grep workflow
     # If the actual name differs, update the upstream below.
     - domain: "${commonDomain}"
@@ -179,7 +179,7 @@ proxy:
       ssl: auto
       upstream: "ai-workflows-n8n:5678"
     # Qdrant dashboard on the qdrant. subdomain.
-    # PROTECT with NPM basic auth or IP allowlist — Qdrant has no built-in auth on the dashboard.
+    # PROTECT with NPM basic auth or IP allowlist - Qdrant has no built-in auth on the dashboard.
     - domain: "qdrant.${commonDomain}"
       ssl: auto
       upstream: "ai-workflows-qdrant:6333"
