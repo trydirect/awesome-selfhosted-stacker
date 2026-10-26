@@ -1,5 +1,5 @@
 name: lightrag
-version: "1.0.0"
+version: "1.0.1"
 
 project:
   identity: lightrag
@@ -38,6 +38,12 @@ app:
     EMBEDDING_BINDING_API_KEY: ${EMBEDDING_BINDING_API_KEY}
     EMBEDDING_MODEL: ${EMBEDDING_MODEL}
     EMBEDDING_DIM: ${EMBEDDING_DIM}
+    # Auth: upstream runs with no authentication unless one of these is set.
+    LIGHTRAG_API_KEY: ${LIGHTRAG_API_KEY}
+    LIGHTRAG_ADMIN_PASSWORD: ${LIGHTRAG_ADMIN_PASSWORD}
+    AUTH_ACCOUNTS: admin:${LIGHTRAG_ADMIN_PASSWORD}
+    TOKEN_SECRET: ${TOKEN_SECRET}
+    WHITELIST_PATHS: /health
   volumes:
     - lightrag_data:/app/data/rag_storage
     - lightrag_inputs:/app/data/inputs
@@ -170,6 +176,25 @@ config_contract:
         EMBEDDING_DIM:
           mutability: editable
           display: number
+        LIGHTRAG_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        LIGHTRAG_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        AUTH_ACCOUNTS:
+          mutability: fixed
+        TOKEN_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 48
+          display: password
+        WHITELIST_PATHS:
+          mutability: fixed
         healthcheck:
           mutability: editable
         interval:
@@ -238,8 +263,13 @@ config_contract:
           mutability: generated
 
 marketplace:
+  display_name: LightRAG
+  category: ai-agents
+  tags: [rag, knowledge-graph, llm, qdrant, postgres]
+  license: free
+  support_url: https://github.com/HKUDS/LightRAG
+  no_secrets_confirmation: true
   publish: true
-  display_name: "Lightrag"
   short_description: "LightRAG knowledge-graph RAG server with web UI, backed by Postgres and Qdrant, on your own server."
   long_description: |
     **LightRAG**: LightRAG knowledge-graph RAG server with web UI, backed by Postgres and Qdrant, on your own server.
