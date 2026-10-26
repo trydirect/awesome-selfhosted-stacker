@@ -1,10 +1,10 @@
-# Marketplace descriptions — what to write
+# Marketplace descriptions: what to write
 
 Every project can carry listing metadata in its `stacker.yml` under
 `marketplace:`. `stacker submit` ships it to the TryDirect marketplace, and
 the template page renders `long_description` as markdown.
 
-The listing is read by **buyers deploying from the web UI** — not by developers
+The listing is read by **buyers deploying from the web UI**, not by developers
 working in this repo. A description copied from the project's `README.md`
 ("git clone …", `generate-secrets.sh`, `stacker deploy`) describes the wrong
 product: the buyer never runs those commands. Write for the person clicking
@@ -12,34 +12,38 @@ product: the buyer never runs those commands. Write for the person clicking
 
 ## Structure (in this order)
 
-1. **One or two sentences** — what the product is and why someone wants it
-   self-hosted ("Self-hosted Firebase alternative — Postgres, auth, realtime…").
-2. **What the deploy does** — TryDirect provisions the server, wires the
+1. **One or two sentences**: what the product is and why someone wants it
+   self-hosted ("Self-hosted Firebase alternative: Postgres, auth, realtime...").
+2. **What the deploy does**: TryDirect provisions the server, wires the
    services, generates credentials. Reassure: no shared state, no secrets in
    the image.
-3. **What's included** — the service table (Service | Port | Description).
-4. **What you configure** — only what the buyer actually types in the deploy
+3. **What's included**: the service table (Service | Port | Description).
+4. **What you configure**: only what the buyer actually types in the deploy
    form (`install.inputs`, `mutability: provided/editable` fields), e.g. the
-   `commonDomain`. Everything `mutability: generated` is created for them —
-   say so instead of listing it.
-5. **Use it for** — 2-4 concrete use cases.
-6. **Requirements** — server size (count the services; ~1 GB RAM each for
+   `commonDomain`. Everything `mutability: generated` is created for them, so
+   say that instead of listing it.
+5. **Use it for**: 2-4 concrete use cases.
+6. **Requirements**: server size (count the services; ~1 GB RAM each for
    JVM/DB-heavy ones), DNS for the domain, any external account needed.
-7. **Alternative: deploy with the Stacker CLI** *(optional, last)* — the
+7. **Alternative: deploy with the Stacker CLI** *(optional, last)*: the
    `git clone` / `generate-secrets.sh` / `stacker deploy` recipe stays here as
    a secondary path for developers. It must never be the main content.
 
 ## Rules
 
+- **Never use the em-dash character `—` (or `–`) anywhere in listing copy**:
+  not in headings, not in descriptions, not in table cells, not in the short
+  description. Use a colon, comma or parentheses instead. Reviewers and
+  automated checks reject the character.
 - Long description: 100-5000 characters of markdown (tables, code fences and
   links all render). Short description: 20-200 characters, one sentence.
-- Buyer voice, present tense: "Deploy from this page…", "You configure…".
-  Not: "Clone the repo…", "Run the script…".
-- Describe this deployment, not upstream's marketing copy — name the actual
+- Buyer voice, present tense: "Deploy from this page...", "You configure...".
+  Not: "Clone the repo...", "Run the script...".
+- Describe this deployment, not upstream's marketing copy: name the actual
   services and ports from this project's `stacker.yml`.
 - Never mention generated values; say they are generated per deployment.
 - `no_secrets_confirmation: true` is a claim that no credentials are embedded
-  in the stack — only set it when `config_contract` marks secrets `generated`
+  in the stack. Only set it when `config_contract` marks secrets `generated`
   or the stack has none.
 
 ## Template
@@ -50,7 +54,7 @@ marketplace:
   display_name: "<Product Name>"
   short_description: "<one sentence: what it is, deployed where>"
   long_description: |
-    **<what it is in one line>** — <what the buyer gets>.
+    **<what it is in one line>**: <what the buyer gets>.
 
     Deploy from this page: TryDirect provisions the server, starts the
     services, generates every credential and wires <gateway/proxy> in front.
@@ -63,7 +67,7 @@ marketplace:
 
     ## What you configure
 
-    - **Domain** (`commonDomain`) — ...
+    - **Domain** (`commonDomain`): ...
     - <other form fields only>
 
     Everything else is generated per deployment.
@@ -96,5 +100,5 @@ marketplace:
 Reference implementation: `stacker-projects/supabase/stacker.yml`.
 
 CLI flags override these values when present
-(`stacker submit --description … --long-description …`), so a one-off rewrite
-can also be done without editing `stacker.yml`.
+(`stacker submit --description ... --long-description ...`), so a one-off
+rewrite can also be done without editing `stacker.yml`.

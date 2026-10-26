@@ -435,11 +435,11 @@ env_file: .env
 marketplace:
   publish: true
   display_name: "Supabase"
-  short_description: "Self-hosted Supabase on your own server — Postgres, authentication, REST/GraphQL APIs, realtime, storage and edge functions."
+  short_description: "Self-hosted Supabase on your own server: Postgres, authentication, REST/GraphQL APIs, realtime, storage and edge functions."
   long_description: |
-    **Self-hosted Firebase alternative** — a complete Supabase platform on your
-    own server: Postgres database, user authentication, REST and GraphQL APIs,
-    realtime subscriptions, file storage and edge functions.
+    **Self-hosted Firebase alternative**: a complete Supabase platform on your
+    own server, with Postgres database, user authentication, REST and GraphQL
+    APIs, realtime subscriptions, file storage and edge functions.
 
     Deploy from this page: TryDirect provisions the server, starts the ten
     Supabase services, generates every credential for your deployment and puts
@@ -461,16 +461,16 @@ marketplace:
 
     ## What you configure
 
-    - **Domain** (`commonDomain`) — the hostname your dashboard and APIs are
+    - **Domain** (`commonDomain`): the hostname your dashboard and APIs are
       served on, e.g. `supabase.example.com`
-    - **Dashboard sign-in** (`DASHBOARD_USERNAME`) — defaults to `supabase`;
+    - **Dashboard sign-in** (`DASHBOARD_USERNAME`): defaults to `supabase`;
       the password is generated and shown after the deploy
-    - **SMTP (optional)** — point the bundled mail service at your provider to
+    - **SMTP (optional)**: point the bundled mail service at your provider to
       send real signup and recovery emails
 
     The database password, JWT secret and anon/service API keys are generated
-    per deployment and stored in your project's secret store — you never type
-    or rotate them by hand.
+    per deployment and stored in your project's secret store, so you never
+    type or rotate them by hand.
 
     ## Use it for
 
@@ -482,7 +482,7 @@ marketplace:
 
     - A cloud account connected to TryDirect (the deploy form provisions the
       server) or one of your existing servers
-    - 4 GB RAM or more — the stack runs ten services
+    - 4 GB RAM or more (the stack runs ten services)
     - A DNS record for your domain pointing at the deployment
 
     ## Alternative: deploy with the Stacker CLI
