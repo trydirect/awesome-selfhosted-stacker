@@ -527,7 +527,7 @@ server target. Start here for production.
 | hn-briefing-agent   | AI agent         | 8000  | —          | scheduled HN briefing API (Gemini/ADK); built from pinned upstream |
 | kotaemon            | RAG chat         | 7860  | —          | ⚠ open RCE #844 / IDOR #846 — self-host only, never expose publicly |
 | Langchain-Chatchat  | AI RAG           | 8501  | —          | stale 2024 images; FAISS + xinference |
-| LightRAG            | AI RAG           | 9621  | —          | + postgres + qdrant; no auth by default (upstream) |
+| LightRAG            | AI RAG           | 9621  | —          | + postgres + qdrant; auth on (admin login + API key, generated) |
 | Local AI Packaged   | AI stack         | 8001  | caddy      | full 28-service upstream stack; deployed (#1363) + baked; Quick Deploy in its README |
 | Local ChatGPT       | AI chat          | 8501  | —          | per-user memory chat (mem0 + qdrant + ollama), fully local |
 | LocalAGI            | AI agent         | 8080  | —          | + LocalAI (CPU) + localrecall postgres |

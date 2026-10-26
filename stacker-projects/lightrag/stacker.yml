@@ -1,5 +1,5 @@
 name: lightrag
-version: "1.0.0"
+version: "1.0.1"
 
 project:
   identity: lightrag
@@ -38,6 +38,12 @@ app:
     EMBEDDING_BINDING_API_KEY: ${EMBEDDING_BINDING_API_KEY}
     EMBEDDING_MODEL: ${EMBEDDING_MODEL}
     EMBEDDING_DIM: ${EMBEDDING_DIM}
+    # Auth: upstream runs with no authentication unless one of these is set.
+    LIGHTRAG_API_KEY: ${LIGHTRAG_API_KEY}
+    LIGHTRAG_ADMIN_PASSWORD: ${LIGHTRAG_ADMIN_PASSWORD}
+    AUTH_ACCOUNTS: admin:${LIGHTRAG_ADMIN_PASSWORD}
+    TOKEN_SECRET: ${TOKEN_SECRET}
+    WHITELIST_PATHS: /health
   volumes:
     - lightrag_data:/app/data/rag_storage
     - lightrag_inputs:/app/data/inputs
@@ -170,6 +176,25 @@ config_contract:
         EMBEDDING_DIM:
           mutability: editable
           display: number
+        LIGHTRAG_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        LIGHTRAG_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        AUTH_ACCOUNTS:
+          mutability: fixed
+        TOKEN_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 48
+          display: password
+        WHITELIST_PATHS:
+          mutability: fixed
         healthcheck:
           mutability: editable
         interval:
@@ -236,3 +261,38 @@ config_contract:
       volumes:
         lightrag_qdrant:
           mutability: generated
+
+marketplace:
+  display_name: LightRAG
+  short_description: "LightRAG knowledge-graph RAG server with web UI, backed by Postgres and Qdrant, on your own server."
+  category: ai-agents
+  tags: [rag, knowledge-graph, llm, qdrant, postgres]
+  license: free
+  support_url: https://github.com/HKUDS/LightRAG
+  no_secrets_confirmation: true
+  long_description: |
+    ## LightRAG
+
+    [LightRAG](https://github.com/HKUDS/LightRAG) (HKU Data Intelligence Lab, MIT license) is a
+    lightweight knowledge-graph RAG framework. It indexes your documents into a knowledge graph
+    plus vector embeddings and answers questions over both.
+
+    ### What you get
+
+    - **LightRAG v1.5.7** API server and web UI on port 9621
+    - **Postgres 16** for key-value, document status and graph storage
+    - **Qdrant** for vector storage
+    - Health checks on every service and persistent volumes for data
+
+    ### Security
+
+    Upstream LightRAG runs with no authentication by default. This stack turns it on:
+    the web UI needs a login (user `admin`), the API needs an `X-API-Key` header, and only
+    `/health` is public. The admin password, API key, JWT secret and Postgres password are
+    generated fresh for every install.
+
+    ### What you provide
+
+    An OpenAI-compatible endpoint for the LLM and the embedding model (OpenAI by default,
+    or any compatible provider): set the API keys, model names and embedding dimension
+    at install.
