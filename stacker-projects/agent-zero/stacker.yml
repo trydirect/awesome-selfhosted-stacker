@@ -1,5 +1,5 @@
 name: agent-zero
-version: "1.0.0"
+version: "1.0.1"
 
 project:
   identity: agent-zero
@@ -70,9 +70,14 @@ config_contract:
           mutability: generated
 
 marketplace:
+  display_name: Agent Zero
+  short_description: "Agent Zero AI agent framework on your own server: the agent gets a Linux computer, a browser and memory, behind a login."
+  category: ai-agents
+  tags: [ai-agent, autonomous-agent, llm, browser-automation]
+  license: free
+  support_url: https://github.com/agent0ai/agent-zero
+  no_secrets_confirmation: true
   publish: true
-  display_name: "Agent Zero"
-  short_description: "AI agent framework with computer use, RAG and multi-model support"
   long_description: |
     **Agent Zero**: AI agent framework with computer use, RAG and multi-model support
 
