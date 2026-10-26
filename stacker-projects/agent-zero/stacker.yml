@@ -1,5 +1,5 @@
 name: agent-zero
-version: "1.0.0"
+version: "1.0.1"
 
 project:
   identity: agent-zero
@@ -68,3 +68,35 @@ config_contract:
       volumes:
         agent_zero_usr:
           mutability: generated
+
+marketplace:
+  display_name: Agent Zero
+  short_description: "Agent Zero AI agent framework on your own server: the agent gets a Linux computer, a browser and memory, behind a login."
+  category: ai-agents
+  tags: [ai-agent, autonomous-agent, llm, browser-automation]
+  license: free
+  support_url: https://github.com/agent0ai/agent-zero
+  no_secrets_confirmation: true
+  long_description: |
+    ## Agent Zero
+
+    [Agent Zero](https://github.com/agent0ai/agent-zero) is an open agent framework for work
+    that needs more than chat. The agent runs in its own Dockerized Linux environment with a
+    terminal, files, a browser and per-project memory, and can delegate tasks to subagents.
+
+    ### What you get
+
+    - **Agent Zero v2.14** web UI on port 50080
+    - A persistent volume for your settings, projects, memory and files
+    - A health check on the container
+
+    ### Security
+
+    The web UI and API require a login. The username defaults to `admin` and the
+    password is generated fresh for every install. The UI is served over plain HTTP on
+    port 50080; put it behind HTTPS before sending real credentials over the internet.
+
+    ### After install
+
+    Open the web UI, sign in, and choose your LLM provider and API key in Settings
+    (OpenAI, Anthropic, OpenRouter, Ollama and others).
