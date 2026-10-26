@@ -1,6 +1,6 @@
 # Stirling PDF
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/stirling-pdf&ref=206881a13b81ab43aaeca1316403e1343763f261)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/stirling-pdf&ref=79c1c63)
 
 **Self-hosted PDF manipulator** — merge, split, convert, OCR, and more.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/stirling-pdf&ref=206881a13b81ab43aaeca1316403e1343763f261
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/stirling-pdf&ref=79c1c63
 ```
 
 TryDirect validates the stack's `stacker.yml`, presents the `.env.example` fields

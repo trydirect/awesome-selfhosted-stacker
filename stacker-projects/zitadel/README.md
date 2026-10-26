@@ -1,6 +1,6 @@
 # Zitadel
 
-[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/zitadel&ref=206881a13b81ab43aaeca1316403e1343763f261)
+[![Deploy to TryDirect](https://img.shields.io/badge/Deploy_to-TryDirect-blue)](https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/zitadel&ref=79c1c63)
 
 **Self-hosted identity management** — Auth0/Keycloak alternative with OIDC, SAML, MFA.
 
@@ -9,7 +9,7 @@
 Click the badge above, or open the deep link:
 
 ```markdown
-https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/zitadel&ref=206881a13b81ab43aaeca1316403e1343763f261
+https://try.direct/quick-deploy?source=github&repo=trydirect/awesome-selfhosted-stacker&path=stacker-projects/zitadel&ref=79c1c63
 ```
 
 ## Manual deploy

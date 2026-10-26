@@ -80,6 +80,11 @@ def check(stacks=None):
                 continue
             ref = parse_qs(urlsplit(link).query)["ref"][0]
             at_ref = git("show", f"{ref}:stacker-projects/{stack}/stacker.yml")
+            if at_ref.returncode != 0 and re.fullmatch(r"[A-Za-z][A-Za-z0-9._/-]*", ref):
+                # A branch name like `main` deploys fine (the User Service fetches
+                # from GitHub) but a CI PR checkout has no local ref by that name;
+                # resolve it through the remote-tracking ref instead.
+                at_ref = git("show", f"origin/{ref}:stacker-projects/{stack}/stacker.yml")
             if at_ref.returncode != 0:
                 errors.append(f"{rel}: no stacker-projects/{stack}/stacker.yml at ref {ref}")
             elif at_ref.stdout != (readme.parent / "stacker.yml").read_text():
