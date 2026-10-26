@@ -2247,3 +2247,36 @@ Error: Environment variable not found: $FLOWISE_USERNAME
 
 ---
 
+## [BUG] bake_pipeline: the smoke clone does not test the buyer's path (found 2026-10-26)
+
+- **Observed:** the lightrag smoke clone (`POST /api/v1/deploy/clone`) came up with the
+  project files, images and `/etc/stacker/env` in place, but the stack never started:
+  cloud-init logged `Unit stacker-compose.service not found`. The same image via
+  Quick Deploy (try.direct/quick-deploy, prepare + start) was healthy in 101s with
+  fresh generated values. A direct API clone is not what a buyer runs, so a red
+  smoke here does not mean the image is broken, and a green one would not prove
+  Quick Deploy works.
+- **Fix direction:** smoke through the Quick Deploy prepare/start endpoints, or make
+  the direct clone start the stack (stacker BUGS: "clone via API lacks
+  stacker-compose.service").
+
+## [BUG] bake_pipeline: three gaps that needed a hand-written wrapper (found 2026-10-26)
+
+1. `POST /api/admin/bake` is sent without `server_id`; it returns 409 when the
+   deployment's project has more than one server. Read the id from the build box
+   (`/hetzner/v1/metadata/instance-id`) or take it as an option.
+2. The smoke clone's private key lives only in a temp file and is deleted, and only
+   on the healthy path, so a failed clone cannot be inspected. Keep it (0600) next to
+   the run and collect `docker ps -a` / cloud-init logs on failure.
+3. `test-templates.py` hard-codes `key_name: htz-10`, and `_cli_credentials()` reads
+   only `~/.config/stacker`, ignoring `XDG_CONFIG_HOME` (a second login there is
+   silently not used unless STACKER_URL/STACKER_TOKEN are set).
+
+## [BUG] test-templates --bake: `stacker install` path breaks stacks with embedded references (found 2026-10-26)
+
+- **Observed:** `test-templates.py --template lightrag --bake` failed at deploy with
+  `Environment variable not found: $LIGHTRAG_ADMIN_PASSWORD`. `stacker install` writes
+  contract values into `stacker.yml` but no `.env`, so a value that embeds another key
+  (`AUTH_ACCOUNTS: admin:${LIGHTRAG_ADMIN_PASSWORD}`) has nothing to resolve
+  (stacker BUGS #12). Workaround used: deploy the build box from the project
+  directory with its own `.env`, then bake that deployment.
