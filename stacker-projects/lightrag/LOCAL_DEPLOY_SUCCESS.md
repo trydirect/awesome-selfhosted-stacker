@@ -27,3 +27,21 @@ stacker deploy --target local
   app starts without reachable LLM (needed only at query/ingest time).
 - Teardown: `stacker destroy -y`; project images removed afterwards
   (`ghcr.io/hkuds/lightrag:v1.5.7`, `postgres:16-alpine`, `qdrant/...`).
+
+## Auth re-check (2026-10-26)
+
+Upstream runs with no authentication unless `LIGHTRAG_API_KEY` or `AUTH_ACCOUNTS`
+is set, and port 9621 is public. The stack now sets both (admin login, API key,
+JWT secret, all generated) and `WHITELIST_PATHS=/health`, so the Ollama-compatible
+`/api/*` routes are protected too. Fresh volumes, `stacker deploy --target local`:
+
+| Request | Code |
+|---|---|
+| `GET /health`, no auth | 200 |
+| `POST /query`, no auth | 401 |
+| `POST /api/chat`, no auth | 401 |
+| `GET /graph/label/list`, wrong `X-API-Key` | 401 |
+| `GET /graph/label/list`, generated `X-API-Key` | 200 |
+| `POST /login` admin, wrong password | 401 |
+| `POST /login` admin, generated password, then JWT on `/graph/label/list` | 200 |
+| `GET /auth-status` | `auth_configured: true` |
