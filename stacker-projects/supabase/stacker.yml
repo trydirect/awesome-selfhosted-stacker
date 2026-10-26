@@ -431,3 +431,76 @@ config_contract:
           display: password
 
 env_file: .env
+
+marketplace:
+  publish: true
+  display_name: "Supabase"
+  short_description: "Self-hosted Supabase on your own server — Postgres, authentication, REST/GraphQL APIs, realtime, storage and edge functions."
+  long_description: |
+    **Self-hosted Firebase alternative** — a complete Supabase platform on your
+    own server: Postgres database, user authentication, REST and GraphQL APIs,
+    realtime subscriptions, file storage and edge functions.
+
+    Deploy from this page: TryDirect provisions the server, starts the ten
+    Supabase services, generates every credential for your deployment and puts
+    the dashboard and APIs behind the Kong gateway. No secrets ship with the
+    stack and nothing is shared between deployments.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | Kong (API Gateway) | 8000 | REST API proxy |
+    | Studio | 3000 | Dashboard UI |
+    | PostgREST | 3000 | Auto-generated REST API |
+    | GoTrue | 9999 | Authentication |
+    | Realtime | 4000 | Realtime subscriptions |
+    | Storage | 5000 | File storage |
+    | Edge Functions | 9000 | Serverless functions |
+    | Postgres | 5432 | Database (private network only) |
+
+    ## What you configure
+
+    - **Domain** (`commonDomain`) — the hostname your dashboard and APIs are
+      served on, e.g. `supabase.example.com`
+    - **Dashboard sign-in** (`DASHBOARD_USERNAME`) — defaults to `supabase`;
+      the password is generated and shown after the deploy
+    - **SMTP (optional)** — point the bundled mail service at your provider to
+      send real signup and recovery emails
+
+    The database password, JWT secret and anon/service API keys are generated
+    per deployment and stored in your project's secret store — you never type
+    or rotate them by hand.
+
+    ## Use it for
+
+    - Mobile and web application backends (auth + Postgres + storage)
+    - Internal tools that need row-level security out of the box
+    - Prototypes that can grow into production without a rewrite
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions the
+      server) or one of your existing servers
+    - 4 GB RAM or more — the stack runs ten services
+    - A DNS record for your domain pointing at the deployment
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/supabase
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy --target cloud --key htz-0
+    ```
+  category: devops
+  tags: [supabase, postgres, auth, database, storage, realtime, baas]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/supabase
+  no_secrets_confirmation: true
