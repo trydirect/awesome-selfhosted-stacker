@@ -28,7 +28,7 @@ app:
   - lemmy_pictrs
 services:
 - name: lemmy_db
-  image: postgres:16.4-alpine
+  image: postgres:17.11-alpine3.23
   environment:
     POSTGRES_DB: lemmy
     POSTGRES_USER: lemmy

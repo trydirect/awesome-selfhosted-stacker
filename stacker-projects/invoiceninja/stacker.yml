@@ -26,7 +26,7 @@ app:
 
 services:
   - name: db
-    image: mariadb:11.4
+    image: mariadb:11.8.8
     environment:
       MARIADB_DATABASE: invoiceninja
       MARIADB_USER: invoiceninja

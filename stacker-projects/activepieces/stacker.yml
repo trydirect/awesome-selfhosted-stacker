@@ -71,7 +71,7 @@ services:
       timeout: "5s"
       retries: 10
   - name: "redis"
-    image: "redis:7.0.7"
+    image: "redis:8.8.3-alpine"
     volumes:
       - "activepieces_redis_data:/data"
     healthcheck:

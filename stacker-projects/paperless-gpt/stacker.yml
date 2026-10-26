@@ -69,7 +69,7 @@ services:
       timeout: 10s
       retries: 5
   - name: paperless_db
-    image: postgres:18.0-alpine
+    image: postgres:17.11-alpine3.23
     environment:
       POSTGRES_USER: paperless
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -82,7 +82,7 @@ services:
       timeout: 5s
       retries: 10
   - name: redis
-    image: redis:7.4-alpine
+    image: redis:8.8.3-alpine
     volumes:
       - paperless_redis:/data
     healthcheck:

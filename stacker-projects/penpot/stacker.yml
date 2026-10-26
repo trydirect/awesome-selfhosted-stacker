@@ -54,7 +54,7 @@ services:
       - redis
 
   - name: postgres
-    image: postgres:16.4-alpine
+    image: postgres:17.11-alpine3.23
     environment:
       POSTGRES_DB: penpot
       POSTGRES_USER: postgres
@@ -63,7 +63,7 @@ services:
       - "penpot-postgres:/var/lib/postgresql/data"
 
   - name: redis
-    image: redis:7.4-alpine
+    image: redis:8.8.3-alpine
     volumes:
       - "penpot-redis:/data"
 

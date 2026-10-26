@@ -34,7 +34,7 @@ app:
 
 services:
   - name: mongo
-    image: mongo:7
+    image: mongo:9.0.4
     volumes:
       - "librechat-mongo:/data/db"
 

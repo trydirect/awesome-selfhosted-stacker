@@ -101,7 +101,7 @@ services:
       timeout: "5s"
       retries: 10
   - name: "socioboard-mongo"
-    image: "mongo:6"
+    image: "mongo:9.0.4"
     environment:
       MONGO_INITDB_DATABASE: "${MONGO_DB_NAME}"
       MONGO_INITDB_ROOT_USERNAME: "${MONGO_USER}"

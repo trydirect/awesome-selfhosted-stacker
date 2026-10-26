@@ -25,7 +25,7 @@ app:
 
 services:
   - name: matomo_db
-    image: mariadb:11.4.4
+    image: mariadb:11.8.8.4
     environment:
       MARIADB_DATABASE: matomo
       MARIADB_USER: matomo

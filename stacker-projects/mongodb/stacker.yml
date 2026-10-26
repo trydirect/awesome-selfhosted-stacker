@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: mongo:7
+  image: mongo:9.0.4
   ports:
     - "27017:27017"
   environment:

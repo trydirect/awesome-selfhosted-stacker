@@ -22,7 +22,7 @@ app:
     REDASH_QUERY_RESULTS_MAX_AGE: '43200'
 services:
 - name: redash_db
-  image: postgres:16.4-alpine
+  image: postgres:17.11-alpine3.23
   environment:
     POSTGRES_DB: redash
     POSTGRES_USER: redash
@@ -37,7 +37,7 @@ services:
     timeout: 5s
     retries: 10
 - name: redis
-  image: redis:7.4-alpine
+  image: redis:8.8.3-alpine
   ports:
   - "127.0.0.1:6380:6379"
   volumes:

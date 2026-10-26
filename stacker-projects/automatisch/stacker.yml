@@ -26,7 +26,7 @@ app:
 
 services:
   - name: automatisch-db
-    image: postgres:16.4-alpine
+    image: postgres:17.11-alpine3.23
     environment:
       POSTGRES_DB: automatisch
       POSTGRES_USER: automatisch
@@ -40,7 +40,7 @@ services:
       retries: 10
 
   - name: redis
-    image: redis:7.4-alpine
+    image: redis:8.8.3-alpine
     healthcheck:
       test: CMD redis-cli ping
       interval: 10s

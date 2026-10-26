@@ -65,7 +65,7 @@ app:
 
 services:
   - name: mongodb
-    image: mongo:8.0
+    image: mongo:9.0.4
     command: "mongod --bind_ip_all --wiredTigerCacheSizeGB 1"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
@@ -79,7 +79,7 @@ services:
       timeout: 3s
       retries: 5
   - name: redis
-    image: redis:7.4.1-bookworm
+    image: redis:8.8.3-alpine
     command: "redis-server --appendonly yes --appendfsync everysec --requirepass ${REDIS_PASSWORD}"
     volumes:
       - redis_data:/data

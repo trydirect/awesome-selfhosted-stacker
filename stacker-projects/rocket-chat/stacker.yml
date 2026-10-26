@@ -18,7 +18,7 @@ app:
   - mongo
 services:
 - name: mongo
-  image: mongo:7.0.12
+  image: mongo:9.0.4.0.12
   environment:
     MONGO_INITDB_DATABASE: rocketchat
   ports:

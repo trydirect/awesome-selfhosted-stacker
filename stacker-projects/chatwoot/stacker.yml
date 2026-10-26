@@ -38,7 +38,7 @@ services:
       retries: 10
 
   - name: chatwoot-redis
-    image: redis:7.4-alpine
+    image: redis:8.8.3-alpine
     healthcheck:
       test: CMD redis-cli ping
       interval: 10s

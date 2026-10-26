@@ -20,7 +20,7 @@ app:
     FORCE_HTTPS: 'false'
 services:
 - name: postgres
-  image: postgres:16
+  image: postgres:17.11-alpine3.23
   ports:
   - "127.0.0.1:5432:5432"
   environment:
@@ -30,7 +30,7 @@ services:
   volumes:
   - postgres_data:/var/lib/postgresql/data
 - name: redis
-  image: redis:7.4-alpine
+  image: redis:8.8.3-alpine
   ports:
   - "127.0.0.1:6380:6379"
   environment: {}

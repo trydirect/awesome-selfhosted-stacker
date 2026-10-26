@@ -32,7 +32,7 @@ app:
 
 services:
   - name: mariadb
-    image: mariadb:11.4
+    image: mariadb:11.8.8
     ports:
       - "127.0.0.1:3306:3306"
     environment:
@@ -49,7 +49,7 @@ services:
       retries: 5
 
   - name: redis
-    image: redis:7.4-alpine
+    image: redis:8.8.3-alpine
     ports:
       - "127.0.0.1:6379:6379"
     healthcheck:

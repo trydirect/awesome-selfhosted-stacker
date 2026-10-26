@@ -31,7 +31,7 @@ app:
 
 services:
   - name: wallabag_db
-    image: postgres:16.4-alpine
+    image: postgres:17.11-alpine3.23
     environment:
       POSTGRES_DB: wallabag
       POSTGRES_USER: wallabag
@@ -47,7 +47,7 @@ services:
       retries: 10
 
   - name: redis
-    image: redis:7.4-alpine
+    image: redis:8.8.3-alpine
     ports:
       - "127.0.0.1:6379:6379"
     volumes:

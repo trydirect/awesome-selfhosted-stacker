@@ -303,7 +303,7 @@ services:
     retries: 6
   restart: always
 - name: redis
-  image: redis:7.4.11-alpine
+  image: redis:8.8.3-alpine.11-alpine
   environment:
     REDIS_AUTH: ${REDIS_AUTH}
   volumes:

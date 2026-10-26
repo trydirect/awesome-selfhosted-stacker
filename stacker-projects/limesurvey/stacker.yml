@@ -31,7 +31,7 @@ app:
 
 services:
   - name: mysql
-    image: mariadb:11.4
+    image: mariadb:11.8.8
     environment:
       MYSQL_DATABASE: limesurvey
       MYSQL_USER: limesurvey

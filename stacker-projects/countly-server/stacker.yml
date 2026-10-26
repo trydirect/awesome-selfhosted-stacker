@@ -15,7 +15,7 @@ app:
   environment: {}
 services:
   - name: "mongodb"
-    image: "bitnami/mongodb:latest"
+    image: "mongo:9.0.4"
     volumes:
       - "countly_mongodb_data:/bitnami"
     environment:
