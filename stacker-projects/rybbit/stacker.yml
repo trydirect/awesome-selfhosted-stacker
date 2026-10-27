@@ -113,7 +113,7 @@ services:
     timeout: 5s
     retries: 10
 - name: redis
-  image: redis:8.8.3-alpine
+  image: redis:7.4-alpine
   command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes --appendfsync everysec --maxmemory-policy noeviction
   volumes:
   - rybbit_redis_data:/data

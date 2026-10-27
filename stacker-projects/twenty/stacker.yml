@@ -2,7 +2,7 @@ name: twenty
 
 app:
   type: custom
-  image: twentycrm/twenty:v0.36.0
+  image: twentycrm/twenty:latest
   ports:
     - "3000:3000/tcp"
   environment:
@@ -25,7 +25,7 @@ app:
 
 services:
   - name: db
-    image: postgres:17.11-alpine3.23
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: twenty
       POSTGRES_USER: twenty
@@ -38,7 +38,7 @@ services:
       timeout: 5s
       retries: 6
   - name: redis
-    image: redis:8.8.3-alpine
+    image: redis:7.4-alpine
     command: redis-server --maxmemory-policy noeviction
     healthcheck:
       test: "CMD redis-cli ping"

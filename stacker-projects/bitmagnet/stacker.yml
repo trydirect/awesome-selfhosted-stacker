@@ -51,7 +51,7 @@ app:
     TMDB_API_KEY: ""
 services:
   - name: "postgres"
-    image: "postgres:17.11-alpine3.23"
+    image: "postgres:16.4-alpine"
     environment:
       POSTGRES_DB: "bitmagnet"
       POSTGRES_USER: "postgres"

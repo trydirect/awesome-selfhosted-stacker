@@ -43,7 +43,7 @@ services:
       - postgres
 
   - name: postgres
-    image: postgres:17.11-alpine3.23
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: openproject
       POSTGRES_USER: openproject

@@ -7,7 +7,7 @@ install:
     commonDomain: forum.example.com
 app:
   type: custom
-  image: discourse/discourse:2026.10.0-latest.1
+  image: discourse/discourse:latest
   ports:
   - "80:80"
   - "443:443"
@@ -43,7 +43,7 @@ services:
     timeout: 5s
     retries: 10
 - name: redis
-  image: redis:8.8.3-alpine
+  image: redis:7.4-alpine
   ports:
   - "127.0.0.1:6379:6379"
   volumes:

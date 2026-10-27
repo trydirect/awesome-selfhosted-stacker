@@ -28,7 +28,7 @@ app:
 
 services:
   - name: bitwarden_db
-    image: postgres:17.11-alpine3.23
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: bitwarden
       POSTGRES_USER: bitwarden

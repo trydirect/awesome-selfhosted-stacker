@@ -183,7 +183,7 @@ services:
       - ai_kb_worker_data:/app/api/storage
 
   - name: ai-knowledge-base-db
-    image: postgres:17.11-alpine3.23
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: dify
       POSTGRES_USER: dify
@@ -197,7 +197,7 @@ services:
       retries: 10
 
   - name: ai-knowledge-base-redis
-    image: redis:8.8.3-alpine
+    image: redis:7.4-alpine
     command: redis-server --requirepass ""
     healthcheck:
       test: CMD redis-cli ping

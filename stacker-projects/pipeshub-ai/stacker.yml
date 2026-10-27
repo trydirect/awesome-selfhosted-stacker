@@ -79,7 +79,7 @@ services:
       timeout: 3s
       retries: 5
   - name: redis
-    image: redis:8.8.3-alpine
+    image: redis:7.4-alpine
     command: "redis-server --appendonly yes --appendfsync everysec --requirepass ${REDIS_PASSWORD}"
     volumes:
       - redis_data:/data

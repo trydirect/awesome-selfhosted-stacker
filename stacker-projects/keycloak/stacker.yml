@@ -23,7 +23,7 @@ app:
 
 services:
   - name: keycloak-db
-    image: postgres:17.11-alpine3.23
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak

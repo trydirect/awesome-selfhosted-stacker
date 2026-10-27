@@ -75,7 +75,7 @@ app:
     MEILI_MASTER_KEY: "${MEILI_MASTER_KEY}"
 services:
   - name: "postgres"
-    image: "postgres:17.11-alpine3.23"
+    image: "postgres:16.4-alpine"
     environment:
       POSTGRES_DB: "open_archive"
       POSTGRES_USER: "admin"

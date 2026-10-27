@@ -25,7 +25,7 @@ app:
   healthcheck: null
 services:
 - name: synapse_db
-  image: postgres:17.11-alpine3.23
+  image: postgres:16.4-alpine
   ports:
   - "127.0.0.1:5432:5432"
   environment:

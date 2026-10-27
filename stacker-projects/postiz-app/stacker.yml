@@ -67,7 +67,7 @@ app:
     NX_ADD_PLUGINS: 'false'
 services:
 - name: postiz-postgres
-  image: postgres:17.11-alpine3.23
+  image: postgres:16.4-alpine
   environment:
     POSTGRES_DB: postiz-db-local
     POSTGRES_USER: postiz-user
@@ -101,7 +101,7 @@ services:
   volumes:
   - temporal_elasticsearch_data:/usr/share/elasticsearch/data
 - name: temporal-postgresql
-  image: postgres:17.11-alpine3.23
+  image: postgres:16.4-alpine
   environment:
     POSTGRES_DB: temporal
     POSTGRES_USER: temporal

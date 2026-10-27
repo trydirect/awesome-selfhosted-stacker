@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: zulip/docker-zulip:9.2
+  image: zulip/docker-zulip:latest
   ports:
     - "8080:80"
     - "8443:443"
@@ -35,7 +35,7 @@ app:
 
 services:
   - name: zulip_db
-    image: zulip/zulip-postgresql:9.2
+    image: zulip/zulip-postgresql:latest
     environment:
       POSTGRES_DB: zulip
       POSTGRES_USER: zulip

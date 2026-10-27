@@ -38,7 +38,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:17.11-alpine3.23.8-alpine
+    image: postgres:16.4-alpine.8-alpine
     environment:
       POSTGRES_USER: coolify
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
@@ -52,7 +52,7 @@ services:
       retries: 10
 
   - name: redis
-    image: redis:8.8.3-alpine
+    image: redis:7.4-alpine
     command: redis-server --save 20 1 --loglevel warning --requirepass "${REDIS_PASSWORD}"
     volumes:
       - coolify-redis:/data
