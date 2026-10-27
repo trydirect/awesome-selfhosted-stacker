@@ -124,7 +124,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Actual App"
+  display_name: "Actual"
   short_description: "Personal finance manager with envelope budgeting and local-first data storage"
   long_description: |
     **actual**: Personal finance manager with envelope budgeting and local-first data storage

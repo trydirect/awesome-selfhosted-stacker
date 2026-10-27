@@ -124,7 +124,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Glpi App"
+  display_name: "Glpi"
   short_description: "IT asset management, ticketing, and inventory tracking platform for teams"
   long_description: |
     **glpi**: IT asset management, ticketing, and inventory tracking platform for teams

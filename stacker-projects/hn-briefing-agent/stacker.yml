@@ -81,14 +81,6 @@ config_contract:
         AGENTSCOUT_GMAIL_CLIENT_ID:
           mutability: editable
           required: false
-        AGENTSCOUT_GMAIL_CLIENT_SECRET:
-          mutability: provided
-          display: password
-          required: false
-        AGENTSCOUT_GMAIL_REFRESH_TOKEN:
-          mutability: provided
-          display: password
-          required: false
 
 marketplace:
   publish: true

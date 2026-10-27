@@ -57,7 +57,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Netdata App"
+  display_name: "Netdata"
   short_description: "Real-time infrastructure monitoring with per-second metrics and alerting"
   long_description: |
     **netdata**: Real-time infrastructure monitoring with per-second metrics and alerting

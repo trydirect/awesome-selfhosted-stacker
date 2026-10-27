@@ -137,7 +137,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Twenty App"
+  display_name: "Twenty"
   short_description: "Modern open-source CRM with customizable views, workflows, and integrations"
   long_description: |
     **twenty**: Modern open-source CRM with customizable views, workflows, and integrations

@@ -155,7 +155,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Librenms App"
+  display_name: "Librenms"
   short_description: "Self-hosted librenms"
   long_description: |
     **librenms**: Self-hosted librenms

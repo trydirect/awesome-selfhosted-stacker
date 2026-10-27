@@ -162,7 +162,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Teable App"
+  display_name: "Teable"
   short_description: "No-code database, Airtable alternative with relational data and API access"
   long_description: |
     **teable**: No-code database, Airtable alternative with relational data and API access

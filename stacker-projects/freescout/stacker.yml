@@ -157,7 +157,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Freescout App"
+  display_name: "Freescout"
   short_description: "Self-hosted freescout"
   long_description: |
     **freescout**: Self-hosted freescout

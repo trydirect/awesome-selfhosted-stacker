@@ -160,7 +160,7 @@ volumes:
 
 marketplace:
   publish: true
-  display_name: "Postiz App"
+  display_name: "Postiz"
   short_description: "Open-source social media scheduling and publishing tool (Buffer alternative). Plan and automate posts across networks."
   long_description: |
     **Postiz App**: Open-source social media scheduling and publishing tool (Buffer alternative). Plan and automate posts across networks.

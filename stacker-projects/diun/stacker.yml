@@ -64,7 +64,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Diun App"
+  display_name: "Diun"
   short_description: "Docker Image Update Notifier, watches registries and alerts on new tags"
   long_description: |
     **diun**: Docker Image Update Notifier, watches registries and alerts on new tags

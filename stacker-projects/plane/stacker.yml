@@ -235,7 +235,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Plane App"
+  display_name: "Plane"
   short_description: "Project management, issues, cycles, modules, and analytics for teams"
   long_description: |
     **plane**: Project management, issues, cycles, modules, and analytics for teams
