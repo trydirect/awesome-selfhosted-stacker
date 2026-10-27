@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: surrealdb/surrealdb:latest
+  image: surrealdb/surrealdb:v2.0.0.0.0
   ports:
     - "8000:8000"
   environment:

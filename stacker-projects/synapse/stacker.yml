@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: matrixdotorg/synapse:latest
+  image: matrixdotorg/synapse:v1.128.0
   build: null
   ports:
   - "8008:8008"
@@ -25,7 +25,7 @@ app:
   healthcheck: null
 services:
 - name: synapse_db
-  image: postgres:16-alpine
+  image: postgres:16.4-alpine
   ports:
   - "127.0.0.1:5432:5432"
   environment:

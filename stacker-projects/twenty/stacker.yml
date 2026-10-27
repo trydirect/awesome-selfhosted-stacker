@@ -25,7 +25,7 @@ app:
 
 services:
   - name: db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: twenty
       POSTGRES_USER: twenty
@@ -38,7 +38,7 @@ services:
       timeout: 5s
       retries: 6
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     command: redis-server --maxmemory-policy noeviction
     healthcheck:
       test: "CMD redis-cli ping"
@@ -108,9 +108,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        twenty_data:
-          mutability: generated
     db:
       fields:
         POSTGRES_DB:

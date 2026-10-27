@@ -30,7 +30,7 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:
   type: custom
-  image: ghcr.io/zibbp/ganymede:latest
+  image: ghcr.io/zibbp/ganymede:v1.2.1
   ports:
   - "4800:4000"
   volumes:

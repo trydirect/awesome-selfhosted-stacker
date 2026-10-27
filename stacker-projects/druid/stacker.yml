@@ -19,6 +19,34 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+    broker:
+      fields:
+        druid_metadata_storage_connector_password:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    coordinator:
+      fields:
+        druid_metadata_storage_connector_password:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    historical:
+      fields:
+        druid_metadata_storage_connector_password:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    middlemanager:
+      fields:
+        druid_metadata_storage_connector_password:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     postgres:
       fields:
         POSTGRES_PASSWORD:
@@ -30,7 +58,7 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:
   type: custom
-  image: apache/druid:31.0.0
+  image: apache/druid:38.0.0
   ports:
   - "8888:8888"
   command: router
@@ -54,7 +82,7 @@ app:
     druid_processing_numMergeBuffers: '2'
 services:
 - name: postgres
-  image: postgres:17.6
+  image: postgres:17.11
   environment:
     POSTGRES_DB: druid
     POSTGRES_USER: druid
@@ -74,7 +102,7 @@ services:
   - druid_zookeeper_data:/data
   - druid_zookeeper_datalog:/datalog
 - name: coordinator
-  image: apache/druid:31.0.0
+  image: apache/druid:38.0.0
   command: coordinator
   volumes:
   - druid_shared:/opt/shared
@@ -95,7 +123,7 @@ services:
     druid_processing_numThreads: '2'
     druid_processing_numMergeBuffers: '2'
 - name: broker
-  image: apache/druid:31.0.0
+  image: apache/druid:38.0.0
   command: broker
   volumes:
   - druid_broker_var:/opt/druid/var
@@ -115,7 +143,7 @@ services:
     druid_processing_numThreads: '2'
     druid_processing_numMergeBuffers: '2'
 - name: historical
-  image: apache/druid:31.0.0
+  image: apache/druid:38.0.0
   command: historical
   volumes:
   - druid_shared:/opt/shared
@@ -136,7 +164,7 @@ services:
     druid_processing_numThreads: '2'
     druid_processing_numMergeBuffers: '2'
 - name: middlemanager
-  image: apache/druid:31.0.0
+  image: apache/druid:38.0.0
   ports:
   - "8091:8091"
   - "8100:8100"

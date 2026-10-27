@@ -17,13 +17,12 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
 app:
   type: custom
-  image: ghcr.io/open-webui/open-webui:main
+  image: ghcr.io/open-webui/open-webui:v0.3.32
   ports:
     - "3000:8080"
   environment:
@@ -35,7 +34,7 @@ app:
 
 services:
   - name: ollama
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.3.12
     ports:
       - "11434:11434"
     environment: {}

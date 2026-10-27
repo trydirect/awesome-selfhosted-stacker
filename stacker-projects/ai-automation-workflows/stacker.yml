@@ -16,7 +16,7 @@ config_contract:
   services:
     app:
       fields:
-        FLOWISE_PASSWORD:
+        APIKEY_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -26,7 +26,7 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        APIKEY_SECRET:
+        FLOWISE_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -68,7 +68,7 @@ hooks:
 
 app:
   type: custom
-  image: flowiseai/flowise:latest
+  image: flowiseai/flowise:2.1.3
   ports:
     - "3001:3000"
   environment:
@@ -91,7 +91,7 @@ app:
 
 services:
   - name: ai-workflows-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: flowise
       POSTGRES_USER: flowise
@@ -105,7 +105,7 @@ services:
       retries: 10
 
   - name: ai-workflows-redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     healthcheck:
       test: CMD redis-cli ping
       interval: 10s
@@ -113,14 +113,14 @@ services:
       retries: 10
 
   - name: ai-workflows-ollama
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.3.12
     ports:
       - "11435:11434"
     volumes:
       - ai_workflows_ollama:/root/.ollama
 
   - name: ai-workflows-n8n
-    image: n8nio/n8n:latest
+    image: n8nio/n8n:1.64.0
     ports:
       - "5679:5678"
     environment:
@@ -157,7 +157,7 @@ deploy:
     public_ports:
       # Only 22 (SSH) and 80/443 (NPM) are public. Flowise, n8n, Qdrant,
       # Ollama, and Postgres are reached only via the NPM reverse proxy
-      # over HTTPS — never exposed directly.
+      # over HTTPS - never exposed directly.
       - "22"
       - "80"
       - "443"
@@ -168,7 +168,7 @@ proxy:
   domains:
     # Flowise UI (primary landing) at the root subdomain.
     # ⚠ VERIFY: upstream is the top-level `app:` container. Stacker names it
-    # after `project.identity` — confirm on your server with:
+    # after `project.identity` - confirm on your server with:
     #   docker ps --format '{{.Names}}' | grep workflow
     # If the actual name differs, update the upstream below.
     - domain: "${commonDomain}"
@@ -179,7 +179,7 @@ proxy:
       ssl: auto
       upstream: "ai-workflows-n8n:5678"
     # Qdrant dashboard on the qdrant. subdomain.
-    # PROTECT with NPM basic auth or IP allowlist — Qdrant has no built-in auth on the dashboard.
+    # PROTECT with NPM basic auth or IP allowlist - Qdrant has no built-in auth on the dashboard.
     - domain: "qdrant.${commonDomain}"
       ssl: auto
       upstream: "ai-workflows-qdrant:6333"

@@ -15,13 +15,13 @@ app:
   environment: {}
 services:
   - name: "mongodb"
-    image: "bitnami/mongodb:latest"
+    image: "mongo:9.0.4"
     volumes:
       - "countly_mongodb_data:/bitnami"
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
   - name: "countly-api"
-    image: "countly/api:latest"
+    image: "countly/api:25.03.56-LTS"
     environment:
       COUNTLY_PLUGINS: "mobile,web,desktop,plugins,density,locale,browser,sources,views,logger,systemlogs,populator,reports,crashes,push,star-rating,slipping-away-users,compare,server-stats,dbviewer,times-of-day,compliance-hub,alerts,onboarding,consolidate,remote-config,hooks,dashboards,sdk,data-manager"
       COUNTLY_CONFIG__MONGODB_HOST: "mongodb"
@@ -29,7 +29,7 @@ services:
       COUNTLY_CONFIG__FILESTORAGE: "gridfs"
       NODE_OPTIONS: "--max-old-space-size=2048"
   - name: "countly-frontend"
-    image: "countly/frontend:latest"
+    image: "countly/frontend:25.03.56-LTS"
     environment:
       COUNTLY_PLUGINS: "mobile,web,desktop,plugins,density,locale,browser,sources,views,logger,systemlogs,populator,reports,crashes,push,star-rating,slipping-away-users,compare,server-stats,dbviewer,times-of-day,compliance-hub,alerts,onboarding,consolidate,remote-config,hooks,dashboards,sdk,data-manager"
       COUNTLY_CONFIG__MONGODB_HOST: "mongodb"

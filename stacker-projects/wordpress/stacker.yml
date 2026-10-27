@@ -7,7 +7,7 @@ install:
     commonDomain: wordpress.example.com
 app:
   type: php
-  image: wordpress
+  image: wordpress:6.6
   ports:
   - "8080:80"
   environment:
@@ -21,7 +21,7 @@ app:
   - wordpress_data:/var/www/html
 services:
 - name: wordpress_db
-  image: mysql:8.0
+  image: mysql:8.4
   environment:
     MYSQL_DATABASE: wordpress
     MYSQL_USER: wordpress

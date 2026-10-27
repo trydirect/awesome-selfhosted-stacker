@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/stackblitz-labs/bolt.diy:latest
+  image: ghcr.io/stackblitz-labs/bolt.diy:v0.0.11
   ports:
     - "5173:5173"
   environment:
@@ -67,29 +67,45 @@ config_contract:
     app:
       fields:
         ANTHROPIC_API_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         GOOGLE_GENERATIVE_AI_API_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         GROQ_API_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         HuggingFace_API_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         OPENAI_API_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         OPEN_ROUTER_API_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         TOGETHER_API_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         XAI_API_KEY:
-          mutability: provided
-          display: password
-      volumes:
-        bolt_diy_data:
           mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+
+marketplace:
+  display_name: "Bolt Diy"

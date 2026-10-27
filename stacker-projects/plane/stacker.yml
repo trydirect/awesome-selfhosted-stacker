@@ -2,7 +2,7 @@ name: plane
 
 app:
   type: custom
-  image: makeplane/plane-aio-community:stable
+  image: makeplane/plane-aio-community:v1.4.2
   ports:
     - "8000:80/tcp"
   environment:
@@ -33,7 +33,7 @@ app:
 
 services:
   - name: db
-    image: postgres:15-alpine
+    image: postgres:16.4-alpine.8-alpine
     environment:
       POSTGRES_DB: plane
       POSTGRES_USER: plane
@@ -46,7 +46,7 @@ services:
       timeout: 5s
       retries: 6
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     healthcheck:
       test: "CMD redis-cli ping"
       interval: 10s
@@ -66,7 +66,7 @@ services:
       timeout: 10s
       retries: 8
   - name: minio
-    image: bitnamilegacy/minio:latest
+    image: bitnamilegacy/minio:2024.10.13
     environment:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: plane123secret
@@ -116,17 +116,26 @@ config_contract:
     app:
       fields:
         AWS_ACCESS_KEY_ID:
-          mutability: provided
-          display: string
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AWS_SECRET_ACCESS_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         AWS_REGION:
           mutability: editable
         AWS_S3_BUCKET_NAME:
           mutability: editable
         AWS_S3_ENDPOINT_URL:
           mutability: editable
-        AWS_SECRET_ACCESS_KEY:
-          mutability: provided
-          display: password
         AMQP_URL:
           mutability: editable
         DATABASE_URL:
@@ -135,10 +144,6 @@ config_contract:
           mutability: editable
         REDIS_URL:
           mutability: editable
-        SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          display: password
         USE_MINIO:
           mutability: editable
         healthcheck:
@@ -155,9 +160,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        plane_data:
-          mutability: generated
     db:
       fields:
         POSTGRES_DB:

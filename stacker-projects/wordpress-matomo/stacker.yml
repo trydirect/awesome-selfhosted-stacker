@@ -1,7 +1,7 @@
 name: wordpress-matomo
 app:
   type: php
-  image: wordpress
+  image: wordpress:6.6
   ports:
   - "8080:80"
   environment:
@@ -15,7 +15,7 @@ app:
   - wordpress_data:/var/www/html
 services:
 - name: wp-db
-  image: mysql:8.0
+  image: mysql:8.4
   environment:
     MYSQL_DATABASE: wordpress
     MYSQL_USER: wordpress
@@ -31,7 +31,7 @@ services:
     timeout: 5s
     retries: 10
 - name: matomo
-  image: matomo:latest
+  image: matomo:5.1:5.1
   ports:
   - "8081:80"
   environment:
@@ -44,7 +44,7 @@ services:
   - matomo_config:/var/www/html/config
   - matomo_logs:/var/www/html/logs
 - name: matomo-db
-  image: mariadb:11
+  image: mariadb:11.8.8
   environment:
     MARIADB_DATABASE: matomo
     MARIADB_USER: matomo
@@ -77,15 +77,15 @@ config_contract:
   services:
     app:
       fields:
-        WORDPRESS_DB_HOST:
-          mutability: editable
-        WORDPRESS_DB_NAME:
-          mutability: editable
         WORDPRESS_DB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        WORDPRESS_DB_HOST:
+          mutability: editable
+        WORDPRESS_DB_NAME:
+          mutability: editable
         WORDPRESS_DB_USER:
           mutability: editable
         WORDPRESS_DEBUG:

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: binwiederhier/ntfy:latest
+  image: binwiederhier/ntfy:v2.34.0
   ports:
     - "8080:80"
   command: "serve"

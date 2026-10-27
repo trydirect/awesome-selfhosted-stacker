@@ -12,7 +12,7 @@ install:
 
 app:
   type: custom
-  image: photoprism/photoprism:latest
+  image: photoprism/photoprism:preview
   ports:
     - "2342:2342"
   environment:
@@ -72,6 +72,11 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        PHOTOPRISM_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         PHOTOPRISM_ADMIN_USER:
           mutability: editable
         PHOTOPRISM_AUTH_MODE:
@@ -82,11 +87,6 @@ config_contract:
           mutability: editable
         PHOTOPRISM_DATABASE_NAME:
           mutability: editable
-        PHOTOPRISM_DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         PHOTOPRISM_DATABASE_SERVER:
           mutability: editable
         PHOTOPRISM_DATABASE_USER:

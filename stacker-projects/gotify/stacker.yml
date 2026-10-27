@@ -1,7 +1,7 @@
 name: gotify
 app:
   type: custom
-  image: gotify/server:latest
+  image: gotify/server:2.5.0
   ports:
   - "8080:80"
   volumes:

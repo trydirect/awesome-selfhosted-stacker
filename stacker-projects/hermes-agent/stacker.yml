@@ -4,7 +4,7 @@ project:
 version: 1.0.0
 app:
   type: custom
-  image: nousresearch/hermes-agent:latest
+  image: nousresearch/hermes-agent:1.0.0
   command: sleep infinity
   ports:
   - "8000:8000"
@@ -42,15 +42,15 @@ config_contract:
   services:
     app:
       fields:
-        HERMES_GID:
-          mutability: editable
-        HERMES_UID:
-          mutability: editable
         HERMES_DASHBOARD_BASIC_AUTH_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        HERMES_GID:
+          mutability: editable
+        HERMES_UID:
+          mutability: editable
         PYTHONUNBUFFERED:
           mutability: editable
 env_file: .env

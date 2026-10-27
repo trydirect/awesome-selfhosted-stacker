@@ -10,7 +10,7 @@ install:
 
 app:
   type: php
-  image: wallabag/wallabag:latest
+  image: wallabag/wallabag:2.6.14
   ports:
     - "8080:80"
   environment:
@@ -31,7 +31,7 @@ app:
 
 services:
   - name: wallabag_db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: wallabag
       POSTGRES_USER: wallabag
@@ -47,7 +47,7 @@ services:
       retries: 10
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     ports:
       - "127.0.0.1:6379:6379"
     volumes:
@@ -95,17 +95,16 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         SYMFONY_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     wallabag_db:
       fields:
         POSTGRES_PASSWORD:

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/diced/zipline:latest
+  image: ghcr.io/diced/zipline:v3.1.0
   ports:
     - "3000:3000"
   environment:
@@ -21,7 +21,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -70,13 +70,13 @@ config_contract:
   services:
     app:
       fields:
-        CORE_RETURN_HTTPS:
-          mutability: editable
         CORE_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        CORE_RETURN_HTTPS:
+          mutability: editable
         DATABASE_URL:
           mutability: generated
           type: alphanumeric

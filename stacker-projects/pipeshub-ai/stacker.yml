@@ -65,7 +65,7 @@ app:
 
 services:
   - name: mongodb
-    image: mongo:8.0.17
+    image: mongo:9.0.4
     command: "mongod --bind_ip_all --wiredTigerCacheSizeGB 1"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
@@ -79,7 +79,7 @@ services:
       timeout: 3s
       retries: 5
   - name: redis
-    image: redis:7.4-bookworm
+    image: redis:7.4-alpine
     command: "redis-server --appendonly yes --appendfsync everysec --requirepass ${REDIS_PASSWORD}"
     volumes:
       - redis_data:/data
@@ -157,28 +157,22 @@ config_contract:
   services:
     app:
       fields:
-        ALLOWED_ORIGINS:
-          mutability: editable
         AWS_ACCESS_KEY_ID:
-          mutability: provided
-        AWS_REGION:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         AWS_SECRET_ACCESS_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         COOKIE_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        FRONTEND_PUBLIC_URL:
-          mutability: editable
         JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        MONGO_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -208,6 +202,17 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        ALLOWED_ORIGINS:
+          mutability: editable
+        AWS_REGION:
+          mutability: provided
+        FRONTEND_PUBLIC_URL:
+          mutability: editable
+        MONGO_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         TELEMETRY_COLLECTION_FLAG:
           mutability: editable
         healthcheck:
@@ -224,13 +229,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        pipeshub_data:
-          mutability: generated
-        pipeshub_root_local:
-          mutability: generated
-        pipeshub_hf_cache:
-          mutability: generated
     mongodb:
       fields:
         MONGO_INITDB_ROOT_PASSWORD:

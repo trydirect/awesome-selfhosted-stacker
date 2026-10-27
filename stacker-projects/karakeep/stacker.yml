@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/karakeep-app/karakeep:latest
+  image: ghcr.io/karakeep-app/karakeep:v0.40.3
   ports:
     - "3000:3000"
   environment:
@@ -22,7 +22,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -38,7 +38,7 @@ services:
       retries: 5
 
   - name: meilisearch
-    image: getmeili/meilisearch:latest
+    image: getmeili/meilisearch:v1.11
     ports:
       - "127.0.0.1:7700:7700"
     environment:
@@ -85,17 +85,17 @@ config_contract:
   services:
     app:
       fields:
+        NEXTAUTH_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DATABASE_URL:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
         MEILI_MASTER_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        NEXTAUTH_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32

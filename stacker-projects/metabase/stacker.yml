@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: metabase/metabase:latest
+  image: metabase/metabase:v0.65.0.x
   ports:
     - "3000:3000"
   environment:
@@ -24,7 +24,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:

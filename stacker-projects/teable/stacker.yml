@@ -26,7 +26,7 @@ app:
 
 services:
   - name: db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: teable
       POSTGRES_USER: teable
@@ -39,7 +39,7 @@ services:
       timeout: 5s
       retries: 6
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     volumes:
       - teable_cache:/data

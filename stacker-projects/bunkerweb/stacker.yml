@@ -2,7 +2,7 @@ name: bunkerweb
 
 app:
   type: custom
-  image: bunkerity/bunkerweb:latest
+  image: bunkerity/bunkerweb:1.6.17
   ports:
     - "80:80/tcp"
     - "443:443/tcp"
@@ -24,7 +24,7 @@ app:
 
 services:
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     ports:
       - "127.0.0.1:6379:6379"
     healthcheck:

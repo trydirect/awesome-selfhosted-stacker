@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/windmill-labs/windmill:latest
+  image: ghcr.io/windmill-labs/windmill:v1.404.1
   ports:
     - "8000:8000"
   environment:
@@ -21,7 +21,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:

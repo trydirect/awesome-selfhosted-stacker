@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: firezone/firezone:latest
+  image: firezone/firezone:0.7.36
   ports:
     - "8080:8080"
     - "51820:51820/udp"
@@ -27,7 +27,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -71,17 +71,11 @@ config_contract:
   services:
     app:
       fields:
-        DATABASE_URL:
+        LIVE_VIEW_SIGNING_SALT:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        EXTERNAL_URL:
-          mutability: editable
-        LIVE_VIEW_SIGNING_SALT:
-          mutability: editable
-        LOG_LEVEL:
-          mutability: editable
         SECRET_KEY:
           mutability: generated
           type: alphanumeric
@@ -92,6 +86,15 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        DATABASE_URL:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        EXTERNAL_URL:
+          mutability: editable
+        LOG_LEVEL:
+          mutability: editable
         command:
           mutability: editable
         volumes:

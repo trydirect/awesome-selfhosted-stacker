@@ -9,7 +9,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "archivesspace/archivesspace:latest"
+  image: "archivesspace/archivesspace:3.5.1"
   command: >-
     sh -c "/archivesspace/scripts/setup-database.sh && exec /archivesspace/archivesspace.sh"
   ports:
@@ -29,7 +29,7 @@ app:
     JAVA_OPTS: "-Djava.awt.headless=true -Dfile.encoding=UTF-8"
 services:
   - name: "db"
-    image: "mysql:8"
+    image: "mysql:8.4"
     command: "--character-set-server=UTF8MB4 --innodb_buffer_pool_size=2G --innodb_buffer_pool_instances=2 --log_bin_trust_function_creators=1"
     environment:
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
@@ -44,7 +44,7 @@ services:
       timeout: "5s"
       retries: 10
   - name: "solr"
-    image: "archivesspace/solr:latest"
+    image: "archivesspace/solr:3.5.1"
     command: "solr-create -p 8983 -c archivesspace -d archivesspace"
     volumes:
       - "archivesspace_solr:/var/solr"
@@ -75,26 +75,16 @@ config_contract:
   services:
     app:
       fields:
-        APPCONFIG_BACKEND_URL:
-          mutability: editable
-        APPCONFIG_DB_URL:
-          mutability: editable
         APPCONFIG_FRONTEND_COOKIE_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        APPCONFIG_FRONTEND_PROXY_URL:
-          mutability: editable
-        APPCONFIG_OAI_PROXY_URL:
-          mutability: editable
         APPCONFIG_PUBLIC_COOKIE_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        APPCONFIG_PUBLIC_PROXY_URL:
-          mutability: editable
         APPCONFIG_PUBLIC_USER_SECRET:
           mutability: generated
           type: alphanumeric
@@ -105,13 +95,23 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        APPCONFIG_SOLR_URL:
-          mutability: editable
         APPCONFIG_STAFF_USER_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        APPCONFIG_BACKEND_URL:
+          mutability: editable
+        APPCONFIG_DB_URL:
+          mutability: editable
+        APPCONFIG_FRONTEND_PROXY_URL:
+          mutability: editable
+        APPCONFIG_OAI_PROXY_URL:
+          mutability: editable
+        APPCONFIG_PUBLIC_PROXY_URL:
+          mutability: editable
+        APPCONFIG_SOLR_URL:
+          mutability: editable
         JAVA_OPTS:
           mutability: editable
     db:

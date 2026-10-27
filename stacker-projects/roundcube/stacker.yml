@@ -3,7 +3,7 @@ version: "1.6.9"
 
 app:
   type: custom
-  image: roundcube/roundcubemail:latest
+  image: roundcube/roundcubemail:1.6.20-fpm-alpine
   ports:
     - "80:80"
   environment:
@@ -32,6 +32,11 @@ config_contract:
   services:
     app:
       fields:
+        ROUNDCUBEMAIL_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         ROUNDCUBEMAIL_DB_DSN:
           mutability: editable
         ROUNDCUBEMAIL_DB_TYPE:
@@ -40,11 +45,6 @@ config_contract:
           mutability: editable
         ROUNDCUBEMAIL_DEFAULT_PORT:
           mutability: editable
-        ROUNDCUBEMAIL_SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         ROUNDCUBEMAIL_SKIN:
           mutability: editable
         ROUNDCUBEMAIL_SMTP_PORT:

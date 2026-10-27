@@ -26,7 +26,7 @@ app:
   - ./config:/romm/config
 services:
 - name: romm-db
-  image: mariadb:11
+  image: mariadb:11.8.8
   environment:
     MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     MARIADB_DATABASE: romm
@@ -48,6 +48,28 @@ install:
     commonDomain: romm.example.com
 config_contract:
   services:
+    app:
+      fields:
+        RETROACHIEVEMENTS_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ROMM_AUTH_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SCREENSCRAPER_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        STEAMGRIDDB_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     romm-db:
       required:
       - MARIADB_DATABASE
@@ -76,14 +98,6 @@ config_contract:
       - SCREENSCRAPER_PASSWORD
       - RETROACHIEVEMENTS_API_KEY
       - STEAMGRIDDB_API_KEY
-    app:
-      fields:
-        RETROACHIEVEMENTS_API_KEY:
-          mutability: provided
-        SCREENSCRAPER_PASSWORD:
-          mutability: provided
-        STEAMGRIDDB_API_KEY:
-          mutability: provided
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 proxy:

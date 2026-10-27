@@ -58,8 +58,6 @@ config_contract:
   services:
     app:
       fields:
-        AUTH_LOGIN:
-          mutability: editable
         AUTH_PASSWORD:
           mutability: generated
           type: alphanumeric

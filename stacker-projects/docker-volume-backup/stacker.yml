@@ -2,7 +2,7 @@ name: docker-volume-backup
 
 app:
   type: custom
-  image: offen/docker-volume-backup:latest
+  image: offen/docker-volume-backup:v2.35.0
   environment:
     BACKUP_FILENAME: "backup-{{.Time}}.tar.gz"
     BACKUP_RETENTION_DAYS: "7"

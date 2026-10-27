@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/khoj-ai/khoj:latest
+  image: ghcr.io/khoj-ai/khoj:v1.28.0
   ports:
     - "42110:42110"
   environment:
@@ -27,7 +27,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -76,19 +76,19 @@ config_contract:
   services:
     app:
       fields:
-        KHOJ_ADMIN_EMAIL:
-          mutability: editable
         KHOJ_ADMIN_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        KHOJ_DATABASE_URL:
+        KHOJ_DJANGO_SECRET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        KHOJ_DJANGO_SECRET_KEY:
+        KHOJ_ADMIN_EMAIL:
+          mutability: editable
+        KHOJ_DATABASE_URL:
           mutability: generated
           type: alphanumeric
           length: 32

@@ -2,7 +2,7 @@ name: grafana
 
 app:
   type: custom
-  image: grafana/grafana:latest
+  image: grafana/grafana:11.2.2
   ports:
     - "3000:3000"
   environment:

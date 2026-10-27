@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: castopod/app:latest
+  image: castopod/app:1.6.4
   ports:
     - "8000:8000"
   environment:
@@ -25,7 +25,7 @@ app:
 
 services:
   - name: mysql
-    image: mysql:8
+    image: mysql:8.4.4
     ports:
       - "127.0.0.1:3306:3306"
     environment:
@@ -70,7 +70,15 @@ config_contract:
     app:
       fields:
         CP_ANALYTICS_SALT:
-          mutability: editable
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CP_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         CP_BASEURL:
           mutability: editable
         CP_CACHE_HANDLER:
@@ -79,11 +87,6 @@ config_contract:
           mutability: editable
         CP_DATABASE_NAME:
           mutability: editable
-        CP_DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         CP_DATABASE_USER:
           mutability: editable
         volumes:

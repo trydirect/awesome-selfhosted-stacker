@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: adguard/adguardhome:latest
+  image: adguard/adguardhome:v0.107.53
   ports:
     - "3000:3000"
     - "8080:80"

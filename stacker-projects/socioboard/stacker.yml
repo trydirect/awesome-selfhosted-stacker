@@ -9,7 +9,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "sintelli/socioboard-web:latest"
+  image: "sintelli/socioboard-web:6.0.0"
   ports:
     - "80:80"
   environment:
@@ -18,7 +18,7 @@ app:
     LARAVEL_KEY: "${LARAVEL_KEY}"
 services:
   - name: "socioboard"
-    image: "sintelli/socioboard:latest"
+    image: "sintelli/socioboard:6.0.0"
     volumes:
       - "socioboard_api_data:/data"
     environment:
@@ -86,7 +86,7 @@ services:
       SESSION_KEY_2: "${API_SESSION_KEY_2}"
       NODE_ENV: "production"
   - name: "socioboard-mysql"
-    image: "mysql:8"
+    image: "mysql:8.4"
     environment:
       MYSQL_DATABASE: "${SQL_DB_NAME}"
       MYSQL_USER: "${SQL_DB_USER}"
@@ -101,7 +101,7 @@ services:
       timeout: "5s"
       retries: 10
   - name: "socioboard-mongo"
-    image: "mongo:6"
+    image: "mongo:9.0.4"
     environment:
       MONGO_INITDB_DATABASE: "${MONGO_DB_NAME}"
       MONGO_INITDB_ROOT_USERNAME: "${MONGO_USER}"

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: trydirect/automatisch:latest
+  image: trydirect/automatisch:0.4.0
   ports:
     - "3000:3000"
   environment:
@@ -26,7 +26,7 @@ app:
 
 services:
   - name: automatisch-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: automatisch
       POSTGRES_USER: automatisch
@@ -40,7 +40,7 @@ services:
       retries: 10
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     healthcheck:
       test: CMD redis-cli ping
       interval: 10s
@@ -78,15 +78,20 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        POSTGRES_DATABASE:
-          mutability: editable
-        POSTGRES_HOST:
-          mutability: editable
         POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        WEBHOOK_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_DATABASE:
+          mutability: editable
+        POSTGRES_HOST:
+          mutability: editable
         POSTGRES_PORT:
           mutability: editable
           display: number
@@ -94,15 +99,15 @@ config_contract:
           mutability: editable
         REDIS_HOST:
           mutability: editable
-        WEBHOOK_SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         WEB_APP_URL:
           mutability: editable
     automatisch-db:
       fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         POSTGRES_DB:
           mutability: editable
         POSTGRES_USER:

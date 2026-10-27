@@ -38,7 +38,7 @@ app:
 
 services:
   - name: db
-    image: mysql:lts
+    image: mysql:8.4
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: mautic_db
@@ -138,6 +138,11 @@ config_contract:
   services:
     app:
       fields:
+        MAUTIC_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DOCKER_MAUTIC_ROLE:
           mutability: editable
         MAUTIC_DB_HOST:
@@ -149,11 +154,6 @@ config_contract:
           mutability: editable
         MAUTIC_DB_USER:
           mutability: editable
-        MAUTIC_DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         MAUTIC_MESSENGER_DSN_EMAIL:
           mutability: editable
         MAUTIC_MESSENGER_DSN_HIT:
@@ -172,15 +172,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        mautic_config:
-          mutability: generated
-        mautic_logs:
-          mutability: generated
-        mautic_files:
-          mutability: generated
-        mautic_images:
-          mutability: generated
     db:
       fields:
         MYSQL_ROOT_PASSWORD:

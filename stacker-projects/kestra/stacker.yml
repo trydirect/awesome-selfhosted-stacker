@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: kestra/kestra:latest
+  image: kestra/kestra:v0.19.8
   ports:
     - "8080:8080"
   environment:
@@ -40,7 +40,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -89,6 +89,11 @@ config_contract:
   services:
     app:
       fields:
+        password:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         KESTRA_CONFIGURATION:
           mutability: editable
         command:
@@ -99,11 +104,6 @@ config_contract:
           mutability: editable
         local:
           mutability: editable
-        password:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         path:
           mutability: editable
         postgres:

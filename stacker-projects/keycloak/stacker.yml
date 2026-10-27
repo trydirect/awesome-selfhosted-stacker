@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: quay.io/keycloak/keycloak:latest
+  image: quay.io/keycloak/keycloak:26.0.0
   ports:
     - "8080:8080"
   environment:
@@ -23,7 +23,7 @@ app:
 
 services:
   - name: keycloak-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
@@ -57,23 +57,23 @@ config_contract:
   services:
     app:
       fields:
-        KC_DB:
-          mutability: editable
         KC_DB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        KEYCLOAK_ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        KC_DB:
+          mutability: editable
         KC_DB_URL:
           mutability: editable
         KC_DB_USERNAME:
           mutability: editable
         KEYCLOAK_ADMIN:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        KEYCLOAK_ADMIN_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32

@@ -65,12 +65,12 @@ config_contract:
   services:
     app:
       fields:
-        ARCHON_DOCKER:
-          mutability: editable
-        PORT:
-          mutability: editable
-          display: number
-        WEBHOOK_SECRET:
+        CLAUDE_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CLAUDE_CODE_OAUTH_TOKEN:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -80,10 +80,16 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        CLAUDE_CODE_OAUTH_TOKEN:
-          mutability: provided
-        CLAUDE_API_KEY:
-          mutability: provided
+        WEBHOOK_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ARCHON_DOCKER:
+          mutability: editable
+        PORT:
+          mutability: editable
+          display: number
         healthcheck:
           mutability: editable
         interval:

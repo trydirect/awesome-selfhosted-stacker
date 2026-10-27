@@ -2,7 +2,7 @@ name: wireguard
 
 app:
   type: custom
-  image: lscr.io/linuxserver/wireguard:latest
+  image: lscr.io/linuxserver/wireguard:1.0.20210914
   ports:
     - "51820:51820/udp"
   environment:

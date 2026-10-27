@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: linuxserver/radarr:latest
+  image: linuxserver/radarr:5.15.1
   ports:
     - "7878:7878"
   environment:

@@ -13,7 +13,7 @@ install:
 
 app:
   type: custom
-  image: passbolt/passbolt:latest
+  image: passbolt/passbolt:5.17.0-1-ce-non-root
   ports:
     - "8443:443"
   environment:
@@ -36,7 +36,7 @@ app:
 
 services:
   - name: postgres
-    image: mariadb:11
+    image: mariadb:11.8
     environment:
       MYSQL_DATABASE: passbolt
       MYSQL_USER: passbolt
@@ -46,7 +46,7 @@ services:
       - "passbolt-mysql:/var/lib/mysql"
 
   - name: mailcatcher
-    image: sj26/mailcatcher:latest
+    image: sj26/mailcatcher:0.9.0
     ports:
       - "1080:1080"
 
@@ -87,17 +87,17 @@ config_contract:
   services:
     app:
       fields:
+        DATASOURCES_DEFAULT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         APP_FULL_BASE_URL:
           mutability: editable
         DATASOURCES_DEFAULT_DATABASE:
           mutability: editable
         DATASOURCES_DEFAULT_HOST:
           mutability: editable
-        DATASOURCES_DEFAULT_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DATASOURCES_DEFAULT_PORT:
           mutability: editable
         DATASOURCES_DEFAULT_USERNAME:
@@ -116,11 +116,6 @@ config_contract:
           mutability: provided
         PASSBOLT_GPG_SERVER_KEY_PATH:
           mutability: provided
-      volumes:
-        passbolt-gpg:
-          mutability: generated
-        passbolt-images:
-          mutability: generated
     postgres:
       fields:
         MYSQL_DATABASE:

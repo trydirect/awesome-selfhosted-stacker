@@ -2,7 +2,7 @@ name: netdata
 
 app:
   type: custom
-  image: netdata/netdata:latest
+  image: netdata/netdata:v2.12.2
   ports:
     - "19999:19999"
   healthcheck:

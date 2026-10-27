@@ -16,10 +16,10 @@ install:
   inputs:
     commonDomain: pipe.example.com
 
-# SOURCE — apprise notification gateway (REST API on :8000)
+# SOURCE - apprise notification gateway (REST API on :8000)
 app:
   type: custom
-  image: caronc/apprise:latest
+  image: caronc/apprise:2.0.2
   ports:
     - "8000:8000"
   environment:
@@ -29,9 +29,9 @@ app:
     - apprise_config:/config
 
 services:
-  # TARGET — ntfy webhook sink (POST /{topic} publishes; GET /{topic}/json reads)
+  # TARGET - ntfy webhook sink (POST /{topic} publishes; GET /{topic}/json reads)
   - name: ntfy
-    image: binwiederhier/ntfy:latest
+    image: binwiederhier/ntfy:v2.34.0
     command: serve
     ports:
       - "8080:80"

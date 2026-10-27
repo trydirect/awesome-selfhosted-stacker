@@ -24,6 +24,13 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+    temporal-postgresql:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     postiz-postgres:
       fields:
         POSTGRES_PASSWORD:
@@ -35,7 +42,7 @@ hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:
   type: custom
-  image: ghcr.io/gitroomhq/postiz-app:latest
+  image: ghcr.io/gitroomhq/postiz-app:v1.6.4
   ports:
   - "4007:5000"
   volumes:
@@ -60,7 +67,7 @@ app:
     NX_ADD_PLUGINS: 'false'
 services:
 - name: postiz-postgres
-  image: postgres:17-alpine
+  image: postgres:16.4-alpine
   environment:
     POSTGRES_DB: postiz-db-local
     POSTGRES_USER: postiz-user
@@ -94,7 +101,7 @@ services:
   volumes:
   - temporal_elasticsearch_data:/usr/share/elasticsearch/data
 - name: temporal-postgresql
-  image: postgres:16
+  image: postgres:16.4-alpine
   environment:
     POSTGRES_DB: temporal
     POSTGRES_USER: temporal

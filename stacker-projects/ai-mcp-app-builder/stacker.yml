@@ -56,16 +56,18 @@ config_contract:
   services:
     app:
       fields:
-        OPENAI_API_KEY:
-          mutability: provided
+        E2B_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
-          required: false
+        OPENAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         OPENAI_MODEL:
           mutability: editable
-          required: false
-        E2B_API_KEY:
-          mutability: provided
-          display: password
           required: false
         E2B_TEMPLATE:
           mutability: editable

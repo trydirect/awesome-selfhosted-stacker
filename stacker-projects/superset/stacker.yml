@@ -7,7 +7,7 @@ install:
     commonDomain: superset.example.com
 app:
   type: python
-  image: apache/superset:latest
+  image: apache/superset:4.0.2
   ports:
   - "8088:8088"
   environment:
@@ -19,7 +19,7 @@ app:
     SUPERSET_ENV: production
 services:
 - name: superset_db
-  image: postgres:16-alpine
+  image: postgres:16.4-alpine
   environment:
     POSTGRES_DB: superset
     POSTGRES_USER: superset
@@ -34,7 +34,7 @@ services:
     timeout: 5s
     retries: 10
 - name: redis
-  image: redis:7-alpine
+  image: redis:7.4-alpine
   ports:
   - "127.0.0.1:6379:6379"
   volumes:

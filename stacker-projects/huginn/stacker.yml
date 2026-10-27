@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/huginn/huginn:latest
+  image: huginn/huginn:latest
   ports:
     - "3000:3000"
   environment:
@@ -31,7 +31,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -85,17 +85,22 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HUGINN_DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DATABASE_ADAPTER:
           mutability: editable
         DATABASE_HOST:
           mutability: editable
         DATABASE_NAME:
           mutability: editable
-        DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DATABASE_PORT:
           mutability: editable
           display: number
@@ -105,11 +110,6 @@ config_contract:
           mutability: editable
         HUGINN_DATABASE_NAME:
           mutability: editable
-        HUGINN_DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         HUGINN_DATABASE_USERNAME:
           mutability: editable
         command:

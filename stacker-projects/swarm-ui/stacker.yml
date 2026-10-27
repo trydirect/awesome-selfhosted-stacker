@@ -6,8 +6,7 @@ project:
 
 app:
   type: custom
-  path: .
-  dockerfile: Dockerfile
+  image: mchaker/swarmui:latest
   ports:
     - "7801:7801"
   volumes:

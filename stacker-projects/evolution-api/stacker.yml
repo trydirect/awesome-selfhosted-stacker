@@ -33,7 +33,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:15-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: evolution
       POSTGRES_USER: evolution
@@ -46,7 +46,7 @@ services:
       timeout: 5s
       retries: 6
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     command: "redis-server --appendonly yes"
     volumes:
       - evolution_redis:/data
@@ -118,9 +118,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        evolution_instances:
-          mutability: generated
     postgres:
       fields:
         POSTGRES_DB:

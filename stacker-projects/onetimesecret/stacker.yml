@@ -5,7 +5,7 @@ project:
 
 app:
   type: custom
-  image: onetimesecret/onetimesecret:latest
+  image: onetimesecret/onetimesecret:0.16.1
   ports:
     - "3000:3000"
   environment:
@@ -17,7 +17,7 @@ app:
 
 services:
   - name: onetimesecret-redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     volumes:
       - ots_redis:/data
     healthcheck:
@@ -64,15 +64,15 @@ config_contract:
   services:
     app:
       fields:
-        HOSTNAME:
-          mutability: editable
-        REDIS_URL:
-          mutability: editable
         SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        HOSTNAME:
+          mutability: editable
+        REDIS_URL:
+          mutability: editable
         volumes:
           mutability: editable
 env_file: .env

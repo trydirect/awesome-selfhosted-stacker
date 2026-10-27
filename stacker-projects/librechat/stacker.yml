@@ -15,7 +15,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/danny-avila/librechat:latest
+  image: librechat/librechat:v0.8.8
   ports:
     - "3080:3080"
   environment:
@@ -34,7 +34,7 @@ app:
 
 services:
   - name: mongo
-    image: mongo:7
+    image: mongo:9.0.4
     volumes:
       - "librechat-mongo:/data/db"
 
@@ -77,15 +77,6 @@ config_contract:
   services:
     app:
       fields:
-        CREDS_IV:
-          mutability: editable
-        CREDS_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        HOST_URL:
-          mutability: editable
         JWT_REFRESH_SECRET:
           mutability: generated
           type: alphanumeric
@@ -96,19 +87,21 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        CREDS_IV:
+          mutability: editable
+        CREDS_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        HOST_URL:
+          mutability: editable
         LOG_LEVEL:
           mutability: editable
         MONGO_URI:
           mutability: editable
         NODE_ENV:
           mutability: editable
-      volumes:
-        librechat-images:
-          mutability: generated
-        librechat-logs:
-          mutability: generated
-        librechat-cache:
-          mutability: generated
     mongo:
       volumes:
         librechat-mongo:

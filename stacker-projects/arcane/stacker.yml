@@ -13,7 +13,7 @@ hooks:
 
 app:
   type: custom
-  image: ghcr.io/getarcaneapp/manager:latest
+  image: ghcr.io/getarcaneapp/manager:v0.14.2
   ports:
     - "3552:3552"
   environment:
@@ -60,8 +60,6 @@ config_contract:
   services:
     app:
       fields:
-        APP_URL:
-          mutability: editable
         ENCRYPTION_KEY:
           mutability: generated
           type: alphanumeric
@@ -72,6 +70,8 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        APP_URL:
+          mutability: editable
         TZ:
           mutability: editable
         healthcheck:

@@ -4,7 +4,7 @@ project:
   identity: archivebox
 app:
   type: python
-  image: archivebox/archivebox:latest
+  image: archivebox/archivebox:0.7.0
   ports:
   - "8000:8000"
   environment:
@@ -50,3 +50,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+
+marketplace:
+  display_name: "Archivebox"

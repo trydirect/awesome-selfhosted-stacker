@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: vikunja/vikunja:latest
+  image: vikunja/vikunja:2
   ports:
     - "3456:3456"
   environment:
@@ -27,7 +27,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -90,7 +90,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
     postgres:
       fields:
         POSTGRES_PASSWORD:

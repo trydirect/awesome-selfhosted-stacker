@@ -14,8 +14,8 @@ proxy:
 project:
   identity: mailu
 app:
-  type: static
-  path: .
+  type: custom
+  image: roundcube/roundcubemail:1.6.20-fpm-alpine
 monitoring:
   status_panel: false
 

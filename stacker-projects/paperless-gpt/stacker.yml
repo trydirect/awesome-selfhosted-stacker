@@ -69,7 +69,7 @@ services:
       timeout: 10s
       retries: 5
   - name: paperless_db
-    image: postgres:18-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_USER: paperless
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -82,7 +82,7 @@ services:
       timeout: 5s
       retries: 10
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     volumes:
       - paperless_redis:/data
     healthcheck:
@@ -132,21 +132,16 @@ config_contract:
   services:
     app:
       fields:
+        OPENAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         PAPERLESS_API_TOKEN:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        OPENAI_API_KEY:
-          mutability: provided
-          display: password
-      volumes:
-        paperless_gpt_prompts:
-          mutability: generated
-        paperless_gpt_config:
-          mutability: generated
-        paperless_gpt_db:
-          mutability: generated
     paperless:
       fields:
         PAPERLESS_DBPASS:

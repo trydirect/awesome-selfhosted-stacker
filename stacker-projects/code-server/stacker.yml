@@ -2,7 +2,7 @@ name: code-server
 version: 4.90.4
 app:
   type: custom
-  image: lscr.io/linuxserver/code-server:latest
+  image: lscr.io/linuxserver/code-server:4.96.1
   ports:
   - "8443:8443"
   environment:
@@ -33,22 +33,22 @@ config_contract:
   services:
     app:
       fields:
-        DEFAULT_WORKSPACE:
-          mutability: editable
         PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        PGID:
-          mutability: editable
-        PUID:
-          mutability: editable
         SUDO_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        DEFAULT_WORKSPACE:
+          mutability: editable
+        PGID:
+          mutability: editable
+        PUID:
+          mutability: editable
         TZ:
           mutability: editable
       volumes:

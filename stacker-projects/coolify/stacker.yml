@@ -6,7 +6,7 @@ project:
 
 app:
   type: custom
-  image: 'coollabsio/coolify:latest'
+  image: 'coollabsio/coolify:4.0.0-beta.351'
   ports:
     - "8000:8080"
   environment:
@@ -38,7 +38,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:15-alpine
+    image: postgres:16.4-alpine.8-alpine
     environment:
       POSTGRES_USER: coolify
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
@@ -52,7 +52,7 @@ services:
       retries: 10
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     command: redis-server --save 20 1 --loglevel warning --requirepass "${REDIS_PASSWORD}"
     volumes:
       - coolify-redis:/data
@@ -111,27 +111,14 @@ deploy:
 
 config_contract:
   services:
-    postgres:
-      required: [POSTGRES_DB, POSTGRES_USER]
-      secret: [POSTGRES_PASSWORD]
-    redis:
-      secret: [REDIS_PASSWORD]
-    soketi:
+    app:
       fields:
-        SOKETI_DEFAULT_APP_KEY:
+        APP_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-      required: [SOKETI_DEFAULT_APP_ID]
-      secret: [SOKETI_DEFAULT_APP_SECRET]
-    coolify:
-      required: [APP_KEY, DB_DATABASE, DB_USERNAME]
-      secret: [DB_PASSWORD, REDIS_PASSWORD, PUSHER_APP_SECRET]
-
-    app:
-      fields:
-        APP_KEY:
+        DB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -141,6 +128,41 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        PUSHER_APP_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    postgres:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    soketi:
+      fields:
+        SOKETI_DEFAULT_APP_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SOKETI_DEFAULT_APP_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    redis:
+      secret: [REDIS_PASSWORD]
+    coolify:
+      required: [APP_KEY, DB_DATABASE, DB_USERNAME]
+      secret: [DB_PASSWORD, REDIS_PASSWORD, PUSHER_APP_SECRET]
+
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 

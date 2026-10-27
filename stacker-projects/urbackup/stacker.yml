@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: uroni/urbackup-server:latest
+  image: uroni/urbackup-server:2.4.13
   ports:
     - "55414:55414"
     - "35623:35623"
@@ -57,17 +57,17 @@ config_contract:
   services:
     app:
       fields:
+        URBACKUP_WEB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         PGID:
           mutability: editable
         PUID:
           mutability: editable
         TZ:
           mutability: editable
-        URBACKUP_WEB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         volumes:
           mutability: editable
 env_file: .env

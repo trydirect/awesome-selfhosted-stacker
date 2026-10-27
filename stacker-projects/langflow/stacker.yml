@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: langflowai/langflow:latest
+  image: langflowai/langflow:1.14.0.dev5
   ports:
     - "7860:7860"
   environment:
@@ -23,7 +23,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -72,6 +72,16 @@ config_contract:
   services:
     app:
       fields:
+        LANGFLOW_SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        LANGFLOW_SUPERUSER_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         LANGFLOW_AUTO_LOGIN:
           mutability: editable
         LANGFLOW_DATABASE_URL:
@@ -79,18 +89,8 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        LANGFLOW_SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         LANGFLOW_SUPERUSER:
           mutability: editable
-        LANGFLOW_SUPERUSER_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         volumes:
           mutability: editable
     postgres:
