@@ -42,3 +42,4 @@ config_contract:
 
 marketplace:
   display_name: "Insforge"
+  short_description: "Self-hosted Insforge application, ready to deploy with Stacker"

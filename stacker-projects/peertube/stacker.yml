@@ -117,4 +117,5 @@ config_contract:
           mutability: generated
 
 marketplace:
-  display_name: "PeerTube"
+  display_name: "Peertube"
+  short_description: "Self-hosted Peertube application, ready to deploy with Stacker"

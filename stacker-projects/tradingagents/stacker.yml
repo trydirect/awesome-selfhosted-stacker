@@ -181,3 +181,4 @@ config_contract:
 
 marketplace:
   display_name: "Tradingagents"
+  short_description: "Self-hosted Tradingagents application, ready to deploy with Stacker"

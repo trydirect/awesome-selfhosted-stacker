@@ -105,3 +105,4 @@ volumes:
 
 marketplace:
   display_name: "Dify"
+  short_description: "Self-hosted Dify application, ready to deploy with Stacker"

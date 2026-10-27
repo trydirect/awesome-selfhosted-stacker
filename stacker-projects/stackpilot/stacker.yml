@@ -146,3 +146,4 @@ env_file: .env
 
 marketplace:
   display_name: "Stackpilot"
+  short_description: "Self-hosted Stackpilot application, ready to deploy with Stacker"

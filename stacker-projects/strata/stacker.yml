@@ -63,3 +63,4 @@ volumes:
 
 marketplace:
   display_name: "Strata"
+  short_description: "Self-hosted Strata application, ready to deploy with Stacker"

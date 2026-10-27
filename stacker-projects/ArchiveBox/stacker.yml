@@ -53,3 +53,4 @@ config_contract:
 
 marketplace:
   display_name: "Archivebox"
+  short_description: "Self-hosted Archivebox application, ready to deploy with Stacker"

@@ -65,4 +65,5 @@ config_contract:
           mutability: generated
 
 marketplace:
-  display_name: "Wiki.js"
+  display_name: "Wikijs"
+  short_description: "Self-hosted Wikijs application, ready to deploy with Stacker"

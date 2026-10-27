@@ -101,4 +101,5 @@ config_contract:
           mutability: generated
 
 marketplace:
-  display_name: "Firefly III"
+  display_name: "Firefly Iii"
+  short_description: "Self-hosted Firefly Iii application, ready to deploy with Stacker"

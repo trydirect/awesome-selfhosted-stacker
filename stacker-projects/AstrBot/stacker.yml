@@ -48,3 +48,4 @@ env_file: .env
 
 marketplace:
   display_name: "Astrbot"
+  short_description: "Self-hosted Astrbot application, ready to deploy with Stacker"

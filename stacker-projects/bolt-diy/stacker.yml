@@ -109,3 +109,4 @@ config_contract:
 
 marketplace:
   display_name: "Bolt Diy"
+  short_description: "Self-hosted Bolt Diy application, ready to deploy with Stacker"
