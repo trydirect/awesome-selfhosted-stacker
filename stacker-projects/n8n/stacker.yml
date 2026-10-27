@@ -1,4 +1,5 @@
 name: n8n
+version: "2.0.0"
 
 project:
   identity: n8n
@@ -9,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: n8nio/n8n:1.64.0
+  image: n8nio/n8n:2.45.4
   ports:
     - "5678:5678"
   environment:
@@ -18,24 +19,32 @@ app:
     DB_POSTGRESDB_PORT: 5432
     DB_POSTGRESDB_DATABASE: n8n
     DB_POSTGRESDB_USER: n8n
-    DB_POSTGRESDB_PASSWORD: "${DB_PASSWORD}"
-    N8N_BASIC_AUTH_ACTIVE: "true"
-    N8N_BASIC_AUTH_USER: admin
-    N8N_BASIC_AUTH_PASSWORD: "${ADMIN_PASSWORD}"
-    N8N_HOST: 0.0.0.0
-    WEBHOOK_URL: http://localhost:5678/
+    DB_POSTGRESDB_PASSWORD: "${POSTGRES_PASSWORD}"
+    N8N_ENCRYPTION_KEY: "${N8N_ENCRYPTION_KEY}"
+    # Owner login, applied on every start by scripts/n8n-entrypoint.sh
+    ADMIN_EMAIL: "${ADMIN_EMAIL}"
+    ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+    # The UI is served over plain HTTP on the server's IP
+    N8N_SECURE_COOKIE: "false"
   volumes:
     - n8n_data:/home/node/.n8n
+    - "./scripts/n8n-entrypoint.sh:/docker-entrypoint.sh:ro"
+  depends_on:
+    - postgres
+  healthcheck:
+    test: "CMD-SHELL wget -qO- http://localhost:5678/healthz/readiness || exit 1"
+    interval: 10s
+    timeout: 5s
+    retries: 12
+    start_period: 60s
 
 services:
   - name: postgres
-    image: postgres:16.4-alpine
-    ports:
-      - "127.0.0.1:5432:5432"
+    image: postgres:17.11-alpine
     environment:
       POSTGRES_DB: n8n
       POSTGRES_USER: n8n
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -72,64 +81,37 @@ config_contract:
   services:
     app:
       fields:
-        DB_POSTGRESDB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        N8N_BASIC_AUTH_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        DB_POSTGRESDB_DATABASE:
-          mutability: editable
-        DB_POSTGRESDB_HOST:
-          mutability: editable
-        DB_POSTGRESDB_PORT:
-          mutability: editable
-          display: number
-        DB_POSTGRESDB_USER:
-          mutability: editable
-        DB_TYPE:
-          mutability: editable
-        N8N_BASIC_AUTH_ACTIVE:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        N8N_BASIC_AUTH_USER:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        N8N_HOST:
-          mutability: editable
-        WEBHOOK_URL:
-          mutability: editable
-        volumes:
-          mutability: editable
-    postgres:
-      fields:
-        POSTGRES_DB:
-          mutability: editable
         POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        POSTGRES_USER:
-          mutability: editable
-        healthcheck:
-          mutability: editable
-        interval:
-          mutability: editable
-        retries:
-          mutability: editable
-        test:
-          mutability: editable
-        timeout:
-          mutability: editable
+        N8N_ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ADMIN_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 24
+          display: password
+        ADMIN_EMAIL:
+          mutability: provided
+          pattern: "^[^@\\s\"]+@[^@\\s\"]+\\.[^@\\s\"]+$"
+      volumes:
+        n8n_data:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        postgres_data:
+          mutability: generated
 env_file: .env
 
 volumes:
@@ -138,54 +120,51 @@ volumes:
 
 marketplace:
   publish: true
-  display_name: "N8N"
-  short_description: "Fair-code workflow automation with 400+ integrations (Zapier alternative). Build powerful automations with code when you need it."
+  display_name: "n8n"
+  short_description: "Workflow automation and AI agents with a visual editor and code when you need it, on your own server"
   long_description: |
-    **n8n**: Fair-code workflow automation with 400+ integrations (Zapier alternative). Build powerful automations with code when you need it.
+    **n8n** (v2.45.4) is a fair-code platform for AI agents and workflow
+    automation: a visual canvas, JavaScript and Python when you need them,
+    and 1500+ integrations.
 
-    Deploy from this page: TryDirect provisions the server, starts the
-    services, generates the deployment credentials and wires the
-    2 containers together. Nothing is shared between deployments and no
-    secrets ship with the stack.
+    Deploy from this page: TryDirect provisions the server, starts n8n with
+    PostgreSQL and generates the database password, the encryption key for
+    your stored credentials and your owner password for this deployment.
+    Nothing is shared between deployments.
 
     ## What's included
 
     | Service | Port | Description |
     | ------- | ---- | ----------- |
-    | app | 5678 (public) | `n8nio/n8n:1.64.0` |
-    | postgres | 5432 (local only) | Database |
+    | app | 5678 (public) | `n8nio/n8n:2.45.4` |
+    | postgres | internal | `postgres:17.11-alpine`, workflows and executions |
 
     ## What you configure
 
-    - **Domain** (`commonDomain`): the hostname the stack is served on
-    - **Defaults provided**: `DB_POSTGRESDB_DATABASE`, `DB_POSTGRESDB_HOST`, `DB_POSTGRESDB_PORT`, `DB_POSTGRESDB_USER`, `DB_TYPE`, `N8N_HOST` and 3 more ship prefilled and can be adjusted in the deploy form
+    - **ADMIN_EMAIL**: your owner login. The owner account exists before
+      n8n starts serving, so nobody else can claim a fresh instance. The
+      owner password is generated and shown in your project's secrets.
 
-    All 5 credentials (passwords and keys) are generated per
-    deployment and stored in your project's secret store.
+    The owner email and password are applied on every start; change them
+    in the deployment's secrets, not in the n8n UI.
 
     ## Requirements
 
-    - A cloud account connected to TryDirect (the deploy form provisions
-      the server) or one of your own servers
-    - A server that fits 2 containers (2 GB RAM or more recommended)
-    - A DNS record for the domain you set in the deploy form
+    - 2 GB RAM or more
+    - The UI is served over plain HTTP on port 5678; put it behind HTTPS
+      before using it for real credentials or public webhooks
 
     ## Alternative: deploy with the Stacker CLI
-
-    Everything above also works from the command line:
 
     ```bash
     git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
     cd awesome-selfhosted-stacker/stacker-projects/n8n
-
-    # Generate secrets
-    cp .env.example .env
+    cp .env.example .env    # set ADMIN_EMAIL
     ./scripts/generate-secrets.sh
-
-    # Deploy
     stacker deploy
     ```
-  category: devops
-  tags: [n8n]
+  category: ai-agents
+  tags: [n8n, workflow-automation, ai-agents, zapier-alternative, no-code]
+  license: free
   support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/n8n
   no_secrets_confirmation: true
