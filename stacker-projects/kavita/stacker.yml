@@ -2,7 +2,7 @@ name: kavita
 
 app:
   type: custom
-  image: lscr.io/linuxserver/kavita:latest
+  image: lscr.io/linuxserver/kavita:0.8.4
   ports:
     - "5001:5000"
   environment:
@@ -48,3 +48,6 @@ deploy:
     size: cpx22
     public_ports:
       - "5001"
+
+marketplace:
+  display_name: "Kavita"

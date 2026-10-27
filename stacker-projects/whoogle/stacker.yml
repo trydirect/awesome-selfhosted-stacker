@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: benbusby/whoogle-search:latest
+  image: benbusby/whoogle-search:0.8.4
   ports:
     - "5001:5000"
   environment:
@@ -62,3 +62,6 @@ env_file: .env
 
 volumes:
   whoogle_data: {}
+
+marketplace:
+  display_name: "Whoogle"

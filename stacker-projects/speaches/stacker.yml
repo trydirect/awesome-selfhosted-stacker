@@ -76,6 +76,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        speaches_hf_cache:
-          mutability: generated
+
+marketplace:
+  display_name: "Speaches"

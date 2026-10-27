@@ -2,7 +2,7 @@ name: freshrss
 
 app:
   type: custom
-  image: lscr.io/linuxserver/freshrss:latest
+  image: lscr.io/linuxserver/freshrss:1.24.3
   ports:
     - "8080:80"
   environment:
@@ -45,3 +45,6 @@ config_contract:
           mutability: editable
 
 env_file: .env
+
+marketplace:
+  display_name: "Freshrss"

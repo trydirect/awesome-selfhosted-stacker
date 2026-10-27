@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: stonith404/pingvin-share:latest
+  image: stonith404/pingvin-share:v1.4.0
   ports:
     - "3000:3000"
   environment:
@@ -53,3 +53,6 @@ env_file: .env
 volumes:
   pingvin_data: {}
   pingvin_uploads: {}
+
+marketplace:
+  display_name: "Pingvin Share"

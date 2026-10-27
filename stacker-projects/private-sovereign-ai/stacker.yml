@@ -12,25 +12,14 @@ config_contract:
   services:
     app:
       fields:
-        # The buyer's own address. Declared so the bake turns the literal URL
-        # baked into the compose back into ${WEBUI_URL}: without it every clone
-        # would keep pointing links and redirects at the author's domain.
-        WEBUI_URL:
-          mutability: provided
-          display: string
         WEBUI_SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        INITIAL_ADMIN_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
     sovereign-ai-ollama:
       volumes:
-        # Model weights: gigabytes behind a pull. No credentials — Ollama holds
+        # Model weights: gigabytes behind a pull. No credentials - Ollama holds
         # no secret of its own.
         sovereign_ai_ollama:
           mutability: fixed
@@ -38,7 +27,7 @@ config_contract:
       volumes:
         # The integration scripts the author ships. Credentials for whatever a
         # pipeline talks to are Open WebUI "valves", stored in its own volume
-        # (sovereign_ai_webui), which resets — so nothing secret lives here.
+        # (sovereign_ai_webui), which resets - so nothing secret lives here.
         sovereign_ai_pipelines:
           mutability: fixed
 hooks:
@@ -46,8 +35,8 @@ hooks:
 
 app:
   type: custom
-  image: ghcr.io/open-webui/open-webui:main
-  # No host port publish — traffic reaches this container only via
+  image: ghcr.io/open-webui/open-webui:v0.3.32
+  # No host port publish - traffic reaches this container only via
   # the NPM reverse proxy on 443. Internal docker port stays 8080.
   environment:
     OLLAMA_BASE_URL: "http://sovereign-ai-ollama:11434"
@@ -73,10 +62,10 @@ app:
     retries: 5
 
 services:
-  # Ollama — the local LLM runtime. Internal-only, reached from Open WebUI
+  # Ollama - the local LLM runtime. Internal-only, reached from Open WebUI
   # via the docker DNS alias sovereign-ai-ollama:11434.
   - name: sovereign-ai-ollama
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.3.12
     environment: {}
     volumes:
       - sovereign_ai_ollama:/root/.ollama
@@ -86,10 +75,10 @@ services:
       timeout: 5s
       retries: 10
 
-  # Pipelines — Open WebUI plugin runtime. Internal-only; Open WebUI
+  # Pipelines - Open WebUI plugin runtime. Internal-only; Open WebUI
   # auto-discovers it on the docker network.
   - name: sovereign-ai-pipelines
-    image: ghcr.io/open-webui/pipelines:main
+    image: ghcr.io/open-webui/pipelines:0.1.0
     environment:
       PIPELINES_URLS: ""
     volumes:
@@ -138,3 +127,6 @@ monitoring:
     interval: 30s
 
 env_file: .env
+
+marketplace:
+  display_name: "Private Sovereign AI"

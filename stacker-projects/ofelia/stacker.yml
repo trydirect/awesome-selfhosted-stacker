@@ -2,7 +2,7 @@ name: ofelia
 
 app:
   type: custom
-  image: mcuadros/ofelia:latest
+  image: mcuadros/ofelia:0.4.0-beta.5
   environment:
     OFELIA_HOST: "ofelia"
   volumes:
@@ -42,3 +42,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
+
+marketplace:
+  display_name: "Ofelia"

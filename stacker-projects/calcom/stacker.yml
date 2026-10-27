@@ -2,7 +2,7 @@ name: calcom
 
 app:
   type: custom
-  image: calcom/cal.com:latest
+  image: calcom/cal.com:v6.2.0
   ports:
     - "3000:3000/tcp"
   environment:
@@ -24,7 +24,7 @@ app:
 
 services:
   - name: db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: calcom
       POSTGRES_USER: calcom
@@ -98,9 +98,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        calcom_data:
-          mutability: generated
     db:
       fields:
         POSTGRES_DB:
@@ -127,3 +124,6 @@ config_contract:
       volumes:
         calcom_db:
           mutability: generated
+
+marketplace:
+  display_name: "Cal.com"

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: nodered/node-red:latest
+  image: nodered/node-red:4.1.17-18-minimal
   ports:
     - "1880:1880"
   environment:
@@ -56,3 +56,6 @@ env_file: .env
 
 volumes:
   nodered_data: {}
+
+marketplace:
+  display_name: "Node-RED"

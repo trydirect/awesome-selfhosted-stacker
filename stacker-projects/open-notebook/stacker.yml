@@ -37,7 +37,7 @@ app:
 
 services:
   - name: surrealdb
-    image: surrealdb/surrealdb:v2
+    image: surrealdb/surrealdb:v2.0.0
     command: start --log info --user ${SURREAL_USER} --pass ${SURREAL_PASSWORD} rocksdb:/home/nonroot/mydatabase.db
     environment:
       SURREAL_EXPERIMENTAL_GRAPHQL: "true"
@@ -79,6 +79,16 @@ config_contract:
   services:
     app:
       fields:
+        ANTHROPIC_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         OPEN_NOTEBOOK_ENCRYPTION_KEY:
           mutability: generated
           type: alphanumeric
@@ -89,21 +99,15 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        SURREAL_USER:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         SURREAL_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        ANTHROPIC_API_KEY:
-          mutability: provided
-          display: password
-        OPENAI_API_KEY:
-          mutability: provided
+        SURREAL_USER:
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         SURREAL_URL:
           mutability: editable
@@ -125,9 +129,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        open_notebook_data:
-          mutability: generated
     surrealdb:
       fields:
         command:
@@ -139,3 +140,6 @@ config_contract:
       volumes:
         open_notebook_surreal:
           mutability: generated
+
+marketplace:
+  display_name: "Open Notebook"

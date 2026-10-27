@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: linuxserver/lidarr:latest
+  image: linuxserver/lidarr:3.2.0-nightly
   ports:
     - "8686:8686"
   environment:
@@ -60,3 +60,6 @@ volumes:
   lidarr_config: {}
   lidarr_music: {}
   lidarr_downloads: {}
+
+marketplace:
+  display_name: "Lidarr"

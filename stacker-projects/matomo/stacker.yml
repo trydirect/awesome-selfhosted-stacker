@@ -10,7 +10,7 @@ install:
 
 app:
   type: php
-  image: matomo:latest
+  image: matomo:5.1
   ports:
     - "8080:80"
   environment:
@@ -25,7 +25,7 @@ app:
 
 services:
   - name: matomo_db
-    image: mariadb:latest
+    image: mariadb:11.8
     environment:
       MARIADB_DATABASE: matomo
       MARIADB_USER: matomo
@@ -89,7 +89,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
     matomo_db:
       fields:
         MARIADB_PASSWORD:
@@ -109,3 +108,6 @@ monitoring:
   status_panel: true
 
 env_file: .env
+
+marketplace:
+  display_name: "Matomo"

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: kimai/kimai2:latest
+  image: kimai/kimai2:2.71.0
   ports:
     - "8001:8001"
   environment:
@@ -26,7 +26,7 @@ app:
 
 services:
   - name: mysql
-    image: mysql:8
+    image: mysql:8.4.4
     ports:
       - "127.0.0.1:3306:3306"
     environment:
@@ -81,9 +81,6 @@ config_contract:
           mutability: editable
         TRUSTED_HOSTS:
           mutability: editable
-      volumes:
-        kimai_data:
-          mutability: generated
     mysql:
       fields:
         MYSQL_DATABASE:
@@ -115,3 +112,6 @@ env_file: .env
 volumes:
   kimai_data: {}
   mysql_data: {}
+
+marketplace:
+  display_name: "Kimai"

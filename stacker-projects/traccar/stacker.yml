@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: traccar/traccar:latest
+  image: traccar/traccar:6.0
   ports:
     - "8083:8082"
     - "5151-5300:5151-5300"
@@ -96,3 +96,6 @@ volumes:
   traccar_logs: {}
   traccar_conf: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Traccar"

@@ -2,7 +2,7 @@ name: stirling-pdf
 
 app:
   type: custom
-  image: frooodle/s-pdf:latest
+  image: frooodle/s-pdf:0.33.1
   ports:
     - "8080:8080"
   volumes:
@@ -42,3 +42,6 @@ config_contract:
           mutability: generated
         stirling_config:
           mutability: generated
+
+marketplace:
+  display_name: "Stirling PDF"

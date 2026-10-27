@@ -12,12 +12,12 @@ config_contract:
   services:
     app:
       fields:
-        SECRET_KEY:
+        ADMIN_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        ADMIN_PASSWORD:
+        SECRET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -45,7 +45,7 @@ hooks:
 
 app:
   type: custom
-  image: trydirect/stackpilot:latest
+  image: trydirect/stackpilot:1.0.0
   ports:
     - "8080:8000"
   environment:
@@ -77,7 +77,7 @@ services:
       retries: 10
 
   - name: stackpilot-redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     healthcheck:
       test: CMD redis-cli ping
       interval: 10s
@@ -85,14 +85,14 @@ services:
       retries: 10
 
   - name: stackpilot-ollama
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.3.12
     volumes:
       - stackpilot_ollama:/root/.ollama
     ports:
       - "11434:11434"
 
   - name: stackpilot-n8n
-    image: n8nio/n8n:latest
+    image: n8nio/n8n:1.64.0
     ports:
       - "5678:5678"
     environment:
@@ -143,3 +143,6 @@ monitoring:
     interval: 30s
 
 env_file: .env
+
+marketplace:
+  display_name: "Stackpilot"

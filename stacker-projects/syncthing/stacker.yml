@@ -2,7 +2,7 @@ name: syncthing
 
 app:
   type: custom
-  image: lscr.io/linuxserver/syncthing:latest
+  image: lscr.io/linuxserver/syncthing:1.28.1
   ports:
     - "8384:8384"
     - "22000:22000/tcp"
@@ -43,3 +43,6 @@ config_contract:
         volumes:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Syncthing"

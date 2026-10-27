@@ -2,7 +2,7 @@ name: hanko
 
 app:
   type: custom
-  image: ghcr.io/teamhanko/hanko:latest
+  image: ghcr.io/teamhanko/hanko:v0.11.1
   ports:
     - "8002:8000"
   volumes:
@@ -20,7 +20,7 @@ app:
 
 services:
   - name: hanko-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: hanko
       POSTGRES_USER: hanko
@@ -48,25 +48,25 @@ config_contract:
   services:
     app:
       fields:
-        HANKO_DATABASE_HOST:
-          mutability: editable
-        HANKO_DATABASE_NAME:
-          mutability: editable
         HANKO_DATABASE_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        HANKO_DATABASE_PORT:
-          mutability: editable
-          display: number
-        HANKO_DATABASE_USER:
-          mutability: editable
         HANKO_SECRETS_DEFAULT:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        HANKO_DATABASE_HOST:
+          mutability: editable
+        HANKO_DATABASE_NAME:
+          mutability: editable
+        HANKO_DATABASE_PORT:
+          mutability: editable
+          display: number
+        HANKO_DATABASE_USER:
+          mutability: editable
         HANKO_SERVER_PUBLIC_PORT:
           mutability: editable
           display: number
@@ -112,3 +112,6 @@ deploy:
     size: cpx22
     public_ports:
       - "8002"
+
+marketplace:
+  display_name: "Hanko"

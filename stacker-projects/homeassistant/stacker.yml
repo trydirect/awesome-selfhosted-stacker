@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: lscr.io/linuxserver/homeassistant:latest
+  image: lscr.io/linuxserver/homeassistant:2024.11.3
   ports:
     - "8123:8123"
   environment:
@@ -62,3 +62,6 @@ config_contract:
         volumes:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Homeassistant"

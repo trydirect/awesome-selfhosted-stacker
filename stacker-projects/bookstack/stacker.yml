@@ -117,3 +117,6 @@ deploy:
       - "80"
       - "443"
       - "6875"
+
+marketplace:
+  display_name: "BookStack"

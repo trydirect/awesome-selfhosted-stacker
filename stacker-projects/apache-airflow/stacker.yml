@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: apache/airflow:latest
+  image: apache/airflow:2.10.2
   ports:
     - "8080:8080"
   environment:
@@ -26,7 +26,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -75,13 +75,18 @@ config_contract:
   services:
     app:
       fields:
-        AIRFLOW__CORE__EXECUTOR:
-          mutability: editable
         AIRFLOW__CORE__FERNET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        AIRFLOW__WEBSERVER__SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AIRFLOW__CORE__EXECUTOR:
+          mutability: editable
         AIRFLOW__DATABASE__SQL_ALCHEMY_CONN:
           mutability: generated
           type: alphanumeric
@@ -89,11 +94,6 @@ config_contract:
           display: password
         AIRFLOW__WEBSERVER__EXPOSE_CONFIG:
           mutability: editable
-        AIRFLOW__WEBSERVER__SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         command:
           mutability: editable
         volumes:
@@ -125,3 +125,6 @@ volumes:
   airflow_dags: {}
   airflow_logs: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Apache Airflow"

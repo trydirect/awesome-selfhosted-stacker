@@ -97,7 +97,13 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
+    zulip_db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
@@ -105,3 +111,6 @@ monitoring:
   status_panel: true
 
 env_file: .env
+
+marketplace:
+  display_name: "Zulip"

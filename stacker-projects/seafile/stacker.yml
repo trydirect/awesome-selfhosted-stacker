@@ -34,7 +34,7 @@ app:
 
 services:
   - name: mysql
-    image: mysql:8
+    image: mysql:8.4.4
     ports:
       - "127.0.0.1:3306:3306"
     environment:
@@ -78,19 +78,7 @@ config_contract:
   services:
     app:
       fields:
-        SEAFILE_MYSQL_DB_HOST:
-          mutability: editable
-        SEAFILE_MYSQL_DB_PORT:
-          mutability: editable
-          display: number
         INIT_SEAFILE_MYSQL_ROOT_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        SEAFILE_MYSQL_DB_USER:
-          mutability: editable
-        SEAFILE_MYSQL_DB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -98,15 +86,27 @@ config_contract:
         JWT_PRIVATE_KEY:
           mutability: generated
           type: alphanumeric
-          length: 64
+          length: 32
           display: password
-        SEAFILE_ADMIN_EMAIL:
-          mutability: editable
         SEAFILE_ADMIN_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        SEAFILE_MYSQL_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SEAFILE_MYSQL_DB_HOST:
+          mutability: editable
+        SEAFILE_MYSQL_DB_PORT:
+          mutability: editable
+          display: number
+        SEAFILE_MYSQL_DB_USER:
+          mutability: editable
+        SEAFILE_ADMIN_EMAIL:
+          mutability: editable
         SEAFILE_SERVER_HOSTNAME:
           mutability: editable
         SEAFILE_SERVER_LETSENCRYPT:
@@ -148,3 +148,6 @@ env_file: .env
 volumes:
   seafile_data: {}
   seafile_mysql: {}
+
+marketplace:
+  display_name: "Seafile"

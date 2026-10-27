@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: lscr.io/linuxserver/duplicati:latest
+  image: lscr.io/linuxserver/duplicati:2.0.9
   ports:
   - "8200:8200"
   environment:
@@ -36,15 +36,15 @@ config_contract:
   services:
     app:
       fields:
-        PGID:
-          mutability: editable
-        PUID:
-          mutability: editable
         SETTINGS_ENCRYPTION_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        PGID:
+          mutability: editable
+        PUID:
+          mutability: editable
         TZ:
           mutability: editable
         volumes:
@@ -69,3 +69,6 @@ deploy:
       - "80"
       - "443"
       - "8200"
+
+marketplace:
+  display_name: "Duplicati"

@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: gotson/komga:latest
+  image: gotson/komga:1.29.1
   ports:
     - "25600:25600"
   environment:
@@ -53,3 +53,6 @@ env_file: .env
 volumes:
   komga_config: {}
   komga_data: {}
+
+marketplace:
+  display_name: "Komga"

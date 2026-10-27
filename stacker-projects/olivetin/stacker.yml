@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: jamesread/olivetin:latest
+  image: jamesread/olivetin:3000.21.0
   ports:
     - "1337:1337"
   volumes:
@@ -47,3 +47,6 @@ config_contract:
       volumes:
         olivetin_config:
           mutability: generated
+
+marketplace:
+  display_name: "Olivetin"

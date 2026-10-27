@@ -12,7 +12,7 @@ install:
 
 app:
   type: custom
-  image: zammad/zammad:latest
+  image: zammad/zammad:7.2
   ports:
     - "8080:80"
   environment:
@@ -34,7 +34,7 @@ app:
 
 services:
   - name: zammad-websocket
-    image: zammad/zammad:latest
+    image: zammad/zammad:7.2
     command: zammad-websocket
     environment:
       POSTGRESQL_HOST: postgres
@@ -53,7 +53,7 @@ services:
       - redis
 
   - name: zammad-worker
-    image: zammad/zammad:latest
+    image: zammad/zammad:7.2
     command: zammad-worker
     environment:
       POSTGRESQL_HOST: postgres
@@ -70,7 +70,7 @@ services:
       - redis
 
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: zammad
       POSTGRES_USER: zammad
@@ -79,7 +79,7 @@ services:
       - "zammad-postgres:/var/lib/postgresql/data"
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     volumes:
       - "zammad-redis:/data"
 
@@ -215,3 +215,6 @@ config_contract:
       volumes:
         zammad-redis:
           mutability: generated
+
+marketplace:
+  display_name: "Zammad"

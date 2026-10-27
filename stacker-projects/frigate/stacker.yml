@@ -2,7 +2,7 @@ name: frigate
 
 app:
   type: custom
-  image: ghcr.io/blakeblackshear/frigate:stable
+  image: ghcr.io/blakeblackshear/frigate:0.14.1
   ports:
     - "5001:5000"
     - "8554:8554"
@@ -46,3 +46,6 @@ config_contract:
         volumes:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Frigate"

@@ -2,7 +2,7 @@ name: nocodb
 
 app:
   type: custom
-  image: nocodb/nocodb:latest
+  image: nocodb/nocodb:2026.10.0
   ports:
     - "8080:8080"
   environment:
@@ -12,7 +12,7 @@ app:
 
 services:
   - name: nocodb-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: nocodb
       POSTGRES_USER: nocodb
@@ -83,3 +83,6 @@ deploy:
     size: cpx22
     public_ports:
       - "8080"
+
+marketplace:
+  display_name: "NocoDB"

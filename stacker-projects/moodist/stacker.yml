@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/remvze/moodist:latest
+  image: ghcr.io/remvze/moodist:1.0.0
   ports:
     - "8080:80"
 
@@ -38,3 +38,6 @@ env_file: .env
 
 config_contract:
   services: {}
+
+marketplace:
+  display_name: "Moodist"

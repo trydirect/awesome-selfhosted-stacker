@@ -55,3 +55,6 @@ config_contract:
         PORT:
           mutability: editable
           required: false
+
+marketplace:
+  display_name: "Excaliflow"

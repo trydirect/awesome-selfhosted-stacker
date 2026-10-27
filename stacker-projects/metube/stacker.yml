@@ -2,7 +2,7 @@ name: metube
 
 app:
   type: custom
-  image: alexta69/metube:latest
+  image: alexta69/metube:2026.10.25
   ports:
     - "8081:8081"
   volumes:
@@ -41,3 +41,6 @@ deploy:
     size: cpx22
     public_ports:
       - "8081"
+
+marketplace:
+  display_name: "Metube"

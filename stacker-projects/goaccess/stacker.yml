@@ -19,7 +19,7 @@ app:
   environment: {}
 services:
   - name: "goaccess"
-    image: "allinurl/goaccess:latest"
+    image: "allinurl/goaccess:1.9.3"
     ports:
       - "127.0.0.1:7890:7890"
     volumes:
@@ -59,3 +59,6 @@ config_contract:
           mutability: generated
         goaccess_public:
           mutability: generated
+
+marketplace:
+  display_name: "Goaccess"

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: typesense/typesense:27.1
+  image: typesense/typesense:31.0.rc22
   ports:
     - "8108:8108"
   environment:
@@ -69,3 +69,6 @@ env_file: .env
 
 volumes:
   typesense_data: {}
+
+marketplace:
+  display_name: "Typesense"

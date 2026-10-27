@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: appwrite/appwrite:latest
+  image: appwrite/appwrite:1.6.0
   ports:
     - "80:80"
     - "443:443"
@@ -32,7 +32,7 @@ app:
 
 services:
   - name: mariadb
-    image: mariadb:11
+    image: mariadb:11.8.8
     ports:
       - "127.0.0.1:3306:3306"
     environment:
@@ -49,7 +49,7 @@ services:
       retries: 5
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     ports:
       - "127.0.0.1:6379:6379"
     healthcheck:
@@ -97,6 +97,11 @@ config_contract:
   services:
     app:
       fields:
+        _APP_OPENSSL_KEY_V1:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         _APP_DB_HOST:
           mutability: editable
         _APP_DB_PASS:
@@ -115,11 +120,6 @@ config_contract:
           mutability: editable
         _APP_DOMAIN_TARGET:
           mutability: editable
-        _APP_OPENSSL_KEY_V1:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         _APP_REDIS_HOST:
           mutability: editable
         _APP_REDIS_PORT:
@@ -169,3 +169,6 @@ volumes:
   appwrite_uploads: {}
   mariadb_data: {}
   influxdb_data: {}
+
+marketplace:
+  display_name: "Appwrite"

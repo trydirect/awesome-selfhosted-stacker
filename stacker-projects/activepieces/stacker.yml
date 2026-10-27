@@ -71,7 +71,7 @@ services:
       timeout: "5s"
       retries: 10
   - name: "redis"
-    image: "redis:7.0.7"
+    image: "redis:7.4-alpine"
     volumes:
       - "activepieces_redis_data:/data"
     healthcheck:
@@ -102,13 +102,23 @@ config_contract:
   services:
     app:
       fields:
-        AP_CONTAINER_TYPE:
-          mutability: editable
         AP_ENCRYPTION_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        AP_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AP_POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        AP_CONTAINER_TYPE:
+          mutability: editable
         AP_ENGINE_EXECUTABLE_PATH:
           mutability: editable
         AP_ENVIRONMENT:
@@ -119,20 +129,10 @@ config_contract:
           mutability: editable
         AP_FRONTEND_URL:
           mutability: editable
-        AP_JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         AP_POSTGRES_DATABASE:
           mutability: editable
         AP_POSTGRES_HOST:
           mutability: editable
-        AP_POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         AP_POSTGRES_PORT:
           mutability: editable
         AP_POSTGRES_USERNAME:
@@ -149,9 +149,6 @@ config_contract:
           mutability: editable
         AP_WEBHOOK_TIMEOUT_SECONDS:
           mutability: editable
-      volumes:
-        activepieces_cache:
-          mutability: generated
     worker:
       fields:
         AP_CONTAINER_TYPE:
@@ -218,3 +215,6 @@ config_contract:
       volumes:
         activepieces_redis_data:
           mutability: generated
+
+marketplace:
+  display_name: "Activepieces"

@@ -32,3 +32,6 @@ env_file: .env
 
 config_contract:
   services: {}
+
+marketplace:
+  display_name: "CyberChef"

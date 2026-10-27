@@ -7,7 +7,7 @@ install:
     commonDomain: redash.example.com
 app:
   type: custom
-  image: redash/redash:latest
+  image: redash/redash:26.9.0
   ports:
   - "5003:5000"
   environment:
@@ -22,7 +22,7 @@ app:
     REDASH_QUERY_RESULTS_MAX_AGE: '43200'
 services:
 - name: redash_db
-  image: postgres:16-alpine
+  image: postgres:16.4-alpine
   environment:
     POSTGRES_DB: redash
     POSTGRES_USER: redash
@@ -37,7 +37,7 @@ services:
     timeout: 5s
     retries: 10
 - name: redis
-  image: redis:7-alpine
+  image: redis:7.4-alpine
   ports:
   - "127.0.0.1:6380:6379"
   volumes:
@@ -103,3 +103,6 @@ hooks:
 monitoring:
   status_panel: true
 env_file: .env
+
+marketplace:
+  display_name: "Redash"

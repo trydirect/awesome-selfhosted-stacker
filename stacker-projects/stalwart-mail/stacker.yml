@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: stalwartlabs/stalwart:latest
+  image: stalwartlabs/stalwart:v1.0.0
   ports:
     - "25:25"
     - "143:143"
@@ -72,3 +72,6 @@ env_file: .env
 
 volumes:
   stalwart_data: {}
+
+marketplace:
+  display_name: "Stalwart Mail"

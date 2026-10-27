@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: pgsty/silo:latest
+  image: bitnami/minio:latest
   ports:
     - "9000:9000"
     - "9001:9001"
@@ -70,3 +70,6 @@ deploy:
       - "443"
       - "9000"
       - "9001"
+
+marketplace:
+  display_name: "MinIO"

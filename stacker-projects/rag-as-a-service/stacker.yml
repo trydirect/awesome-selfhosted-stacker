@@ -45,3 +45,6 @@ hooks:
 
 monitoring:
   status_panel: true
+
+marketplace:
+  display_name: "RAG As A Service"

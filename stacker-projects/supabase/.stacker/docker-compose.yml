@@ -18,9 +18,9 @@ services:
       KONG_PLUGINS: "request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function,correlation-id"
       KONG_PROXY_ACCESS_LOG: "/dev/stdout combined"
       SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
-      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_ANON_KEY: ${ANON_KEY}
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
-      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
     volumes:
       - "./kong.yml:/usr/local/kong/kong.yml"
     restart: unless-stopped
@@ -36,13 +36,13 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     environment:
-      AUTHENTICATOR_PASSWORD: ${AUTHENTICATOR_PASSWORD}
+      AUTHENTICATOR_PASSWORD: ${POSTGRES_PASSWORD}
       JWT_EXP: "3600"
       JWT_SECRET: ${JWT_SECRET}
       POSTGRES_DB: "postgres"
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      SUPABASE_AUTH_ADMIN_PASSWORD: ${SUPABASE_AUTH_ADMIN_PASSWORD}
-      SUPABASE_FUNCTIONS_ADMIN_PASSWORD: ${SUPABASE_FUNCTIONS_ADMIN_PASSWORD}
+      SUPABASE_AUTH_ADMIN_PASSWORD: ${POSTGRES_PASSWORD}
+      SUPABASE_FUNCTIONS_ADMIN_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - "./postgresql.schema.sql:/etc/postgresql.schema.sql:ro"
       - "db_data:/var/lib/postgresql/data"
@@ -75,9 +75,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_PORT: "5432"
       STUDIO_PG_META_URL: "http://meta:8080"
-      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_ANON_KEY: ${ANON_KEY}
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
-      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
       SUPABASE_URL: "http://app:8000"
     volumes:
       - "studio_snippets:/app/snippets"
@@ -104,7 +104,7 @@ services:
       GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
       GOTRUE_JWT_EXP: "3600"
       GOTRUE_JWT_ISSUER: "http://localhost:8000/auth/v1"
-      GOTRUE_JWT_SECRET: ${GOTRUE_JWT_SECRET}
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
       GOTRUE_MAILER_AUTOCONFIRM: "false"
       GOTRUE_SITE_URL: "http://localhost:3000"
       GOTRUE_SMTP_ADMIN_EMAIL: "admin@example.com"
@@ -124,14 +124,14 @@ services:
   rest:
     image: postgrest/postgrest:v14.12
     environment:
-      PGRST_APP_SETTINGS_JWT_EXP: "3600"
-      PGRST_APP_SETTINGS_JWT_SECRET: ${PGRST_APP_SETTINGS_JWT_SECRET}
+      PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXPIRY}
+      PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
       PGRST_DB_ANON_ROLE: "anon"
       PGRST_DB_EXTRA_SEARCH_PATH: "public"
       PGRST_DB_MAX_ROWS: "1000"
       PGRST_DB_SCHEMAS: "public,storage,graphql_public"
       PGRST_DB_URI: "postgres://authenticator:913496e4675d253ad5ba601a50387f405707649bb34d21692bbdf9762044035c@db:5432/postgres"
-      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET}
+      PGRST_JWT_SECRET: ${JWT_SECRET}
     restart: unless-stopped
     networks:
       - app-network
@@ -147,12 +147,12 @@ services:
       DB_ENC_KEY: ${DB_ENC_KEY}
       DB_HOST: "db"
       DB_NAME: "postgres"
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_PORT: "5432"
       DB_USER: "supabase_admin"
       DISABLE_HEALTHCHECK_LOGGING: "true"
       JWT_SECRET: ${JWT_SECRET}
-      METRICS_JWT_SECRET: ${METRICS_JWT_SECRET}
+      METRICS_JWT_SECRET: ${JWT_SECRET}
       PORT: "4000"
       RUN_JANITOR: "true"
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
@@ -175,10 +175,10 @@ services:
       FILE_STORAGE_BACKEND_PATH: "/var/lib/storage"
       IMGPROXY_URL: "http://imgproxy:5001"
       JWT_SECRET: ${JWT_SECRET}
-      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET}
+      PGRST_JWT_SECRET: ${JWT_SECRET}
       POSTGREST_URL: "http://rest:3000"
       REGION: "stub"
-      SERVICE_KEY: ${SERVICE_KEY}
+      SERVICE_KEY: ${SERVICE_ROLE_KEY}
       STORAGE_BACKEND: "file"
       STORAGE_PUBLIC_URL: "http://localhost:8000"
     volumes:
@@ -208,10 +208,10 @@ services:
   meta:
     image: supabase/postgres-meta:v0.96.6
     environment:
-      CRYPTO_KEY: ${CRYPTO_KEY}
+      CRYPTO_KEY: ${PG_META_CRYPTO_KEY}
       PG_META_DB_HOST: "db"
       PG_META_DB_NAME: "postgres"
-      PG_META_DB_PASSWORD: ${PG_META_DB_PASSWORD}
+      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
       PG_META_DB_PORT: "5432"
       PG_META_DB_USER: "postgres"
       PG_META_PORT: "8080"
@@ -227,9 +227,9 @@ services:
     image: supabase/edge-runtime:v1.74.0
     environment:
       JWT_SECRET: ${JWT_SECRET}
-      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_ANON_KEY: ${ANON_KEY}
       SUPABASE_PUBLIC_URL: "http://localhost:8000"
-      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
       SUPABASE_URL: "http://app:8000"
       VERIFY_JWT: "false"
     command: "start --main-service /home/deno/functions/main --port 8081"

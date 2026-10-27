@@ -15,7 +15,7 @@ app:
 
 services:
   - name: infisical-redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     healthcheck:
       test: CMD redis-cli ping
       interval: 10s
@@ -23,7 +23,7 @@ services:
       retries: 5
 
   - name: infisical-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: infisical
       POSTGRES_USER: infisical
@@ -55,12 +55,12 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        DB_CONNECTION_URI:
+        ENCRYPTION_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        ENCRYPTION_KEY:
+        DB_CONNECTION_URI:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -107,3 +107,6 @@ deploy:
     size: cpx22
     public_ports:
       - "8080"
+
+marketplace:
+  display_name: "Infisical"

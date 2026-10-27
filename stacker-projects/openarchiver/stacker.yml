@@ -9,22 +9,7 @@ config_contract:
   services:
     app:
       fields:
-        MEILI_MASTER_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         ENCRYPTION_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        REDIS_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        STORAGE_ENCRYPTION_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -39,11 +24,33 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        STORAGE_ENCRYPTION_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MEILI_MASTER_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    postgres:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "logiclabshq/open-archiver:latest"
+  image: "logiclabshq/open-archiver:v0.6.2"
   ports:
     - "3000:3000"
   volumes:
@@ -68,7 +75,7 @@ app:
     MEILI_MASTER_KEY: "${MEILI_MASTER_KEY}"
 services:
   - name: "postgres"
-    image: "postgres:17-alpine"
+    image: "postgres:16.4-alpine"
     environment:
       POSTGRES_DB: "open_archive"
       POSTGRES_USER: "admin"
@@ -129,3 +136,6 @@ volumes:
   openarchiver_postgres_data: {}
   openarchiver_valkey_data: {}
   openarchiver_meili_data: {}
+
+marketplace:
+  display_name: "Openarchiver"

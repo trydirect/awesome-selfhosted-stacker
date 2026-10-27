@@ -10,7 +10,7 @@ install:
 
 app:
   type: python
-  image: sissbruecker/linkding:latest
+  image: sissbruecker/linkding:1.27.0
   ports:
     - "9090:9090"
   environment:
@@ -54,7 +54,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
@@ -65,3 +64,6 @@ env_file: .env
 
 volumes:
   linkding_data: {}
+
+marketplace:
+  display_name: "Linkding"

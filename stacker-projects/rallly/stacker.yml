@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: lukevella/rallly:latest
+  image: lukevella/rallly:4.16
   ports:
     - "3000:3000"
   environment:
@@ -20,7 +20,7 @@ app:
 
 services:
   - name: rallly-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: rallly
       POSTGRES_USER: rallly
@@ -54,6 +54,11 @@ config_contract:
   services:
     app:
       fields:
+        SECRET_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DATABASE_URL:
           mutability: generated
           type: alphanumeric
@@ -61,9 +66,6 @@ config_contract:
           display: password
         NEXT_PUBLIC_BASE_URL:
           mutability: editable
-        SECRET_PASSWORD:
-          mutability: generated
-          type: alphanumeric
         SUPPORT_EMAIL:
           mutability: editable
           length: 32
@@ -108,3 +110,6 @@ deploy:
       - "80"
       - "443"
       - "3000"
+
+marketplace:
+  display_name: "Rallly"

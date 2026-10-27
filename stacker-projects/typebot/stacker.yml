@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: baptistearno/typebot-builder:latest
+  image: baptistearno/typebot-builder:3.19.1
   ports:
     - "3001:3000"
   environment:
@@ -23,7 +23,7 @@ app:
 
 services:
   - name: typebot-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: typebot
       POSTGRES_USER: typebot
@@ -57,19 +57,19 @@ config_contract:
   services:
     app:
       fields:
-        ADMIN_EMAIL:
-          mutability: editable
-        DATABASE_URL:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         ENCRYPTION_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
         NEXTAUTH_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ADMIN_EMAIL:
+          mutability: editable
+        DATABASE_URL:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -121,3 +121,6 @@ deploy:
       - "80"
       - "443"
       - "3001"
+
+marketplace:
+  display_name: "Typebot"

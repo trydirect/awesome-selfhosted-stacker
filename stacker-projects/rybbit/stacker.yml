@@ -7,6 +7,52 @@ install:
     commonDomain: rybbit.example.com
 config_contract:
   services:
+    backend:
+      fields:
+        BETTER_AUTH_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        CLICKHOUSE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MAPBOX_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENROUTER_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    clickhouse:
+      fields:
+        CLICKHOUSE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    postgres:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     app:
       fields:
         BETTER_AUTH_SECRET:
@@ -24,28 +70,11 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    backend:
-      fields:
-        MAPBOX_TOKEN:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        OPENROUTER_API_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        REDIS_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 app:
   type: custom
-  image: ghcr.io/rybbit-io/rybbit-client:latest
+  image: ghcr.io/rybbit-io/rybbit-client:v1.0.0
   ports:
   - "3002:3002"
   environment:
@@ -84,7 +113,7 @@ services:
     timeout: 5s
     retries: 10
 - name: redis
-  image: redis:7-alpine
+  image: redis:7.4-alpine
   command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes --appendfsync everysec --maxmemory-policy noeviction
   volumes:
   - rybbit_redis_data:/data
@@ -94,7 +123,7 @@ services:
     timeout: 5s
     retries: 10
 - name: backend
-  image: ghcr.io/rybbit-io/rybbit-backend:latest
+  image: ghcr.io/rybbit-io/rybbit-backend:v1.0.0
   ports:
   - "3001:3001"
   environment:
@@ -145,3 +174,6 @@ volumes:
   rybbit_clickhouse_data: {}
   rybbit_postgres_data: {}
   rybbit_redis_data: {}
+
+marketplace:
+  display_name: "Rybbit"

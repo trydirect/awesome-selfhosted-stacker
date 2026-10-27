@@ -29,7 +29,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: peertube
       POSTGRES_USER: peertube
@@ -38,13 +38,13 @@ services:
       - "peertube-postgres:/var/lib/postgresql/data"
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     command: redis-server --requirepass ${PEERTUBE_REDIS_PASSWORD}
     volumes:
       - "peertube-redis:/data"
 
   - name: mailcatcher
-    image: sj26/mailcatcher:latest
+    image: sj26/mailcatcher:0.9.0
     ports:
       - "1080:1080"
 
@@ -59,28 +59,28 @@ config_contract:
   services:
     app:
       fields:
+        PEERTUBE_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PEERTUBE_REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         NODE_ENV:
           mutability: editable
         PEERTUBE_DB_HOST:
           mutability: editable
         PEERTUBE_DB_NAME:
           mutability: editable
-        PEERTUBE_DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         PEERTUBE_DB_PORT:
           mutability: editable
         PEERTUBE_DB_USER:
           mutability: editable
         PEERTUBE_REDIS_HOST:
           mutability: editable
-        PEERTUBE_REDIS_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         PEERTUBE_REDIS_PORT:
           mutability: editable
         PEERTUBE_SMTP_FROM:
@@ -97,11 +97,6 @@ config_contract:
           mutability: editable
         PEERTUBE_WEBSERVER_PORT:
           mutability: editable
-      volumes:
-        peertube-data:
-          mutability: generated
-        peertube-config:
-          mutability: generated
     postgres:
       fields:
         POSTGRES_DB:
@@ -120,3 +115,6 @@ config_contract:
       volumes:
         peertube-redis:
           mutability: generated
+
+marketplace:
+  display_name: "PeerTube"

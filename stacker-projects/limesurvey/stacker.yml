@@ -13,7 +13,7 @@ install:
 
 app:
   type: custom
-  image: acspri/limesurvey:latest
+  image: acspri/limesurvey:6.5.2
   ports:
     - "8080:80"
   environment:
@@ -31,7 +31,7 @@ app:
 
 services:
   - name: mysql
-    image: mariadb:11
+    image: mariadb:11.8.8
     environment:
       MYSQL_DATABASE: limesurvey
       MYSQL_USER: limesurvey
@@ -96,11 +96,6 @@ config_contract:
           mutability: editable
         LIMESURVEY_DBUSER:
           mutability: editable
-      volumes:
-        limesurvey-uploads:
-          mutability: generated
-        limesurvey-config:
-          mutability: generated
     mysql:
       fields:
         MYSQL_DATABASE:
@@ -120,3 +115,6 @@ config_contract:
       volumes:
         limesurvey-mysql:
           mutability: generated
+
+marketplace:
+  display_name: "LimeSurvey"

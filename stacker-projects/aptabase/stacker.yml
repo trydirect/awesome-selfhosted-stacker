@@ -9,7 +9,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "ghcr.io/aptabase/aptabase:main"
+  image: "ghcr.io/aptabase/aptabase:0.4.2"
   ports:
     - "3000:8080"
   environment:
@@ -20,7 +20,7 @@ app:
     AUTH_SECRET: "${AUTH_SECRET}"
 services:
   - name: "postgres"
-    image: "postgres:16-alpine"
+    image: "postgres:16.4-alpine"
     environment:
       POSTGRES_DB: "aptabase"
       POSTGRES_USER: "aptabase"
@@ -78,13 +78,13 @@ config_contract:
   services:
     app:
       fields:
-        ASPNETCORE_URLS:
-          mutability: editable
         AUTH_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        ASPNETCORE_URLS:
+          mutability: editable
         BASE_URL:
           mutability: editable
         CLICKHOUSE_URL:
@@ -119,3 +119,6 @@ config_contract:
       volumes:
         aptabase_clickhouse_data:
           mutability: generated
+
+marketplace:
+  display_name: "Aptabase"

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: funkwhale/all-in-one:latest
+  image: funkwhale/all-in-one:1.2.10
   ports:
     - "5001:5000"
   environment:
@@ -26,7 +26,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -42,7 +42,7 @@ services:
       retries: 5
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     ports:
       - "127.0.0.1:6379:6379"
     healthcheck:
@@ -79,14 +79,14 @@ config_contract:
   services:
     app:
       fields:
-        CACHE_URL:
-          mutability: editable
-        DATABASE_URL:
+        DJANGO_SECRET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        DJANGO_SECRET_KEY:
+        CACHE_URL:
+          mutability: editable
+        DATABASE_URL:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -127,3 +127,6 @@ env_file: .env
 volumes:
   funkwhale_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Funkwhale"

@@ -14,7 +14,7 @@ install:
 
 app:
   type: custom
-  image: freikin/dawarich:latest
+  image: freikin/dawarich:0.16.0
   ports:
     - "3000:3000"
   environment:
@@ -37,7 +37,7 @@ app:
 
 services:
   - name: dawarich-background
-    image: freikin/dawarich:latest
+    image: freikin/dawarich:0.16.0
     command: bundle exec sidekiq -C config/sidekiq.yml
     environment:
       RAILS_ENV: production
@@ -59,7 +59,7 @@ services:
       - redis
 
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: dawarich
       POSTGRES_USER: dawarich
@@ -68,7 +68,7 @@ services:
       - "dawarich-postgres:/var/lib/postgresql/data"
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     volumes:
       - "dawarich-redis:/data"
 
@@ -110,25 +110,11 @@ config_contract:
   services:
     app:
       fields:
-        APPLICATION_HOST:
-          mutability: editable
-        APPLICATION_PROTOCOL:
-          mutability: editable
-        DATABASE_HOST:
-          mutability: editable
-        DATABASE_NAME:
-          mutability: editable
         DATABASE_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        DATABASE_PORT:
-          mutability: editable
-        DATABASE_USERNAME:
-          mutability: editable
-        DawarichBackgroundJob:
-          mutability: editable
         ENCRYPTION_DTERMINARY_KEY:
           mutability: generated
           type: alphanumeric
@@ -139,20 +125,31 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        RAILS_ENV:
-          mutability: editable
-        REDIS_URL:
-          mutability: editable
         SECRET_KEY_BASE:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        APPLICATION_HOST:
+          mutability: editable
+        APPLICATION_PROTOCOL:
+          mutability: editable
+        DATABASE_HOST:
+          mutability: editable
+        DATABASE_NAME:
+          mutability: editable
+        DATABASE_PORT:
+          mutability: editable
+        DATABASE_USERNAME:
+          mutability: editable
+        DawarichBackgroundJob:
+          mutability: editable
+        RAILS_ENV:
+          mutability: editable
+        REDIS_URL:
+          mutability: editable
         SELF_HOSTED:
           mutability: editable
-      volumes:
-        dawarich-storage:
-          mutability: generated
     dawarich-background:
       fields:
         APPLICATION_HOST:
@@ -212,3 +209,6 @@ config_contract:
       volumes:
         dawarich-redis:
           mutability: generated
+
+marketplace:
+  display_name: "Dawarich"

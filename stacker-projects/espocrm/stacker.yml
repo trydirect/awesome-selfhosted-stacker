@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: espocrm/espocrm:latest
+  image: espocrm/espocrm:8.3.1
   ports:
     - "8080:80"
   environment:
@@ -27,7 +27,7 @@ app:
 
 services:
   - name: mysql
-    image: mysql:8
+    image: mysql:8.4.4
     ports:
       - "127.0.0.1:3306:3306"
     environment:
@@ -77,15 +77,15 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        ESPOCRM_DATABASE_HOST:
-          mutability: editable
-        ESPOCRM_DATABASE_NAME:
-          mutability: editable
         ESPOCRM_DATABASE_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        ESPOCRM_DATABASE_HOST:
+          mutability: editable
+        ESPOCRM_DATABASE_NAME:
+          mutability: editable
         ESPOCRM_DATABASE_PLATFORM:
           mutability: editable
         ESPOCRM_DATABASE_PORT:
@@ -129,3 +129,6 @@ volumes:
   espocrm_data: {}
   espocrm_config: {}
   mysql_data: {}
+
+marketplace:
+  display_name: "EspoCRM"

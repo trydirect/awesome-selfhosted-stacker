@@ -215,6 +215,16 @@ config_contract:
   services:
     app:
       fields:
+        DASHBOARD_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         SUPABASE_ANON_KEY:
           mutability: generated
           type: alphanumeric
@@ -226,11 +236,6 @@ config_contract:
           length: 32
           display: password
         POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JWT_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -255,14 +260,35 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        DASHBOARD_PASSWORD:
+    db:
+      fields:
+        JWT_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DB_INIT_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     realtime:
       fields:
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
@@ -278,21 +304,48 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    db:
+    rest:
       fields:
-        DB_INIT_PASSWORD:
+        PGRST_APP_SETTINGS_JWT_EXP:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-    rest:
-      fields:
         PGRST_JWT_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
         PGRST_APP_SETTINGS_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    storage:
+      fields:
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PGRST_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SERVICE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    studio:
+      fields:
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -305,13 +358,6 @@ config_contract:
           length: 32
           display: password
         PG_META_DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-    storage:
-      fields:
-        SERVICE_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -329,3 +375,6 @@ volumes:
   db_data: {}
   studio_snippets: {}
   storage_data: {}
+
+marketplace:
+  display_name: "Supabase Posthog"

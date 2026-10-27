@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: localai/localai:latest
+  image: localai/localai:v2.29.0
   ports:
     - "8080:8080"
   environment:
@@ -62,3 +62,6 @@ env_file: .env
 
 volumes:
   localai_models: {}
+
+marketplace:
+  display_name: "LocalAI"

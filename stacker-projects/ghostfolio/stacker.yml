@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghostfolio/ghostfolio:latest
+  image: ghostfolio/ghostfolio:3.93.0
   ports:
     - "3333:3333"
   environment:
@@ -21,7 +21,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -37,7 +37,7 @@ services:
       retries: 5
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     ports:
       - "127.0.0.1:6379:6379"
     healthcheck:
@@ -79,12 +79,12 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        DATABASE_URL:
+        JWT_SECRET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        JWT_SECRET_KEY:
+        DATABASE_URL:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -117,3 +117,6 @@ env_file: .env
 volumes:
   ghostfolio_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Ghostfolio"

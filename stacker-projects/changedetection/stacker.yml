@@ -2,7 +2,7 @@ name: changedetection
 
 app:
   type: custom
-  image: ghcr.io/dgtlmoon/changedetection.io:latest
+  image: dgtlmoon/changedetection.io:0.48.05
   ports:
     - "5001:5000"
   volumes:
@@ -40,3 +40,6 @@ config_contract:
       volumes:
         changedetection_data:
           mutability: generated
+
+marketplace:
+  display_name: "Changedetection"

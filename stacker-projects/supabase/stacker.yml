@@ -218,6 +218,11 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         SUPABASE_ANON_KEY:
           mutability: generated
           type: alphanumeric
@@ -230,6 +235,11 @@ config_contract:
           display: password
     db:
       fields:
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
@@ -255,8 +265,109 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+    realtime:
+      fields:
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 64
+          display: password
+        DB_ENC_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        METRICS_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PGRST_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    rest:
+      fields:
+        PGRST_APP_SETTINGS_JWT_EXP:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PGRST_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        PGRST_APP_SETTINGS_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    storage:
+      fields:
+        PGRST_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ANON_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SERVICE_ROLE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SERVICE_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     studio:
       fields:
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
@@ -295,87 +406,6 @@ config_contract:
           length: 32
           display: password
         GOTRUE_JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-    rest:
-      fields:
-        POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        PGRST_JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        PGRST_APP_SETTINGS_JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-    realtime:
-      fields:
-        POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        SECRET_KEY_BASE:
-          mutability: generated
-          type: alphanumeric
-          length: 64
-          display: password
-        DB_ENC_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        METRICS_JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        PGRST_JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-    storage:
-      fields:
-        ANON_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        SERVICE_ROLE_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        POSTGRES_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        SERVICE_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -431,3 +461,6 @@ config_contract:
           display: password
 
 env_file: .env
+
+marketplace:
+  display_name: "Supabase"

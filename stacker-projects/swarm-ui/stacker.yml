@@ -6,8 +6,7 @@ project:
 
 app:
   type: custom
-  path: .
-  dockerfile: Dockerfile
+  image: mchaker/swarmui:latest
   ports:
     - "7801:7801"
   volumes:
@@ -48,3 +47,6 @@ config_contract:
         swarm_data: { mutability: generated }
         swarm_backend: { mutability: generated }
 env_file: .env
+
+marketplace:
+  display_name: "Swarm UI"

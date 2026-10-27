@@ -18,7 +18,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "offen/offen:latest"
+  image: "offen/offen:v0.7.4"
   ports:
     - "3000:3000"
   volumes:
@@ -56,3 +56,6 @@ monitoring:
 env_file: ".env"
 volumes:
   offen_data: {}
+
+marketplace:
+  display_name: "Offen"

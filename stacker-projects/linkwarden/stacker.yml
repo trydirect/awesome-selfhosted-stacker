@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/linkwarden/linkwarden:latest
+  image: ghcr.io/linkwarden/linkwarden:v2.7.0
   ports:
     - "3000:3000"
   environment:
@@ -24,7 +24,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -61,17 +61,16 @@ config_contract:
   services:
     app:
       fields:
-        DB_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         NEXTAUTH_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     postgres:
       fields:
         POSTGRES_PASSWORD:
@@ -90,3 +89,6 @@ env_file: .env
 volumes:
   linkwarden_data: {}
   linkwarden_pgdata: {}
+
+marketplace:
+  display_name: "Linkwarden"

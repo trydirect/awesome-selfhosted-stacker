@@ -2,7 +2,7 @@ name: speedtest-tracker
 
 app:
   type: custom
-  image: lscr.io/linuxserver/speedtest-tracker:latest
+  image: lscr.io/linuxserver/speedtest-tracker:0.24.2
   ports:
     - "8080:80"
   environment:
@@ -45,3 +45,6 @@ config_contract:
         volumes:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Speedtest Tracker"

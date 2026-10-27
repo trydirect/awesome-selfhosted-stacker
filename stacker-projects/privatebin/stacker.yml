@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: privatebin/nginx-fpm-alpine:latest
+  image: privatebin/nginx-fpm-alpine:1.6.2
   ports:
     - "8080:8080"
   environment:
@@ -50,3 +50,6 @@ env_file: .env
 
 volumes:
   privatebin_data: {}
+
+marketplace:
+  display_name: "PrivateBin"

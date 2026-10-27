@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: jellyfin/jellyfin:latest
+  image: jellyfin/jellyfin:10.9.11
   build: null
   ports:
   - "8096:8096"
@@ -74,3 +74,6 @@ env_file: .env
 env: {}
 config_contract:
   services: {}
+
+marketplace:
+  display_name: "Jellyfin"

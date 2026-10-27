@@ -7,7 +7,7 @@ version: "1.0.0"
 app:
   type: custom
   path: .
-  image: ashleykza/comfyui:latest
+  image: ashleykza/comfyui:cu128-py311-v0.26.0
   ports:
     - "8188:3001"
   environment:
@@ -44,3 +44,6 @@ config_contract:
         PRELOAD_MODELS:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Comfyui"

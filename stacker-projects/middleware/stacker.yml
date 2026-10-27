@@ -9,7 +9,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "middlewareeng/middleware:latest"
+  image: "middlewareeng/middleware:0.1.0"
   ports:
     - "3333:3333"
     - "127.0.0.1:9696:9696"
@@ -68,3 +68,6 @@ config_contract:
           mutability: generated
         middleware_keys:
           mutability: generated
+
+marketplace:
+  display_name: "Middleware"

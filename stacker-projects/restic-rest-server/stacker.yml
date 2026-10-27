@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: restic/rest-server:latest
+  image: restic/rest-server:0.12.1
   ports:
     - "8000:8000"
   command: "/entrypoint.sh --no-auth --listen :8000"
@@ -57,3 +57,6 @@ config_contract:
       volumes:
         restic_repos:
           mutability: generated
+
+marketplace:
+  display_name: "Restic REST Server"

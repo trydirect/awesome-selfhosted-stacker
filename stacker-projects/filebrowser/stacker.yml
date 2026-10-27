@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: filebrowser/filebrowser:latest
+  image: filebrowser/filebrowser:v2.31.2
   ports:
     - "8080:80"
   environment:
@@ -62,3 +62,6 @@ env_file: .env
 volumes:
   filebrowser_data: {}
   filebrowser_db: {}
+
+marketplace:
+  display_name: "Filebrowser"

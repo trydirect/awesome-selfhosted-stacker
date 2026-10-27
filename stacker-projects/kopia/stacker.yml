@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: kopia/kopia:latest
+  image: kopia/kopia:0.18.2
   ports:
     - "51515:51515"
   environment:
@@ -72,3 +72,6 @@ deploy:
       - "80"
       - "443"
       - "51515"
+
+marketplace:
+  display_name: "Kopia"

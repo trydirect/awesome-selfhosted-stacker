@@ -75,3 +75,6 @@ volumes:
   gitlab_config: {}
   gitlab_logs: {}
   gitlab_data: {}
+
+marketplace:
+  display_name: "GitLab"

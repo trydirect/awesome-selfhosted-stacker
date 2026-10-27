@@ -3,7 +3,7 @@ version: "1.10.0"
 
 app:
   type: custom
-  image: etherpad/etherpad:latest
+  image: etherpad/etherpad:1.9.7
   ports:
     - "9001:9001"
   environment:
@@ -53,13 +53,18 @@ config_contract:
   services:
     app:
       fields:
-        ABIWORD:
-          mutability: editable
         ADMIN_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        USER_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ABIWORD:
+          mutability: editable
         ALLOW_UNKNOWN_FILE_ENDS:
           mutability: editable
         DB_DIR:
@@ -92,17 +97,12 @@ config_contract:
           mutability: editable
         TRUST_PROXY:
           mutability: editable
-        USER_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         automaticReconnectionTimeout:
           mutability: editable
         loadTest:
           mutability: editable
         loglevel:
           mutability: editable
-      volumes:
-        etherpad-data:
-          mutability: generated
+
+marketplace:
+  display_name: "Etherpad"

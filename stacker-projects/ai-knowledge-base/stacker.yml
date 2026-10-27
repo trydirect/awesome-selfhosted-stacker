@@ -10,24 +10,61 @@ install:
 
 config_contract:
   services:
-    app:
+    ai-knowledge-base-worker:
       fields:
-        SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DB_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        POSTGRES_PASSWORD:
+        EMBEDDING_OPENAI_API_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
         QDRANT_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    app:
+      fields:
+        DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        EMBEDDING_OPENAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        QDRANT_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        REDIS_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -38,16 +75,6 @@ config_contract:
           length: 32
           display: password
         APP_SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        REDIS_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        EMBEDDING_OPENAI_API_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -156,7 +183,7 @@ services:
       - ai_kb_worker_data:/app/api/storage
 
   - name: ai-knowledge-base-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: dify
       POSTGRES_USER: dify
@@ -170,7 +197,7 @@ services:
       retries: 10
 
   - name: ai-knowledge-base-redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     command: redis-server --requirepass ""
     healthcheck:
       test: CMD redis-cli ping
@@ -189,7 +216,7 @@ services:
       - ai_kb_qdrant_data:/qdrant/storage
 
   - name: ai-knowledge-base-ollama
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.3.12
     ports:
       - "11434:11434"
     volumes:
@@ -242,3 +269,6 @@ monitoring:
     interval: 30s
 
 env_file: .env
+
+marketplace:
+  display_name: "AI Knowledge Base"

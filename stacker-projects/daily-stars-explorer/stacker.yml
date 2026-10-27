@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: ghcr.io/emanuelef/daily-stars-explorer:latest
+  image: ghcr.io/emanuelef/daily-stars-explorer:1.3.0
   build: null
   ports:
   - "8080:8080"
@@ -71,3 +71,6 @@ env_file: .env
 env: {}
 config_contract:
   services: {}
+
+marketplace:
+  display_name: "Daily Stars Explorer"

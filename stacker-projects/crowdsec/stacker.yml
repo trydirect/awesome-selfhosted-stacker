@@ -2,7 +2,7 @@ name: crowdsec
 
 app:
   type: custom
-  image: crowdsecurity/crowdsec:latest
+  image: crowdsecurity/crowdsec:v1.6.5
   environment:
     COLLECTIONS: "crowdsecurity/nginx"
     GID: "1000"
@@ -42,3 +42,6 @@ config_contract:
         volumes:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Crowdsec"

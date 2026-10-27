@@ -14,9 +14,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-      volumes:
-        mailarchiver_keys: { mutability: generated }
-        mailarchiver_postgres_data: { mutability: generated }
     postgres:
       fields:
         POSTGRES_PASSWORD:
@@ -28,7 +25,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "s1t5/mailarchiver:latest"
+  image: "s1t5/mailarchiver:1.0.0"
   ports:
     - "5002:5000"
   volumes:
@@ -40,7 +37,7 @@ app:
     TimeZone__DisplayTimeZoneId: "${TIMEZONE}"
 services:
   - name: "postgres"
-    image: "postgres:17-alpine"
+    image: "postgres:16.4-alpine"
     environment:
       POSTGRES_DB: "MailArchiver"
       POSTGRES_USER: "mailuser"
@@ -73,3 +70,6 @@ env_file: ".env"
 volumes:
   mailarchiver_keys: {}
   mailarchiver_postgres_data: {}
+
+marketplace:
+  display_name: "Mail Archiver"

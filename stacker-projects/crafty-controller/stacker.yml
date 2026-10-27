@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: registry.gitlab.com/crafty-controller/crafty-4:latest
+  image: registry.gitlab.com/crafty-controller/crafty-4:4.3.0
   ports:
     - "8443:8443"
     - "25565:25565"
@@ -56,3 +56,6 @@ volumes:
   crafty_data: {}
   crafty_backups: {}
   crafty_servers: {}
+
+marketplace:
+  display_name: "Crafty Controller"

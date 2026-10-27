@@ -25,7 +25,7 @@ app:
     start_period: 20s
 services:
   - name: postgres
-    image: postgres:17.10-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
       POSTGRES_USER: postgres
@@ -39,7 +39,7 @@ services:
       retries: 10
       start_period: 20s
   - name: redis
-    image: redis:7.4.9-alpine
+    image: redis:7.4-alpine
     command: --save "" --appendonly no
 volumes:
   postgres-data: {}
@@ -114,3 +114,6 @@ config_contract:
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 env_file: .env
+
+marketplace:
+  display_name: "Zitadel"

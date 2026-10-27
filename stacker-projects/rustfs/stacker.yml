@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: rustfs/rustfs:latest
+  image: rustfs/rustfs:0.1.0
   build: null
   ports:
   - "9000:9000"
@@ -29,7 +29,7 @@ app:
   healthcheck: null
 services:
 - name: otel-collector
-  image: otel/opentelemetry-collector:latest
+  image: otel/opentelemetry-collector:0.112.0
   ports: []
   environment: {}
   volumes: []
@@ -103,6 +103,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-      volumes:
-        rustfs_data: { mutability: generated }
-        rustfs_logs: { mutability: generated }
+
+marketplace:
+  display_name: "Rustfs"

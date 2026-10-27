@@ -15,8 +15,18 @@ config_contract:
           length: 32
           display: password
         TMDB_API_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    postgres:
+      fields:
+        POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -25,7 +35,7 @@ hooks:
   pre_build: "./scripts/generate-secrets.sh"
 app:
   type: "custom"
-  image: "ghcr.io/bitmagnet-io/bitmagnet:latest"
+  image: "ghcr.io/bitmagnet-io/bitmagnet:v0.10.0"
   ports:
     - "3333:3333"
   command: "worker run --all"
@@ -41,7 +51,7 @@ app:
     TMDB_API_KEY: ""
 services:
   - name: "postgres"
-    image: "postgres:16-alpine"
+    image: "postgres:16.4-alpine"
     environment:
       POSTGRES_DB: "bitmagnet"
       POSTGRES_USER: "postgres"
@@ -72,3 +82,6 @@ volumes:
   bitmagnet_config: {}
   bitmagnet_data: {}
   bitmagnet_postgres_data: {}
+
+marketplace:
+  display_name: "Bitmagnet"

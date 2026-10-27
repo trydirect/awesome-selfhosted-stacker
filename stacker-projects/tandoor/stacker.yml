@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: vabene1111/recipes:latest
+  image: vabene1111/recipes:1.5.19
   ports:
     - "8080:80"
   environment:
@@ -30,7 +30,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -82,7 +82,13 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-
+    postgres:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
 hooks:
   pre_build: ./scripts/generate-secrets.sh
 
@@ -95,3 +101,6 @@ volumes:
   tandoor_staticfiles: {}
   tandoor_mediafiles: {}
   tandoor_pgdata: {}
+
+marketplace:
+  display_name: "Tandoor"

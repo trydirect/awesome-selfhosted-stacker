@@ -7,7 +7,7 @@ app:
   type: node
   path: .
   dockerfile: null
-  image: naskio/strapi:latest
+  image: naskio/strapi:4.25.9
   build: null
   ports:
   - "1337:1337"
@@ -27,7 +27,7 @@ app:
   healthcheck: null
 services:
 - name: strapi_db
-  image: postgres:16-alpine
+  image: postgres:16.4-alpine
   ports:
   - "127.0.0.1:5432:5432"
   environment:
@@ -99,17 +99,17 @@ config_contract:
   services:
     app:
       fields:
+        ADMIN_JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         DATABASE_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
         JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        ADMIN_JWT_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -121,3 +121,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+
+marketplace:
+  display_name: "Strapi"

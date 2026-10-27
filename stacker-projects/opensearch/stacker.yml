@@ -52,13 +52,13 @@ config_contract:
   services:
     app:
       fields:
-        DISABLE_INSTALL_DEMO_CONFIG:
-          mutability: editable
         OPENSEARCH_INITIAL_ADMIN_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
+        DISABLE_INSTALL_DEMO_CONFIG:
+          mutability: editable
         OPENSEARCH_JAVA_OPTS:
           mutability: editable
         volumes:
@@ -67,3 +67,6 @@ env_file: .env
 
 volumes:
   opensearch_data: {}
+
+marketplace:
+  display_name: "OpenSearch"

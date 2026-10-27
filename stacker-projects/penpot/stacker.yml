@@ -12,7 +12,7 @@ install:
 
 app:
   type: custom
-  image: penpotapp/frontend:latest
+  image: penpotapp/frontend:2.1
   ports:
     - "9001:80"
   environment:
@@ -20,7 +20,7 @@ app:
 
 services:
   - name: penpot-backend
-    image: penpotapp/backend:latest
+    image: penpotapp/backend:2.1
     environment:
       PENPOT_FLAGS: enable-registration enable-login-with-password enable-login-with-oidc enable-login-with-google enable-login-with-github enable-login-with-gitlab
       PENPOT_DATABASE_URI: "postgresql://postgres:5432/penpot"
@@ -43,7 +43,7 @@ services:
       - redis
 
   - name: penpot-exporter
-    image: penpotapp/exporter:latest
+    image: penpotapp/exporter:2.1
     environment:
       PENPOT_REDIS_URI: "redis://redis:6379"
       PENPOT_ASSETS_STORAGE_BACKEND: assets-fs
@@ -54,7 +54,7 @@ services:
       - redis
 
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: penpot
       POSTGRES_USER: postgres
@@ -63,12 +63,12 @@ services:
       - "penpot-postgres:/var/lib/postgresql/data"
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     volumes:
       - "penpot-redis:/data"
 
   - name: mailcatcher
-    image: sj26/mailcatcher:latest
+    image: sj26/mailcatcher:0.9.0
     ports:
       - "1080:1080"
 
@@ -177,3 +177,6 @@ config_contract:
       volumes:
         penpot-redis:
           mutability: generated
+
+marketplace:
+  display_name: "Penpot"

@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: ghcr.io/d8a-tech/d8a:latest
+  image: ghcr.io/d8a-tech/d8a:0.1.12
   build: null
   ports:
   - "8080:8080"
@@ -72,3 +72,6 @@ env_file: .env
 env: {}
 config_contract:
   services: {}
+
+marketplace:
+  display_name: "D8a"

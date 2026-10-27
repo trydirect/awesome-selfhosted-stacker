@@ -2,7 +2,7 @@ name: portainer
 
 app:
   type: custom
-  image: portainer/portainer-ce:latest
+  image: portainer/portainer-ce:2.21.4
   ports:
     - "9000:9000"
   volumes:
@@ -38,3 +38,6 @@ config_contract:
       volumes:
         portainer_data:
           mutability: generated
+
+marketplace:
+  display_name: "Portainer"

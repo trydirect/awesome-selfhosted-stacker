@@ -3,7 +3,7 @@ version: "2.0.300"
 
 app:
   type: custom
-  image: ghcr.io/requarks/wiki:2
+  image: ghcr.io/requarks/wiki:2.5
   ports:
     - "3000:3000"
   environment:
@@ -17,7 +17,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: wikijs
       POSTGRES_USER: wikijs
@@ -63,3 +63,6 @@ config_contract:
       volumes:
         wikijs-postgres:
           mutability: generated
+
+marketplace:
+  display_name: "Wiki.js"

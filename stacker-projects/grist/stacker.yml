@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: gristlabs/grist:latest
+  image: gristlabs/grist:1.7.21
   ports:
     - "8484:8484"
   environment:
@@ -57,3 +57,6 @@ env_file: .env
 
 volumes:
   grist_data: {}
+
+marketplace:
+  display_name: "Grist"

@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: vectorim/element-web:latest
+  image: vectorim/element-web:v1.11.84
   ports:
     - "8080:80"
   volumes:
@@ -53,3 +53,6 @@ config_contract:
       volumes:
         element_config:
           mutability: generated
+
+marketplace:
+  display_name: "Element"

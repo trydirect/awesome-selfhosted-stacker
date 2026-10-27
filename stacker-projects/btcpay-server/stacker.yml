@@ -23,7 +23,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: btcpayserver
       POSTGRES_USER: postgres
@@ -95,3 +95,6 @@ config_contract:
       volumes:
         btcpay-postgres:
           mutability: generated
+
+marketplace:
+  display_name: "Btcpay Server"

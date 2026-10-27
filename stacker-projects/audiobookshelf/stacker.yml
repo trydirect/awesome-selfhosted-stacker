@@ -2,7 +2,7 @@ name: audiobookshelf
 
 app:
   type: custom
-  image: ghcr.io/advplyr/audiobookshelf:latest
+  image: ghcr.io/advplyr/audiobookshelf:2.17.2
   ports:
     - "13378:80"
   volumes:
@@ -48,3 +48,6 @@ deploy:
     size: cpx22
     public_ports:
       - "13378"
+
+marketplace:
+  display_name: "Audiobookshelf"

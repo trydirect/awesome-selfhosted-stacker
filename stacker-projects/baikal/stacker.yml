@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ckulka/baikal:latest
+  image: ckulka/baikal:0.9.5
   ports:
     - "8080:80"
   volumes:
@@ -51,3 +51,6 @@ config_contract:
           mutability: generated
         baikal_data:
           mutability: generated
+
+marketplace:
+  display_name: "Baïkal"

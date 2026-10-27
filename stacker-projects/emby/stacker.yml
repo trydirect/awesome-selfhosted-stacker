@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: emby/embyserver:latest
+  image: emby/embyserver:4.11.0.10
   ports:
     - "8096:8096"
     - "8920:8920"
@@ -56,3 +56,6 @@ env_file: .env
 volumes:
   emby_config: {}
   emby_data: {}
+
+marketplace:
+  display_name: "Emby"

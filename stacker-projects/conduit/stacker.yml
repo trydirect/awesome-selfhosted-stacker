@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: matrixconduit/matrix-conduit:latest
+  image: matrixconduit/matrix-conduit:v0.10.15
   ports:
     - "6167:6167"
   environment:
@@ -63,3 +63,6 @@ env_file: .env
 
 volumes:
   conduit_data: {}
+
+marketplace:
+  display_name: "Conduit"

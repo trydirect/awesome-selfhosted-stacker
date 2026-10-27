@@ -75,73 +75,90 @@ config_contract:
   services:
     app:
       fields:
-        OPENAI_API_KEY:
-          mutability: provided
-          required: false
-          display: password
         ANTHROPIC_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        GOOGLE_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        XAI_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        DEEPSEEK_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        OPENROUTER_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        GROQ_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        MISTRAL_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        MOONSHOT_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        NVIDIA_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        MINIMAX_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        DASHSCOPE_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        ZHIPU_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        OPENAI_COMPATIBLE_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        FRED_API_KEY:
-          mutability: provided
-          required: false
-          display: password
-        TYPESAFE_API_KEY:
-          mutability: provided
-          required: false
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         AWS_BEARER_TOKEN_BEDROCK:
-          mutability: provided
-          required: false
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DASHSCOPE_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        DEEPSEEK_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        FRED_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GOOGLE_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        GROQ_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MINIMAX_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MISTRAL_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        MOONSHOT_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        NVIDIA_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENAI_COMPATIBLE_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        OPENROUTER_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        TYPESAFE_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        XAI_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ZHIPU_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         SEC_EDGAR_USER_AGENT:
           mutability: editable
@@ -161,6 +178,6 @@ config_contract:
         TRADINGAGENTS_LLM_PROVIDER:
           mutability: editable
           required: false
-      volumes:
-        tradingagents_data:
-          mutability: generated
+
+marketplace:
+  display_name: "Tradingagents"

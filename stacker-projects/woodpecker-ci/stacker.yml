@@ -2,7 +2,7 @@ name: woodpecker-ci
 
 app:
   type: custom
-  image: woodpeckerci/woodpecker-server:v3
+  image: woodpeckerci/woodpecker-server:v2.7.0
   ports:
     - "8000:8000"
   environment:
@@ -17,7 +17,7 @@ app:
 
 services:
   - name: woodpecker-agent
-    image: woodpeckerci/woodpecker-agent:v3
+    image: woodpeckerci/woodpecker-agent:v2.7.0
     environment:
       WOODPECKER_SERVER: app:9000
       WOODPECKER_AGENT_SECRET: ${AGENT_SECRET}
@@ -64,8 +64,16 @@ config_contract:
           mutability: editable
     woodpecker-agent:
       fields:
+        WOODPECKER_AGENT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         WOODPECKER_SERVER:
           mutability: editable
         depends_on:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Woodpecker Ci"

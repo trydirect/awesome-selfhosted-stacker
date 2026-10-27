@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: corentinth/it-tools:latest
+  image: corentinth/it-tools:2024.10.22-7ca5933
   ports:
     - "8083:80"
 
@@ -39,3 +39,6 @@ env_file: .env
 
 config_contract:
   services: {}
+
+marketplace:
+  display_name: "IT Tools"

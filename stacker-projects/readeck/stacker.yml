@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: codeberg.org/readeck/readeck:latest
+  image: codeberg.org/readeck/readeck:0.16.2
   ports:
     - "8000:8000"
   environment:
@@ -21,7 +21,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -70,14 +70,14 @@ config_contract:
   services:
     app:
       fields:
-        READECK_DATABASE_DRIVER:
-          mutability: editable
-        READECK_DATABASE_SOURCE:
+        READECK_SECRET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        READECK_SECRET_KEY:
+        READECK_DATABASE_DRIVER:
+          mutability: editable
+        READECK_DATABASE_SOURCE:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -110,3 +110,6 @@ env_file: .env
 volumes:
   readeck_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Readeck"

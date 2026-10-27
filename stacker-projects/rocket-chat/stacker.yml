@@ -7,7 +7,7 @@ install:
     commonDomain: chat.example.com
 app:
   type: custom
-  image: rocket.chat:latest
+  image: rocket.chat:6.12.2
   ports:
   - "3000:3000"
   environment:
@@ -18,7 +18,7 @@ app:
   - mongo
 services:
 - name: mongo
-  image: mongo:7.0
+  image: mongo:9.0.4.0.12
   environment:
     MONGO_INITDB_DATABASE: rocketchat
   ports:
@@ -66,3 +66,6 @@ config_contract:
         depends_on:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Rocket Chat"

@@ -14,7 +14,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/hcengineering/platform:latest
+  image: ghcr.io/hcengineering/platform:v0.6.0
   ports:
     - "8080:8080"
   environment:
@@ -37,7 +37,7 @@ app:
 
 services:
   - name: huly-account
-    image: ghcr.io/hcengineering/account:latest
+    image: ghcr.io/hcengineering/account:v0.6.0
     environment:
       ACCOUNTS_PORT: "8083"
       DB_URL: postgres://postgres:${HULY_DATABASE_PASSWORD}@postgres:5432/huly
@@ -49,7 +49,7 @@ services:
       - redis
 
   - name: huly-worker
-    image: ghcr.io/hcengineering/worker:latest
+    image: ghcr.io/hcengineering/worker:v0.6.0
     environment:
       SERVER_PORT: "8080"
       DB_URL: postgres://postgres:${HULY_DATABASE_PASSWORD}@postgres:5432/huly
@@ -65,7 +65,7 @@ services:
       - huly-account
 
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: huly
       POSTGRES_USER: postgres
@@ -74,7 +74,7 @@ services:
       - "huly-postgres:/var/lib/postgresql/data"
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     volumes:
       - "huly-redis:/data"
 
@@ -116,19 +116,11 @@ config_contract:
   services:
     app:
       fields:
-        ACCOUNTS_URL:
-          mutability: editable
         AUTH_SECRET:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        DB_URL:
-          mutability: editable
-        GITHUB_APP_NAME:
-          mutability: editable
-        GITHUB_CLIENT_ID:
-          mutability: editable
         GITHUB_CLIENT_SECRET:
           mutability: generated
           type: alphanumeric
@@ -139,6 +131,19 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+        TELEGRAM_API_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        ACCOUNTS_URL:
+          mutability: editable
+        DB_URL:
+          mutability: editable
+        GITHUB_APP_NAME:
+          mutability: editable
+        GITHUB_CLIENT_ID:
+          mutability: editable
         GITHUB_WEBHOOK_URL:
           mutability: editable
         REDIS_URL:
@@ -149,16 +154,8 @@ config_contract:
           mutability: editable
         TELEGRAM_API_ID:
           mutability: editable
-        TELEGRAM_API_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         UPLOAD_URL:
           mutability: editable
-      volumes:
-        huly-files:
-          mutability: generated
     huly-account:
       fields:
         ACCOUNTS_PORT:
@@ -212,3 +209,6 @@ config_contract:
       volumes:
         huly-redis:
           mutability: generated
+
+marketplace:
+  display_name: "Huly"

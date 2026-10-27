@@ -2,7 +2,7 @@ name: cryptpad
 version: 5.7.0
 app:
   type: custom
-  image: cryptpad/cryptpad:latest
+  image: cryptpad/cryptpad:version-2026.10.0
   ports:
   - "3000:3000"
   - "3001:3001"
@@ -44,3 +44,6 @@ config_contract:
           mutability: generated
         cryptpad-sessions:
           mutability: generated
+
+marketplace:
+  display_name: "CryptPad"

@@ -65,10 +65,10 @@ config_contract:
   services:
     app:
       fields:
-        APP_ENV:
-          mutability: editable
         HF_TOKEN:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         JWT_SECRET:
           mutability: generated
@@ -76,8 +76,12 @@ config_contract:
           length: 32
           display: password
         OPENAI_API_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
+        APP_ENV:
+          mutability: editable
         PGID:
           mutability: editable
           display: number
@@ -100,8 +104,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        scriberr_data:
-          mutability: generated
-        scriberr_env:
-          mutability: generated
+
+marketplace:
+  display_name: "Scriberr"

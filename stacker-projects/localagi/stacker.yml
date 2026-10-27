@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: quay.io/mudler/localagi:latest
+  image: quay.io/mudler/localagi:1.0.0
   ports:
     - "8080:3000"
   environment:
@@ -108,16 +108,15 @@ config_contract:
           length: 32
           display: password
         LOCALAGI_LLM_API_KEY:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         POSTGRES_PASSWORD:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-      volumes:
-        localagi_pool:
-          mutability: generated
     localai:
       fields:
         DEBUG:
@@ -169,3 +168,6 @@ config_contract:
       volumes:
         postgres_data:
           mutability: generated
+
+marketplace:
+  display_name: "Localagi"

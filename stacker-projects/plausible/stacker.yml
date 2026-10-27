@@ -22,7 +22,7 @@ app:
   healthcheck: null
 services:
 - name: plausible_db
-  image: postgres:16-alpine
+  image: postgres:16.4-alpine
   ports: []
   environment:
     POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -105,6 +105,20 @@ env_file: .env
 env: {}
 config_contract:
   services:
+    app:
+      fields:
+        SECRET_KEY_BASE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+    plausible_db:
+      fields:
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
     plausible:
       required:
       - BASE_URL
@@ -121,8 +135,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    plausible_db:
-      required:
-      - POSTGRES_DB
-      secret:
-      - POSTGRES_PASSWORD
+
+marketplace:
+  display_name: "Plausible"

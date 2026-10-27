@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: anycable/anycable-go:latest
+  image: anycable/anycable-go:1.4.4
   ports:
     - "8080:8080"
     - "50051:50051"
@@ -19,7 +19,7 @@ app:
 
 services:
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     ports:
       - "127.0.0.1:6379:6379"
     healthcheck:
@@ -66,3 +66,6 @@ config_contract:
           mutability: editable
           display: number
 env_file: .env
+
+marketplace:
+  display_name: "Anycable"

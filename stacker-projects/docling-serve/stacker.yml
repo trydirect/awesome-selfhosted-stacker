@@ -79,6 +79,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        docling_cache:
-          mutability: generated
+
+marketplace:
+  display_name: "Docling Serve"

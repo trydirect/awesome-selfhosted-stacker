@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: caronc/apprise:latest
+  image: caronc/apprise:2.0.2
   ports:
     - "8000:8000"
   environment:
@@ -55,3 +55,6 @@ env_file: .env
 volumes:
   apprise_config: {}
   apprise_state: {}
+
+marketplace:
+  display_name: "Apprise"

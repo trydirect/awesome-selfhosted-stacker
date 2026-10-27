@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: mattermost/focalboard:latest
+  image: mattermost/focalboard:7.11.4
   ports:
     - "8000:8000"
   environment:
@@ -20,7 +20,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -104,3 +104,6 @@ env_file: .env
 volumes:
   focalboard_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Focalboard"

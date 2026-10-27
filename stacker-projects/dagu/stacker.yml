@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: ghcr.io/dagucloud/dagu:latest
+  image: ghcr.io/dagucloud/dagu:v1.2.6
   ports:
     - "8080:8080"
   environment:
@@ -62,3 +62,6 @@ env_file: .env
 volumes:
   dagu_data: {}
   dagu_dags: {}
+
+marketplace:
+  display_name: "Dagu"

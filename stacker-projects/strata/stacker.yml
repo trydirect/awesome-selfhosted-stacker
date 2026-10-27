@@ -6,7 +6,7 @@ project:
 
 app:
   type: custom
-  image: trydirect/strata:latest
+  image: trydirect/strata:0.1.44
   path: strata-src
   dockerfile: Dockerfile
   environment:
@@ -60,3 +60,6 @@ env_file: .env
 
 volumes:
   strata-data: {}
+
+marketplace:
+  display_name: "Strata"

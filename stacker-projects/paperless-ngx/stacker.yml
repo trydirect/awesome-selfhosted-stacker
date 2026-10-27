@@ -7,7 +7,7 @@ app:
   type: python
   path: .
   dockerfile: null
-  image: ghcr.io/paperless-ngx/paperless-ngx:latest
+  image: ghcr.io/paperless-ngx/paperless-ngx:2.11.0
   build: null
   ports:
   - "8000:8000"
@@ -33,7 +33,7 @@ app:
   healthcheck: null
 services:
 - name: paperless_db
-  image: postgres:16-alpine
+  image: postgres:16.4-alpine
   ports:
   - "127.0.0.1:5432:5432"
   environment:
@@ -51,7 +51,7 @@ services:
     timeout: 5s
     retries: 10
 - name: redis
-  image: redis:7-alpine
+  image: redis:7.4-alpine
   ports:
   - "127.0.0.1:6380:6379"
   environment: {}
@@ -125,12 +125,12 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        PAPERLESS_DBPASS:
+        PAPERLESS_SECRET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        PAPERLESS_SECRET_KEY:
+        PAPERLESS_DBPASS:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -142,3 +142,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+
+marketplace:
+  display_name: "Paperless-ngx"

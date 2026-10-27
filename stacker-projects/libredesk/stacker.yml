@@ -2,7 +2,7 @@ name: libredesk
 
 app:
   type: custom
-  image: libredesk/libredesk:latest
+  image: libredesk/libredesk:v2.9.0
   ports:
     - "9000:9000/tcp"
   environment:
@@ -23,7 +23,7 @@ app:
 
 services:
   - name: db
-    image: postgres:17-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: libredesk
       POSTGRES_USER: libredesk
@@ -36,7 +36,7 @@ services:
       timeout: 5s
       retries: 6
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     healthcheck:
       test: "CMD redis-cli ping"
       interval: 10s
@@ -78,7 +78,9 @@ config_contract:
     app:
       fields:
         LIBREDESK_SYSTEM_USER_PASSWORD:
-          mutability: provided
+          mutability: generated
+          type: alphanumeric
+          length: 32
           display: password
         healthcheck:
           mutability: editable
@@ -94,9 +96,6 @@ config_contract:
           mutability: editable
         volumes:
           mutability: editable
-      volumes:
-        libredesk_uploads:
-          mutability: generated
     db:
       fields:
         POSTGRES_DB:
@@ -123,3 +122,6 @@ config_contract:
       volumes:
         libredesk_db:
           mutability: generated
+
+marketplace:
+  display_name: "Libredesk"

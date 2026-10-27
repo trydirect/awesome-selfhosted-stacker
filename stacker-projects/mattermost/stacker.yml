@@ -2,7 +2,7 @@ name: mattermost
 
 app:
   type: custom
-  image: mattermost/mattermost-enterprise-edition:latest
+  image: mattermost/mattermost-enterprise-edition:9.11
   ports:
     - "8065:8065"
   environment:
@@ -18,7 +18,7 @@ app:
 
 services:
   - name: mattermost-db
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: mattermost
       POSTGRES_USER: mattermost
@@ -96,3 +96,6 @@ config_contract:
         timeout:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Mattermost"

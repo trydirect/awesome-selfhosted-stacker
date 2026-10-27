@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: taleshape/shaper:latest
+  image: taleshape/shaper:1.0.0
   ports:
     - "8080:5454"
   environment:
@@ -53,3 +53,6 @@ env_file: .env
 
 volumes:
   shaper_data: {}
+
+marketplace:
+  display_name: "Shaper"

@@ -3,7 +3,7 @@ version: "8.1.0"
 
 app:
   type: custom
-  image: onlyoffice/documentserver:latest
+  image: onlyoffice/documentserver:8.1.1
   ports:
     - "80:80"
   environment:
@@ -28,25 +28,23 @@ config_contract:
   services:
     app:
       fields:
+        JWT_SECRET:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         JWT_ENABLED:
           mutability: editable
         JWT_HEADER:
           mutability: editable
         JWT_HEADER_SCHEMA:
           mutability: editable
-        JWT_SECRET:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         ONLYOFFICE_EXAMPLE:
           mutability: editable
         ONLYOFFICE_SAMPLE:
           mutability: editable
         WOPI_ENABLED:
           mutability: editable
-      volumes:
-        onlyoffice-data:
-          mutability: generated
-        onlyoffice-logs:
-          mutability: generated
+
+marketplace:
+  display_name: "OnlyOffice"

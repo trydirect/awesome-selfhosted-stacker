@@ -2232,3 +2232,18 @@ unclassified provisioner error + dead host.
 - No third identical attempt made (re-evaluate-before-retry rule). Awaiting
   platform-side diagnosis or an approved workaround (e.g. deploying the
   stack with non-conflicting host ports).
+## local-ai-packaged - FAILED
+
+- **Provider:** hetzner
+- **Date:** 2026-10-19 16:07
+- **Error:** stacker deploy failed (exit 1): ✗ Environment variable not found: $FLOWISE_USERNAME
+Error: Environment variable not found: $FLOWISE_USERNAME
+
+### Logs
+
+```
+1
+```
+
+---
+

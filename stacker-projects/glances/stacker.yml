@@ -10,7 +10,7 @@ install:
 
 app:
   type: custom
-  image: nicolargo/glances:latest-full
+  image: nicolargo/glances:4.3.0-full
   ports:
     - "61208:61208"
   environment:
@@ -51,3 +51,6 @@ config_contract:
         volumes:
           mutability: editable
 env_file: .env
+
+marketplace:
+  display_name: "Glances"

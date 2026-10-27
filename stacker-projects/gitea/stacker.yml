@@ -7,7 +7,7 @@ app:
   type: custom
   path: .
   dockerfile: null
-  image: gitea/gitea:latest
+  image: gitea/gitea:1.22.3
   build: null
   ports:
   - "3000:3000"
@@ -31,7 +31,7 @@ app:
   healthcheck: null
 services:
 - name: gitea_db
-  image: postgres:16-alpine
+  image: postgres:16.4-alpine
   ports:
   - "127.0.0.1:5432:5432"
   environment:
@@ -109,12 +109,12 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        GITEA_DATABASE_PASSWD:
+        GITEA_SECURITY_SECRET_KEY:
           mutability: generated
           type: alphanumeric
           length: 32
           display: password
-        GITEA_SECURITY_SECRET_KEY:
+        GITEA_DATABASE_PASSWD:
           mutability: generated
           type: alphanumeric
           length: 32
@@ -126,3 +126,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
+
+marketplace:
+  display_name: "Gitea"

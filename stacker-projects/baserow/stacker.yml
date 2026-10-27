@@ -9,7 +9,7 @@ install:
 
 app:
   type: custom
-  image: baserow/baserow:latest
+  image: baserow/baserow:2.4.1
   ports:
     - "80:80"
     - "443:443"
@@ -26,7 +26,7 @@ app:
 
 services:
   - name: postgres
-    image: postgres:16-alpine
+    image: postgres:16.4-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -42,7 +42,7 @@ services:
       retries: 5
 
   - name: redis
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     ports:
       - "127.0.0.1:6379:6379"
     healthcheck:
@@ -79,27 +79,27 @@ config_contract:
   services:
     app:
       fields:
+        DATABASE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        SECRET_KEY:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
         BASEROW_PUBLIC_URL:
           mutability: editable
         DATABASE_HOST:
           mutability: editable
         DATABASE_NAME:
           mutability: editable
-        DATABASE_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         DATABASE_PORT:
           mutability: editable
           display: number
         DATABASE_USER:
           mutability: editable
-        SECRET_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         volumes:
           mutability: editable
     postgres:
@@ -128,3 +128,6 @@ env_file: .env
 volumes:
   baserow_data: {}
   postgres_data: {}
+
+marketplace:
+  display_name: "Baserow"
