@@ -1,5 +1,6 @@
 #!/bin/sh
-# Mounted over the image's /docker-entrypoint.sh. Sets the instance owner from
+# The n8n service's entrypoint (run as `sh`, so it needs no executable bit),
+# in place of the image's /docker-entrypoint.sh. Sets the instance owner from
 # ADMIN_EMAIL / ADMIN_PASSWORD before n8n starts: an n8n without an owner lets
 # whoever opens it first create one, and N8N_INSTANCE_OWNER_PASSWORD_HASH only
 # accepts a bcrypt hash, which a deploy form cannot generate.
