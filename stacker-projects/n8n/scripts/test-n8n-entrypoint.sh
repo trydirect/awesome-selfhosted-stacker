@@ -3,23 +3,29 @@
 # Needs docker and curl.
 set -eu
 cd "$(dirname "$0")"
-IMAGE=$(sed -n 's/^  image: \(n8nio\/n8n:.*\)$/\1/p' ../stacker.yml)
+IMAGE=$(sed -n 's/^ *image: \(n8nio\/n8n:.*\)$/\1/p' ../stacker.yml)
+# A deploy uploads the script without its executable bit: test it that way.
+script=$(mktemp); cp n8n-entrypoint.sh "$script"; chmod 644 "$script"
+run() { docker run --entrypoint tini -v "$script:/n8n-entrypoint.sh:ro" "$@"; }
 name=n8n-entrypoint-test-$$
 port=${TEST_PORT:-15678}
 email=owner@example.com
 password=GeneratedPassw0rdx
-trap 'docker rm -f "$name" >/dev/null 2>&1 || true' EXIT
+trap 'docker rm -f "$name" >/dev/null 2>&1 || true; rm -f "$script"' EXIT
 fail() { echo "FAIL: $1" >&2; docker logs "$name" 2>&1 | tail -20 >&2; exit 1; }
 
+# The template starts the script through sh, so it does not need the bit.
+grep -q '^    entrypoint: "tini -- sh /n8n-entrypoint.sh"$' ../stacker.yml \
+  || fail "stacker.yml does not start n8n through sh /n8n-entrypoint.sh"
+
 # Without the login it refuses to start.
-if docker run --rm -v "$PWD/n8n-entrypoint.sh:/docker-entrypoint.sh:ro" "$IMAGE" >/dev/null 2>&1; then
+if run --rm "$IMAGE" -- sh /n8n-entrypoint.sh >/dev/null 2>&1; then
   fail "started without ADMIN_EMAIL / ADMIN_PASSWORD"
 fi
 
-docker run -d --name "$name" -p "127.0.0.1:$port:5678" \
-  -v "$PWD/n8n-entrypoint.sh:/docker-entrypoint.sh:ro" \
+run -d --name "$name" -p "127.0.0.1:$port:5678" \
   -e ADMIN_EMAIL="$email" -e ADMIN_PASSWORD="$password" -e N8N_SECURE_COOKIE=false \
-  "$IMAGE" >/dev/null
+  "$IMAGE" -- sh /n8n-entrypoint.sh >/dev/null
 
 tries=0
 until curl -sf "http://127.0.0.1:$port/healthz/readiness" >/dev/null; do

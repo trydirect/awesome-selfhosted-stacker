@@ -8,37 +8,36 @@ install:
   inputs:
     commonDomain: n8n.example.com
 
-app:
-  type: custom
-  image: n8nio/n8n:2.45.4
-  ports:
-    - "5678:5678"
-  environment:
-    DB_TYPE: postgresdb
-    DB_POSTGRESDB_HOST: postgres
-    DB_POSTGRESDB_PORT: 5432
-    DB_POSTGRESDB_DATABASE: n8n
-    DB_POSTGRESDB_USER: n8n
-    DB_POSTGRESDB_PASSWORD: "${POSTGRES_PASSWORD}"
-    N8N_ENCRYPTION_KEY: "${N8N_ENCRYPTION_KEY}"
-    # Owner login, applied on every start by scripts/n8n-entrypoint.sh
-    ADMIN_EMAIL: "${ADMIN_EMAIL}"
-    ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
-    # The UI is served over plain HTTP on the server's IP
-    N8N_SECURE_COOKIE: "false"
-  volumes:
-    - n8n_data:/home/node/.n8n
-    - "./scripts/n8n-entrypoint.sh:/docker-entrypoint.sh:ro"
-  depends_on:
-    - postgres
-  healthcheck:
-    test: "CMD-SHELL wget -qO- http://localhost:5678/healthz/readiness || exit 1"
-    interval: 10s
-    timeout: 5s
-    retries: 12
-    start_period: 60s
-
 services:
+  - name: n8n
+    image: n8nio/n8n:2.45.4
+    entrypoint: "tini -- sh /n8n-entrypoint.sh"
+    ports:
+      - "5678:5678"
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: "5432"
+      DB_POSTGRESDB_DATABASE: n8n
+      DB_POSTGRESDB_USER: n8n
+      DB_POSTGRESDB_PASSWORD: "${POSTGRES_PASSWORD}"
+      N8N_ENCRYPTION_KEY: "${N8N_ENCRYPTION_KEY}"
+      # Owner login, applied on every start by scripts/n8n-entrypoint.sh
+      ADMIN_EMAIL: "${ADMIN_EMAIL}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      # The UI is served over plain HTTP on the server's IP
+      N8N_SECURE_COOKIE: "false"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - "./scripts/n8n-entrypoint.sh:/n8n-entrypoint.sh:ro"
+    depends_on:
+      - postgres
+    healthcheck:
+      test: "CMD-SHELL wget -qO- http://localhost:5678/healthz/readiness || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
   - name: postgres
     image: postgres:17.11-alpine
     environment:
@@ -79,7 +78,7 @@ monitoring:
 
 config_contract:
   services:
-    app:
+    n8n:
       fields:
         POSTGRES_PASSWORD:
           mutability: generated
@@ -136,7 +135,7 @@ marketplace:
 
     | Service | Port | Description |
     | ------- | ---- | ----------- |
-    | app | 5678 (public) | `n8nio/n8n:2.45.4` |
+    | n8n | 5678 (public) | `n8nio/n8n:2.45.4` |
     | postgres | internal | `postgres:17.11-alpine`, workflows and executions |
 
     ## What you configure
