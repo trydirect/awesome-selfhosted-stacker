@@ -54,3 +54,22 @@ config_contract:
 marketplace:
   display_name: "Archivebox"
   short_description: "Self-hosted Archivebox application, ready to deploy with Stacker"
+
+  long_description: |
+    ## Archivebox
+    
+    A self-hosted Archivebox stack, ready to deploy with Stacker.
+    
+    ### Docker images
+    
+    - `archivebox/archivebox:0.7.0`
+    
+    ### Quick start
+    
+    ```bash
+    stacker install ArchiveBox
+    ```
+    
+    ### Configuration
+    
+    Secrets and passwords are auto-generated on first deploy. Customize via `stacker.yml` or environment variables.

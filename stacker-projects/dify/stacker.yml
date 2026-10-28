@@ -106,3 +106,31 @@ volumes:
 marketplace:
   display_name: "Dify"
   short_description: "Self-hosted Dify application, ready to deploy with Stacker"
+
+  long_description: |
+    ## Dify
+    
+    A self-hosted Dify stack, ready to deploy with Stacker.
+    
+    ### What's included
+    
+    - **Api** (api)
+    - **Db** (db)
+    - **Redis** (redis)
+    
+    ### Docker images
+    
+    - `langgenius/dify-web:0.11.2`
+    - `langgenius/dify-api:0.11.2`
+    - `postgres:15`
+    - `redis:7.4-alpine`
+    
+    ### Quick start
+    
+    ```bash
+    stacker install dify
+    ```
+    
+    ### Configuration
+    
+    Secrets and passwords are auto-generated on first deploy. Customize via `stacker.yml` or environment variables.
