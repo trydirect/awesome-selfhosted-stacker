@@ -32,6 +32,11 @@ if need "SECRET_KEY"; then
   echo "  Generated SECRET_KEY"
 fi
 
+if need "POSTGRES_PASSWORD"; then
+  sed -i '' "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$(openssl rand -hex 16)/" .env
+  echo "  Generated POSTGRES_PASSWORD"
+fi
+
 if need "JWT_SECRET"; then
   sed -i '' "s/^JWT_SECRET=.*/JWT_SECRET=$(openssl rand -hex 32)/" .env
   echo "  Generated JWT_SECRET"
