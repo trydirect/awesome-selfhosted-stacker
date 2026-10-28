@@ -5,9 +5,12 @@ After a template is deployed and verified, instead of `stacker destroy`:
   1. read the deployment lock (deployment id, build box IP, SSH key);
   2. record the build box's generated values and SSH host key;
   3. POST /api/admin/bake on the stacker API and poll it until done;
-  4. smoke clone: POST /api/v1/deploy/clone, wait until the clone is healthy;
+  4. smoke clone: POST /api/v1/deploy/clone of the `unstable` (not yet
+     promoted) bake, wait until the clone is healthy;
   5. check every `generated` value and the SSH host key differ on the clone;
-  6. append one row to BAKES.md, with the servers to remove.
+  6. when all is green, POST /api/admin/bake/{id}/promote: only then do
+     buyers get the new image (it becomes `latest`, the old one `stable`);
+  7. append one row to BAKES.md, with the servers to remove.
 
 Nothing here deletes a server. The build box and the clone are listed in
 BAKES.md and removed by hand (BAKE_PIPELINE_PLAN.md, decision 1).
@@ -320,19 +323,22 @@ def bake(template, work_dir, bakes_file, log=print):
         return False
     image_id = job["image_id"]
     return smoke(template, version, image_id, stacker_yml, build_env, build_host_key,
-                 keys, servers, bakes_file, log)
+                 keys, servers, bakes_file, log, job_id=job["id"])
 
 
 def smoke(template, version, image_id, stacker_yml, build_env, build_host_key,
-          keys, servers, bakes_file, log=print):
+          keys, servers, bakes_file, log=print, job_id=None):
     """Smoke-clone a baked image as a buyer would, check it, record it.
-    Callable on its own to repeat the smoke of an image already baked."""
+    With `job_id`, a green smoke promotes that bake to buyers. Callable on its
+    own (no `job_id`) to repeat the smoke of an image already baked."""
     log(f"  [bake 4/5] Smoke clone of image {image_id} ...")
     status, clone = api("POST", "/api/v1/deploy/clone", {
         "stack": template,
         "version": version,
         "domain": f"{template}-smoke.try.direct",
         "env": buyer_env(stacker_yml, os.environ),
+        # The bake buyers cannot see yet; stacker allows this for admins only.
+        "channel": "unstable",
     }, timeout=300)
     if status != 200:
         append_bakes_row(bakes_file, bakes_row(template, version, image_id, f"clone refused {status}: {clone}", servers))
@@ -359,8 +365,16 @@ def smoke(template, version, image_id, stacker_yml, build_env, build_host_key,
         if build_host_key and clone_host_key == build_host_key:
             problems.append("SSH host key same as the build box")
 
+    promoted = False
+    if not problems and job_id:
+        status, resp = api("POST", f"/api/admin/bake/{job_id}/promote")
+        if status == 200:
+            promoted = True
+        else:
+            problems.append(f"promote refused {status}: {resp}")
+
     log("  [bake 5/5] Recording in BAKES.md ...")
-    smoke = "ok" if not problems else "FAIL: " + ", ".join(problems)
+    smoke = ("ok, promoted" if promoted else "ok") if not problems else "FAIL: " + ", ".join(problems)
     append_bakes_row(bakes_file, bakes_row(template, version, image_id, smoke, servers))
     log(f"  {'OK' if not problems else 'FAIL'}: {smoke}")
     log("  Servers to remove by hand: " + "; ".join(servers))

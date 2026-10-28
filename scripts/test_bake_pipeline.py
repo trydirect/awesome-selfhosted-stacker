@@ -4,6 +4,7 @@ Run: uv run --with pyyaml python3 -m unittest scripts/test_bake_pipeline.py
 """
 
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -176,6 +177,74 @@ class BakesRow(unittest.TestCase):
             row,
             "| 2026-10-15 | n8n | 1.2.0 | 555 | ok | build box demo-build 203.0.113.7; clone 9001 198.51.100.4 |",
         )
+
+
+class SmokeAndPromote(unittest.TestCase):
+    """smoke() with the API and the servers faked: what it asks stacker for."""
+
+    def run_smoke(self, healthy=True, promote_status=200, job_id="job-1"):
+        calls = []
+
+        def api(method, path, body=None, timeout=60):
+            calls.append((method, path, body))
+            if path == "/api/v1/deploy/clone":
+                return 200, {"server_id": 9001, "public_ipv4": "198.51.100.4",
+                             "ssh_private_key": "KEY"}
+            if path.endswith("/promote"):
+                return promote_status, {"item": {"promoted": True}}
+            raise AssertionError(f"unexpected call {method} {path}")
+
+        fakes = {
+            "api": api,
+            "wait_http": lambda url, timeout=900: (healthy, "fake"),
+            "ssh": lambda *a, **k: "N8N_ENCRYPTION_KEY=new\nPOSTGRES_PASSWORD=new\n",
+            "host_key": lambda ip: "clone-key",
+        }
+        saved = {name: getattr(bp, name) for name in fakes}
+        for name, fake in fakes.items():
+            setattr(bp, name, fake)
+        try:
+            with tempfile.TemporaryDirectory() as d:
+                bakes = Path(d) / "BAKES.md"
+                ok = bp.smoke(
+                    "demo", "1.0", 555, STACKER_YML,
+                    {"N8N_ENCRYPTION_KEY": "old", "POSTGRES_PASSWORD": "old"},
+                    "build-key", ["N8N_ENCRYPTION_KEY", "POSTGRES_PASSWORD"],
+                    ["build box demo-build 203.0.113.7"], bakes,
+                    log=lambda *a: None, job_id=job_id,
+                )
+                row = bakes.read_text().splitlines()[-1]
+        finally:
+            for name, real in saved.items():
+                setattr(bp, name, real)
+        return ok, calls, row
+
+    def test_the_smoke_clone_asks_for_the_unpromoted_bake(self):
+        _, calls, _ = self.run_smoke()
+        clone = [body for _, path, body in calls if path == "/api/v1/deploy/clone"]
+        self.assertEqual(clone[0]["channel"], "unstable")
+
+    def test_a_green_smoke_promotes_the_bake(self):
+        ok, calls, row = self.run_smoke()
+        self.assertTrue(ok)
+        self.assertIn(("POST", "/api/admin/bake/job-1/promote", None), calls)
+        self.assertIn("| ok, promoted |", row)
+
+    def test_a_failed_smoke_does_not_promote(self):
+        ok, calls, _ = self.run_smoke(healthy=False)
+        self.assertFalse(ok)
+        self.assertFalse([c for c in calls if c[1].endswith("/promote")])
+
+    def test_a_refused_promote_is_not_a_pass(self):
+        ok, _, row = self.run_smoke(promote_status=409)
+        self.assertFalse(ok)
+        self.assertIn("promote refused 409", row)
+
+    def test_a_smoke_repeated_on_its_own_promotes_nothing(self):
+        ok, calls, row = self.run_smoke(job_id=None)
+        self.assertTrue(ok)
+        self.assertFalse([c for c in calls if c[1].endswith("/promote")])
+        self.assertIn("| ok |", row)
 
 
 if __name__ == "__main__":
