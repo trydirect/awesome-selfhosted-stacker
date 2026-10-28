@@ -11,12 +11,19 @@ name=n8n-entrypoint-test-$$
 port=${TEST_PORT:-15678}
 email=owner@example.com
 password=GeneratedPassw0rdx
+db_password=$(od -An -N12 -tx1 /dev/urandom | tr -d ' \n')
 trap 'docker rm -f "$name" >/dev/null 2>&1 || true; rm -f "$script"' EXIT
 fail() { echo "FAIL: $1" >&2; docker logs "$name" 2>&1 | tail -20 >&2; exit 1; }
 
 # The template starts the script through sh, so it does not need the bit.
 grep -q '^    entrypoint: "tini -- sh /n8n-entrypoint.sh"$' ../stacker.yml \
   || fail "stacker.yml does not start n8n through sh /n8n-entrypoint.sh"
+
+# The template passes the database password only as POSTGRES_PASSWORD (the
+# entrypoint maps it to DB_POSTGRESDB_PASSWORD): a second secret-shaped name
+# for the same value makes a marketplace submit or bake refuse the template.
+grep -q '^      DB_POSTGRESDB_PASSWORD:' ../stacker.yml \
+  && fail "stacker.yml still sets DB_POSTGRESDB_PASSWORD on the n8n service"
 
 # Without the login it refuses to start.
 if run --rm "$IMAGE" -- sh /n8n-entrypoint.sh >/dev/null 2>&1; then
@@ -25,6 +32,7 @@ fi
 
 run -d --name "$name" -p "127.0.0.1:$port:5678" \
   -e ADMIN_EMAIL="$email" -e ADMIN_PASSWORD="$password" -e N8N_SECURE_COOKIE=false \
+  -e POSTGRES_PASSWORD="$db_password" \
   "$IMAGE" -- sh /n8n-entrypoint.sh >/dev/null
 
 tries=0
@@ -47,5 +55,10 @@ login() {
 # (the n8n process is the only child of tini, PID 1)
 docker exec "$name" sh -c 'cat /proc/$(pgrep -P 1 | head -1)/environ | tr "\0" "\n"' \
   | grep -q '^ADMIN_PASSWORD=' && fail "ADMIN_PASSWORD is visible to the n8n process"
+
+# n8n gets the database password under the name it reads.
+docker exec "$name" sh -c 'cat /proc/$(pgrep -P 1 | head -1)/environ | tr "\0" "\n"' \
+  | grep -qx "DB_POSTGRESDB_PASSWORD=$db_password" \
+  || fail "DB_POSTGRESDB_PASSWORD is not set from POSTGRES_PASSWORD"
 
 echo "n8n-entrypoint: all tests passed"

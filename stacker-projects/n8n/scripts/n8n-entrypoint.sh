@@ -18,6 +18,9 @@ export N8N_INSTANCE_OWNER_MANAGED_BY_ENV=true
 export N8N_INSTANCE_OWNER_EMAIL="$ADMIN_EMAIL"
 export N8N_INSTANCE_OWNER_PASSWORD_HASH
 unset ADMIN_PASSWORD
+# The template passes the database password as POSTGRES_PASSWORD only, so
+# one secret has one name in the marketplace contract.
+export DB_POSTGRESDB_PASSWORD="${POSTGRES_PASSWORD:-}"
 
 # The rest is the image's own entrypoint.
 if [ -d /opt/custom-certificates ]; then
