@@ -67,3 +67,27 @@ config_contract:
 marketplace:
   display_name: "Wikijs"
   short_description: "Self-hosted Wikijs application, ready to deploy with Stacker"
+
+  long_description: |
+    ## Wikijs
+    
+    A self-hosted Wikijs stack, ready to deploy with Stacker.
+    
+    ### What's included
+    
+    - **Postgres** (postgres)
+    
+    ### Docker images
+    
+    - `ghcr.io/requarks/wiki:2`
+    - `postgres:16.4-alpine`
+    
+    ### Quick start
+    
+    ```bash
+    stacker install wikijs
+    ```
+    
+    ### Configuration
+    
+    Secrets and passwords are auto-generated on first deploy. Customize via `stacker.yml` or environment variables.

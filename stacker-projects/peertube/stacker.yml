@@ -119,3 +119,31 @@ config_contract:
 marketplace:
   display_name: "Peertube"
   short_description: "Self-hosted Peertube application, ready to deploy with Stacker"
+
+  long_description: |
+    ## Peertube
+    
+    A self-hosted Peertube stack, ready to deploy with Stacker.
+    
+    ### What's included
+    
+    - **Postgres** (postgres)
+    - **Redis** (redis)
+    - **Mailcatcher** (mailcatcher)
+    
+    ### Docker images
+    
+    - `chocobozzz/peertube:production`
+    - `postgres:16.4-alpine`
+    - `redis:7.4-alpine`
+    - `sj26/mailcatcher:0.9.0`
+    
+    ### Quick start
+    
+    ```bash
+    stacker install peertube
+    ```
+    
+    ### Configuration
+    
+    Secrets and passwords are auto-generated on first deploy. Customize via `stacker.yml` or environment variables.
