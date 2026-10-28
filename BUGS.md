@@ -2280,3 +2280,20 @@ Error: Environment variable not found: $FLOWISE_USERNAME
   (`AUTH_ACCOUNTS: admin:${LIGHTRAG_ADMIN_PASSWORD}`) has nothing to resolve
   (stacker BUGS #12). Workaround used: deploy the build box from the project
   directory with its own `.env`, then bake that deployment.
+
+## [FEATURE] marketplace: validate vendor logo URLs — reject external URLs (found 2026-10-28)
+
+- **Observed:** vendor profile at `try.direct/applications/marketplace/author/optimum`
+  loads avatar from `https://optimum-web.com/images/optimum-web-logo.png` (external
+  domain). The image fails to load ("Could not load the image"), confirming the
+  fragility of external asset URLs.
+- **Expected:** platform should reject or proxy external logo/avatar URLs. Only
+  `try.direct`-hosted assets should be allowed.
+- **Impact:** broken images on vendor profiles and template listings, privacy leaks
+  (third-party requests), potential for malicious image replacement after approval.
+- **Proposed fix:**
+  1. Validate at upload: reject logo/avatar URLs not on `try.direct`
+  2. Or proxy all external images through `try.direct` (cache + sanitize)
+  3. Document the policy in the vendor onboarding flow
+- **Workaround:** vendors must upload logos through the dashboard, not link externally.
+  Policy documented in `docs/marketplace-description-guide.md`.
