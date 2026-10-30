@@ -181,3 +181,23 @@ config_contract:
 
 marketplace:
   display_name: "Tradingagents"
+  short_description: "Self-hosted Tradingagents application, ready to deploy with Stacker"
+
+  long_description: |
+    ## Tradingagents
+    
+    A self-hosted Tradingagents stack, ready to deploy with Stacker.
+    
+    ### Docker images
+    
+    - `optimum/tradingagents:1.0.0`
+    
+    ### Quick start
+    
+    ```bash
+    stacker install tradingagents
+    ```
+    
+    ### Configuration
+    
+    Secrets and passwords are auto-generated on first deploy. Customize via `stacker.yml` or environment variables.

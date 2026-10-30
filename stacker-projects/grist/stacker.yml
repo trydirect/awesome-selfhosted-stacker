@@ -60,7 +60,7 @@ volumes:
 
 marketplace:
   publish: true
-  display_name: "Grist App"
+  display_name: "Grist"
   short_description: "Spreadsheet-database hybrid with relational data, formulas, and custom views"
   long_description: |
     **grist**: Spreadsheet-database hybrid with relational data, formulas, and custom views

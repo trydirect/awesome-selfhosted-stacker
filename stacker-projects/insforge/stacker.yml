@@ -42,3 +42,19 @@ config_contract:
 
 marketplace:
   display_name: "Insforge"
+  short_description: "Self-hosted Insforge application, ready to deploy with Stacker"
+
+  long_description: |
+    ## Insforge
+    
+    A self-hosted Insforge stack, ready to deploy with Stacker.
+    
+    ### Quick start
+    
+    ```bash
+    stacker install insforge
+    ```
+    
+    ### Configuration
+    
+    Secrets and passwords are auto-generated on first deploy. Customize via `stacker.yml` or environment variables.

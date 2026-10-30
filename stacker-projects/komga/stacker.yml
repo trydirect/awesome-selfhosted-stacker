@@ -56,7 +56,7 @@ volumes:
 
 marketplace:
   publish: true
-  display_name: "Komga App"
+  display_name: "Komga"
   short_description: "Comic and manga server with OPDS support, web reader, and metadata management"
   long_description: |
     **komga**: Comic and manga server with OPDS support, web reader, and metadata management

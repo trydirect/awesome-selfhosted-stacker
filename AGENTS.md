@@ -68,6 +68,15 @@ stacker-projects/<name>/     # one independent project per subdirectory, each wi
 
 ## Working conventions in this repo
 
+- **Read the history before you change or commit anything.** For every file
+  you are about to touch, run `git fetch origin` and read its history on
+  `origin/main` (`git log --follow -p origin/main -- <file>`) and the linked
+  PRs, and understand why the current lines are the way they are. Do not
+  undo, "simplify" or re-add something without knowing why it was changed;
+  if the reason is unclear, ask. Commit on a fresh branch from the latest
+  `origin/main`, change only the lines the fix needs, and never force-push
+  `main` (a stale local `main` pushed over origin silently drops other
+  people's merged work).
 - **Re-evaluate before every retry or deployment.** Re-read the applicable
   `stacker.yml`, `SKILL.md`, deployment status/events, existing success files,
   lock files, and known failures. Confirm the next command addresses the

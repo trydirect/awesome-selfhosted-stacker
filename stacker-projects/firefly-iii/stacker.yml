@@ -101,4 +101,29 @@ config_contract:
           mutability: generated
 
 marketplace:
-  display_name: "Firefly III"
+  display_name: "Firefly Iii"
+  short_description: "Self-hosted Firefly Iii application, ready to deploy with Stacker"
+
+  long_description: |
+    ## Firefly Iii
+    
+    A self-hosted Firefly Iii stack, ready to deploy with Stacker.
+    
+    ### What's included
+    
+    - **Postgres** (postgres)
+    
+    ### Docker images
+    
+    - `fireflyiii/core:version-6.1.24`
+    - `postgres:16.4-alpine`
+    
+    ### Quick start
+    
+    ```bash
+    stacker install firefly-iii
+    ```
+    
+    ### Configuration
+    
+    Secrets and passwords are auto-generated on first deploy. Customize via `stacker.yml` or environment variables.

@@ -51,7 +51,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Docker Socket Proxy App"
+  display_name: "Docker Socket Proxy"
   short_description: "Self-hosted docker-socket-proxy"
   long_description: |
     **docker-socket-proxy**: Self-hosted docker-socket-proxy

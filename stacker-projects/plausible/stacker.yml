@@ -135,11 +135,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-    plausible_db:
-      required:
-      - POSTGRES_DB
-      secret:
-      - POSTGRES_PASSWORD
 
 marketplace:
   publish: true

@@ -65,7 +65,7 @@ volumes:
 
 marketplace:
   publish: true
-  display_name: "Filebrowser App"
+  display_name: "Filebrowser"
   short_description: "Self-hosted filebrowser"
   long_description: |
     **filebrowser**: Self-hosted filebrowser

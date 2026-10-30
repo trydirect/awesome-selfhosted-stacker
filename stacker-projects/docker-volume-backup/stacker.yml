@@ -55,7 +55,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Docker Volume Backup App"
+  display_name: "Docker Volume Backup"
   short_description: "Self-hosted docker-volume-backup"
   long_description: |
     **docker-volume-backup**: Self-hosted docker-volume-backup

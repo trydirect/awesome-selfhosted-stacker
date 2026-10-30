@@ -124,7 +124,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Akaunting App"
+  display_name: "Akaunting"
   short_description: "Self-hosted akaunting"
   long_description: |
     **Akaunting**: Self-hosted akaunting

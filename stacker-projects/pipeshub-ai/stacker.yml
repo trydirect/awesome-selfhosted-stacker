@@ -1,5 +1,5 @@
 name: pipeshub-ai
-version: "0.10.0"
+version: "0.10.1"
 
 project:
   identity: pipeshub-ai
@@ -44,9 +44,6 @@ app:
     CONNECTOR_BACKEND: http://localhost:8088
     INDEXING_BACKEND: http://localhost:8091
     EMBEDDING_SERVER_URL: http://localhost:8002
-    AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
-    AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
-    AWS_REGION: "${AWS_REGION}"
   volumes:
     - pipeshub_data:/data/pipeshub
     - pipeshub_root_local:/root/.local
@@ -100,6 +97,17 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+  - name: claim-org
+    image: curlimages/curl:8.23.0
+    command: "sh /claim-org.sh"
+    environment:
+      ADMIN_EMAIL: "${ADMIN_EMAIL}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+    volumes:
+      - "./scripts/claim-org.sh:/claim-org.sh:ro"
+    depends_on:
+      - app
+    restart: "no"
   - name: neo4j
     image: neo4j:5.26.0
     environment:
@@ -143,7 +151,7 @@ deploy:
     provider: hetzner
     ssh_key: ${BASE_PATH}/stacker-project-test
     region: fsn1
-    size: cpx42
+    size: cpx32
     public_ports:
       - "3000"
 
@@ -157,16 +165,6 @@ config_contract:
   services:
     app:
       fields:
-        AWS_ACCESS_KEY_ID:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
-        AWS_SECRET_ACCESS_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         COOKIE_SECRET:
           mutability: generated
           type: alphanumeric
@@ -204,8 +202,6 @@ config_contract:
           display: password
         ALLOWED_ORIGINS:
           mutability: editable
-        AWS_REGION:
-          mutability: provided
         FRONTEND_PUBLIC_URL:
           mutability: editable
         MONGO_PASSWORD:
@@ -231,11 +227,6 @@ config_contract:
           mutability: editable
     mongodb:
       fields:
-        MONGO_INITDB_ROOT_PASSWORD:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         MONGO_INITDB_ROOT_USERNAME:
           mutability: editable
         healthcheck:
@@ -282,11 +273,6 @@ config_contract:
           type: alphanumeric
           length: 32
           display: password
-        QDRANT__SERVICE__API_KEY:
-          mutability: generated
-          type: alphanumeric
-          length: 32
-          display: password
         healthcheck:
           mutability: editable
         interval:
@@ -304,6 +290,15 @@ config_contract:
       volumes:
         qdrant_storage:
           mutability: generated
+    claim-org:
+      fields:
+        ADMIN_EMAIL:
+          mutability: provided
+          pattern: "^[^@\\s\"]+@[^@\\s\"]+\\.[^@\\s\"]+$"
+        ADMIN_PASSWORD:
+          mutability: provided
+          display: password
+          pattern: "^[A-Za-z0-9#?!@$%^&*-]{12,72}$"
     neo4j:
       fields:
         NEO4J_AUTH:
@@ -336,58 +331,59 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Pipeshub Ai"
-  short_description: "AI knowledge hub, connect data sources for enterprise RAG"
+  display_name: "PipesHub"
+  short_description: "Self-hosted AI search and assistant over your company's documents, chats and tickets"
   long_description: |
-    **Pipeshub AI**: AI knowledge hub, connect data sources for enterprise RAG
+    **PipesHub** (v0.10.0) is an open-source enterprise search and AI
+    assistant: connect Slack, Google Drive, GitHub, Microsoft 365, Notion
+    and 50+ other sources, and get answers with citations from your own
+    data.
 
     Deploy from this page: TryDirect provisions the server, starts the
-    services, generates the deployment credentials and wires the
-    5 containers together. Nothing is shared between deployments and no
-    secrets ship with the stack.
+    services and generates every database password and signing secret
+    for this deployment. Nothing is shared between deployments.
 
     ## What's included
 
     | Service | Port | Description |
     | ------- | ---- | ----------- |
-    | app | 3000 (public) | `pipeshubai/pipeshub-ai:0.10.0` |
-    | mongodb | internal | Database |
-    | redis | internal | Cache |
+    | app | 3000 (public) | `pipeshubai/pipeshub-ai:0.10.0` (web UI and API) |
+    | mongodb | internal | Accounts, settings, documents |
+    | redis | internal | Cache and message broker |
     | qdrant | internal | Vector database |
-    | neo4j | internal | `neo4j:5.26.0` |
+    | neo4j | internal | Knowledge graph |
+    | claim-org | none | One-shot: creates your admin account at first boot |
 
     ## What you configure
 
-    - **Domain** (`commonDomain`): the hostname the stack is served on
-    - **AWS_REGION**: you provide this in the deploy form
-    - **Defaults provided**: `ALLOWED_ORIGINS`, `FRONTEND_PUBLIC_URL`, `TELEMETRY_COLLECTION_FLAG`, `MONGO_INITDB_ROOT_USERNAME`, `NEO4J_AUTH` ship prefilled and can be adjusted in the deploy form
+    - **ADMIN_EMAIL** and **ADMIN_PASSWORD**: your admin login. The
+      password needs 12+ characters with an uppercase letter, a lowercase
+      letter, a number and one of `#?!@$%^&*-`.
+    - **LLM provider**: chosen in the PipesHub onboarding wizard after
+      you sign in (OpenAI, Anthropic, Gemini, Ollama and others). A local
+      embedding model is the default.
 
-    All 15 credentials (passwords and keys) are generated per
-    deployment and stored in your project's secret store.
+    The admin account is created automatically as soon as the app is up
+    (a few minutes after the server starts), so a fresh instance is not
+    left open for someone else to claim.
 
     ## Requirements
 
-    - A cloud account connected to TryDirect (the deploy form provisions
-      the server) or one of your own servers
-    - A server that fits 5 containers (4 GB RAM or more recommended)
-    - A DNS record for the domain you set in the deploy form
+    - 8 GB RAM or more (the stack uses about 5 GB at rest)
+    - The UI is served over plain HTTP on port 3000; put it behind HTTPS
+      before connecting real company data
 
     ## Alternative: deploy with the Stacker CLI
-
-    Everything above also works from the command line:
 
     ```bash
     git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
     cd awesome-selfhosted-stacker/stacker-projects/pipeshub-ai
-
-    # Generate secrets
-    cp .env.example .env
+    cp .env.example .env    # set ADMIN_EMAIL and ADMIN_PASSWORD
     ./scripts/generate-secrets.sh
-
-    # Deploy
     stacker deploy
     ```
-  category: devops
-  tags: [pipeshub ai]
+  category: ai-agents
+  tags: [pipeshub, rag, enterprise-search, knowledge-base, ai-assistant]
+  license: free
   support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/pipeshub-ai
   no_secrets_confirmation: true

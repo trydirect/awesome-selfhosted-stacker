@@ -109,3 +109,23 @@ config_contract:
 
 marketplace:
   display_name: "Bolt Diy"
+  short_description: "Self-hosted Bolt Diy application, ready to deploy with Stacker"
+
+  long_description: |
+    ## Bolt Diy
+    
+    A self-hosted Bolt Diy stack, ready to deploy with Stacker.
+    
+    ### Docker images
+    
+    - `ghcr.io/stackblitz-labs/bolt.diy:v0.0.11`
+    
+    ### Quick start
+    
+    ```bash
+    stacker install bolt-diy
+    ```
+    
+    ### Configuration
+    
+    Secrets and passwords are auto-generated on first deploy. Customize via `stacker.yml` or environment variables.

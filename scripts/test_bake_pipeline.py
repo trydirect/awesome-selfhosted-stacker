@@ -119,6 +119,20 @@ class HealthUrl(unittest.TestCase):
         yml = "name: x\napp:\n  ports: ['127.0.0.1:9000:9000', '3000:3000']\n"
         self.assertEqual(bp.health_url("203.0.113.7", yml), "http://203.0.113.7:3000/")
 
+    def test_a_stack_without_app_uses_its_first_public_port(self):
+        yml = (
+            "name: x\nservices:\n  - name: n8n\n    ports: ['5678:5678']\n"
+            "deploy:\n  cloud:\n    public_ports: ['5678']\n"
+        )
+        self.assertEqual(bp.health_url("203.0.113.7", yml), "http://203.0.113.7:5678/")
+
+    def test_a_stack_without_app_or_public_ports_uses_a_service_port(self):
+        yml = (
+            "name: x\nservices:\n  - name: db\n    ports: ['127.0.0.1:5432:5432']\n"
+            "  - name: web\n    ports: ['8080:80']\n"
+        )
+        self.assertEqual(bp.health_url("203.0.113.7", yml), "http://203.0.113.7:8080/")
+
 
 class Lock(unittest.TestCase):
     def test_the_fields_the_bake_needs(self):

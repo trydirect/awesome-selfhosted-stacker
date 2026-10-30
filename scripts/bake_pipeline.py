@@ -119,9 +119,18 @@ def _published_port(mapping):
 
 
 def health_url(server_ip, stacker_yml_text):
-    """The app's first public port plus `monitoring.healthcheck.endpoint`."""
+    """The app's first public port plus `monitoring.healthcheck.endpoint`.
+
+    A stack without `app` (services only) uses its first firewall-opened
+    `deploy.cloud.public_ports` entry, else the first public service port.
+    """
     doc = _yaml().safe_load(stacker_yml_text) or {}
     ports = ((doc.get("app") or {}).get("ports")) or []
+    if not ports:
+        cloud = ((doc.get("deploy") or {}).get("cloud")) or {}
+        ports = list(cloud.get("public_ports") or [])
+        for svc in doc.get("services") or []:
+            ports += (svc or {}).get("ports") or []
     port = next((p for p in map(_published_port, ports) if p), None)
     endpoint = (((doc.get("monitoring") or {}).get("healthcheck")) or {}).get("endpoint") or "/"
     if not endpoint.startswith("/"):

@@ -16,7 +16,7 @@ services:
     ports:
       - "5001:5001"
     environment:
-      SECRET_KEY: "${SECRET_KEY:-auto-generated-key-change-in-production}"
+      SECRET_KEY: "${SECRET_KEY}"
       CONSOLE_API_URL: "https://${commonDomain}"
       APP_API_URL: "https://${commonDomain}"
     volumes:
@@ -29,7 +29,7 @@ services:
     environment:
       POSTGRES_DB: dify
       POSTGRES_USER: dify
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-auto-generated-password}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
     volumes:
       - db_data:/var/lib/postgresql/data
   - name: redis
@@ -105,3 +105,32 @@ volumes:
 
 marketplace:
   display_name: "Dify"
+  short_description: "Self-hosted Dify application, ready to deploy with Stacker"
+
+  long_description: |
+    ## Dify
+    
+    A self-hosted Dify stack, ready to deploy with Stacker.
+    
+    ### What's included
+    
+    - **Api** (api)
+    - **Db** (db)
+    - **Redis** (redis)
+    
+    ### Docker images
+    
+    - `langgenius/dify-web:0.11.2`
+    - `langgenius/dify-api:0.11.2`
+    - `postgres:15`
+    - `redis:7.4-alpine`
+    
+    ### Quick start
+    
+    ```bash
+    stacker install dify
+    ```
+    
+    ### Configuration
+    
+    Secrets and passwords are auto-generated on first deploy. Customize via `stacker.yml` or environment variables.

@@ -135,7 +135,7 @@ config_contract:
 
 marketplace:
   publish: true
-  display_name: "Fossbilling App"
+  display_name: "Fossbilling"
   short_description: "Self-hosted fossbilling"
   long_description: |
     **fossbilling**: Self-hosted fossbilling
