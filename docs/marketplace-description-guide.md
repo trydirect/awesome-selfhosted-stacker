@@ -102,3 +102,25 @@ Reference implementation: `stacker-projects/supabase/stacker.yml`.
 CLI flags override these values when present
 (`stacker submit --description ... --long-description ...`), so a one-off
 rewrite can also be done without editing `stacker.yml`.
+
+---
+
+## Vendor assets policy
+
+### Logos and avatars
+
+Vendor logos and avatars **must be hosted on TryDirect** (`try.direct` domain).
+External URLs (e.g. `https://example.com/logo.png`) are not allowed because:
+
+- **Broken links** - external domains can expire, change, or return 404
+- **Privacy** - third-party requests leak visitor IPs and referrers
+- **Bandwidth theft** - hotlinking consumes the vendor's (or victim's) bandwidth
+- **Security** - external images can be replaced with malicious content after approval
+
+**Upload your logo through the vendor dashboard** instead of referencing an
+external URL. The platform stores it on `try.direct` and serves it from there.
+
+### Stack screenshots and diagrams
+
+The same rule applies to any image embedded in `long_description`: prefer text
+descriptions, service tables, and CLI recipes over external image links.
