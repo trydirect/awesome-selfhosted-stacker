@@ -201,6 +201,9 @@ deploy:
 
 monitoring:
   status_panel: true
+  healthcheck:
+    # Kong has no route at /; GoTrue's health check is public.
+    endpoint: /auth/v1/health
 
 hooks:
   pre_build: ./scripts/generate-secrets.sh
@@ -288,9 +291,10 @@ config_contract:
           length: 64
           display: password
         DB_ENC_KEY:
+          # Realtime uses it as an AES-128 key: exactly 16 bytes.
           mutability: generated
           type: alphanumeric
-          length: 32
+          length: 16
           display: password
         METRICS_JWT_SECRET:
           mutability: generated
@@ -338,13 +342,25 @@ config_contract:
           display: password
         ANON_KEY:
           mutability: generated
-          type: alphanumeric
-          length: 32
+          type: derived_jwt
+          signing_key: storage.JWT_SECRET
+          claims:
+            exp: 1918252800
+            iat: 1760486400
+            iss: supabase
+            role: anon
+          alg: HS256
           display: password
         SERVICE_ROLE_KEY:
           mutability: generated
-          type: alphanumeric
-          length: 32
+          type: derived_jwt
+          signing_key: storage.JWT_SECRET
+          claims:
+            exp: 1918252800
+            iat: 1760486400
+            iss: supabase
+            role: service_role
+          alg: HS256
           display: password
         JWT_SECRET:
           mutability: generated
@@ -441,13 +457,25 @@ config_contract:
           display: password
         ANON_KEY:
           mutability: generated
-          type: alphanumeric
-          length: 32
+          type: derived_jwt
+          signing_key: functions.JWT_SECRET
+          claims:
+            exp: 1918252800
+            iat: 1760486400
+            iss: supabase
+            role: anon
+          alg: HS256
           display: password
         SERVICE_ROLE_KEY:
           mutability: generated
-          type: alphanumeric
-          length: 32
+          type: derived_jwt
+          signing_key: functions.JWT_SECRET
+          claims:
+            exp: 1918252800
+            iat: 1760486400
+            iss: supabase
+            role: service_role
+          alg: HS256
           display: password
         SUPABASE_ANON_KEY:
           mutability: generated
