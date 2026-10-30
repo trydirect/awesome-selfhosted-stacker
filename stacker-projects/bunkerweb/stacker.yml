@@ -2,21 +2,22 @@ name: bunkerweb
 
 app:
   type: custom
-  image: bunkerity/bunkerweb:1.6.17
+  image: bunkerity/bunkerweb-all-in-one:1.6.17
   ports:
-    - "80:80/tcp"
-    - "443:443/tcp"
+    - "80:8080/tcp"
+    - "443:8443/tcp"
+    - "443:8443/udp"
     - "7000:7000/tcp"
   environment:
-    API_HOST: "0.0.0.0"
-    API_PORT: "7000"
+    API_WHITELIST_IP: "127.0.0.0/8"
+    USE_REDIS: "yes"
     REDIS_HOST: redis
     REDIS_PORT: "6379"
   volumes:
-    - bunkerweb_data:/var/cache/bunkerweb
+    - bunkerweb_data:/data
     - /var/run/docker.sock:/var/run/docker.sock:ro
   healthcheck:
-    test: "CMD curl -fs http://localhost:7000/health"
+    test: "CMD /usr/share/bunkerweb/helpers/healthcheck-ui.sh"
     interval: 30s
     timeout: 5s
     retries: 3
@@ -56,6 +57,7 @@ deploy:
     public_ports:
       - "80"
       - "443"
+      - "443/udp"
       - "7000"
 
 hooks:
@@ -68,47 +70,18 @@ config_contract:
   services:
     app:
       fields:
-        API_HOST:
+        API_WHITELIST_IP:
           mutability: editable
-        API_PORT:
+        USE_REDIS:
           mutability: editable
-          display: number
         REDIS_HOST:
           mutability: editable
         REDIS_PORT:
           mutability: editable
           display: number
-        healthcheck:
-          mutability: editable
-        interval:
-          mutability: editable
-        retries:
-          mutability: editable
-        start_period:
-          mutability: editable
-        test:
-          mutability: editable
-        timeout:
-          mutability: editable
-        volumes:
-          mutability: editable
       volumes:
         bunkerweb_data:
           mutability: generated
-    redis:
-      fields:
-        POSTGRES_DB:
-          mutability: editable
-        healthcheck:
-          mutability: editable
-        interval:
-          mutability: editable
-        retries:
-          mutability: editable
-        test:
-          mutability: editable
-        timeout:
-          mutability: editable
 
 marketplace:
   publish: true
@@ -131,7 +104,7 @@ marketplace:
 
     ## What you configure
 
-    - **Defaults provided**: `API_HOST`, `API_PORT`, `REDIS_HOST`, `REDIS_PORT`, `POSTGRES_DB` ship prefilled and can be adjusted in the deploy form
+    - **Defaults provided**: `API_WHITELIST_IP`, `USE_REDIS`, `REDIS_HOST`, `REDIS_PORT` ship prefilled and can be adjusted in the deploy form
 
     ## Requirements
 
