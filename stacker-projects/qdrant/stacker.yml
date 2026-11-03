@@ -1,0 +1,100 @@
+name: qdrant
+
+project:
+  identity: qdrant
+
+app:
+  type: custom
+  image: qdrant/qdrant:v1.20.0
+  ports:
+    - "6333:6333"
+    - "6335:6335"
+  volumes:
+    - qdrant_data:/qdrant/storage
+
+volumes:
+  qdrant_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "6333"
+      - "6335"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields: {}
+      volumes:
+        qdrant_data:
+          mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Qdrant"
+  short_description: "Vector search database for embeddings, REST and gRPC APIs"
+  long_description: |
+    **Qdrant**: Vector search database for embeddings, REST and gRPC APIs
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 6333 (public), 6335 (public) | `qdrant/qdrant:v1.20.0` — REST + gRPC vector API |
+
+    ## What you configure
+
+    - Collections and API usage through the REST API on 6333; data persists
+      in the generated `qdrant_data` volume
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/qdrant
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [qdrant]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/qdrant
+  no_secrets_confirmation: true

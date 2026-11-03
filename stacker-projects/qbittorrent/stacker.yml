@@ -1,0 +1,104 @@
+name: qbittorrent
+
+project:
+  identity: qbittorrent
+
+app:
+  type: custom
+  image: qbittorrentofficial/qbittorrent-nox:5.3.0-2
+  ports:
+    - "8080:8080"
+  volumes:
+    - qbit_config:/config
+    - qbit_downloads:/downloads
+
+volumes:
+  qbit_config: {}
+  qbit_downloads: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields: {}
+      volumes:
+        qbit_config:
+          mutability: generated
+        qbit_downloads:
+          mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "qBittorrent"
+  short_description: "BitTorrent client with a web UI, headless nox build"
+  long_description: |
+    **qBittorrent**: BitTorrent client with a web UI, headless nox build
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public) | `qbittorrentofficial/qbittorrent-nox:5.3.0-2` — WebUI and torrent engine |
+
+    ## What you configure
+
+    - The generated WebUI password is printed in the container logs on
+      first start (`stacker logs --service app`) — change it in Tools →
+      Options → WebUI
+    - Downloads land in the generated `qbit_downloads` volume
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/qbittorrent
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [qbittorrent]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/qbittorrent
+  no_secrets_confirmation: true

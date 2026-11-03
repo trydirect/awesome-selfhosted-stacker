@@ -1,0 +1,99 @@
+name: prometheus
+
+project:
+  identity: prometheus
+
+app:
+  type: custom
+  image: prom/prometheus:v3.15.1
+  ports:
+    - "9090:9090"
+  volumes:
+    - prometheus_data:/prometheus
+
+volumes:
+  prometheus_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "9090"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields: {}
+      volumes:
+        prometheus_data:
+          mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Prometheus"
+  short_description: "Time-series monitoring and alerting system, scrapes and stores metrics"
+  long_description: |
+    **Prometheus**: Time-series monitoring and alerting system, scrapes and stores metrics
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 9090 (public) | `prom/prometheus:v3.15.1` — web UI, query API, TSDB |
+
+    ## What you configure
+
+    - Prometheus runs with its default configuration (scrapes itself); point
+      it at your targets by adding scrape configs through the deploy form or
+      after install
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/prometheus
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [prometheus]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/prometheus
+  no_secrets_confirmation: true

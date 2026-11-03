@@ -1,6 +1,6 @@
 # Stacker Self-Hosted Projects — Full Index
 
-**248 projects** · **164 tested & verified** · Updated 2026-09-18
+**297 projects** · **164 tested & verified** · Updated 2026-11-02
 
 Each project is a ready-to-run `stacker.yml` deployment. See [README.md](../README.md) for quick start.
 
@@ -38,7 +38,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 
 ---
 
-## AI & LLM (24)
+## AI & LLM (26)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -67,6 +67,8 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | ai-mcp-app-builder | built from source | 3000 | — | | describe an MCP app, get a live sandboxed instance |
 | local-chatgpt-with-memory | built from source | 8501 | qdrant, ollama | | per-user memory chat, fully local |
 | rag-as-a-service | built from source | 8501 | — | | streamlit RAG demo; keys entered in UI |
+| flowise | flowiseai/flowise | 3000 | — | |
+| label-studio | heartexlabs/label-studio | 8080 | postgres | |
 ## Analytics (21)
 
 | Project | Image | Port | DB | Tested |
@@ -180,7 +182,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | penpot | penpotapp/penpot-frontend | 9001 | postgres, redis | |
 
 | excaliflow | built from source | 3000 | — | | diagrams with live animated flows |
-## Dashboard (5)
+## Dashboard (6)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -189,8 +191,9 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | grist | gristlabs/grist | 8484 | — | ⚠️ |
 | homer | b4bz/homer | 8080 | — | ✅ |
 | organizr | organizr/organizr | 9983 | — | |
+| homepage | ghcr.io/gethomepage/homepage | 3000 | — | |
 
-## Developer & DevOps Tools (21)
+## Developer & DevOps Tools (28)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -215,6 +218,13 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | budibase | budibase/budibase | 80 | couchdb, redis | | |
 | prowlarr | linuxserver/prowlarr | 9696 | — | ✅ | |
 | bolt-diy | ghcr.io/stackblitz-labs/bolt.diy | 5173 | — | | AI code builder |
+| jenkins | jenkins/jenkins | 8080, 50000 | — | | LTS, JDK 17 |
+| sonarqube | sonarqube | 9000 | postgres | | community edition |
+| forgejo | codeberg.org/forgejo/forgejo | 3000, 2222 | — | | SQLite by default |
+| openbao | openbao/openbao | 8200 | — | | dev mode (in-memory) |
+| rabbitmq | rabbitmq | 5672, 15672 | — | | management UI included |
+| kafka | apache/kafka | 9092 | — | | single-node KRaft |
+| dozzle | amir20/dozzle | 8080 | — | | docker.sock (read-only) |
 
 ## Document Management (12)
 
@@ -247,7 +257,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | syncthing | lscr.io/linuxserver/syncthing | 8384 | — | | |
 | zipline | ghcr.io/diced/zipline | 3000 | postgres | ✅ | Auto-migrate |
 
-## Media (26)
+## Media (28)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -277,6 +287,8 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | radarr | linuxserver/radarr | 7878 | — | | |
 | lidarr | linuxserver/lidarr | 8686 | — | | |
 | scriberr | ghcr.io/rishikanthc/scriberr | 8080 | — | ✅ | WhisperX transcription |
+| bazarr | lscr.io/linuxserver/bazarr | 6767 | — | | subtitles for Radarr/Sonarr |
+| qbittorrent | qbittorrentofficial/qbittorrent-nox | 8080 | — | | WebUI password in logs |
 
 ## Booking & Scheduling (2)
 
@@ -305,7 +317,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 |---------|-------|------|----|:------:|-------|
 | hi-events | ghcr.io/hidevops/hi-events | 8080 | postgres, redis | | DB migrate |
 
-## Monitoring (11)
+## Monitoring (13)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -319,6 +331,8 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | uptimekuma | louislam/uptime-kuma:2 | 3001 | — | ✅ | |
 | healthchecks | healthchecks/healthchecks | 8000 | postgres | ✅ | Auto-migrate |
 | cachet | cachethq/cachet | 8000 | postgres, redis | | DB migrate |
+| prometheus | prom/prometheus | 9090 | — | | |
+| gatus | twinproduction/gatus | 8080 | — | | |
 
 ## Money & Budgeting (4)
 
@@ -329,7 +343,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | ghostfolio | ghostfolio/ghostfolio | 3333 | postgres, redis | | |
 | tradingagents | tradingagents (built from source) | — | — | | CLI multi-agent trading framework (pinned upstream commit) |
 
-## Note-taking (6)
+## Note-taking (7)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -339,6 +353,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | standard-notes | standardnotes/server | 3000 | postgres, redis | | Auto-migrate |
 | appflowy | appflowyinc/appflowy_cloud | 8000 | postgres, redis | | Auto-migrate |
 | open-notebook | lfnovo/open_notebook | 8502 | surrealdb | ✅ | API on 5055 |
+| joplin-server | joplin/server | 22300 | postgres | | sync backend for Joplin apps |
 
 ## Password Management (13)
 
@@ -414,7 +429,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | manticore | manticoresearch/manticore | 9306 | — | ✅ | |
 | vane | itzcrazykns1337/vane | 3000 | — | ✅ | Perplexica successor |
 
-## Databases (4)
+## Databases (7)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
@@ -422,6 +437,9 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | surrealdb | surrealdb/surrealdb | 8000 | — | ✅ | |
 | influxdb | influxdb:2.7 | 8086 | — | ✅ | |
 | mongodb | mongo:7 | 27017 | — | ✅ | |
+| neo4j | neo4j | 7474, 7687 | — | | community edition, browser UI |
+| qdrant | qdrant/qdrant | 6333 | — | | vector search, REST + gRPC |
+| chromadb | chromadb/chroma | 8000 | — | | embedding database |
 
 ## Storage (3)
 
@@ -449,11 +467,12 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 |---------|-------|------|----|:------:|-------|
 | baserow | baserow/baserow | 80 | postgres, redis | | Auto-migrate |
 
-## IoT (1)
+## IoT (2)
 
 | Project | Image | Port | DB | Tested | Notes |
 |---------|-------|------|----|:------:|-------|
 | node-red | nodered/node-red | 1880 | — | ✅ | |
+| mosquitto | eclipse-mosquitto | 1883 | — | | anonymous access enabled |
 
 ## Health & Fitness (1)
 
@@ -512,7 +531,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 |---------|-------|------|----|:------:|-------|
 | hugo | klakegg/hugo | 1313 | — | | |
 
-## Self-hosting (4)
+## Self-hosting (5)
 
 | Project | Image | Port | DB | Tested |
 |---------|-------|------|----|:------:|
@@ -520,6 +539,7 @@ stacker secrets set KEY --scope service --service my-app --body "value"  # remot
 | coolify | coollabsio/coolify | 8000 | postgres, redis | |
 | dockhand | fnsys/dockhand | 3000 | — | ✅ |
 | portainer | portainer/portainer-ce | 9000 | — | ✅ |
+| dockge | louislam/dockge | 5001 | — | |
 
 ## Social (7)
 

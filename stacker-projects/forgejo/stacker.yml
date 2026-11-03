@@ -1,0 +1,100 @@
+name: forgejo
+
+project:
+  identity: forgejo
+
+app:
+  type: custom
+  image: codeberg.org/forgejo/forgejo:17.0.1
+  ports:
+    - "3000:3000"
+    - "2222:22"
+  volumes:
+    - forgejo_data:/data
+
+volumes:
+  forgejo_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+      - "2222"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields: {}
+      volumes:
+        forgejo_data:
+          mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Forgejo"
+  short_description: "Self-hosted Git service with issues, PRs and actions, lightweight Gitea fork"
+  long_description: |
+    **Forgejo**: Self-hosted Git service with issues, PRs and actions, lightweight Gitea fork
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public), 2222 (public) | `codeberg.org/forgejo/forgejo:17.0.1` — web UI + SSH git access |
+
+    ## What you configure
+
+    - First visit to port 3000 runs the install wizard (database defaults
+      to SQLite, admin account created there)
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/forgejo
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [forgejo]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/forgejo
+  no_secrets_confirmation: true

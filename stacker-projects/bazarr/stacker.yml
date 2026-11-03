@@ -1,0 +1,111 @@
+name: bazarr
+
+project:
+  identity: bazarr
+
+app:
+  type: custom
+  image: lscr.io/linuxserver/bazarr:1.5.4
+  ports:
+    - "6767:6767"
+  environment:
+    PUID: "1000"
+    PGID: "1000"
+    TZ: UTC
+  volumes:
+    - bazarr_config:/config
+
+volumes:
+  bazarr_config: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "6767"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        PUID:
+          mutability: editable
+          display: number
+        PGID:
+          mutability: editable
+          display: number
+        TZ:
+          mutability: editable
+      volumes:
+        bazarr_config:
+          mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Bazarr"
+  short_description: "Subtitle manager that downloads and syncs subtitles for Radarr and Sonarr"
+  long_description: |
+    **Bazarr**: Subtitle manager that downloads and syncs subtitles for Radarr and Sonarr
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 6767 (public) | `lscr.io/linuxserver/bazarr:1.5.4` — subtitle web UI |
+
+    ## What you configure
+
+    - **Defaults provided**: `PUID`, `PGID`, `TZ` ship prefilled and can be adjusted in the deploy form
+    - Connect Bazarr to your Radarr/Sonarr instances in Settings after
+      first login (the initial credentials are created in the setup wizard)
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/bazarr
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [bazarr]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/bazarr
+  no_secrets_confirmation: true

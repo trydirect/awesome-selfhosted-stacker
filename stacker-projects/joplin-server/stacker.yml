@@ -1,0 +1,151 @@
+name: joplin-server
+
+project:
+  identity: joplin-server
+
+app:
+  type: custom
+  image: joplin/server:3.7.3
+  ports:
+    - "22300:22300"
+  environment:
+    APP_BASE_URL: "http://localhost:22300"
+    APP_PORT: "22300"
+    DB_CLIENT: pg
+    POSTGRES_HOST: postgres
+    POSTGRES_PORT: "5432"
+    POSTGRES_DATABASE: joplin
+    POSTGRES_USER: joplin
+    POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: joplin
+      POSTGRES_USER: joplin
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - joplin_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD pg_isready -U joplin -d joplin"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  joplin_pgdata: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "22300"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        APP_BASE_URL:
+          mutability: editable
+        APP_PORT:
+          mutability: editable
+          display: number
+        DB_CLIENT:
+          mutability: editable
+        POSTGRES_HOST:
+          mutability: editable
+        POSTGRES_PORT:
+          mutability: editable
+          display: number
+        POSTGRES_DATABASE:
+          mutability: editable
+        POSTGRES_USER:
+          mutability: editable
+        POSTGRES_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes: {}
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        joplin_pgdata:
+          mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Joplin Server"
+  short_description: "Note syncing backend for the Joplin apps, end-to-end encrypted notes"
+  long_description: |
+    **Joplin Server**: Note syncing backend for the Joplin apps, end-to-end encrypted notes
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 22300 (public) | `joplin/server:3.7.3` — sync API and web UI |
+    | postgres | internal | `postgres:16-alpine` — notes and revisions |
+
+    ## What you configure
+
+    - **Defaults provided**: `APP_BASE_URL`, `APP_PORT`, `DB_CLIENT`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DATABASE`, `POSTGRES_USER` ship prefilled and can be adjusted in the deploy form — point `APP_BASE_URL` at your public URL before syncing clients
+
+    All 1 credential (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/joplin-server
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [joplin-server]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/joplin-server
+  no_secrets_confirmation: true

@@ -1,0 +1,146 @@
+name: label-studio
+
+project:
+  identity: label-studio
+
+app:
+  type: custom
+  image: heartexlabs/label-studio:1.23.2
+  ports:
+    - "8080:8080"
+  environment:
+    DJANGO_DB_NAME: labelstudio
+    DJANGO_DB_USER: labelstudio
+    DJANGO_DB_PASSWORD: "${POSTGRES_PASSWORD}"
+    DJANGO_DB_HOST: postgres
+    DJANGO_DB_PORT: "5432"
+  volumes:
+    - labelstudio_data:/label-studio/files
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: labelstudio
+      POSTGRES_USER: labelstudio
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - labelstudio_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: "CMD pg_isready -U labelstudio -d labelstudio"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  labelstudio_data: {}
+  labelstudio_pgdata: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8080"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        DJANGO_DB_NAME:
+          mutability: editable
+        DJANGO_DB_USER:
+          mutability: editable
+        DJANGO_DB_HOST:
+          mutability: editable
+        DJANGO_DB_PORT:
+          mutability: editable
+          display: number
+        DJANGO_DB_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        labelstudio_data:
+          mutability: generated
+    postgres:
+      fields:
+        POSTGRES_DB:
+          mutability: editable
+        POSTGRES_USER:
+          mutability: editable
+      volumes:
+        labelstudio_pgdata:
+          mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Label Studio"
+  short_description: "Data labeling tool for machine learning, images, text, audio and more"
+  long_description: |
+    **Label Studio**: Data labeling tool for machine learning, images, text, audio and more
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    2 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8080 (public) | `heartexlabs/label-studio:1.23.2` — labeling web UI |
+    | postgres | internal | `postgres:16-alpine` — projects and annotations |
+
+    ## What you configure
+
+    - **Defaults provided**: `DJANGO_DB_NAME`, `DJANGO_DB_USER`, `DJANGO_DB_HOST`, `DJANGO_DB_PORT`, `POSTGRES_DB`, `POSTGRES_USER` ship prefilled and can be adjusted in the deploy form
+
+    All 1 credential (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 2 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/label-studio
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [label-studio]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/label-studio
+  no_secrets_confirmation: true
