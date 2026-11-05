@@ -1,0 +1,116 @@
+name: flowise
+
+project:
+  identity: flowise
+
+app:
+  type: custom
+  image: flowiseai/flowise:3.1.4
+  ports:
+    - "3000:3000"
+  environment:
+    FLOWISE_USERNAME: admin
+    FLOWISE_PASSWORD: "${FLOWISE_PASSWORD}"
+    FLOWISE_SECRETKEY_OVERWRITE: "${FLOWISE_SECRET_KEY}"
+  volumes:
+    - flowise_data:/root/.flowise
+
+volumes:
+  flowise_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "3000"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        FLOWISE_USERNAME:
+          mutability: editable
+        FLOWISE_PASSWORD:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+        FLOWISE_SECRETKEY_OVERWRITE:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+      volumes:
+        flowise_data:
+          mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Flowise"
+  short_description: "Visual builder for LLM chains and agents, drag-and-drop AI flows"
+  long_description: |
+    **Flowise**: Visual builder for LLM chains and agents, drag-and-drop AI flows
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 3000 (public) | `flowiseai/flowise:3.1.4` — visual flow builder web UI |
+
+    ## What you configure
+
+    - **Defaults provided**: `FLOWISE_USERNAME` ships prefilled and can be adjusted in the deploy form
+
+    All 2 credentials (passwords and keys) are generated per
+    deployment and stored in your project's secret store.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/flowise
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [flowise]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/flowise
+  no_secrets_confirmation: true

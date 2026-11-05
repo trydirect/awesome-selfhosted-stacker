@@ -5,7 +5,7 @@
 > database setup, health checks, secrets, and remote monitoring included.
 
 <p>
-  <img alt="Projects" src="https://img.shields.io/badge/projects-266-blue">
+  <img alt="Projects" src="https://img.shields.io/badge/projects-297-blue">
   <img alt="Tested" src="https://img.shields.io/badge/tested%20%26%20verified-172-brightgreen">
   <img alt="Targets" src="https://img.shields.io/badge/deploy-local%20%7C%20server%20%7C%20cloud-orange">
   <img alt="Powered by" src="https://img.shields.io/badge/powered%20by-Stacker-8A2BE2">

@@ -1,0 +1,108 @@
+name: dockge
+
+project:
+  identity: dockge
+
+app:
+  type: custom
+  image: louislam/dockge:1.5.0
+  ports:
+    - "5001:5001"
+  environment:
+    DOCKGE_STACKS_DIR: /stacks
+  volumes:
+    - dockge_data:/app/data
+    - dockge_stacks:/stacks
+    - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  dockge_data: {}
+  dockge_stacks: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "5001"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        DOCKGE_STACKS_DIR:
+          mutability: editable
+      volumes:
+        dockge_data:
+          mutability: generated
+        dockge_stacks:
+          mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Dockge"
+  short_description: "Docker Compose stack manager, slick terminal and editor for compose files"
+  long_description: |
+    **Dockge**: Docker Compose stack manager, slick terminal and editor for compose files
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 5001 (public) | `louislam/dockge:1.5.0` — compose stack manager web UI |
+
+    ## What you configure
+
+    - **Defaults provided**: `DOCKGE_STACKS_DIR` ships prefilled and can be adjusted in the deploy form
+    - The first visit creates the admin account; compose stacks live in
+      the generated `dockge_stacks` volume
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/dockge
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [dockge]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/dockge
+  no_secrets_confirmation: true

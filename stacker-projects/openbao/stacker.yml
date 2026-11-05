@@ -1,0 +1,99 @@
+name: openbao
+
+project:
+  identity: openbao
+
+app:
+  type: custom
+  image: openbao/openbao:2.7.2
+  command: "server -dev -dev-root-token-id=${BAO_ROOT_TOKEN} -dev-listen-address=0.0.0.0:8200"
+  ports:
+    - "8200:8200"
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "8200"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        BAO_ROOT_TOKEN:
+          mutability: generated
+          type: alphanumeric
+          length: 32
+          display: password
+
+marketplace:
+  publish: true
+  display_name: "OpenBao"
+  short_description: "Secrets management with identity-based access, KV engine and PKI (dev mode)"
+  long_description: |
+    **OpenBao**: Secrets management with identity-based access, KV engine and PKI (dev mode)
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 8200 (public) | `openbao/openbao:2.7.2` — secrets API and web UI (dev mode) |
+
+    ## What you configure
+
+    All 1 credential (passwords and keys) are generated per
+    deployment and stored in your project's secret store — the generated
+    root token unlocks the UI/API on 8200.
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+    - Dev mode keeps secrets in memory only — use an external storage
+      backend and unseal workflow for production
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/openbao
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [openbao]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/openbao
+  no_secrets_confirmation: true

@@ -1,0 +1,132 @@
+name: kafka
+
+project:
+  identity: kafka
+
+app:
+  type: custom
+  image: apache/kafka:4.3.2
+  ports:
+    - "9092:9092"
+  environment:
+    KAFKA_NODE_ID: "1"
+    KAFKA_PROCESS_ROLES: broker,controller
+    KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+    KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+    KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+    KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+    KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+    KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+    KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+    KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+  volumes:
+    - kafka_data:/var/lib/kafka/data
+
+volumes:
+  kafka_data: {}
+
+proxy:
+  type: none
+  auto_detect: false
+
+env_file: .env
+
+deploy:
+  target: server
+  server:
+    host: ${DEPLOY_HOST}
+    user: root
+    ssh_key: ${BASE_PATH}/stacker-project-test
+  cloud:
+    provider: hetzner
+    ssh_key: ${BASE_PATH}/stacker-project-test
+    region: fsn1
+    size: cpx22
+    public_ports:
+      - "9092"
+
+hooks:
+  pre_build: ./scripts/generate-secrets.sh
+
+monitoring:
+  status_panel: true
+
+config_contract:
+  services:
+    app:
+      fields:
+        KAFKA_ADVERTISED_LISTENERS:
+          mutability: editable
+        KAFKA_CONTROLLER_QUORUM_VOTERS:
+          mutability: editable
+        KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS:
+          mutability: editable
+          display: number
+        KAFKA_LISTENERS:
+          mutability: editable
+        KAFKA_NODE_ID:
+          mutability: editable
+          display: number
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:
+          mutability: editable
+          display: number
+        KAFKA_PROCESS_ROLES:
+          mutability: editable
+        KAFKA_TRANSACTION_STATE_LOG_MIN_ISR:
+          mutability: editable
+          display: number
+        KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR:
+          mutability: editable
+          display: number
+      volumes:
+        kafka_data:
+          mutability: generated
+
+marketplace:
+  publish: true
+  display_name: "Apache Kafka"
+  short_description: "Distributed event streaming platform, single-node KRaft setup"
+  long_description: |
+    **Apache Kafka**: Distributed event streaming platform, single-node KRaft setup
+
+    Deploy from this page: TryDirect provisions the server, starts the
+    services, generates the deployment credentials and wires the
+    1 containers together. Nothing is shared between deployments and no
+    secrets ship with the stack.
+
+    ## What's included
+
+    | Service | Port | Description |
+    | ------- | ---- | ----------- |
+    | app | 9092 (public) | `apache/kafka:4.3.2` — broker + controller in one (KRaft) |
+
+    ## What you configure
+
+    - **Defaults provided**: `KAFKA_ADVERTISED_LISTENERS`, `KAFKA_CONTROLLER_QUORUM_VOTERS`, `KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS`, `KAFKA_LISTENERS`, `KAFKA_NODE_ID`, `KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR`, `KAFKA_PROCESS_ROLES`, `KAFKA_TRANSACTION_STATE_LOG_MIN_ISR`, `KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR` ship prefilled and can be adjusted in the deploy form
+
+    ## Requirements
+
+    - A cloud account connected to TryDirect (the deploy form provisions
+      the server) or one of your own servers
+    - A server that fits 1 containers (2 GB RAM or more recommended)
+
+    ## Alternative: deploy with the Stacker CLI
+
+    Everything above also works from the command line:
+
+    ```bash
+    git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
+    cd awesome-selfhosted-stacker/stacker-projects/kafka
+
+    # Generate secrets
+    cp .env.example .env
+    ./scripts/generate-secrets.sh
+
+    # Deploy
+    stacker deploy
+    ```
+  category: devops
+  tags: [kafka]
+  support_url: https://github.com/trydirect/awesome-selfhosted-stacker/tree/main/stacker-projects/kafka
+  no_secrets_confirmation: true
