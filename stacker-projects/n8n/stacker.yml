@@ -57,14 +57,20 @@ proxy:
   auto_detect: false
 
 deploy:
+  # Defaults to the server you already have. `stacker deploy --target cloud`
+  # provisions one instead, with your own provider key.
   target: server
   server:
     host: ${DEPLOY_HOST}
-    user: root
-    ssh_key: ${BASE_PATH}/stacker-project-test
+    user: ${DEPLOY_USER}
+    # Your own key, not one of ours. SSH_KEY_PATH used to read
+    # ${BASE_PATH}/stacker-project-test, a key from this repository's test
+    # fixtures that nobody outside it has, so a first deploy failed on a
+    # missing file.
+    ssh_key: ${SSH_KEY_PATH}
   cloud:
     provider: hetzner
-    ssh_key: ${BASE_PATH}/stacker-project-test
+    ssh_key: ${SSH_KEY_PATH}
     region: fsn1
     size: cpx22
     public_ports:
@@ -158,10 +164,12 @@ marketplace:
     ```bash
     git clone https://github.com/trydirect/awesome-selfhosted-stacker.git
     cd awesome-selfhosted-stacker/stacker-projects/n8n
-    cp .env.example .env    # set ADMIN_EMAIL
+    cp .env.example .env    # set ADMIN_EMAIL, DEPLOY_HOST, SSH_KEY_PATH
     ./scripts/generate-secrets.sh
-    stacker deploy
+    stacker deploy          # onto the server in DEPLOY_HOST, over SSH
     ```
+
+    No TryDirect account is needed for that path.
   category: ai-agents
   tags: [n8n, workflow-automation, ai-agents, zapier-alternative, no-code]
   license: free
