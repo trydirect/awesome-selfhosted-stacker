@@ -1,6 +1,18 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+
+# `sed -i` is not portable: BSD sed (macOS) wants the backup suffix as a
+# separate argument, GNU sed (Linux) takes it attached or not at all, and each
+# rejects the other's form. `sed -i '' ...` worked on a laptop and died on
+# every server with
+#     sed: can't read s|...|: No such file or directory
+# so the secrets were silently never generated. Decide once, here.
+if sed --version >/dev/null 2>&1; then
+  sed_inplace() { sed -i "$@"; }      # GNU sed, Linux
+else
+  sed_inplace() { sed -i '' "$@"; }   # BSD sed, macOS
+fi
 if [ ! -f .env ]; then
   cp .env.example .env
 fi
@@ -25,7 +37,7 @@ if ! grep -q "^DB_CONNECTION_URI=." .env 2>/dev/null; then
   db_pass=$(grep "^DB_PASSWORD=" .env | cut -d= -f2-)
   url="postgresql://infisical:${db_pass}@infisical-db:5432/infisical"
   if grep -q "^DB_CONNECTION_URI=" .env; then
-    sed -i '' "s|^DB_CONNECTION_URI=.*|DB_CONNECTION_URI=${url}|" .env
+    sed_inplace "s|^DB_CONNECTION_URI=.*|DB_CONNECTION_URI=${url}|" .env
   else
     echo "DB_CONNECTION_URI=${url}" >> .env
   fi
@@ -34,7 +46,7 @@ fi
 if ! grep -q "^POSTGRES_PASSWORD=." .env 2>/dev/null; then
   db_pass=$(grep "^DB_PASSWORD=" .env | cut -d= -f2-)
   if grep -q "^POSTGRES_PASSWORD=" .env; then
-    sed -i '' "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=${db_pass}|" .env
+    sed_inplace "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=${db_pass}|" .env
   else
     echo "POSTGRES_PASSWORD=${db_pass}" >> .env
   fi

@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# `sed -i` is not portable: BSD sed (macOS) wants the backup suffix as a
+# separate argument, GNU sed (Linux) takes it attached or not at all, and each
+# rejects the other's form. `sed -i '' ...` worked on a laptop and died on
+# every server with
+#     sed: can't read s|...|: No such file or directory
+# so the secrets were silently never generated. Decide once, here.
+if sed --version >/dev/null 2>&1; then
+  sed_inplace() { sed -i "$@"; }      # GNU sed, Linux
+else
+  sed_inplace() { sed -i '' "$@"; }   # BSD sed, macOS
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 ENV_FILE="$PROJECT_DIR/.env"
@@ -25,9 +37,9 @@ set_if_empty() {
   current="$(grep "^${key}=" "$ENV_FILE" | cut -d= -f2-)"
   if [ -z "$current" ]; then
     if [ -n "$comment" ]; then
-      sed -i '' "s|^${key}=$|# ${comment}\n${key}=${value}|" "$ENV_FILE"
+      sed_inplace "s|^${key}=$|# ${comment}\n${key}=${value}|" "$ENV_FILE"
     else
-      sed -i '' "s|^${key}=$|${key}=${value}|" "$ENV_FILE"
+      sed_inplace "s|^${key}=$|${key}=${value}|" "$ENV_FILE"
     fi
     echo "  set ${key}"
   fi
@@ -58,7 +70,7 @@ echo "Done."
 # --- contract-key alignment (config_contract generated fields) ---
 gen() { openssl rand -hex 16; }
 sync() { # sync <KEY> <VALUE>
-  if grep -q "^${1}=" .env; then sed -i '' "s|^${1}=.*|${1}=${2}|" .env; else echo "${1}=${2}" >> .env; fi
+  if grep -q "^${1}=" .env; then sed_inplace "s|^${1}=.*|${1}=${2}|" .env; else echo "${1}=${2}" >> .env; fi
 }
 ANON=$(grep "^ANON_KEY=" .env | cut -d= -f2-)
 SVC=$(grep "^SERVICE_ROLE_KEY=" .env | cut -d= -f2-)
