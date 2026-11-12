@@ -1,6 +1,18 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+
+# `sed -i` is not portable: BSD sed (macOS) wants the backup suffix as a
+# separate argument, GNU sed (Linux) takes it attached or not at all, and each
+# rejects the other's form. `sed -i '' ...` worked on a laptop and died on
+# every server with
+#     sed: can't read s|...|: No such file or directory
+# so the secrets were silently never generated. Decide once, here.
+if sed --version >/dev/null 2>&1; then
+  sed_inplace() { sed -i "$@"; }      # GNU sed, Linux
+else
+  sed_inplace() { sed -i '' "$@"; }   # BSD sed, macOS
+fi
 if [ ! -f .env ]; then
   cp .env.example .env
   echo "  Created .env from .env.example"
@@ -11,15 +23,15 @@ need() {
   [ -z "$val" ]
 }
 if need "DB_PASSWORD"; then
-  sed -i '' "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" .env
+  sed_inplace "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" .env
   echo "  Generated DB_PASSWORD"
 fi
 if need "DB_ROOT_PASSWORD"; then
-  sed -i '' "s|^DB_ROOT_PASSWORD=.*|DB_ROOT_PASSWORD=$(openssl rand -hex 16)|" .env
+  sed_inplace "s|^DB_ROOT_PASSWORD=.*|DB_ROOT_PASSWORD=$(openssl rand -hex 16)|" .env
   echo "  Generated DB_ROOT_PASSWORD"
 fi
 if need "ANALYTICS_SALT"; then
-  sed -i '' "s|^ANALYTICS_SALT=.*|ANALYTICS_SALT=$(openssl rand -hex 16)|" .env
+  sed_inplace "s|^ANALYTICS_SALT=.*|ANALYTICS_SALT=$(openssl rand -hex 16)|" .env
   echo "  Generated ANALYTICS_SALT"
 fi
 echo "Secrets ready."

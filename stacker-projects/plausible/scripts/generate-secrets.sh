@@ -6,6 +6,18 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+# `sed -i` is not portable: BSD sed (macOS) wants the backup suffix as a
+# separate argument, GNU sed (Linux) takes it attached or not at all, and each
+# rejects the other's form. `sed -i '' ...` worked on a laptop and died on
+# every server with
+#     sed: can't read s|...|: No such file or directory
+# so the secrets were silently never generated. Decide once, here.
+if sed --version >/dev/null 2>&1; then
+  sed_inplace() { sed -i "$@"; }      # GNU sed, Linux
+else
+  sed_inplace() { sed -i '' "$@"; }   # BSD sed, macOS
+fi
+
 if [ ! -f .env ]; then
   cp .env.example .env
   echo "  Created .env from .env.example"
@@ -18,17 +30,17 @@ need() {
 }
 
 if need "SECRET_KEY_BASE"; then
-  sed -i '' "s/^SECRET_KEY_BASE=.*/SECRET_KEY_BASE=$(openssl rand -hex 64)/" .env
+  sed_inplace "s/^SECRET_KEY_BASE=.*/SECRET_KEY_BASE=$(openssl rand -hex 64)/" .env
   echo "  Generated SECRET_KEY_BASE"
 fi
 
 if need "DB_PASSWORD"; then
-  sed -i '' "s/^DB_PASSWORD=.*/DB_PASSWORD=$(openssl rand -hex 16)/" .env
+  sed_inplace "s/^DB_PASSWORD=.*/DB_PASSWORD=$(openssl rand -hex 16)/" .env
   echo "  Generated DB_PASSWORD"
 fi
 
 if need "TOTP_VAULT_KEY"; then
-  sed -i '' "s|^TOTP_VAULT_KEY=.*|TOTP_VAULT_KEY=$(openssl rand -base64 32)|" .env
+  sed_inplace "s|^TOTP_VAULT_KEY=.*|TOTP_VAULT_KEY=$(openssl rand -base64 32)|" .env
   echo "  Generated TOTP_VAULT_KEY"
 fi
 
